@@ -5,7 +5,7 @@
       ".svelte-kit/generated/client-optimized/nodes/1.js",
       ".svelte-kit/generated/client-optimized/nodes/2.js"
     ],
-    "file": "_app/immutable/entry/app.XQJ4rP3m.js",
+    "file": "_app/immutable/entry/app.yllqhsju.js",
     "imports": [
       "_scheduler.zMJaRgub.js",
       "_index.W8cwxZNY.js"
@@ -24,11 +24,11 @@
     "src": ".svelte-kit/generated/client-optimized/nodes/0.js"
   },
   ".svelte-kit/generated/client-optimized/nodes/1.js": {
-    "file": "_app/immutable/nodes/1.UYhZRv3B.js",
+    "file": "_app/immutable/nodes/1.b5Rb9S3F.js",
     "imports": [
       "_scheduler.zMJaRgub.js",
       "_index.W8cwxZNY.js",
-      "_entry.pP5mZS-c.js"
+      "_entry.j-p-D1b_.js"
     ],
     "isDynamicEntry": true,
     "isEntry": true,
@@ -36,6 +36,7 @@
   },
   ".svelte-kit/generated/client-optimized/nodes/2.js": {
     "assets": [
+      "_app/immutable/assets/android-chrome-512x512.6tSliZMZ.png",
       "_app/immutable/assets/fa-brands-400.vfWL-IA9.woff2",
       "_app/immutable/assets/fa-brands-400.7WSgTNmj.ttf",
       "_app/immutable/assets/fa-regular-400.DjrD39cY.woff2",
@@ -48,7 +49,7 @@
     "css": [
       "_app/immutable/assets/2.Ar-JMMcq.css"
     ],
-    "file": "_app/immutable/nodes/2.zBZrWCc4.js",
+    "file": "_app/immutable/nodes/2.2JLsJwwa.js",
     "imports": [
       "_scheduler.zMJaRgub.js",
       "_index.W8cwxZNY.js"
@@ -57,8 +58,8 @@
     "isEntry": true,
     "src": ".svelte-kit/generated/client-optimized/nodes/2.js"
   },
-  "_entry.pP5mZS-c.js": {
-    "file": "_app/immutable/chunks/entry.pP5mZS-c.js",
+  "_entry.j-p-D1b_.js": {
+    "file": "_app/immutable/chunks/entry.j-p-D1b_.js",
     "imports": [
       "_scheduler.zMJaRgub.js"
     ]
@@ -105,11 +106,19 @@
     "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-v4compatibility.woff2"
   },
   "node_modules/@sveltejs/kit/src/runtime/client/entry.js": {
-    "file": "_app/immutable/entry/start.VHO9AgHF.js",
+    "file": "_app/immutable/entry/start.vvcjkoiE.js",
     "imports": [
-      "_entry.pP5mZS-c.js"
+      "_entry.j-p-D1b_.js"
     ],
     "isEntry": true,
     "src": "node_modules/@sveltejs/kit/src/runtime/client/entry.js"
+  },
+  "src/lib/OpenFusionAPI/img/android-chrome-512x512.png": {
+    "file": "_app/immutable/assets/android-chrome-512x512.6tSliZMZ.png",
+    "src": "src/lib/OpenFusionAPI/img/android-chrome-512x512.png"
+  },
+  "src/lib/OpenFusionAPI/img/flame.png": {
+    "file": "_app/immutable/assets/flame.KSOL5w7N.png",
+    "src": "src/lib/OpenFusionAPI/img/flame.png"
   }
 }

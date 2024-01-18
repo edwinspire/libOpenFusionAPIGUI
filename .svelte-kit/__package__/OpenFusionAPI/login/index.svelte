@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import { createEventDispatcher } from 'svelte';
 	import { userStore, getListMethods, getListHandler, url_paths } from '../utils.js';
+	import logo from '../img/favicon.png';
 
 	const dispatch = createEventDispatcher();
 
@@ -58,7 +59,7 @@
 			<div class="media t1">
 				<div class="media-left">
 					<figure class="image is-48x48">
-						<img src="openfusionapi/favicon.png" alt="OpenFusionAPI" />
+						<img src="{logo}" alt="OpenFusionAPI" />
 					</figure>
 				</div>
 				<div class="media-content">

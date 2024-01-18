@@ -1,4 +1,6 @@
 <script>
+import logo from "./img/android-chrome-512x512.png";
+import flame from "./img/flame.png";
 </script>
 
 <section class="hero is-black is-fullheight her">
@@ -7,7 +9,7 @@
 
             <div class="main">
                     <figure class="image is-128x128">
-                        <img src="android-chrome-512x512.png" />
+                        <img src="{logo}" />
                     </figure>
                 </div>
             
