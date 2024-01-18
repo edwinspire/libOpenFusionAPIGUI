@@ -3,7 +3,7 @@
 	
 </script>
 
-<section class="hero is-black is-fullheight her">
+<section class="hero is-black is-fullheight">
 	<div class="hero-body">
 		<div class="container">
 			<div class="main">
