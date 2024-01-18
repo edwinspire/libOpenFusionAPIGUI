@@ -85,8 +85,6 @@
 </div>
 
 <style>
-  /* Importar los estilos de Bulma */
-  @import "bulma/css/bulma.min.css";
 
   /* Estilos adicionales */
   .container {
