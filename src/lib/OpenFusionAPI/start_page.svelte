@@ -22,7 +22,7 @@
 	span {
 		height: 300px;
 		width: 100%;
-		background-image: url('openfusionapi/flame.png');
+		background-image: url('flame.png');
 		background-position: 0 -1000px;
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
