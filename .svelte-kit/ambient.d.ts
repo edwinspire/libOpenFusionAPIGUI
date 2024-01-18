@@ -49,6 +49,8 @@ declare module '$env/static/private' {
 	export const XRDP_PULSE_SOURCE_SOCKET: string;
 	export const XRDP_PULSE_SINK_SOCKET: string;
 	export const DBUS_SESSION_BUS_ADDRESS: string;
+	export const npm_config_engine_strict: string;
+	export const npm_config_resolution_mode: string;
 	export const COLORTERM: string;
 	export const GIO_LAUNCHED_DESKTOP_FILE_PID: string;
 	export const COLOR: string;
@@ -158,6 +160,8 @@ declare module '$env/dynamic/private' {
 		XRDP_PULSE_SOURCE_SOCKET: string;
 		XRDP_PULSE_SINK_SOCKET: string;
 		DBUS_SESSION_BUS_ADDRESS: string;
+		npm_config_engine_strict: string;
+		npm_config_resolution_mode: string;
 		COLORTERM: string;
 		GIO_LAUNCHED_DESKTOP_FILE_PID: string;
 		COLOR: string;

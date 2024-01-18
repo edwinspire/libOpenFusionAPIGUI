@@ -1,27 +1,19 @@
 // @ts-ignore
 import uFetch from '@edwinspire/universal-fetch';
 import { writable } from 'svelte/store';
+import { PUBLIC_API_SERVER_HOST } from '$env/static/public';
 
-let PUBLIC_URL_DEVELOPMENT_API;
-
-try {
-  ({ PUBLIC_URL_DEVELOPMENT_API } = require('$env/static/public'));
-} catch (error) {
-  PUBLIC_URL_DEVELOPMENT_API = '';
-}
-
-console.log(PUBLIC_URL_DEVELOPMENT_API);
 
 export const url_paths = {
-	getfunctions: PUBLIC_URL_DEVELOPMENT_API+'/api/system/functions/prd',
-	getHandler: PUBLIC_URL_DEVELOPMENT_API+'/api/system/system/handler/0.01/prd',
-	Methods: PUBLIC_URL_DEVELOPMENT_API+'/api/system/system/method/0.01/prd',
-	listEnv: PUBLIC_URL_DEVELOPMENT_API+'/api/system/system/environment/0.01/prd',
-	listApps: PUBLIC_URL_DEVELOPMENT_API+'/api/system/api/apps/0.01/prd',
-	getApp: PUBLIC_URL_DEVELOPMENT_API+'/api/system/api/app/0.01/prd',
-	saveApp: PUBLIC_URL_DEVELOPMENT_API+'/api/system/api/app/0.01/prd',
-	saveMethod: PUBLIC_URL_DEVELOPMENT_API+'/api/system/system/method/0.01/prd',
-	login: PUBLIC_URL_DEVELOPMENT_API+"/api/system/system/login/0.01/prd"
+	getfunctions: PUBLIC_API_SERVER_HOST+'/api/system/functions/prd',
+	getHandler: PUBLIC_API_SERVER_HOST+'/api/system/system/handler/0.01/prd',
+	Methods: PUBLIC_API_SERVER_HOST+'/api/system/system/method/0.01/prd',
+	listEnv: PUBLIC_API_SERVER_HOST+'/api/system/system/environment/0.01/prd',
+	listApps: PUBLIC_API_SERVER_HOST+'/api/system/api/apps/0.01/prd',
+	getApp: PUBLIC_API_SERVER_HOST+'/api/system/api/app/0.01/prd',
+	saveApp: PUBLIC_API_SERVER_HOST+'/api/system/api/app/0.01/prd',
+	saveMethod: PUBLIC_API_SERVER_HOST+'/api/system/system/method/0.01/prd',
+	login: PUBLIC_API_SERVER_HOST+"/api/system/system/login/0.01/prd"
 };
 
 //const path_functions = '/system/main/functions';

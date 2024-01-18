@@ -2,13 +2,6 @@ import { c as create_ssr_component, d as createEventDispatcher, f as add_attribu
 import uFetch from "@edwinspire/universal-fetch";
 import "events";
 import "d3";
-let PUBLIC_URL_DEVELOPMENT_API;
-try {
-  ({ PUBLIC_URL_DEVELOPMENT_API } = require("$env/static/public"));
-} catch (error) {
-  PUBLIC_URL_DEVELOPMENT_API = "";
-}
-console.log(PUBLIC_URL_DEVELOPMENT_API);
 const css = {
   code: '@import "bulma/css/bulma.min.css";.container.svelte-osrx57{max-width:400px;margin:0 auto;padding:2rem;margin-top:10vh;border:1px solid #ccc;border-radius:4px}.form.svelte-osrx57{margin-bottom:1rem}',
   map: null
