@@ -1,17 +1,39 @@
 <script>
 </script>
 
-<section class="hero is-black is-fullheight">
+<section class="hero is-black is-fullheight her">
 	<div class="hero-body">
 		<div class="container">
+
+            <div class="main">
+                    <figure class="image is-128x128">
+                        <img src="android-chrome-512x512.png" />
+                    </figure>
+                </div>
+            
+
 			<div class="flame">
-				<h1><span>OpenFusionAPI</span></h1>
+				<h1>
+						<span>OpenFusionAPI</span>
+					
+				</h1>
 			</div>
 		</div>
 	</div>
 </section>
 
 <style>
+	.her {
+		display: inherit !important;
+	}
+
+    .main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+  }
+
 	.container {
 		width: 100%;
 		height: 300px;
