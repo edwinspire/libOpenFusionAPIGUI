@@ -1,9 +1,9 @@
 <script>
-	import { OpenFusionAPIGUI  } from '../lib/index.js';
+	import { StartPage  } from '../lib/index.js';
 	import { onMount } from 'svelte';
 
 	
 	onMount(() => {});
 </script>
 
-<OpenFusionAPIGUI></OpenFusionAPIGUI>
+<StartPage></StartPage>

@@ -49,31 +49,26 @@
 	onMount(() => {});
 </script>
 
-
 <div class="modal is-active">
 	<div class="modal-background"></div>
 	<div class="modal-content">
 		<div class="box">
 			<!-- Any other Bulma elements you want -->
-      
 
-
-
-      <div class="media t1 ">
-        <div class="media-left">
-          <figure class="image is-48x48">
-            <img src="favicon.png" alt="OpenFusionAPI">
-          </figure>
-        </div>
-        <div class="media-content">
-          <p class="title is-family-sans-serif">Open Fusion API</p>
-        </div>
-      </div>
-
+			<div class="media t1">
+				<div class="media-left">
+					<figure class="image is-48x48">
+						<img src="openfusionapi/favicon.png" alt="OpenFusionAPI" />
+					</figure>
+				</div>
+				<div class="media-content">
+					<p class="title is-family-sans-serif">Open Fusion API</p>
+				</div>
+			</div>
 
 			<div class="field">
 				<p class="control has-icons-left has-icons-right">
-					<input class="input" type="text" placeholder="Username" bind:value={username}/>
+					<input class="input" type="text" placeholder="Username" bind:value={username} />
 					<span class="icon is-small is-left">
 						<i class="fa-solid fa-user"></i>
 					</span>
@@ -81,7 +76,7 @@
 			</div>
 			<div class="field">
 				<p class="control has-icons-left">
-					<input class="input" type="password" placeholder="Password" bind:value={password}/>
+					<input class="input" type="password" placeholder="Password" bind:value={password} />
 					<span class="icon is-small is-left">
 						<i class="fas fa-lock"></i>
 					</span>
@@ -89,9 +84,14 @@
 			</div>
 			<div class="field">
 				<p class="control">
-					<button class="button is-success" on:click={()=>{
-            handleSubmit();
-          }}> Login </button>
+					<button
+						class="button is-success"
+						on:click={() => {
+							handleSubmit();
+						}}
+					>
+						Login
+					</button>
 				</p>
 			</div>
 		</div>
@@ -99,7 +99,7 @@
 </div>
 
 <style>
-	.t1{
-padding: 1em;
-  }
+	.t1 {
+		padding: 1em;
+	}
 </style>

@@ -58,7 +58,7 @@
 			<div class="media t1">
 				<div class="media-left">
 					<figure class="image is-48x48">
-						<img src="favicon.png" alt="OpenFusionAPI" />
+						<img src="openfusionapi/favicon.png" alt="OpenFusionAPI" />
 					</figure>
 				</div>
 				<div class="media-content">
