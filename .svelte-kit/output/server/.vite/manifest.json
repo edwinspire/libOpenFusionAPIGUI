@@ -82,9 +82,14 @@
     "file": "_app/immutable/assets/android-chrome-512x512.6tSliZMZ.png",
     "src": "src/lib/OpenFusionAPI/img/android-chrome-512x512.png"
   },
+  "src/lib/OpenFusionAPI/img/flame.png": {
+    "file": "_app/immutable/assets/flame.KSOL5w7N.png",
+    "src": "src/lib/OpenFusionAPI/img/flame.png"
+  },
   "src/routes/+page.svelte": {
     "assets": [
       "_app/immutable/assets/android-chrome-512x512.6tSliZMZ.png",
+      "_app/immutable/assets/flame.KSOL5w7N.png",
       "_app/immutable/assets/fa-brands-400.vfWL-IA9.woff2",
       "_app/immutable/assets/fa-brands-400.7WSgTNmj.ttf",
       "_app/immutable/assets/fa-regular-400.DjrD39cY.woff2",
@@ -95,7 +100,7 @@
       "_app/immutable/assets/fa-v4compatibility.BdHZVUy0.ttf"
     ],
     "css": [
-      "_app/immutable/assets/_page.s9fWK2Ly.css"
+      "_app/immutable/assets/_page.MWNetxke.css"
     ],
     "file": "entries/pages/_page.svelte.js",
     "imports": [

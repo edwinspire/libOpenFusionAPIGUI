@@ -1,5 +1,6 @@
 <script>
 	import logo from './img/android-chrome-512x512.png';
+    import flame from './img/flame.png';
 	
 </script>
 
@@ -8,13 +9,13 @@
 		<div class="container">
 			<div class="main">
 				<figure class="image is-128x128">
-					<img src={logo} />
+					<img src={logo} alt="OpenFusionAPI"/>
 				</figure>
 			</div>
 
 			<div>
-				<h1 class="h01">
-					<span class="span01">OpenFusionAPI</span>
+				<h1 class="h01" >
+					<span class="span01" style="background-image: url( {flame});">OpenFusionAPI</span>
 				</h1>
 			</div>
 		</div>
@@ -22,9 +23,6 @@
 </section>
 
 <style>
-	.her {
-		display: inherit !important;
-	}
 
 	.main {
 		display: flex;
@@ -42,7 +40,7 @@
 	.span01 {
 		height: 300px;
 		width: 100%;
-		background-image: url('flame.png');
+		/* background-image: url({flame}); */
 		background-position: 0 -1000px;
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
