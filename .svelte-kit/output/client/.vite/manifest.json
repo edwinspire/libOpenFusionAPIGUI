@@ -5,7 +5,7 @@
       ".svelte-kit/generated/client-optimized/nodes/1.js",
       ".svelte-kit/generated/client-optimized/nodes/2.js"
     ],
-    "file": "_app/immutable/entry/app.yllqhsju.js",
+    "file": "_app/immutable/entry/app.-DPseYKt.js",
     "imports": [
       "_scheduler.zMJaRgub.js",
       "_index.W8cwxZNY.js"
@@ -24,11 +24,11 @@
     "src": ".svelte-kit/generated/client-optimized/nodes/0.js"
   },
   ".svelte-kit/generated/client-optimized/nodes/1.js": {
-    "file": "_app/immutable/nodes/1.b5Rb9S3F.js",
+    "file": "_app/immutable/nodes/1.drYn-zOV.js",
     "imports": [
       "_scheduler.zMJaRgub.js",
       "_index.W8cwxZNY.js",
-      "_entry.j-p-D1b_.js"
+      "_entry.KRYiJp_7.js"
     ],
     "isDynamicEntry": true,
     "isEntry": true,
@@ -47,9 +47,9 @@
       "_app/immutable/assets/fa-v4compatibility.BdHZVUy0.ttf"
     ],
     "css": [
-      "_app/immutable/assets/2.Ar-JMMcq.css"
+      "_app/immutable/assets/2.Du4BUoD2.css"
     ],
-    "file": "_app/immutable/nodes/2.2JLsJwwa.js",
+    "file": "_app/immutable/nodes/2.JsmiagT_.js",
     "imports": [
       "_scheduler.zMJaRgub.js",
       "_index.W8cwxZNY.js"
@@ -58,8 +58,8 @@
     "isEntry": true,
     "src": ".svelte-kit/generated/client-optimized/nodes/2.js"
   },
-  "_entry.j-p-D1b_.js": {
-    "file": "_app/immutable/chunks/entry.j-p-D1b_.js",
+  "_entry.KRYiJp_7.js": {
+    "file": "_app/immutable/chunks/entry.KRYiJp_7.js",
     "imports": [
       "_scheduler.zMJaRgub.js"
     ]
@@ -106,9 +106,9 @@
     "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-v4compatibility.woff2"
   },
   "node_modules/@sveltejs/kit/src/runtime/client/entry.js": {
-    "file": "_app/immutable/entry/start.vvcjkoiE.js",
+    "file": "_app/immutable/entry/start.b6358sXY.js",
     "imports": [
-      "_entry.j-p-D1b_.js"
+      "_entry.KRYiJp_7.js"
     ],
     "isEntry": true,
     "src": "node_modules/@sveltejs/kit/src/runtime/client/entry.js"
@@ -116,9 +116,5 @@
   "src/lib/OpenFusionAPI/img/android-chrome-512x512.png": {
     "file": "_app/immutable/assets/android-chrome-512x512.6tSliZMZ.png",
     "src": "src/lib/OpenFusionAPI/img/android-chrome-512x512.png"
-  },
-  "src/lib/OpenFusionAPI/img/flame.png": {
-    "file": "_app/immutable/assets/flame.KSOL5w7N.png",
-    "src": "src/lib/OpenFusionAPI/img/flame.png"
   }
 }

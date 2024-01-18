@@ -1,23 +1,20 @@
 <script>
-import logo from "./img/android-chrome-512x512.png";
-import flame from "./img/flame.png";
+	import logo from './img/android-chrome-512x512.png';
+	
 </script>
 
 <section class="hero is-black is-fullheight her">
 	<div class="hero-body">
 		<div class="container">
+			<div class="main">
+				<figure class="image is-128x128">
+					<img src={logo} />
+				</figure>
+			</div>
 
-            <div class="main">
-                    <figure class="image is-128x128">
-                        <img src="{logo}" />
-                    </figure>
-                </div>
-            
-
-			<div class="flame">
-				<h1>
-						<span>OpenFusionAPI</span>
-					
+			<div>
+				<h1 class="h01">
+					<span class="span01">OpenFusionAPI</span>
 				</h1>
 			</div>
 		</div>
@@ -29,12 +26,11 @@ import flame from "./img/flame.png";
 		display: inherit !important;
 	}
 
-    .main {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-  }
+	.main {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
 
 	.container {
 		width: 100%;
@@ -43,7 +39,7 @@ import flame from "./img/flame.png";
 		transform: translateY(50%);
 	}
 
-	span {
+	.span01 {
 		height: 300px;
 		width: 100%;
 		background-image: url('flame.png');
@@ -53,7 +49,7 @@ import flame from "./img/flame.png";
 		animation: fire 4s linear infinite;
 	}
 
-	h1 {
+	.h01 {
 		color: #fff;
 		font-size: 80px;
 		text-align: center;
