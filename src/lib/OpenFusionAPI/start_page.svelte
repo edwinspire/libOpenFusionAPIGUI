@@ -1,40 +1,40 @@
 <script>
 	import logo from './img/android-chrome-512x512.png';
-    import flame from './img/flame.png';
-	
+	import flame from './img/flame.png';
 </script>
 
-<section class="hero is-black is-fullheight">
-	<div class="hero-body">
-		<div class="container">
-			<div class="main">
-				<figure class="image is-128x128">
-					<img src={logo} alt="OpenFusionAPI"/>
-				</figure>
-			</div>
-
-			<div>
-				<h1 class="h01" >
-					<span class="span01" style="background-image: url( {flame});">OpenFusionAPI</span>
-				</h1>
-			</div>
+<div class="xcontainer">
+	<div class="">
+		<div class="main">
+			<figure class="image is-128x128">
+				<img src={logo} alt="OpenFusionAPI" />
+			</figure>
 		</div>
+
+		<h1 class="title">
+			<div><span class="span01" style="background-image: url( {flame});">OpenFusionAPI</span></div>
+		</h1>
+		
+			<div class="has-text-centered has-text-weight-bold"><span class="span01 " style="background-image: url( {flame});"><a  href="/openfusionapi">ENTER</a></span></div>
+	
 	</div>
-</section>
+</div>
 
 <style>
+	.xcontainer {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 100vh; /* 100% del viewport height */
+		width: 100%; /* 100% del ancho disponible */
+		background-color: black;
+		color: white; /* Color del texto, ajusta según sea necesario */
+	}
 
 	.main {
 		display: flex;
 		justify-content: center;
 		align-items: center;
-	}
-
-	.container {
-		width: 100%;
-		height: 300px;
-		margin: 100px auto;
-		transform: translateY(50%);
 	}
 
 	.span01 {
@@ -45,12 +45,6 @@
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		animation: fire 4s linear infinite;
-	}
-
-	.h01 {
-		color: #fff;
-		font-size: 80px;
-		text-align: center;
 	}
 
 	@keyframes fire {
