@@ -88,8 +88,6 @@
   },
   "src/routes/+page.svelte": {
     "assets": [
-      "_app/immutable/assets/android-chrome-512x512.6tSliZMZ.png",
-      "_app/immutable/assets/flame.KSOL5w7N.png",
       "_app/immutable/assets/fa-brands-400.vfWL-IA9.woff2",
       "_app/immutable/assets/fa-brands-400.7WSgTNmj.ttf",
       "_app/immutable/assets/fa-regular-400.DjrD39cY.woff2",

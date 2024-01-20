@@ -147,10 +147,11 @@ export const saveMethod = async ( token,   method) => {
 
 export const css_handlers = {
 	FETCH: { css: ' is-primary  ', label: ' Fetch ', icon: ' fa-solid fa-server ' },
-	JS: { css: ' is-danger ', label: ' Javascript ', icon: ' fa-brands fa-square-js ' },
+	JS: { css: ' is-dark ', label: ' Javascript ', icon: ' fa-brands fa-square-js ' },
 	SOAP: { css: ' is-warning ', label: ' SOAP ', icon: ' fa-solid fa-soap ' },
+	SOAPFn: { css: ' is-warning ', label: ' SOAP FUNCTION', icon: ' fa-solid fa-soap ' },
 	SQL: { css: ' is-link ', label: ' SQL ', icon: 'fa-solid fa-database ' },
-	FUNCTION: { css: ' is-dark  ', label: ' Function ', icon: ' fa-brands fa-node-js ' }
+	FUNCTION: { css: ' is-info  ', label: ' Function ', icon: ' fa-brands fa-node-js ' }
 };
 
 /**

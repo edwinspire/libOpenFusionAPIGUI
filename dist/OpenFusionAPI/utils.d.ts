@@ -47,7 +47,7 @@ export namespace css_handlers {
         let icon_2: string;
         export { icon_2 as icon };
     }
-    namespace SQL {
+    namespace SOAPFn {
         let css_3: string;
         export { css_3 as css };
         let label_3: string;
@@ -55,12 +55,20 @@ export namespace css_handlers {
         let icon_3: string;
         export { icon_3 as icon };
     }
-    namespace FUNCTION {
+    namespace SQL {
         let css_4: string;
         export { css_4 as css };
         let label_4: string;
         export { label_4 as label };
         let icon_4: string;
         export { icon_4 as icon };
+    }
+    namespace FUNCTION {
+        let css_5: string;
+        export { css_5 as css };
+        let label_5: string;
+        export { label_5 as label };
+        let icon_5: string;
+        export { icon_5 as icon };
     }
 }
