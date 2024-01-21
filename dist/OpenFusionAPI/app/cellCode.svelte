@@ -40,7 +40,6 @@
 	 */
 	export let value;
 	export let row = {};
-	
 
 	onMount(() => {});
 </script>
@@ -145,7 +144,12 @@
 			{:else if row && row.handler == 'SQL'}
 				<SqlCode bind:this={fnSqlCode} code={value} bind:environment={row.environment} bind:row />
 			{:else if row && row.handler == 'FETCH'}
-				<FetchCode bind:this={fnFetchCode} code={value} bind:environment={row.environment} bind:row />
+				<FetchCode
+					bind:this={fnFetchCode}
+					code={value}
+					bind:environment={row.environment}
+					bind:row
+				/>
 			{:else if row && row.handler == 'FUNCTION'}
 				<CustomFn bind:this={fnCustomFn} code={value} bind:environment={row.environment} bind:row />
 			{:else}

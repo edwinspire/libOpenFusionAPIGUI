@@ -272,14 +272,12 @@
 			getListFunction($userStore.token, app.app, app.environment);
 
 			if (app.endpoints) {
-				endpoints = app.endpoints.map(
-					(/** @type {{ environment: any; resource: any; }} */ ax) => {
-						return {
-							endpoint: `/api/${app.app}${ax.resource}/${ax.environment}`,
-							...ax
-						};
-					}
-				);
+				endpoints = app.endpoints.map((/** @type {{ environment: any; resource: any; }} */ ax) => {
+					return {
+						endpoint: `${ax.method == 'WS' ? '/ws/' : '/api/'}${app.app}${ax.resource}/${ax.environment}`,
+						...ax
+					};
+				});
 				//console.log(endpoints);
 			}
 		}
@@ -598,7 +596,7 @@
 							cache_time: 0
 						};
 						*/
-						SelectedRow = {...default_row};
+						SelectedRow = { ...default_row };
 
 						showEndpointEdit = true;
 					}}
@@ -627,7 +625,7 @@
 		SelectedRow.latest_updater = $userStore.iduser;
 
 		if (validateResource && availableURL) {
-			SelectedRow.endpoint = `/api/${app.app}/${SelectedRow.environment}${SelectedRow.resource}`;
+			SelectedRow.endpoint = `${SelectedRow.method == 'WS' ? '/ws/' : '/api/'}${app.app}/${SelectedRow.environment}${SelectedRow.resource}`;
 
 			console.log('SelectedRow: ', SelectedRow);
 
