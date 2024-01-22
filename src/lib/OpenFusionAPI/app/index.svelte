@@ -31,7 +31,7 @@
 	const default_row = {
 		idendpoint: undefined,
 		enabled: true,
-		access: true,
+		access: 0,
 		environment: 'dev',
 		resource: '',
 		method: 'GET',
@@ -645,7 +645,7 @@
 					endpoint: SelectedRow.endpoint,
 					resource: SelectedRow.resource,
 					enabled: SelectedRow.enabled,
-					access: true,
+					access: 0,
 					environment: SelectedRow.environment,
 					resource: SelectedRow.resource,
 					method: SelectedRow.method,
@@ -711,8 +711,21 @@
 							<p class="control">
 								<!-- svelte-ignore a11y-missing-attribute -->
 								<a class="button is-small is-static">
-									/api/{app.app}/
+									{SelectedRow.method == 'WS' ? '/ws/' : '/api/'}{app.app}
 								</a>
+							</p>
+
+							<p class="control is-expanded">
+								<input
+									class="input is-small"
+									type="text"
+									placeholder="Resourse"
+									bind:value={SelectedRow.resource}
+								/>
+							</p>
+							<p class="control">
+								<!-- svelte-ignore a11y-missing-attribute -->
+								<a class="button is-small is-static"> / </a>
 							</p>
 							<p class="control">
 								<SelectEnvironment
@@ -721,14 +734,6 @@
 									on:select={(e) => {
 										console.log(e);
 									}}
-								/>
-							</p>
-							<p class="control is-expanded">
-								<input
-									class="input is-small"
-									type="text"
-									placeholder="Resourse"
-									bind:value={SelectedRow.resource}
 								/>
 							</p>
 						</div>
