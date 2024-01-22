@@ -563,18 +563,20 @@
 				/>
 			</div>
 
-			<div class="columns" style="display: {active_tab == 'vars' ? 'block' : 'none'};">
-				<div class="column">
-					<div>
-						Development: <Vars bind:this={fnVarsDev} environment={'dev'} editable={true} />
+			<div style="display: {active_tab == 'vars' ? 'block' : 'none'};">
+				<div class="columns">
+					<div class="column">
+						<div>
+							Development: <Vars bind:this={fnVarsDev} environment={'dev'} editable={true} />
+						</div>
 					</div>
-				</div>
-				<div class="column">
-					<div>Quality: <Vars bind:this={fnVarsQa} environment={'qa'} editable={true} /></div>
-				</div>
-				<div class="column">
-					<div>
-						Production: <Vars bind:this={fnVarsPrd} environment={'prd'} editable={true} />
+					<div class="column">
+						<div>Quality: <Vars bind:this={fnVarsQa} environment={'qa'} editable={true} /></div>
+					</div>
+					<div class="column">
+						<div>
+							Production: <Vars bind:this={fnVarsPrd} environment={'prd'} editable={true} />
+						</div>
 					</div>
 				</div>
 			</div>

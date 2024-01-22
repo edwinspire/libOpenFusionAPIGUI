@@ -14,9 +14,7 @@ import { SvelteComponent } from "svelte";
 declare const __propDef: {
     props: {
         idapp?: number;
-    }; /**
-     * @param {{ resource?: any; environment?: any; method?: any; idendpoint?: any; }} endpoint_value
-     */
+    };
     events: {
         [evt: string]: CustomEvent<any>;
     };

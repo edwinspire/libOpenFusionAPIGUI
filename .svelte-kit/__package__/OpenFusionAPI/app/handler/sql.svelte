@@ -114,6 +114,23 @@
 				</div>
 			</div></EditorCode2
 		>
+
+		{#if row.method === 'GET'}
+		<div class="block">
+			<div class="icon-text">
+				<span class="icon has-text-warning">
+					<i class="fas fa-exclamation-triangle"></i>
+				</span>
+				<span>Warning</span>
+			</div>
+
+			<p class="block">
+				The GET method is recommended only for simple requests where there is no input
+parameters, or failing that the parameters are key-value, which will be used to join with the variables of the SQL query.
+			</p>
+		</div>
+	{/if}
+
 	</div>
 
 	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
@@ -126,6 +143,10 @@
 				</div>
 			</div>
 		</EditorCode>
+
+
+	
+
 	</div>
 
 	<div class={tabList[2].isActive ? '' : 'is-hidden'}>

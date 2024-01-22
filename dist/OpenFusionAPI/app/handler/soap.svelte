@@ -17,7 +17,7 @@
 		fnEditorCode.reset();
 	}
 
-let code_desc = JSON.stringify({"describe()": true});
+	let code_desc = JSON.stringify({ 'describe()': true });
 
 	let tabList = [
 		{ label: 'Parameters', isActive: true },
@@ -64,27 +64,24 @@ let code_desc = JSON.stringify({"describe()": true});
 					</div>
 				</h3>
 				<div>Service connection parameters.</div>
-
 			</div>
 		</EditorCode>
 
-
 		{#if row.method === 'GET'}
-		<div class="block">
-			<div class="icon-text">
-				<span class="icon has-text-warning">
-					<i class="fas fa-exclamation-triangle"></i>
-				</span>
-				<span>Warning</span>
+			<div class="block">
+				<div class="icon-text">
+					<span class="icon has-text-warning">
+						<i class="fas fa-exclamation-triangle"></i>
+					</span>
+					<span>Warning</span>
+				</div>
+
+				<p class="block">
+					The GET method is recommended only for simple requests where there are no input
+					parameters, or failing which the parameters are key-value.
+				</p>
 			</div>
-
-			<p class="block">
-				The GET method is recommended only for simple requests where there are no input
-				parameters, or failing which the parameters are key-value.
-			</p>
-		</div>
-	{/if}
-
+		{/if}
 	</div>
 	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
 		Enter the parameters in json format like the following example:
@@ -109,14 +106,14 @@ let code_desc = JSON.stringify({"describe()": true});
 					be sent directly in the Body.
 				</li>
 			</ul>
-		<br/>
+			<br />
 			<div class="block">
-				If you want to <strong>get description</strong> of the SOAP service, you can send the following JSON request: 
+				If you want to <strong>get description</strong> of the SOAP service, you can send the
+				following JSON request:
 				<code>
 					{code_desc}
 				</code>
 			</div>
-
 		</div>
 	</div>
 	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
