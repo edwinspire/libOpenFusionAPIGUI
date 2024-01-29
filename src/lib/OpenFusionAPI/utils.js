@@ -108,7 +108,7 @@ export const getListMethods = async (/** @type {string} */ token) => {
 	let f = new uFetch();
 	f.setBearerAuthorization(token);
 	try {
-		let fr = await f.get(url_paths.Methods);
+		let fr = await f.GET({url: url_paths.Methods});
 		let list = await fr.json();
 
 		if (list && Array.isArray(list)) {

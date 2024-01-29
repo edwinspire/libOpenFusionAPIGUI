@@ -1,6 +1,7 @@
 {
 	"version": "0.2.0",
 	"configurations": [
+
         {
             "name": "Launch Chrome",
             "request": "launch",
@@ -15,6 +16,15 @@
 			"name": "Launch Edge",
 			"url": "http://127.0.0.1:5173",
 			"webRoot": "${workspaceFolder}"
-		}
+		},
+		{
+			"name": "Launch vite",
+			"request": "launch",
+			"runtimeArgs": ["run-script", "dev"],
+			"runtimeExecutable": "npm",
+			"skipFiles": ["<node_internals>/**"],
+			"type": "node",
+			"console": "integratedTerminal"
+		},
 	]
 }

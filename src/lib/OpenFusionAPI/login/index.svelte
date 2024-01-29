@@ -32,7 +32,7 @@
 			console.log(data);
 
 			if (data.login) {
-				userStore.set(data);
+				userStore.set({ ...data.user, token: data.token });
 				await getListMethods(data.token);
 				await getListHandler(data.token);
 			} else {
@@ -59,7 +59,7 @@
 			<div class="media t1">
 				<div class="media-left">
 					<figure class="image is-48x48">
-						<img src="{logo}" alt="OpenFusionAPI" />
+						<img src={logo} alt="OpenFusionAPI" />
 					</figure>
 				</div>
 				<div class="media-content">

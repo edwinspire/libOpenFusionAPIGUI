@@ -202,6 +202,10 @@
 		return !check;
 	}
 
+	function reloadPage() {
+		window.location.reload();
+	}
+
 	async function getEnvList() {
 		// Lógica de autenticación aquí
 
@@ -231,7 +235,7 @@
 		try {
 			//      console.log("getListApps > ", $userStore, uf);
 
-			let apps_res = await uf.get(url_paths.listApps);
+			let apps_res = await uf.GET({ url: url_paths.listApps });
 			let apps = await apps_res.json();
 			//console.log(apps);
 
@@ -286,9 +290,12 @@
 	async function getApp() {
 		if (idapp) {
 			try {
-				let apps_res = await uf.get(url_paths.getApp, {
-					idapp: idapp,
-					raw: false
+				let apps_res = await uf.GET({
+					url: url_paths.getApp,
+					data: {
+						idapp: idapp,
+						raw: false
+					}
 				});
 				let app_resp = await apps_res.json();
 				//console.log(app_resp);
@@ -317,16 +324,26 @@
 
 	async function saveApp() {
 		try {
-			let apps_res = await uf.post(url_paths.saveApp, appToStore());
-			let rapp = await apps_res.json();
+			let apps_res = await uf.POST({ url: url_paths.saveApp, data: appToStore() });
 
-			if (idapp == rapp.idapp) {
-				getApp();
+			if (apps_res.status == 200) {
+				let rapp = await apps_res.json();
+
+				if (idapp == rapp.idapp) {
+					alert('Saved successfully');
+
+					getApp();
+				} else {
+					idapp = rapp.idapp;
+				}
+
+				await getListApps();
+			} else if (apps_res.status == 401) {
+				alert('The session has expired.');
+				reloadPage();
 			} else {
-				idapp = rapp.idapp;
+				alert('Error: ' + apps_res.status);
 			}
-
-			await getListApps();
 		} catch (error) {
 			// @ts-ignore
 			alert(error.message);
@@ -346,7 +363,7 @@
 
 <Level>
 	<span slot="r01">
-		{#if $userStore && $userStore.role && $userStore.role.enabled && $userStore.role.create_app}
+		{#if $userStore}
 			<button
 				class="button is-small is-primary is-outlined"
 				on:click={() => {
@@ -367,7 +384,7 @@
 			label="Application: "
 			bind:options
 			on:select={(/** @type {{ detail: { value: number; }; }} */ e) => {
-				if ($userStore && $userStore.role && $userStore.role.enabled && $userStore.role.read_app) {
+				if ($userStore) {
 					idapp = e.detail.value;
 				} else {
 					alert('You do not have authorization');
@@ -379,7 +396,7 @@
 
 <div />
 
-{#if $userStore && $userStore.role && $userStore.role.enabled && $userStore.role.read_app}
+{#if $userStore}
 	<div>
 		<Level>
 			<span slot="l01">
@@ -419,7 +436,7 @@
 				</div>
 			</span>
 			<span slot="r01">
-				{#if $userStore && $userStore.role && $userStore.role.enabled && ($userStore.role.create_app || $userStore.role.update_app)}
+				{#if $userStore}
 					<button
 						class="button is-small is-link is-outlined"
 						on:click={() => {
@@ -443,7 +460,7 @@
 			</span>
 
 			<span slot="r02">
-				{#if $userStore && $userStore.role && $userStore.role.enabled && $userStore.role.read_app}
+				{#if $userStore}
 					<button
 						class="button is-small"
 						on:click={() => {
@@ -488,7 +505,7 @@
 			</span>
 
 			<span slot="r03">
-				{#if $userStore && $userStore.role && $userStore.role.enabled && ($userStore.role.create_app || $userStore.role.update_app)}
+				{#if $userStore}
 					<div class="field has-addons">
 						<p class="control file">
 							<input
