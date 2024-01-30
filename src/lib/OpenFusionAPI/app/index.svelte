@@ -212,7 +212,7 @@
 		try {
 			//      console.log("getListApps > ", $userStore, uf);
 
-			let env_list_resp = await uf.get(url_paths.listEnv);
+			let env_list_resp = await uf.GET({url: url_paths.listEnv});
 			let env_list = await env_list_resp.json();
 			//console.log(apps);
 
@@ -384,6 +384,9 @@
 			label="Application: "
 			bind:options
 			on:select={(/** @type {{ detail: { value: number; }; }} */ e) => {
+
+console.log($userStore, userStore);
+
 				if ($userStore) {
 					idapp = e.detail.value;
 				} else {
