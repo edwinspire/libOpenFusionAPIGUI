@@ -27,16 +27,16 @@
 
 		try {
 			// @ts-ignore
-			let user = await uf.post(url_paths.login, { username, password });
+			let user = await uf.POST({ url: url_paths.login, data: { username, password } });
 			let data = await user.json();
 			console.log(data);
 
 			if (data.login) {
-				userStore.set({ ...data.user, token: data.token });
+				userStore.set(data);
 				await getListMethods(data.token);
 				await getListHandler(data.token);
 			} else {
-				alert('Credenciales inválidas');
+				alert('Invalid credentials');
 			}
 
 			emitSuccess(data.login);
