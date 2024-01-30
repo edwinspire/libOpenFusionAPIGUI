@@ -330,7 +330,7 @@
 				let rapp = await apps_res.json();
 
 				if (idapp == rapp.idapp) {
-					alert('Saved successfully');
+					alert('Saved successfully.');
 
 					getApp();
 				} else {
