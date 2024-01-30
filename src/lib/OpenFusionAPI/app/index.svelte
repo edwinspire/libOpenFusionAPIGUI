@@ -385,7 +385,7 @@
 			bind:options
 			on:select={(/** @type {{ detail: { value: number; }; }} */ e) => {
 
-console.log($userStore, userStore);
+console.log('>>>>>> Application > ', $userStore, userStore);
 
 				if ($userStore) {
 					idapp = e.detail.value;
