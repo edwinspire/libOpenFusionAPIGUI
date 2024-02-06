@@ -647,7 +647,7 @@ console.log('>>>>>> Application > ', $userStore, userStore);
 		SelectedRow.latest_updater = $userStore.iduser;
 
 		if (validateResource && availableURL) {
-			SelectedRow.endpoint = `${SelectedRow.method == 'WS' ? '/ws/' : '/api/'}${app.app}/${SelectedRow.environment}${SelectedRow.resource}`;
+			SelectedRow.endpoint = `${SelectedRow.method == 'WS' ? '/ws/' : '/api/'}${app.app}${SelectedRow.resource}/${SelectedRow.environment}`;
 
 			console.log('SelectedRow: ', SelectedRow);
 
