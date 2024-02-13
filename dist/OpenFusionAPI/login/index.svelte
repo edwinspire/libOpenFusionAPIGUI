@@ -3,7 +3,12 @@
 	import uFetch from '@edwinspire/universal-fetch';
 	import { onMount } from 'svelte';
 	import { createEventDispatcher } from 'svelte';
-	import { userStore, getListMethods, getListHandler, url_paths } from '../utils.js';
+	import {
+		userStore,
+		getListMethods,
+		getListHandler,
+		url_paths
+	} from '../utils.js';
 	import logo from '../img/favicon.png';
 
 	const dispatch = createEventDispatcher();
@@ -33,6 +38,7 @@
 
 			if (data.login) {
 				userStore.set(data);
+
 				await getListMethods(data.token);
 				await getListHandler(data.token);
 			} else {

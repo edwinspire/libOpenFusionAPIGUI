@@ -2,12 +2,12 @@
   import { onMount } from "svelte";
   import Login from "./login/index.svelte";
   import Main from "./main/index.svelte";
-  import { getListMethods } from "./utils";
+  //import { getListMethods } from "./utils";
 
   let page = "login";
 
   onMount(() => {
-    getListMethods();
+   //getListMethods();
   });
 </script>
 

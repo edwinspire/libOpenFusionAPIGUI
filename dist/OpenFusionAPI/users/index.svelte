@@ -40,7 +40,7 @@
 	userStore.subscribe((value) => {
 		console.log('tokenStore ->>>>', value);
 		// @ts-ignore
-		uf.setBearerAuthorization(value.token);
+		//uf.setBearerAuthorization(value.token);
 	});
 
 	async function getApps() {

@@ -5,15 +5,15 @@ import { PUBLIC_API_SERVER_HOST } from '$env/static/public';
 
 
 export const url_paths = {
-	getfunctions: PUBLIC_API_SERVER_HOST+'/api/system/functions/prd',
-	getHandler: PUBLIC_API_SERVER_HOST+'/api/system/system/handler/0.01/prd',
-	Methods: PUBLIC_API_SERVER_HOST+'/api/system/system/method/0.01/prd',
-	listEnv: PUBLIC_API_SERVER_HOST+'/api/system/system/environment/0.01/prd',
-	listApps: PUBLIC_API_SERVER_HOST+'/api/system/api/apps/0.01/prd',
-	getApp: PUBLIC_API_SERVER_HOST+'/api/system/api/app/0.01/prd',
-	saveApp: PUBLIC_API_SERVER_HOST+'/api/system/api/app/0.01/prd',
-	saveMethod: PUBLIC_API_SERVER_HOST+'/api/system/system/method/0.01/prd',
-	login: PUBLIC_API_SERVER_HOST+"/api/system/system/login/0.01/prd"
+	getfunctions: PUBLIC_API_SERVER_HOST + '/api/system/functions/prd',
+	getHandler: PUBLIC_API_SERVER_HOST + '/api/system/system/handler/0.01/prd',
+	Methods: PUBLIC_API_SERVER_HOST + '/api/system/system/method/0.01/prd',
+	listEnv: PUBLIC_API_SERVER_HOST + '/api/system/system/environment/0.01/prd',
+	listApps: PUBLIC_API_SERVER_HOST + '/api/system/api/apps/0.01/prd',
+	getApp: PUBLIC_API_SERVER_HOST + '/api/system/api/app/0.01/prd',
+	saveApp: PUBLIC_API_SERVER_HOST + '/api/system/api/app/0.01/prd',
+	saveMethod: PUBLIC_API_SERVER_HOST + '/api/system/system/method/0.01/prd',
+	login: PUBLIC_API_SERVER_HOST + "/api/system/system/login/0.01/prd"
 };
 
 //const path_functions = '/system/main/functions';
@@ -108,7 +108,7 @@ export const getListMethods = async (/** @type {string} */ token) => {
 	let f = new uFetch();
 	f.setBearerAuthorization(token);
 	try {
-		let fr = await f.GET({url: url_paths.Methods});
+		let fr = await f.GET({ url: url_paths.Methods });
 		let list = await fr.json();
 
 		if (list && Array.isArray(list)) {
@@ -127,22 +127,7 @@ export const getListMethods = async (/** @type {string} */ token) => {
 	}
 };
 
-/*
-export const saveMethod = async ( token,   method) => {
-	let f = new uFetch();
-	f.setBearerAuthorization(token);
-	try {
-		let fr = await f.post('/api/system/system/method/0.01/prd', { method });
-		let result = await fr.json();
 
-		console.log(result);
-		return result;
-	} catch (error) {
-		console.error(error);
-		return { error }
-	}
-};
-*/
 
 
 export const css_handlers = {
@@ -172,3 +157,5 @@ export function validateURL(string_url) {
 		return false;
 	}
 }
+
+

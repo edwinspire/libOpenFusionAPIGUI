@@ -1,11 +1,11 @@
 {
   ".svelte-kit/generated/server/internal.js": {
     "file": "internal.js",
+    "src": ".svelte-kit/generated/server/internal.js",
+    "isEntry": true,
     "imports": [
       "_internal.js"
-    ],
-    "isEntry": true,
-    "src": ".svelte-kit/generated/server/internal.js"
+    ]
   },
   "_exports.js": {
     "file": "chunks/exports.js"
@@ -53,30 +53,30 @@
   },
   "node_modules/@sveltejs/kit/src/runtime/components/error.svelte": {
     "file": "entries/fallbacks/error.svelte.js",
+    "src": "node_modules/@sveltejs/kit/src/runtime/components/error.svelte",
+    "isEntry": true,
     "imports": [
       "_ssr.js",
       "_exports.js"
-    ],
-    "isEntry": true,
-    "src": "node_modules/@sveltejs/kit/src/runtime/components/error.svelte"
+    ]
   },
   "node_modules/@sveltejs/kit/src/runtime/components/layout.svelte": {
     "file": "entries/fallbacks/layout.svelte.js",
+    "src": "node_modules/@sveltejs/kit/src/runtime/components/layout.svelte",
+    "isEntry": true,
     "imports": [
       "_ssr.js"
-    ],
-    "isEntry": true,
-    "src": "node_modules/@sveltejs/kit/src/runtime/components/layout.svelte"
+    ]
   },
   "node_modules/@sveltejs/kit/src/runtime/server/index.js": {
     "file": "index.js",
+    "src": "node_modules/@sveltejs/kit/src/runtime/server/index.js",
+    "isEntry": true,
     "imports": [
       "_internal.js",
       "_exports.js",
       "_ssr.js"
-    ],
-    "isEntry": true,
-    "src": "node_modules/@sveltejs/kit/src/runtime/server/index.js"
+    ]
   },
   "src/lib/OpenFusionAPI/img/android-chrome-512x512.png": {
     "file": "_app/immutable/assets/android-chrome-512x512.6tSliZMZ.png",
@@ -87,6 +87,15 @@
     "src": "src/lib/OpenFusionAPI/img/flame.png"
   },
   "src/routes/+page.svelte": {
+    "file": "entries/pages/_page.svelte.js",
+    "src": "src/routes/+page.svelte",
+    "isEntry": true,
+    "imports": [
+      "_ssr.js"
+    ],
+    "css": [
+      "_app/immutable/assets/_page.nPPYuAA9.css"
+    ],
     "assets": [
       "_app/immutable/assets/fa-brands-400.vfWL-IA9.woff2",
       "_app/immutable/assets/fa-brands-400.7WSgTNmj.ttf",
@@ -96,15 +105,6 @@
       "_app/immutable/assets/fa-solid-900.zNLXiXYJ.ttf",
       "_app/immutable/assets/fa-v4compatibility.Gkfbzimj.woff2",
       "_app/immutable/assets/fa-v4compatibility.BdHZVUy0.ttf"
-    ],
-    "css": [
-      "_app/immutable/assets/_page.nPPYuAA9.css"
-    ],
-    "file": "entries/pages/_page.svelte.js",
-    "imports": [
-      "_ssr.js"
-    ],
-    "isEntry": true,
-    "src": "src/routes/+page.svelte"
+    ]
   }
 }
