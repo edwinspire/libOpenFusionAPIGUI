@@ -43,7 +43,8 @@
 		data_test: {},
 		rowkey: 0,
 		latest_updater: null,
-		cache_time: 0
+		cache_time: 0,
+		ctrl: {}
 	};
 
 	/**
@@ -120,7 +121,8 @@
 		headers_test: { hidden: true },
 		data_test: { hidden: true },
 		latest_updater: { hidden: true },
-		environment: { hidden: true }
+		environment: { hidden: true },
+		ctrl: { hidden: true }
 	};
 
 	let tabs = [
