@@ -68,16 +68,17 @@
 	"types": "./dist/index.d.ts",
 	"type": "module",
 	"dependencies": {
-		"@edwinspire/universal-fetch": "git+https://github.com/edwinspire/universal-fetch.git",
-		"@fortawesome/fontawesome-free": "^6.4.0",
-		"bulma": "^0.9.4",
-		"luxon": "^2.0.2",
 		"@codemirror/lang-javascript": "^6.1.9",
 		"@codemirror/lang-json": "^6.0.1",
 		"@codemirror/lang-sql": "^6.5.0",
+		"@codemirror/lang-xml": "^6.1.0",
 		"@codemirror/lint": "^6.2.2",
 		"@edwinspire/svelte-components": "github:edwinspire/svelte-components",
+		"@edwinspire/universal-fetch": "git+https://github.com/edwinspire/universal-fetch.git",
+		"@fortawesome/fontawesome-free": "^6.4.0",
+		"bulma": "^1.0.1",
 		"codemirror": "^6.0.1",
-		"jsonwebtoken": "^9.0.0"
+		"jsonwebtoken": "^9.0.0",
+		"luxon": "^2.0.2"
 	}
 }

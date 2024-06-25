@@ -7,6 +7,7 @@
 	import { javascript } from '@codemirror/lang-javascript';
 	import { sql } from '@codemirror/lang-sql';
 	import { json } from '@codemirror/lang-json';
+	import { xml } from '@codemirror/lang-xml';
 
 	const languageConf = new Compartment();
 
@@ -26,7 +27,7 @@
 	export let lang = 'txt';
 	//let internalCode;
 
-  /*
+	/*
 	const formatearCodigo = (code_string) => {
 		let r = code_string;
 console.log('formatearCodigo');
@@ -53,7 +54,7 @@ console.log('formatearCodigo');
   */
 
 	$: code, setCode();
-
+	$: lang, createEditor();
 	// Obtener los cambios del código
 	export function getCode() {
 		let c = FormatJson(editor.state.doc.toString());
@@ -100,6 +101,14 @@ console.log('formatearCodigo');
 	}
 
 	function createEditor() {
+
+		// Elimina los posibles elementos del contenedor del editor
+		if (txta) {
+			while (txta.firstChild) {
+				txta.removeChild(txta.firstChild);
+			}
+		}
+
 		let extensions = [basicSetup];
 		let internalCode = FormatJson(code);
 
@@ -113,6 +122,12 @@ console.log('formatearCodigo');
 			extensions = [
 				basicSetup,
 				languageConf.of(javascript())
+				//    linter(esLint()),
+			];
+		} else if (lang == 'xml') {
+			extensions = [
+				basicSetup,
+				languageConf.of(xml())
 				//    linter(esLint()),
 			];
 		}

@@ -1,10 +1,12 @@
 <script>
 	// @ts-nocheck
-
+/*
 	import FetchCode from './handler/fetch.svelte';
 	import JsCode from './handler/js.svelte';
 	import SoapCode from './handler/soap.svelte';
 	import SqlCode from './handler/sql.svelte';
+	import TextCode from './handler/text.svelte';
+*/
 
 	/**
 	 * @type {any}

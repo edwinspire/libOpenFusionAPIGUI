@@ -1,7 +1,7 @@
-/** @typedef {typeof __propDef.props}  SqlProps */
-/** @typedef {typeof __propDef.events}  SqlEvents */
-/** @typedef {typeof __propDef.slots}  SqlSlots */
-export default class Sql extends SvelteComponent<{
+/** @typedef {typeof __propDef.props}  TextProps */
+/** @typedef {typeof __propDef.events}  TextEvents */
+/** @typedef {typeof __propDef.slots}  TextSlots */
+export default class Text extends SvelteComponent<{
     code: any;
     row: any;
     environment: any;
@@ -13,9 +13,9 @@ export default class Sql extends SvelteComponent<{
     get reset(): () => void;
     get getCode(): () => any;
 }
-export type SqlProps = typeof __propDef.props;
-export type SqlEvents = typeof __propDef.events;
-export type SqlSlots = typeof __propDef.slots;
+export type TextProps = typeof __propDef.props;
+export type TextEvents = typeof __propDef.events;
+export type TextSlots = typeof __propDef.slots;
 import { SvelteComponent } from "svelte";
 declare const __propDef: {
     props: {

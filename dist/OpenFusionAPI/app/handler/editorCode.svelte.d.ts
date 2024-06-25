@@ -31,5 +31,7 @@ declare const __propDef: {
     slots: {
         message: {};
     };
+    exports?: {};
+    bindings?: string;
 };
 export {};

@@ -7,10 +7,12 @@
 	import JsCode from '../../handler/js.svelte';
 	import SoapCode from '../../handler/soap.svelte';
 	import SqlCode from '../../handler/sql.svelte';
+	import TextCode from '../../handler/text.svelte';
 	import CustomFn from '../../handler/customFunction.svelte';
 	import { Level, SlideFullScreen } from '@edwinspire/svelte-components';
 	import { css_handlers } from '../../../utils.js';
 	//import { userStore } from '../utils.js';
+
 
 	/**
 	 * @type {FetchCode}
@@ -33,6 +35,12 @@
 	 * @type {CustomFn}
 	 */
 	let fnCustomFn;
+
+
+	/**
+	 * @type {TextFn}
+	 */
+	 let fnTextFn;
 
 	let showCode = false;
 
@@ -106,6 +114,8 @@
 						fnFetchCode.reset();
 					} else if (row && row.handler == 'FUNCTION') {
 						fnCustomFn.reset();
+					} else if (row && row.handler == 'TEXT') {
+						fnTextFn.reset();
 					}
 					showCode = false;
 				}}>Cancel</button
@@ -127,6 +137,8 @@
 						value = fnFetchCode.getCode();
 					} else if (row && row.handler == 'FUNCTION') {
 						value = fnCustomFn.getCode();
+					}else if (row && row.handler == 'TEXT') {
+						value = fnTextFn.getCode();
 					}
 					//      console.log(methodSelected, value, value[methodSelected]);
 
@@ -147,6 +159,8 @@
 			<FetchCode bind:this={fnFetchCode} code={value} bind:environment={row.environment} bind:row />
 		{:else if row && row.handler == 'FUNCTION'}
 			<CustomFn bind:this={fnCustomFn} code={value} bind:environment={row.environment} bind:row />
+			{:else if row && row.handler == 'TEXT'}
+			<TextCode bind:this={fnTextFn} code={value} bind:environment={row.environment} bind:row />
 		{:else}
 			<code contenteditable>
 				{value}
