@@ -137,6 +137,7 @@ export const css_handlers = {
 	SOAP: { css: ' is-warning ', label: ' SOAP ', icon: ' fa-solid fa-soap ' },
 	SOAPFn: { css: ' is-warning ', label: ' SOAP FUNCTION', icon: ' fa-solid fa-soap ' },
 	SQL: { css: ' is-link ', label: ' SQL ', icon: 'fa-solid fa-database ' },
+	TEXT: { css: ' is-success ', label: ' TEXT ', icon: 'fa-regular fa-file-lines ' },
 	FUNCTION: { css: ' is-info  ', label: ' Function ', icon: ' fa-brands fa-node-js ' }
 };
 

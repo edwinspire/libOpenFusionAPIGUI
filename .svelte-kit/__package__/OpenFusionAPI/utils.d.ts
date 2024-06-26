@@ -63,12 +63,20 @@ export namespace css_handlers {
         let icon_4: string;
         export { icon_4 as icon };
     }
-    namespace FUNCTION {
+    namespace TEXT {
         let css_5: string;
         export { css_5 as css };
         let label_5: string;
         export { label_5 as label };
         let icon_5: string;
         export { icon_5 as icon };
+    }
+    namespace FUNCTION {
+        let css_6: string;
+        export { css_6 as css };
+        let label_6: string;
+        export { label_6 as label };
+        let icon_6: string;
+        export { icon_6 as icon };
     }
 }
