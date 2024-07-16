@@ -384,6 +384,8 @@
 	<span slot="r02">
 		<PredictiveInput
 			label="Application: "
+			classLabel="is-small"
+			classInput="is-small"
 			bind:options
 			on:select={(/** @type {{ detail: { value: number; }; }} */ e) => {
 
