@@ -3,7 +3,7 @@ import uFetch from '@edwinspire/universal-fetch';
 import { writable } from 'svelte/store';
 import { PUBLIC_API_SERVER_HOST } from '$env/static/public';
 
-const host = PUBLIC_API_SERVER_HOST||'';
+const host = PUBLIC_API_SERVER_HOST || '';
 
 export const url_paths = {
 	getfunctions: host + '/api/system/functions/prd',
@@ -14,7 +14,8 @@ export const url_paths = {
 	getApp: host + '/api/system/api/app/0.01/prd',
 	saveApp: host + '/api/system/api/app/0.01/prd',
 	saveMethod: host + '/api/system/system/method/0.01/prd',
-	login: host + "/api/system/system/login/0.01/prd"
+	login: host + '/api/system/system/login/0.01/prd',
+	getCacheSize: host + '/api/system/cache/response/size'
 };
 
 //const path_functions = '/system/main/functions';
@@ -128,9 +129,6 @@ export const getListMethods = async (/** @type {string} */ token) => {
 	}
 };
 
-
-
-
 export const css_handlers = {
 	FETCH: { css: ' is-primary  ', label: ' Fetch ', icon: ' fa-solid fa-server ' },
 	JS: { css: ' is-dark ', label: ' Javascript ', icon: ' fa-brands fa-square-js ' },
@@ -159,5 +157,3 @@ export function validateURL(string_url) {
 		return false;
 	}
 }
-
-

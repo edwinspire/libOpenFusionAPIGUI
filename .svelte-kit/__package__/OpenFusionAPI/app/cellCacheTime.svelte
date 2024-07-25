@@ -30,5 +30,9 @@
 			<!-- svelte-ignore a11y-missing-attribute -->
 			<a class="button is-small"> seg. </a>
 		</div>
+		<div class="control">
+			<!-- svelte-ignore a11y-missing-attribute -->
+			<a class="button is-small"> {row.cache_size} KB </a>
+		</div>
 	</div>
 </td>

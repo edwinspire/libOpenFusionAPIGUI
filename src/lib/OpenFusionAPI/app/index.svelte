@@ -122,7 +122,8 @@
 		data_test: { hidden: true },
 		latest_updater: { hidden: true },
 		environment: { hidden: true },
-		ctrl: { hidden: true }
+		ctrl: { hidden: true },
+		cache_size: { hidden: true }
 	};
 
 	let tabs = [
@@ -214,7 +215,7 @@
 		try {
 			//      console.log("getListApps > ", $userStore, uf);
 
-			let env_list_resp = await uf.GET({url: url_paths.listEnv});
+			let env_list_resp = await uf.GET({ url: url_paths.listEnv });
 			let env_list = await env_list_resp.json();
 			//console.log(apps);
 
@@ -224,6 +225,34 @@
 				});
 			} else {
 				environment_list = [];
+			}
+		} catch (error) {
+			// @ts-ignore
+			alert(error.message);
+		}
+	}
+
+	async function getCacheSize() {
+		// Lógica de autenticación aquí
+
+		try {
+			//      console.log("getListApps > ", $userStore, uf);
+			if (app && app.app) {
+				let get_list_cache = await uf.GET({
+					url: url_paths.getCacheSize,
+					data: { appName: app.app }
+				});
+
+				let cache_list = await get_list_cache.json();
+
+				//	console.log(cache_list, endpoints);
+
+				endpoints = endpoints.map((item) => {
+					let rItem = item;
+					let data_cache = cache_list.find((element) => element.url == item.endpoint);
+					rItem['cache_size'] = data_cache ? data_cache.bytes : 0;
+					return rItem;
+				});
 			}
 		} catch (error) {
 			// @ts-ignore
@@ -358,7 +387,9 @@
 		// console.log($userStore);
 		await getListApps();
 		await getEnvList();
-
+		setInterval(async () => {
+			await getCacheSize();
+		}, 5000);
 		// @ts-ignore
 	});
 </script>
@@ -388,8 +419,7 @@
 			classInput="is-small"
 			bind:options
 			on:select={(/** @type {{ detail: { value: number; }; }} */ e) => {
-
-console.log('>>>>>> Application > ', $userStore, userStore);
+				console.log('>>>>>> Application > ', $userStore, userStore);
 
 				if ($userStore) {
 					idapp = e.detail.value;

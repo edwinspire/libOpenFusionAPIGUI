@@ -1,27 +1,34 @@
 {
 	"version": "0.2.0",
 	"configurations": [
+	{
+		"name": "Launch Chrome",
+		"request": "launch",
+		"type": "chrome",
+		"url": "http://localhost:3000",
+		"webRoot": "${workspaceFolder}"
+	},
 
         {
             "name": "Launch Chrome",
             "request": "launch",
             "type": "chrome",
         
-            "url": "http://localhost:5173",
+            "url": "http://localhost:3000",
             "webRoot": "${workspaceFolder}"
         },
 		{
 			"type": "msedge",
 			"request": "launch",
 			"name": "Launch Edge",
-			"url": "http://127.0.0.1:5173",
+			"url": "http://127.0.0.1:3000",
 			"webRoot": "${workspaceFolder}"
 		},
 		{
 			"name": "Launch vite",
 			"request": "launch",
-			"runtimeArgs": ["run-script", "dev"],
-			"runtimeExecutable": "npm",
+			"runtimeArgs": ["dev"],
+			"runtimeExecutable": "vite",
 			"skipFiles": ["<node_internals>/**"],
 			"type": "node",
 			"console": "integratedTerminal"
