@@ -14,6 +14,7 @@ export namespace url_paths {
     let saveMethod: string;
     let login: string;
     let getCacheSize: string;
+    let clearCache: string;
 }
 export const userStore: import("svelte/store").Writable<{}>;
 export const listMethodStore: import("svelte/store").Writable<{}>;

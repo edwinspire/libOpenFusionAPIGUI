@@ -44,7 +44,8 @@
 		rowkey: 0,
 		latest_updater: null,
 		cache_time: 0,
-		ctrl: {}
+		ctrl: {},
+		cache_size: 0
 	};
 
 	/**
@@ -63,6 +64,9 @@
 	let SelectedRow = {};
 	let validateResource = false;
 	let availableURL = false;
+	let TableSelectionType = 0;
+let TableObject;
+
 
 	$: idapp, getApp();
 	// @ts-ignore
@@ -169,7 +173,7 @@
 		}
 	};
 */
-
+	//let SelectedEndpoints = [];
 	/**
 	 * @type {any}
 	 */
@@ -260,6 +264,39 @@
 		}
 	}
 
+	async function clearcache() {
+		// Lógica de autenticación aquí
+
+		let urls_clear = TableObject.GetSelectedRows().map((u) => {
+			return u.endpoint;
+		});
+
+		try {
+			//      console.log("getListApps > ", $userStore, uf);
+			if (urls_clear && Array.isArray(urls_clear) && urls_clear.length > 0) {
+				let get_list_clear = await uf.POST({
+					url: url_paths.clearCache,
+					data: urls_clear
+				});
+
+				let get_list_clear_result = await get_list_clear.json();
+
+				console.log('Clear Cache', get_list_clear_result);
+
+				//TableSelectionType = 0;
+				//SelectedEndpoints = [];
+				alert('Cache deleted');
+
+			} else {
+				alert('You must select at least one record.');
+				TableSelectionType = 2;
+			}
+		} catch (error) {
+			// @ts-ignore
+			alert(error.message);
+		}
+	}
+
 	async function getListApps() {
 		// Lógica de autenticación aquí
 
@@ -339,7 +376,7 @@
 	}
 
 	userStore.subscribe((value) => {
-		console.log('tokenStore ->>>>', value);
+		// console.log('tokenStore ->>>>', value);
 		// @ts-ignore
 		uf.setBearerAuthorization(value.token);
 	});
@@ -565,7 +602,7 @@
 
 										try {
 											uploaded_file = JSON.parse(fileContent);
-											console.log('Contenido del archivo JSON:', uploaded_file);
+											// console.log('Contenido del archivo JSON:', uploaded_file);
 
 											// TODO: Aquí puedes realizar acciones con los datos JSON, por ejemplo, mostrarlos en la página.
 											showAppData([uploaded_file]);
@@ -637,10 +674,13 @@
 
 			<div style="display: {active_tab == 'endpoints' ? 'block' : 'none'};">
 				<Table
+				
 					ShowNewButton="true"
 					ShowEditButton="true"
 					bind:RawDataTable={endpoints}
 					bind:columns
+					bind:SelectionType={TableSelectionType}
+					bind:this={TableObject}
 					on:newrow={() => {
 						/*
 						SelectedRow = {
@@ -663,6 +703,19 @@
 					}}
 				>
 					<span slot="l01"> Endpoints </span>
+					<span slot="r10">
+						<button
+							class="button is-small"
+							on:click={() => {
+								clearcache();
+							}}
+						>
+							<span class="icon is-small">
+								<i class="fa-solid fa-eraser"></i>
+							</span>
+							<span>Cache</span>
+						</button>
+					</span>
 				</Table>
 			</div>
 		</Tab>
@@ -788,7 +841,7 @@
 									bind:options={environment_list}
 									bind:option={SelectedRow.environment}
 									on:select={(e) => {
-										console.log(e);
+									//	console.log(e);
 									}}
 								/>
 							</p>

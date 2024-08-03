@@ -15,7 +15,8 @@ export const url_paths = {
 	saveApp: host + '/api/system/api/app/0.01/prd',
 	saveMethod: host + '/api/system/system/method/0.01/prd',
 	login: host + '/api/system/system/login/0.01/prd',
-	getCacheSize: host + '/api/system/cache/response/size'
+	getCacheSize: host + '/api/system/cache/response/size',
+	clearCache: host + '/api/system/cache/clear'
 };
 
 //const path_functions = '/system/main/functions';
