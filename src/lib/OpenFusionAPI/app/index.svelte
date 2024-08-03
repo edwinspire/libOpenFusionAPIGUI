@@ -65,8 +65,7 @@
 	let validateResource = false;
 	let availableURL = false;
 	let TableSelectionType = 0;
-let TableObject;
-
+	let TableObject;
 
 	$: idapp, getApp();
 	// @ts-ignore
@@ -283,10 +282,7 @@ let TableObject;
 
 				console.log('Clear Cache', get_list_clear_result);
 
-				//TableSelectionType = 0;
-				//SelectedEndpoints = [];
 				alert('Cache deleted');
-
 			} else {
 				alert('You must select at least one record.');
 				TableSelectionType = 2;
@@ -674,7 +670,6 @@ let TableObject;
 
 			<div style="display: {active_tab == 'endpoints' ? 'block' : 'none'};">
 				<Table
-				
 					ShowNewButton="true"
 					ShowEditButton="true"
 					bind:RawDataTable={endpoints}
@@ -841,7 +836,7 @@ let TableObject;
 									bind:options={environment_list}
 									bind:option={SelectedRow.environment}
 									on:select={(e) => {
-									//	console.log(e);
+										//	console.log(e);
 									}}
 								/>
 							</p>
