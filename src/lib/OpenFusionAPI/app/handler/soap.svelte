@@ -2,8 +2,8 @@
 	// @ts-nocheck
 
 	import { onMount } from 'svelte';
-	import EditorCode from '../../widgets/editorCodeDecrepted.svelte';
-	import { Tab } from '@edwinspire/svelte-components';
+	//import EditorCode from '../../widgets/editorCodeDecrepted.svelte';
+	import { Tab, EditorCode } from '@edwinspire/svelte-components';
 	import Vars from '../vars.svelte';
 	import CodeHTML from '../../widgets/codeHTML.svelte';
 
@@ -12,9 +12,16 @@
 	 */
 	export let code;
 	export let environment;
+	$: code, parseCode();
+	let initial_code = '';
 
 	export function reset() {
-		fnEditorCode.reset();
+		//		fnEditorCode.reset();
+		parseCode();
+	}
+
+	function parseCode() {
+		initial_code = code;
 	}
 
 	let code_desc = JSON.stringify({ 'describe()': true });
@@ -25,10 +32,6 @@
 		{ label: 'App Variables' }
 	];
 
-	/**
-	 * @type {EditorCode}
-	 */
-	let fnEditorCode;
 	let jsonParams = {
 		wsdl: 'https://www.dataaccess.com/webservicesserver/numberconversion.wso?WSDL',
 		functionName: 'NumberToDollars',
@@ -43,7 +46,8 @@
 
 	export function getCode() {
 		//fnEditorCode.apply();
-		return fnEditorCode.getCode();
+		//return fnEditorCode.getCode();
+		return initial_code;
 	}
 
 	onMount(() => {
@@ -53,25 +57,25 @@
 
 <Tab bind:tabs={tabList}>
 	<div class={tabList[0].isActive ? '' : 'is-hidden'}>
-		<EditorCode lang="json" bind:code bind:this={fnEditorCode}>
-			<div slot="message">
-				<h3 class="subtitle is-5">
-					<div class="icon-text">
-						<span class="icon has-text-info">
-							<i class="fa-solid fa-link"></i>
-						</span>
-						<span>{row.endpoint}</span>
-					</div>
-				</h3>
-				<div>Service connection parameters.</div>
-			</div>
-		</EditorCode>
+		<div>
+			<h3 class="subtitle is-5">
+				<div class="icon-text">
+					<span class="icon has-text-info">
+						<i class="fa-solid fa-link"></i>
+					</span>
+					<span>{row.endpoint}</span>
+				</div>
+			</h3>
+			<div>Service connection parameters.</div>
+		</div>
+
+		<EditorCode lang="json" bind:code={initial_code}></EditorCode>
 
 		{#if row.method === 'GET'}
 			<div class="block">
 				<div class="icon-text">
 					<span class="icon has-text-warning">
-						<i class="fas fa-exclamation-triangle"></i>
+						<i class="fas fa-exclamationcode-triangle"></i>
 					</span>
 					<span>Warning</span>
 				</div>
