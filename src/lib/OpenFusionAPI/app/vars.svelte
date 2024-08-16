@@ -2,7 +2,7 @@
 	// @ts-nocheck
 	import { onMount } from 'svelte';
 	import { listAppVars } from '../utils';
-	import EditorCode from './handler/editorCode.svelte';
+	import EditorCode from '../widgets/editorCodeDecrepted.svelte';
 	import CodeHTML from '../widgets/codeHTML.svelte';
 
 	// export let vars = {};

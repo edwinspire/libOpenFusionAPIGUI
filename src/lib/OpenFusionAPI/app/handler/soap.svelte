@@ -2,7 +2,7 @@
 	// @ts-nocheck
 
 	import { onMount } from 'svelte';
-	import EditorCode from './editorCode.svelte';
+	import EditorCode from '../../widgets/editorCodeDecrepted.svelte';
 	import { Tab } from '@edwinspire/svelte-components';
 	import Vars from '../vars.svelte';
 	import CodeHTML from '../../widgets/codeHTML.svelte';

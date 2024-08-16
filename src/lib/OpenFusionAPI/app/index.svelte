@@ -95,7 +95,8 @@
 				component: ColumnTypes.BooleanIcon,
 				props: {
 					ontrue: { label: 'Enabled' },
-					onfalse: { label: 'Unabled' }
+					onfalse: { label: 'Unabled' },
+					editInline: true
 				}
 			}
 		},
@@ -155,23 +156,6 @@
 	 */
 	let options = [];
 
-	/*
-	let namespaceSelected = '';
-	let nameSelected = '';
-	let showDialogOneField = false;
-	let showDialogMethod = false;
-	let methodSelectedDialog = '';
-	let paramDialogOneField = {
-		title: '',
-		description: '',
-		inputType: 'text',
-		value: '',
-		label: '',
-		function: ( value) => {
-			console.log('<Funcion>', value);
-		}
-	};
-*/
 	//let SelectedEndpoints = [];
 	/**
 	 * @type {any}

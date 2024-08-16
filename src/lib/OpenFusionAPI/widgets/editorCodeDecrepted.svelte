@@ -14,7 +14,7 @@
 	/**
 	 * @type {EditorView}
 	 */
-	let editor;
+	let editor = new EditorView();
 
 	/**
 	 * @type {HTMLTextAreaElement}
@@ -27,38 +27,17 @@
 	export let lang = 'txt';
 	//let internalCode;
 
-	/*
-	const formatearCodigo = (code_string) => {
-		let r = code_string;
-console.log('formatearCodigo');
-		try {
-			switch (lang) {
-				case 'js':
-					r = prettier.format(code_string, {
-						parser: 'babel',
-						semi: false,
-						singleQuote: true
-					});
-
-					break;
-
-				default:
-					r = code_string;
-					break;
-			}
-		} catch (error) {
-			console.error('Error al formatear el código:', error);
-		}
-		return r;
-	};
-  */
-
+	$: editor.state.doc, fnddd();
 	$: code, setCode();
 	$: lang, createEditor();
+
+	function fnddd() {
+		console.log('cambia XXXXXXXXXXXXXXXXXXXXXXXX');
+	}
+
 	// Obtener los cambios del código
 	export function getCode() {
 		let c = FormatJson(editor.state.doc.toString());
-		//console.warn('>>> getCode >>>>>>>', editor.state.doc, c, editor.state.doc.toString());
 		return c;
 	}
 
@@ -101,7 +80,6 @@ console.log('formatearCodigo');
 	}
 
 	function createEditor() {
-
 		// Elimina los posibles elementos del contenedor del editor
 		if (txta) {
 			while (txta.firstChild) {
