@@ -1,17 +1,24 @@
 <script>
 	// @ts-nocheck
 	import { onMount } from 'svelte';
-	import EditorCode from '../../widgets/editorCodeDecrepted.svelte';
-	import { Tab } from '@edwinspire/svelte-components';
+	//import EditorCode from '../../widgets/editorCodeDecrepted.svelte';
+	import { Tab, EditorCode } from '@edwinspire/svelte-components';
 	import Vars from '../vars.svelte';
+	import { parse } from 'svelte/compiler';
 
 	export let code;
 	export let environment;
-	let fnEditorCode;
 	export let row;
+	let internal_code = code;
+
+	$: code, parseCode();
+
+	function parseCode() {
+		internal_code = code;
+	}
 
 	export function reset() {
-		fnEditorCode.reset();
+		parseCode();
 	}
 
 	let tabList = [
@@ -22,7 +29,7 @@
 
 	export function getCode() {
 		//    console.log(">> getCode en JS.SVELTE ", );
-		return fnEditorCode.getCode();
+		return internal_code;
 	}
 
 	onMount(() => {});
@@ -30,18 +37,17 @@
 
 <Tab bind:tabs={tabList}>
 	<div class={tabList[0].isActive ? '' : 'is-hidden'}>
-		<EditorCode lang="js" bind:code bind:this={fnEditorCode}>
-			<div slot="message">
-				<h3 class="subtitle is-5">
-					<div class="icon-text">
-						<span class="icon has-text-info">
-							<i class="fa-solid fa-link"></i>
-						</span>
-						<span>{row.endpoint}</span>
-					</div>
-				</h3>
-			</div>
-		</EditorCode>
+		<div>
+			<h3 class="subtitle is-5">
+				<div class="icon-text">
+					<span class="icon has-text-info">
+						<i class="fa-solid fa-link"></i>
+					</span>
+					<span>{row.endpoint}</span>
+				</div>
+			</h3>
+		</div>
+		<EditorCode lang="js" bind:code={internal_code}></EditorCode>
 	</div>
 
 	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
