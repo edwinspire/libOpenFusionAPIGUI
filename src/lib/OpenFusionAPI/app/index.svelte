@@ -21,7 +21,8 @@
 	import cellPath from './cellPath.svelte';
 	import cellCacheTime from './cellCacheTime.svelte';
 	import { validateURL } from '../utils.js';
-	import Vars from './vars.svelte';
+//	import Vars from './vars.svelte';
+	import AppVars from './app_vars.svelte';
 
 	import SelectEnvironment from '../widgets/Select.svelte';
 
@@ -70,6 +71,8 @@
 	$: idapp, getApp();
 	// @ts-ignore
 	$: SelectedRow.resource, checkResource();
+
+	let fnVars;
 
 	/**
 	 * @type {Vars}
@@ -497,10 +500,15 @@
 							//	console.log(fnVarsDev.getCode());
 
 							if (confirm('Do you want to save the application data?')) {
-								app.vars = {};
+								app.vars = fnVars.getCode();
+
+								console.log('---> fnVars ', fnVars.getCode());
+
+								/*
 								app.vars.dev = fnVarsDev.getCode();
 								app.vars.qa = fnVarsQa.getCode();
 								app.vars.prd = fnVarsPrd.getCode();
+								*/
 								saveApp();
 							}
 						}}
@@ -635,21 +643,9 @@
 			</div>
 
 			<div style="display: {active_tab == 'vars' ? 'block' : 'none'};">
-				<div class="columns">
-					<div class="column">
-						<div>
-							Development: <Vars bind:this={fnVarsDev} environment={'dev'} editable={true} />
-						</div>
-					</div>
-					<div class="column">
-						<div>Quality: <Vars bind:this={fnVarsQa} environment={'qa'} editable={true} /></div>
-					</div>
-					<div class="column">
-						<div>
-							Production: <Vars bind:this={fnVarsPrd} environment={'prd'} editable={true} />
-						</div>
-					</div>
-				</div>
+				<AppVars editable={true}  bind:this={fnVars}></AppVars>
+
+				
 			</div>
 
 			<div style="display: {active_tab == 'endpoints' ? 'block' : 'none'};">

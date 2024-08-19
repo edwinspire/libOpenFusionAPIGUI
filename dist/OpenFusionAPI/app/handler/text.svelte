@@ -1,9 +1,8 @@
 <script>
 	// @ts-nocheck
 	import { onMount } from 'svelte';
-	import { Tab } from '@edwinspire/svelte-components';
+	import { Tab, EditorCode } from '@edwinspire/svelte-components';
 	import Vars from '../vars.svelte';
-	import EditorCode2 from './editorCode.svelte';
 	import SelectMimeType from '../../widgets/Select.svelte';
 
 	/**
@@ -59,7 +58,8 @@
 	let tabList = [{ label: 'Payload', isActive: true }, { label: 'App Variables' }];
 
 	export function reset() {
-		fnEditorCode2.reset();
+		//	fnEditorCode2.reset();
+		ParseCode();
 	}
 
 	/**
@@ -90,13 +90,13 @@
 	}
 
 	export function getCode() {
-		let textCode = fnEditorCode2.getCode();
+		//let textCode = fnEditorCode2.getCode();
 		let conf = {};
 		let outcode = {};
 
 		try {
 			outcode.mimeType = mimeType;
-			outcode.payload = textCode;
+			outcode.payload = payload;
 			return JSON.stringify(outcode, null, 2);
 		} catch (error) {
 			console.log(error);
@@ -105,55 +105,56 @@
 	}
 
 	onMount(() => {
-		console.log(code);
+		//console.log(code);
 		ParseCode();
 	});
 </script>
 
 <Tab bind:tabs={tabList}>
 	<div class={tabList[0].isActive ? '' : 'is-hidden'}>
-		<EditorCode2 bind:lang={langEditor} bind:code={payload} bind:this={fnEditorCode2}>
-			<div slot="message">
-				<h3 class="subtitle is-5">
-					<div class="icon-text">
-						<span class="icon has-text-info">
-							<i class="fa-solid fa-link"></i>
-						</span>
-						<span>{row.endpoint}</span>
+		<div>
+			<h3 class="subtitle is-5">
+				<div class="icon-text">
+					<span class="icon has-text-info">
+						<i class="fa-solid fa-link"></i>
+					</span>
+					<span>{row.endpoint}</span>
+				</div>
+			</h3>
+
+			<div>
+				<div class="field is-horizontal">
+					<div class="field-label is-small">
+						<!-- svelte-ignore a11y-label-has-associated-control -->
+						<label class="label">MIME Type</label>
 					</div>
-				</h3>
+					<div class="field-body">
+						<div class="field is-narrow">
+							<div class="control">
+								<div class="is-fullwidth">
+									<SelectMimeType
+										bind:options={mimeTypes}
+										bind:option={mimeType}
+										on:select={(e) => {
+											console.log('Cambia', e, mimeType);
 
-				<div>
-					<div class="field is-horizontal">
-						<div class="field-label is-small">
-							<label class="label">MIME Type</label>
-						</div>
-						<div class="field-body">
-							<div class="field is-narrow">
-								<div class="control">
-									<div class="is-fullwidth">
-										<SelectMimeType
-											bind:options={mimeTypes}
-											bind:option={mimeType}
-											on:select={(e) => {
-												console.log('Cambia', e, mimeType);
-
-												if (mimeType.includes('xml')) {
-													langEditor = 'xml';
-													console.warn('langEditor', langEditor);
-												}
-											}}
-										/>
-									</div>
+											if (mimeType.includes('xml')) {
+												langEditor = 'xml';
+												console.warn('langEditor', langEditor);
+											}
+										}}
+									/>
 								</div>
 							</div>
 						</div>
 					</div>
-
-					<div class="content is-small">Plain Text that will be returned by the Endpoint.</div>
 				</div>
-			</div></EditorCode2
-		>
+
+				<div class="content is-small">Plain Text that will be returned by the Endpoint.</div>
+			</div>
+		</div>
+
+		<EditorCode bind:lang={langEditor} bind:code={payload}></EditorCode>
 	</div>
 
 	<div class={tabList[1].isActive ? '' : 'is-hidden'}>

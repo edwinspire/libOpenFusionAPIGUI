@@ -5,13 +5,13 @@ export default class Soap extends SvelteComponent<{
     code: any;
     row: any;
     environment: any;
-    getCode?: () => any;
+    getCode?: () => string;
     reset?: () => void;
 }, {
     [evt: string]: CustomEvent<any>;
 }, {}> {
     get reset(): () => void;
-    get getCode(): () => any;
+    get getCode(): () => string;
 }
 export type SoapProps = typeof __propDef.props;
 export type SoapEvents = typeof __propDef.events;
@@ -22,7 +22,7 @@ declare const __propDef: {
         code: any;
         row: any;
         environment: any;
-        getCode?: () => any;
+        getCode?: () => string;
         reset?: () => void;
     };
     events: {

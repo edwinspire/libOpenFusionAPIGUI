@@ -2,8 +2,9 @@
 	// @ts-nocheck
 	import { onMount } from 'svelte';
 	import { listAppVars } from '../utils';
-	import EditorCode from '../widgets/editorCodeDecrepted.svelte';
+	//import EditorCode from '../widgets/editorCodeDecrepted.svelte';
 	import CodeHTML from '../widgets/codeHTML.svelte';
+	import { EditorCode } from '@edwinspire/svelte-components';
 
 	// export let vars = {};
 	export let editable = false;
@@ -17,19 +18,16 @@
 		console.log('listAppVars ->>>>', value);
 		// @ts-ignore
 		Datavars = value || {};
-		/*
-		if (Datavars) {
-			fnEditorCodes = Object.keys(Datavars[environment]).map((key) => {
-				return { key: {} };
-			});
-		}
-		*/
 	});
 
 	export function getCode() {
 		//fnEditorCode.apply();
 		//return fnEditorCode.getCode();
 		let codes = {};
+		
+		console.log('>>> Datavars >>>', Datavars);
+
+		/*
 		Object.keys(fnEditorCodes).forEach((key) => {
 			try {
 				codes[key] = JSON.parse(fnEditorCodes[key].getCode());
@@ -39,7 +37,8 @@
 
 			//return c;
 		});
-		return codes;
+		*/
+		return Datavars;
 	}
 
 	onMount(() => {});
@@ -117,29 +116,28 @@
 				{#if editable}
 					<details>
 						<summary><strong>{varKey}</strong></summary>
-						<EditorCode
-							bind:this={fnEditorCodes[varKey]}
-							lang={'json'}
-							code={JSON.stringify(Datavars[environment][varKey])}
-							><span slot="message">
-								{#if false}
-									<button
-										class="button is-danger is-small"
-										on:click={() => {
-											// TODO: Hacer que funcione
-											if (confirm('Are you sure you want to permanently delete the variables?')) {
-												delete Datavars[environment][varKey];
-											}
-										}}
-									>
-										<span>Delete</span>
-										<span class="icon is-small">
-											<i class="fas fa-times"></i>
-										</span>
-									</button>
-								{/if}
-							</span></EditorCode
-						>
+
+						<span>
+							{#if false}
+								<button
+									class="button is-danger is-small"
+									on:click={() => {
+										// TODO: Hacer que funcione
+										if (confirm('Are you sure you want to permanently delete the variables?')) {
+											delete Datavars[environment][varKey];
+										}
+									}}
+								>
+									<span>Delete</span>
+									<span class="icon is-small">
+										<i class="fas fa-times"></i>
+									</span>
+								</button>
+							{/if}
+						</span>
+
+						<!-- <EditorCode lang={'json'} code={JSON.stringify(Datavars[environment][varKey])}></EditorCode> -->
+						<EditorCode lang={'json'} bind:code={Datavars[environment][varKey]}></EditorCode>
 					</details>
 				{:else}
 					<details>

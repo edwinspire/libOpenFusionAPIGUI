@@ -3,7 +3,6 @@
 	import { onMount } from 'svelte';
 	import { Tab, EditorCode } from '@edwinspire/svelte-components';
 	import Vars from '../vars.svelte';
-	//import EditorCode2 from '../../widgets/editorCodeDecrepted.svelte';
 	import SelectMimeType from '../../widgets/Select.svelte';
 
 	/**

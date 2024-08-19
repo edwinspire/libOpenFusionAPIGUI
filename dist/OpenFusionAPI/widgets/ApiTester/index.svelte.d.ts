@@ -2,7 +2,8 @@
 /** @typedef {typeof __propDef.events}  IndexEvents */
 /** @typedef {typeof __propDef.slots}  IndexSlots */
 export default class Index extends SvelteComponent<{
-    idapp?: number;
+    url: any;
+    method?: string;
 }, {
     [evt: string]: CustomEvent<any>;
 }, {}> {
@@ -13,14 +14,13 @@ export type IndexSlots = typeof __propDef.slots;
 import { SvelteComponent } from "svelte";
 declare const __propDef: {
     props: {
-        idapp?: number;
+        url: any;
+        method?: string;
     };
     events: {
         [evt: string]: CustomEvent<any>;
     };
-    slots: {}; /**
-     * @param {{ resource?: any; environment?: any; method?: any; idendpoint?: any; }} endpoint_value
-     */
+    slots: {};
     exports?: {};
     bindings?: string;
 };
