@@ -315,12 +315,18 @@
 
 			if (app && app.vars && typeof app.vars === 'object') {
 				listAppVars.set(app.vars);
+
+				console.log('===>>>> VARS', app.vars);
+
 			} else if (app && app.vars && typeof app.vars === 'string') {
 				try {
 					listAppVars.set(JSON.parse(app.vars));
 				} catch (error) {
 					console.error(error);
+					listAppVars.set({});
 				}
+			}else{
+				listAppVars.set({});
 			}
 
 			// @ts-ignore

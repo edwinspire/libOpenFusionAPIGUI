@@ -1,8 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
 	import { listAppVars } from '../utils';
-	import CodeHTML from '../widgets/codeHTML.svelte';
-	import { EditorCode, Tab } from '@edwinspire/svelte-components';
+	import {  Tab } from '@edwinspire/svelte-components';
+	import VarEnv from './vars/vars.svelte';
 
 	export let isReadOnly = false;
 	export let showCode = false;
@@ -36,16 +36,7 @@
 	{#if environment == 'dev' || environment == '*'}
 		<div class={tabList[0].isActive ? '' : 'is-hidden'}>
 			{#if Datavars && Datavars.dev}
-				<div class="box">
-					{#each Object.keys(Datavars.dev) as varname}
-						<EditorCode
-							{showCode}
-							bind:isReadOnly
-							bind:title={varname}
-							bind:code={Datavars.dev[varname]}
-						></EditorCode>
-					{/each}
-				</div>
+				<VarEnv bind:appVars={Datavars.dev}></VarEnv>
 			{/if}
 		</div>
 	{/if}
@@ -53,16 +44,7 @@
 	{#if environment == 'qa' || environment == '*'}
 		<div class={tabList[1].isActive ? '' : 'is-hidden'}>
 			{#if Datavars && Datavars.qa}
-				<div class="box">
-					{#each Object.keys(Datavars.qa) as varname}
-						<EditorCode
-							{showCode}
-							bind:isReadOnly
-							bind:title={varname}
-							bind:code={Datavars.qa[varname]}
-						></EditorCode>
-					{/each}
-				</div>
+				<VarEnv bind:appVars={Datavars.qa}></VarEnv>
 			{/if}
 		</div>
 	{/if}
@@ -70,16 +52,7 @@
 	{#if environment == 'prd' || environment == '*'}
 		<div class={tabList[2].isActive ? '' : 'is-hidden'}>
 			{#if Datavars && Datavars.prd}
-				<div class="box">
-					{#each Object.keys(Datavars.prd) as varname}
-						<EditorCode
-							{showCode}
-							bind:isReadOnly
-							bind:title={varname}
-							bind:code={Datavars.prd[varname]}
-						></EditorCode>
-					{/each}
-				</div>
+				<VarEnv bind:appVars={Datavars.prd}></VarEnv>
 			{/if}
 		</div>
 	{/if}
