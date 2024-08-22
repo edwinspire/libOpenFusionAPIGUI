@@ -3,7 +3,7 @@
 
 	import { onMount } from 'svelte';
 	import { Tab } from '@edwinspire/svelte-components';
-	import Vars from '../vars.svelte';
+	import AppVars from '../app_vars.svelte';
 	import { parse } from 'svelte/compiler';
 
 	/**
@@ -70,6 +70,6 @@
 	</div>
 
 	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
-		<Vars bind:environment />
+		<AppVars editable={true} {environment} isReadOnly={true}></AppVars>
 	</div>
 </Tab>

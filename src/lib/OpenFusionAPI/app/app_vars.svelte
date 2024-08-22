@@ -1,11 +1,10 @@
 <script>
 	import { onMount } from 'svelte';
 	import { listAppVars } from '../utils';
-	import {  Tab } from '@edwinspire/svelte-components';
 	import VarEnv from './vars/vars.svelte';
 
 	export let isReadOnly = false;
-	export let showCode = false;
+	//export let showCode = false;
 	export let environment = '*';
 	let Datavars = {};
 
@@ -22,9 +21,46 @@
 		{ label: 'Production' }
 	];
 
+	$: environment, setTabs();
+
+	function setTabs() {
+		console.log(environment, tabList);
+		/*
+		if (environment && tabList) {
+			
+			tabList = [{ label: 'Development', isActive: true }];
+			
+		}
+		*/
+		tabList = tabList.map((tab) => {
+			let tabItem = { ...tab };
+			tabItem.isActive = false;
+
+			switch (tab.label) {
+				case 'Development':
+					tabItem.isActive = environment == 'dev' || environment == '*';
+					break;
+				case 'Quality':
+					tabItem.isActive = environment == 'qa';
+					break;
+				case 'Production':
+					tabItem.isActive = environment == 'prd';
+					break;
+			}
+
+			return tabItem;
+		});
+	}
+
 	export function getCode() {
 		console.log('getCode >>>> ', Datavars);
 		return Datavars;
+	}
+
+	let isOpen = false;
+
+	function toggleDetails() {
+		isOpen = !isOpen;
 	}
 
 	onMount(() => {
@@ -32,28 +68,29 @@
 	});
 </script>
 
-<Tab bind:tabs={tabList}>
+<div  >
 	{#if environment == 'dev' || environment == '*'}
-		<div class={tabList[0].isActive ? '' : 'is-hidden'}>
-			{#if Datavars && Datavars.dev}
-				<VarEnv bind:appVars={Datavars.dev}></VarEnv>
-			{/if}
-		</div>
+		{#if Datavars && Datavars.dev}
+			<div class="column"><VarEnv bind:appVars={Datavars.dev} bind:isReadOnly title={'DEVELOPMENT'}></VarEnv></div>
+		{/if}
 	{/if}
 
 	{#if environment == 'qa' || environment == '*'}
-		<div class={tabList[1].isActive ? '' : 'is-hidden'}>
-			{#if Datavars && Datavars.qa}
-				<VarEnv bind:appVars={Datavars.qa}></VarEnv>
-			{/if}
-		</div>
+		{#if Datavars && Datavars.qa}
+			<div class="column">
+				<VarEnv bind:appVars={Datavars.qa} bind:isReadOnly title={'QUALITY'}></VarEnv>
+			</div>
+		{/if}
 	{/if}
 
+	
 	{#if environment == 'prd' || environment == '*'}
-		<div class={tabList[2].isActive ? '' : 'is-hidden'}>
-			{#if Datavars && Datavars.prd}
-				<VarEnv bind:appVars={Datavars.prd}></VarEnv>
-			{/if}
-		</div>
+		{#if Datavars && Datavars.prd}
+			<div class="column">
+				<VarEnv bind:appVars={Datavars.prd} bind:isReadOnly title={'PRODUCTION'}></VarEnv>
+			</div>
+		{/if}
 	{/if}
-</Tab>
+
+</div>
+

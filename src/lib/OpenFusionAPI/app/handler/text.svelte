@@ -2,7 +2,7 @@
 	// @ts-nocheck
 	import { onMount } from 'svelte';
 	import { Tab, EditorCode } from '@edwinspire/svelte-components';
-	import Vars from '../vars.svelte';
+	import AppVars from '../app_vars.svelte';
 	import SelectMimeType from '../../widgets/Select.svelte';
 
 	/**
@@ -158,6 +158,6 @@
 	</div>
 
 	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
-		<Vars bind:environment />
+		<AppVars editable={true} {environment} isReadOnly={true}></AppVars>
 	</div>
 </Tab>
