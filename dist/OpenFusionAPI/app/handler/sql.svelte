@@ -2,9 +2,9 @@
 	// @ts-nocheck
 	import { onMount } from 'svelte';
 	import { Tab, EditorCode } from '@edwinspire/svelte-components';
-	import Vars from '../vars.svelte';
 	import CodeHTML from '../../widgets/codeHTML.svelte';
 	import ApiTester from '../../widgets/ApiTester/index.svelte';
+	import AppVars from '../app_vars.svelte';
 
 	/**
 	 * @type {any}
@@ -84,7 +84,7 @@
 	}
 
 	onMount(() => {
-	//	console.log(code);
+		//	console.log(code);
 		ParseCode();
 		sample_bind_post_string = JSON.stringify(sample_bind_post);
 	});
@@ -112,13 +112,12 @@
 						>sequelize</a
 					>
 					documentation.
-					<br /><br />
-					<div>Query to be executed.</div>
 				</div>
 			</div>
 		</div>
 
-		<EditorCode lang="sql" bind:code={query_code} ></EditorCode>
+		<EditorCode isReadOnly={false} title={'Query to be executed'} lang="sql" bind:code={query_code}
+		></EditorCode>
 	</div>
 
 	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
@@ -179,7 +178,7 @@
 	</div>
 
 	<div class={tabList[3].isActive ? '' : 'is-hidden'}>
-		<Vars bind:environment />
+		<AppVars editable={true} {environment} isReadOnly={true}></AppVars>
 	</div>
 
 	<div class={tabList[4].isActive ? '' : 'is-hidden'}>

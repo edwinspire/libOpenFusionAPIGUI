@@ -2,9 +2,11 @@
 /** @typedef {typeof __propDef.events}  VarsEvents */
 /** @typedef {typeof __propDef.slots}  VarsSlots */
 export default class Vars extends SvelteComponent<{
+    isReadOnly?: boolean;
+    showCode?: boolean;
+    appVars?: {};
+    title?: string;
     getCode?: () => {};
-    environment?: string;
-    editable?: boolean;
 }, {
     [evt: string]: CustomEvent<any>;
 }, {}> {
@@ -16,9 +18,11 @@ export type VarsSlots = typeof __propDef.slots;
 import { SvelteComponent } from "svelte";
 declare const __propDef: {
     props: {
+        isReadOnly?: boolean;
+        showCode?: boolean;
+        appVars?: {};
+        title?: string;
         getCode?: () => {};
-        environment?: string;
-        editable?: boolean;
     };
     events: {
         [evt: string]: CustomEvent<any>;

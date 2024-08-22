@@ -2,7 +2,7 @@
 	// @ts-nocheck
 	import { onMount } from 'svelte';
 	import { Tab, EditorCode } from '@edwinspire/svelte-components';
-	import Vars from '../vars.svelte';
+	import AppVars from '../app_vars.svelte';
 	import { parse } from 'svelte/compiler';
 
 	export let code;
@@ -73,6 +73,6 @@
 	</div>
 
 	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
-		<Vars bind:environment />
+		<AppVars editable={true} {environment} isReadOnly={true}></AppVars>
 	</div>
 </Tab>

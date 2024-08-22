@@ -21,7 +21,7 @@
 	import cellPath from './cellPath.svelte';
 	import cellCacheTime from './cellCacheTime.svelte';
 	import { validateURL } from '../utils.js';
-//	import Vars from './vars.svelte';
+	//	import Vars from './vars.svelte';
 	import AppVars from './app_vars.svelte';
 
 	import SelectEnvironment from '../widgets/Select.svelte';
@@ -315,16 +315,23 @@
 
 			if (app && app.vars && typeof app.vars === 'object') {
 				listAppVars.set(app.vars);
+
+				console.log('===>>>> VARS', app.vars);
 			} else if (app && app.vars && typeof app.vars === 'string') {
 				try {
 					listAppVars.set(JSON.parse(app.vars));
 				} catch (error) {
 					console.error(error);
+					listAppVars.set({});
 				}
+			} else {
+				listAppVars.set({});
 			}
 
 			// @ts-ignore
 			getListFunction($userStore.token, app.app, app.environment);
+
+			console.log('showAppData >> ', app.endpoints);
 
 			if (app.endpoints) {
 				endpoints = app.endpoints.map((/** @type {{ environment: any; resource: any; }} */ ax) => {
@@ -333,7 +340,7 @@
 						...ax
 					};
 				});
-				//console.log(endpoints);
+				console.log(endpoints);
 			}
 		}
 	}
@@ -643,9 +650,7 @@
 			</div>
 
 			<div style="display: {active_tab == 'vars' ? 'block' : 'none'};">
-				<AppVars editable={true}  bind:this={fnVars}></AppVars>
-
-				
+				<AppVars editable={true} bind:this={fnVars}></AppVars>
 			</div>
 
 			<div style="display: {active_tab == 'endpoints' ? 'block' : 'none'};">
@@ -744,6 +749,11 @@
 					cache_time: 0
 				});
 			}
+/*
+			endpoints = endpoints.map((en) => {
+				return en;
+			});
+			*/
 
 			showEndpointEdit = false;
 		} else {

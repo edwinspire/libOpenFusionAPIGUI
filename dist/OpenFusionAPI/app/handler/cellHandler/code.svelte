@@ -11,8 +11,6 @@
 	import CustomFn from '../../handler/customFunction.svelte';
 	import { Level, SlideFullScreen } from '@edwinspire/svelte-components';
 	import { css_handlers } from '../../../utils.js';
-	//import { userStore } from '../utils.js';
-
 
 	/**
 	 * @type {FetchCode}
@@ -100,9 +98,10 @@
 <SlideFullScreen bind:show={showCode}>
 	<Level>
 		<span slot="r01">
-			<button
-				class="button is-small"
-				on:click={() => {
+
+			<div class="field has-addons">
+				<p class="control">
+				  <button class="button is-success is-small" on:click={() => {
 					if (row && row.handler == 'JS') {
 						fnJsCode.reset();
 						//console.log("methodSelected > ", methodSelected, fnJsCode.getCode());
@@ -118,34 +117,43 @@
 						fnTextFn.reset();
 					}
 					showCode = false;
-				}}>Cancel</button
-			>
-		</span>
-
-		<span slot="r02">
-			<button
-				class="button is-small is-success"
-				on:click={() => {
+				}}>
+					<span class="icon is-small">
+						<i class="fa-solid fa-check"></i>
+					</span>
+					<span>Accept</span>
+				  </button>
+				</p>
+				<p class="control">
+				  <button class="button is-small" on:click={() => {
 					if (row && row.handler == 'JS') {
-						value = fnJsCode.getCode();
+						fnJsCode.reset();
 						//console.log("methodSelected > ", methodSelected, fnJsCode.getCode());
 					} else if (row && row.handler == 'SOAP') {
-						value = fnSoapCode.getCode();
+						fnSoapCode.reset();
 					} else if (row && row.handler == 'SQL') {
-						value = fnSqlCode.getCode();
+						fnSqlCode.reset();
 					} else if (row && row.handler == 'FETCH') {
-						value = fnFetchCode.getCode();
+						fnFetchCode.reset();
 					} else if (row && row.handler == 'FUNCTION') {
-						value = fnCustomFn.getCode();
-					}else if (row && row.handler == 'TEXT') {
-						value = fnTextFn.getCode();
+						fnCustomFn.reset();
+					} else if (row && row.handler == 'TEXT') {
+						fnTextFn.reset();
 					}
-					//      console.log(methodSelected, value, value[methodSelected]);
-
 					showCode = false;
-				}}>Accept</button
-			>
+				}}>
+					<span class="icon is-small">
+						<i class="fa-solid fa-xmark"></i>
+					</span>
+					<span>Cancel</span>
+				  </button>
+				</p>
+			  </div>
+
+
+
 		</span>
+
 	</Level>
 
 	<div>
