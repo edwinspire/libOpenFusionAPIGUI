@@ -70,6 +70,6 @@
 	</div>
 
 	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
-		<AppVars editable={true} {environment} isReadOnly={true}></AppVars>
+		<AppVars {environment} isReadOnly={true}></AppVars>
 	</div>
 </Tab>

@@ -11,9 +11,14 @@
 	 */
 	export let code;
 	export let environment;
+	export let row;
+
+
 	$: code, parseCode();
 	let initial_code = '';
+	let code_desc = JSON.stringify({ 'describe()': true });
 
+	
 	export function reset() {
 		//		fnEditorCode.reset();
 		parseCode();
@@ -23,8 +28,7 @@
 		initial_code = code;
 	}
 
-	let code_desc = JSON.stringify({ 'describe()': true });
-
+	
 	let tabList = [
 		{ label: 'Parameters', isActive: true },
 		{ label: 'Information', isActive: false },
@@ -41,7 +45,6 @@
 		RequestArgs: { dNum: 236.08 }
 	};
 
-	export let row;
 
 	export function getCode() {
 		//fnEditorCode.apply();
@@ -120,7 +123,7 @@
 		</div>
 	</div>
 	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
-		<AppVars editable={true} {environment} isReadOnly={true}></AppVars>
+		<AppVars {environment} isReadOnly={true}></AppVars>
 	</div>
 </Tab>
 

@@ -7,7 +7,8 @@
 		ColumnTypes,
 		DialogModal,
 		Level,
-		Tab
+		Tab,
+		sha256
 		// @ts-ignore
 	} from '@edwinspire/svelte-components';
 	import { onMount } from 'svelte';
@@ -15,13 +16,11 @@
 	import { userStore, getListFunction, listAppVars, url_paths } from '../utils.js';
 	import CellMethod from './cellMethod.svelte';
 	import CellAccess from './cellAccess.svelte';
-	//	import cellHandler from './cellHandler.svelte';
 	import cellHandler from './handler/cellHandler/index.svelte';
-	//import cellCode from './cellCode.svelte';
 	import cellPath from './cellPath.svelte';
 	import cellCacheTime from './cellCacheTime.svelte';
 	import { validateURL } from '../utils.js';
-	//	import Vars from './vars.svelte';
+
 	import AppVars from './app_vars.svelte';
 
 	import SelectEnvironment from '../widgets/Select.svelte';
@@ -68,26 +67,10 @@
 	let TableSelectionType = 0;
 	let TableObject;
 
-	$: idapp, getApp();
-	// @ts-ignore
-	$: SelectedRow.resource, checkResource();
-
 	let fnVars;
 
-	/**
-	 * @type {Vars}
-	 */
-	let fnVarsDev;
-	/**
-	 * @type {Vars}
-	 */
-	let fnVarsQa;
-	/**
-	 * @type {Vars}
-	 */
-	let fnVarsPrd;
-
-	let active_tab = '';
+	let hash_data_cache = '-';
+	let active_tab = 0;
 
 	let columns = {
 		//enabled: { label: 'Enabled App' },
@@ -113,7 +96,6 @@
 				component: CellAccess
 			}
 		},
-		//code: { label: 'Code', decorator: { component: cellCode } },
 		code: { label: 'Code', hidden: true },
 		idapp: { hidden: true },
 		rowkey: { hidden: true },
@@ -166,6 +148,10 @@
 	let app = {};
 
 	let uf = new uFetch();
+
+	$: idapp, getApp();
+	// @ts-ignore
+	$: SelectedRow.resource, checkResource();
 
 	function checkResource() {
 		// @ts-ignore
@@ -235,14 +221,27 @@
 
 				let cache_list = await get_list_cache.json();
 
-				//	console.log(cache_list, endpoints);
+				//console.log('>> cache_list >> ', cache_list, JSON.stringify(cache_list));
 
-				endpoints = endpoints.map((item) => {
-					let rItem = item;
-					let data_cache = cache_list.find((element) => element.url == item.endpoint);
-					rItem['cache_size'] = data_cache ? data_cache.bytes : 0;
-					return rItem;
-				});
+				// Verificar si hay cambios en los datos, si es así actualizar la tabla
+				if (cache_list && Array.isArray(cache_list)) {
+					let hash_data_cache_now = sha256(
+						JSON.stringify(cache_list.length > 0 ? cache_list : '0')
+					);
+
+					if (hash_data_cache !== hash_data_cache_now) {
+						hash_data_cache = hash_data_cache_now;
+						endpoints = endpoints.map((item) => {
+							let rItem = item;
+							let data_cache = cache_list.find((element) => element.url == item.endpoint);
+							rItem['cache_size'] = data_cache ? data_cache.bytes : 0;
+							return rItem;
+						});
+					}
+				}
+
+				//
+				//	console.log(cache_list, endpoints);
 			}
 		} catch (error) {
 			// @ts-ignore
@@ -308,7 +307,7 @@
 	 */
 	function showAppData(app_resp) {
 		if (app_resp && app_resp.length > 0) {
-			active_tab = active_tab == '' ? 'endpoints' : active_tab;
+			active_tab = 0;
 
 			//appDataTable = AppToTable(app);
 			app = app_resp[0];
@@ -509,7 +508,7 @@
 							if (confirm('Do you want to save the application data?')) {
 								app.vars = fnVars.getCode();
 
-								console.log('---> fnVars ', fnVars.getCode());
+								console.log('---> fnVars ', fnVars.getCode(), app);
 
 								/*
 								app.vars.dev = fnVarsDev.getCode();
@@ -641,7 +640,7 @@
 		</Level>
 
 		<Tab bind:tabs bind:active={active_tab}>
-			<div style="display: {active_tab == 'description' ? 'block' : 'none'};">
+			<div style="display: {active_tab == 1 ? 'block' : 'none'};">
 				<textarea
 					class="textarea is-small"
 					placeholder="Description"
@@ -649,11 +648,11 @@
 				/>
 			</div>
 
-			<div style="display: {active_tab == 'vars' ? 'block' : 'none'};">
-				<AppVars editable={true} bind:this={fnVars}></AppVars>
+			<div style="display: {active_tab == 2 ? 'block' : 'none'};">
+				<AppVars isReadOnly={false} bind:this={fnVars}></AppVars>
 			</div>
 
-			<div style="display: {active_tab == 'endpoints' ? 'block' : 'none'};">
+			<div style="display: {active_tab == 0 ? 'block' : 'none'};">
 				<Table
 					ShowNewButton="true"
 					ShowEditButton="true"
@@ -749,7 +748,7 @@
 					cache_time: 0
 				});
 			}
-/*
+			/*
 			endpoints = endpoints.map((en) => {
 				return en;
 			});

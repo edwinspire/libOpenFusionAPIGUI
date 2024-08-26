@@ -14,6 +14,7 @@
 	export let row;
 
 	let sample_bind_post_string = '{}';
+	let fnApiTester;
 
 	let sample_bind_post = {
 		bind: {
@@ -33,7 +34,15 @@
 
 	let params_code = '{}';
 	let query_code = 'SELECT 1+1;';
+	let internal_data_test;
+
 	$: code, ParseCode();
+	$: row.data_test, setDataTest();
+
+	function setDataTest() {
+		internal_data_test = { ...row.data_test };
+		console.log('internal_data_test', internal_data_test);
+	}
 
 	export function reset() {
 		ParseCode();
@@ -57,18 +66,21 @@
 		}
 	}
 
-	export function getCode() {
-		//fnEditorCode.apply();
-		//let p = fnEditorCode.getCode();
-		//let query = fnEditorCode2.getCode();
+	export function getData() {
+		let data = { code: getCode(), data_test: internal_data_test };
+		console.log('> getData > SQL', data);
+		return data;
+	}
+
+	function getCode() {
 		let conf = {};
 		let outcode = {};
 
 		try {
-			conf = JSON.parse(params_code);
+			conf = typeof params_code === 'object' ? params_code : JSON.parse(params_code);
 			//return JSON.stringify(c, null, 2);
 		} catch (error) {
-			console.error('No se pudo parsear getCode', error);
+			console.error('No se pudo parsear getCode', error, params_code);
 			conf = params_code;
 			//return code;
 		}
@@ -178,10 +190,10 @@
 	</div>
 
 	<div class={tabList[3].isActive ? '' : 'is-hidden'}>
-		<AppVars editable={true} {environment} isReadOnly={true}></AppVars>
+		<AppVars {environment} isReadOnly={true}></AppVars>
 	</div>
 
 	<div class={tabList[4].isActive ? '' : 'is-hidden'}>
-		<ApiTester></ApiTester>
+		<ApiTester bind:this={fnApiTester} bind:data={internal_data_test}></ApiTester>
 	</div>
 </Tab>

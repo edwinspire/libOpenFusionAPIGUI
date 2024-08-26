@@ -8,6 +8,8 @@
 	export let url;
 	export let method = 'GET';
 
+	export let data = { query: [], headers: [], auth: {}, body: {} };
+
 	let tabList = [
 		{ label: 'Query Parameters', isActive: true },
 		{ label: 'HTTP Headers' },
@@ -15,8 +17,6 @@
 		{ label: 'Body' },
 		{ label: 'Result' }
 	];
-
-	let data = { query: [], headers: [], auth: {} };
 </script>
 
 <div class="is-flex is-justify-content-flex-end">
@@ -35,15 +35,15 @@
 
 <Tab bind:tabs={tabList}>
 	<div class={tabList[0].isActive ? '' : 'is-hidden'}>
-		<Query bind:parameters={data.query}></Query>
+		<Query bind:data={data.query}></Query>
 	</div>
 	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
-		<Headers bind:parameters={data.headers}></Headers>
+		<Headers bind:data={data.headers}></Headers>
 	</div>
 	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
-		<Auth bind:parameters={data.auth}></Auth>
+		<Auth bind:data={data.auth}></Auth>
 	</div>
 	<div class={tabList[3].isActive ? '' : 'is-hidden'}>
-		<Body bind:parameters={data.body}></Body>
+		<Body bind:data={data.body}></Body>
 	</div>
 </Tab>

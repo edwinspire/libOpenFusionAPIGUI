@@ -15,13 +15,10 @@
 	import { userStore, getListFunction, listAppVars, url_paths } from '../utils.js';
 	import CellMethod from './cellMethod.svelte';
 	import CellAccess from './cellAccess.svelte';
-	//	import cellHandler from './cellHandler.svelte';
 	import cellHandler from './handler/cellHandler/index.svelte';
-	//import cellCode from './cellCode.svelte';
 	import cellPath from './cellPath.svelte';
 	import cellCacheTime from './cellCacheTime.svelte';
 	import { validateURL } from '../utils.js';
-	//	import Vars from './vars.svelte';
 	import AppVars from './app_vars.svelte';
 
 	import SelectEnvironment from '../widgets/Select.svelte';
@@ -113,7 +110,6 @@
 				component: CellAccess
 			}
 		},
-		//code: { label: 'Code', decorator: { component: cellCode } },
 		code: { label: 'Code', hidden: true },
 		idapp: { hidden: true },
 		rowkey: { hidden: true },

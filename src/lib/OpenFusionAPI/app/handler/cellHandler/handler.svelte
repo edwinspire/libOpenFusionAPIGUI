@@ -50,7 +50,7 @@
 			bind:css_class={css_h}
 			on:select={(/** @type {{ detail: { value: string; }; }} */ e) => {
 				setCSS(e.detail.value);
-				console.log('Row', row);
+			//	console.log('Row', row);
 			}}
 		/>
 	</div>
