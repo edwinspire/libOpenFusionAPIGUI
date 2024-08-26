@@ -194,6 +194,6 @@
 	</div>
 
 	<div class={tabList[4].isActive ? '' : 'is-hidden'}>
-		<ApiTester bind:this={fnApiTester} bind:data={internal_data_test}></ApiTester>
+		<ApiTester bind:this={fnApiTester} bind:data={internal_data_test} bind:method={row.method} url={row.endpoint}></ApiTester>
 	</div>
 </Tab>

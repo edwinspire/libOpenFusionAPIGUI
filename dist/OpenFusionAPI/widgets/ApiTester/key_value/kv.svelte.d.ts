@@ -2,7 +2,7 @@
 /** @typedef {typeof __propDef.events}  KvEvents */
 /** @typedef {typeof __propDef.slots}  KvSlots */
 export default class Kv extends SvelteComponent<{
-    parameters?: any[];
+    data?: any[];
 }, {
     [evt: string]: CustomEvent<any>;
 }, {}> {
@@ -13,7 +13,7 @@ export type KvSlots = typeof __propDef.slots;
 import { SvelteComponent } from "svelte";
 declare const __propDef: {
     props: {
-        parameters?: any[];
+        data?: any[];
     };
     events: {
         [evt: string]: CustomEvent<any>;

@@ -4,6 +4,12 @@
 export default class Index extends SvelteComponent<{
     url: any;
     method?: string;
+    data?: {
+        query: any[];
+        headers: any[];
+        auth: {};
+        body: {};
+    };
 }, {
     [evt: string]: CustomEvent<any>;
 }, {}> {
@@ -16,6 +22,12 @@ declare const __propDef: {
     props: {
         url: any;
         method?: string;
+        data?: {
+            query: any[];
+            headers: any[];
+            auth: {};
+            body: {};
+        };
     };
     events: {
         [evt: string]: CustomEvent<any>;

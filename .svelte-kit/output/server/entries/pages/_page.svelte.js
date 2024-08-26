@@ -2,6 +2,7 @@ import { c as create_ssr_component, d as createEventDispatcher, f as add_attribu
 import uFetch from "@edwinspire/universal-fetch";
 import "events";
 import "d3";
+import "../../chunks/client.js";
 import "prettier";
 import "prettier/parser-babel";
 import "prettier/plugins/babel";

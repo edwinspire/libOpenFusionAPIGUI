@@ -5,13 +5,19 @@ export default class Sql extends SvelteComponent<{
     code: any;
     row: any;
     environment: any;
-    getCode?: () => any;
     reset?: () => void;
+    getData?: () => {
+        code: any;
+        data_test: any;
+    };
 }, {
     [evt: string]: CustomEvent<any>;
 }, {}> {
     get reset(): () => void;
-    get getCode(): () => any;
+    get getData(): () => {
+        code: any;
+        data_test: any;
+    };
 }
 export type SqlProps = typeof __propDef.props;
 export type SqlEvents = typeof __propDef.events;
@@ -22,8 +28,11 @@ declare const __propDef: {
         code: any;
         row: any;
         environment: any;
-        getCode?: () => any;
         reset?: () => void;
+        getData?: () => {
+            code: any;
+            data_test: any;
+        };
     };
     events: {
         [evt: string]: CustomEvent<any>;

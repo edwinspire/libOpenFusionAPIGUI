@@ -19,9 +19,6 @@ declare const __propDef: {
         [evt: string]: CustomEvent<any>;
     };
     slots: {};
-    /**
-     * @param {{ resource?: any; environment?: any; method?: any; idendpoint?: any; }} endpoint_value
-     */
     exports?: {};
     bindings?: string;
 };

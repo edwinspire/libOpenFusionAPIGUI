@@ -1,7 +1,6 @@
 <script>
 
 import Handler from './handler.svelte';
-
 	
 	/**
 	 * @type {any}

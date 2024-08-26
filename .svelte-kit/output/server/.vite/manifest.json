@@ -8,6 +8,13 @@
       "_internal.js"
     ]
   },
+  "_client.js": {
+    "file": "chunks/client.js",
+    "name": "client",
+    "imports": [
+      "_exports.js"
+    ]
+  },
   "_exports.js": {
     "file": "chunks/exports.js",
     "name": "exports"
@@ -62,7 +69,7 @@
     "isEntry": true,
     "imports": [
       "_ssr.js",
-      "_exports.js"
+      "_client.js"
     ]
   },
   "node_modules/@sveltejs/kit/src/runtime/components/layout.svelte": {
@@ -99,7 +106,8 @@
     "src": "src/routes/+page.svelte",
     "isEntry": true,
     "imports": [
-      "_ssr.js"
+      "_ssr.js",
+      "_client.js"
     ],
     "css": [
       "_app/immutable/assets/_page.a8r7HAJ-.css"
