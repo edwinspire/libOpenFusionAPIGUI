@@ -114,10 +114,8 @@
 								value = fnCustomFn.getCode();
 							} else if (row && row.handler == 'TEXT') {
 								value = fnTextFn.getCode();
-								fnCustomFn.reset();
-							} else if (row && row.handler == 'TEXT') {
 								fnTextFn.reset();
-							}
+							} 
 
 							showCode = false;
 						}}

@@ -28,6 +28,9 @@ declare const __propDef: {
     events: {
         [evt: string]: CustomEvent<any>;
     };
+    /** @typedef {typeof __propDef.props}  JsProps */
+    /** @typedef {typeof __propDef.events}  JsEvents */
+    /** @typedef {typeof __propDef.slots}  JsSlots */
     slots: {};
     exports?: {};
     bindings?: string;

@@ -4,7 +4,9 @@
 	import { onMount } from 'svelte';
 	import { Tab, EditorCode } from '@edwinspire/svelte-components';
 	import AppVars from '../app_vars.svelte';
+	import ApiTester from '../../widgets/ApiTester/index.svelte';
 	import CodeHTML from '../../widgets/codeHTML.svelte';
+	
 
 	/**
 	 * @type {any}
@@ -13,12 +15,19 @@
 	export let environment;
 	export let row;
 
-
-	$: code, parseCode();
+	
 	let initial_code = '';
 	let code_desc = JSON.stringify({ 'describe()': true });
+	let fnApiTester;
+	let internal_data_test;	
 
-	
+	$: code, parseCode();
+	$: row.data_test, setDataTest();
+
+	function setDataTest() {
+		internal_data_test = { ...row.data_test };
+		console.log('internal_data_test', internal_data_test);
+	}
 	export function reset() {
 		//		fnEditorCode.reset();
 		parseCode();
@@ -32,7 +41,8 @@
 	let tabList = [
 		{ label: 'Parameters', isActive: true },
 		{ label: 'Information', isActive: false },
-		{ label: 'App Variables' }
+		{ label: 'App Variables' },
+		{ label: 'Tester' }
 	];
 
 	let jsonParams = {
@@ -124,6 +134,14 @@
 	</div>
 	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
 		<AppVars {environment} isReadOnly={true}></AppVars>
+	</div>
+	<div class={tabList[3].isActive ? '' : 'is-hidden'}>
+		<ApiTester
+			bind:this={fnApiTester}
+			bind:data={internal_data_test}
+			bind:method={row.method}
+			url={row.endpoint}
+		></ApiTester>
 	</div>
 </Tab>
 

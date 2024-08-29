@@ -4,13 +4,22 @@
 	import { Tab, EditorCode } from '@edwinspire/svelte-components';
 	import AppVars from '../app_vars.svelte';
 	import { parse } from 'svelte/compiler';
+	import ApiTester from '../../widgets/ApiTester/index.svelte';
 
 	export let code;
 	export let environment;
 	export let row;
 	let internal_code = code;
+	let fnApiTester;
+	let internal_data_test;
 
 	$: code, parseCode();
+	$: row.data_test, setDataTest();
+
+	function setDataTest() {
+		internal_data_test = { ...row.data_test };
+		console.log('internal_data_test', internal_data_test);
+	}
 
 	function parseCode() {
 		internal_code = code;
@@ -23,7 +32,8 @@
 	let tabList = [
 		{ label: 'Code', isActive: true },
 		{ label: 'Predefined Variables' },
-		{ label: 'App Variables' }
+		{ label: 'App Variables' },
+		{ label: 'Tester' }
 	];
 
 	export function getCode() {
@@ -74,5 +84,14 @@
 
 	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
 		<AppVars {environment} isReadOnly={true}></AppVars>
+	</div>
+
+	<div class={tabList[3].isActive ? '' : 'is-hidden'}>
+		<ApiTester
+			bind:this={fnApiTester}
+			bind:data={internal_data_test}
+			bind:method={row.method}
+			url={row.endpoint}
+		></ApiTester>
 	</div>
 </Tab>

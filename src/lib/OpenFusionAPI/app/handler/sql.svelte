@@ -124,6 +124,8 @@
 						>sequelize</a
 					>
 					documentation.
+
+					
 				</div>
 			</div>
 		</div>
@@ -169,6 +171,12 @@
 						parameters, or failing that the parameters are key-value on query request, which will be
 						used to join with the variables of the SQL query.
 					</p>
+
+					<div class="block">
+						If you send a parameter that is not present in the query you will get an error
+						similar to: <code>Column index out of range</code>
+					</div>
+
 				</div>
 			{:else if row.method === 'POST'}
 				<div class="block">
@@ -194,6 +202,11 @@
 	</div>
 
 	<div class={tabList[4].isActive ? '' : 'is-hidden'}>
-		<ApiTester bind:this={fnApiTester} bind:data={internal_data_test} bind:method={row.method} url={row.endpoint}></ApiTester>
+		<ApiTester
+			bind:this={fnApiTester}
+			bind:data={internal_data_test}
+			bind:method={row.method}
+			url={row.endpoint}
+		></ApiTester>
 	</div>
 </Tab>

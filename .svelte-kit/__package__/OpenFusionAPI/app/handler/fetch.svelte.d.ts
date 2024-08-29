@@ -5,13 +5,13 @@ export default class Fetch extends SvelteComponent<{
     code: any;
     row: any;
     environment: any;
-    getCode?: () => string;
+    getCode?: () => any;
     reset?: () => void;
 }, {
     [evt: string]: CustomEvent<any>;
 }, {}> {
     get reset(): () => void;
-    get getCode(): () => string;
+    get getCode(): () => any;
 }
 export type FetchProps = typeof __propDef.props;
 export type FetchEvents = typeof __propDef.events;
@@ -22,7 +22,7 @@ declare const __propDef: {
         code: any;
         row: any;
         environment: any;
-        getCode?: () => string;
+        getCode?: () => any;
         reset?: () => void;
     };
     events: {

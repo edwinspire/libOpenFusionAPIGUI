@@ -4,6 +4,8 @@
 	import { Tab, EditorCode } from '@edwinspire/svelte-components';
 	import AppVars from '../app_vars.svelte';
 	import SelectMimeType from '../../widgets/Select.svelte';
+	import ApiTester from '../../widgets/ApiTester/index.svelte';
+
 
 	/**
 	 * @type {any}
@@ -15,6 +17,9 @@
 	 * @type {EditorCode}
 	 */
 	let fnEditorCode;
+	//let internal_code = code;
+	let fnApiTester;
+	let internal_data_test;
 
 	let mimeTypes = [
 		{ id: 'text/plain', value: 'text/plain', enabled: true },
@@ -55,21 +60,29 @@
 		{ id: 'text/x-component', value: 'text/x-component', enabled: true }
 	];
 
-	let tabList = [{ label: 'Payload', isActive: true }, { label: 'App Variables' }];
+	let tabList = [{ label: 'Payload', isActive: true }, { label: 'App Variables' }, 		{ label: 'Tester' }];
+
+	/**
+	 * @type {EditorCode}
+	 */
+	//let fnEditorCode2;
+	let mimeType = 'text/plain';
+	let payload = code;
+	let langEditor = 'txt';
+	$: code, ParseCode();
+	$: row.data_test, setDataTest();
+
+	 function setDataTest() {
+		internal_data_test = { ...row.data_test };
+		console.log('internal_data_test', internal_data_test);
+	}
 
 	export function reset() {
 		//	fnEditorCode2.reset();
 		ParseCode();
 	}
 
-	/**
-	 * @type {EditorCode}
-	 */
-	let fnEditorCode2;
-	let mimeType = 'text/plain';
-	let payload = '';
-	let langEditor = 'txt';
-	$: code, ParseCode();
+
 
 	function ParseCode() {
 		try {
@@ -154,10 +167,21 @@
 			</div>
 		</div>
 
-		<EditorCode bind:lang={langEditor} bind:code={payload}></EditorCode>
+		 <EditorCode bind:lang={langEditor} bind:code={payload}></EditorCode> 
+		
 	</div>
 
 	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
 		<AppVars {environment} isReadOnly={true}></AppVars>
 	</div>
+
+	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
+		<ApiTester
+			bind:this={fnApiTester}
+			bind:data={internal_data_test}
+			bind:method={row.method}
+			url={row.endpoint}
+		></ApiTester>
+	</div>
+
 </Tab>

@@ -5,6 +5,7 @@
 	import { Tab } from '@edwinspire/svelte-components';
 	import AppVars from '../app_vars.svelte';
 	import { parse } from 'svelte/compiler';
+	import ApiTester from '../../widgets/ApiTester/index.svelte';
 
 	/**
 	 * @type {any}
@@ -12,12 +13,19 @@
 	export let code;
 	export let environment;
 	export let row;
+	let internal_code = code;
+	let fnApiTester;
+	let internal_data_test;
 
-	let tabList = [{ label: 'Url', isActive: true }, { label: 'App Variables' }];
-
-	let internal_code = '';
+	let tabList = [{ label: 'Url', isActive: true }, { label: 'App Variables' }, { label: 'Tester' }];
 
 	$: code, parseCode();
+	$: row.data_test, setDataTest();
+
+	function setDataTest() {
+		internal_data_test = { ...row.data_test };
+		console.log('internal_data_test', internal_data_test);
+	}
 
 	export function reset() {
 		//	fnEditorCode.reset();
@@ -51,7 +59,7 @@
 				</div>
 			</h3>
 		</div>
-<br/>
+		<br />
 		<div class="field">
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label">Url to make the request. The operation is similar to a proxy</label>
@@ -71,5 +79,14 @@
 
 	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
 		<AppVars {environment} isReadOnly={true}></AppVars>
+	</div>
+
+	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
+		<ApiTester
+			bind:this={fnApiTester}
+			bind:data={internal_data_test}
+			bind:method={row.method}
+			url={row.endpoint}
+		></ApiTester>
 	</div>
 </Tab>
