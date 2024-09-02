@@ -1,10 +1,9 @@
 <script>
 	// @ts-nocheck
 	import { onMount } from 'svelte';
-	import { Tab, EditorCode } from '@edwinspire/svelte-components';
+	import { Tab, EditorCode, RESTTester } from '@edwinspire/svelte-components';
 	import AppVars from '../app_vars.svelte';
-	import { parse } from 'svelte/compiler';
-	import ApiTester from '../../widgets/ApiTester/index.svelte';
+	import WarnPrd from './warning_production.svelte';	
 
 	export let code;
 	export let environment;
@@ -87,11 +86,12 @@
 	</div>
 
 	<div class={tabList[3].isActive ? '' : 'is-hidden'}>
-		<ApiTester
+		<WarnPrd bind:environment></WarnPrd>
+		<RESTTester
 			bind:this={fnApiTester}
 			bind:data={internal_data_test}
 			bind:method={row.method}
 			url={row.endpoint}
-		></ApiTester>
+		></RESTTester>
 	</div>
 </Tab>

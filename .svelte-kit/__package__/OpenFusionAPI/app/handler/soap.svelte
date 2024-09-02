@@ -2,12 +2,10 @@
 	// @ts-nocheck
 
 	import { onMount } from 'svelte';
-	import { Tab, EditorCode } from '@edwinspire/svelte-components';
+	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '../app_vars.svelte';
-	import ApiTester from '../../widgets/ApiTester/index.svelte';
-	import CodeHTML from '../../widgets/codeHTML.svelte';
+	import WarnPrd from './warning_production.svelte';
 	
-
 	/**
 	 * @type {any}
 	 */
@@ -15,11 +13,10 @@
 	export let environment;
 	export let row;
 
-	
 	let initial_code = '';
 	let code_desc = JSON.stringify({ 'describe()': true });
 	let fnApiTester;
-	let internal_data_test;	
+	let internal_data_test;
 
 	$: code, parseCode();
 	$: row.data_test, setDataTest();
@@ -37,7 +34,6 @@
 		initial_code = code;
 	}
 
-	
 	let tabList = [
 		{ label: 'Parameters', isActive: true },
 		{ label: 'Information', isActive: false },
@@ -54,7 +50,6 @@
 		},
 		RequestArgs: { dNum: 236.08 }
 	};
-
 
 	export function getCode() {
 		//fnEditorCode.apply();
@@ -101,7 +96,7 @@
 	</div>
 	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
 		Enter the parameters in json format like the following example:
-		<CodeHTML bind:jsonObject={jsonParams} />
+		<JSONView bind:jsonObject={jsonParams} />
 		<div style="margin-top: 1em;">
 			The variables with the following:
 			<ul class="list_params">
@@ -136,12 +131,13 @@
 		<AppVars {environment} isReadOnly={true}></AppVars>
 	</div>
 	<div class={tabList[3].isActive ? '' : 'is-hidden'}>
-		<ApiTester
+		<WarnPrd bind:environment></WarnPrd>
+		<RESTTester
 			bind:this={fnApiTester}
 			bind:data={internal_data_test}
 			bind:method={row.method}
 			url={row.endpoint}
-		></ApiTester>
+		></RESTTester>
 	</div>
 </Tab>
 

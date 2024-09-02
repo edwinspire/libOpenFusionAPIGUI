@@ -1,10 +1,9 @@
 <script>
 	// @ts-nocheck
 	import { onMount } from 'svelte';
-	import { Tab, EditorCode } from '@edwinspire/svelte-components';
-	import CodeHTML from '../../widgets/codeHTML.svelte';
-	import ApiTester from '../../widgets/ApiTester/index.svelte';
+	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '../app_vars.svelte';
+	import WarnPrd from './warning_production.svelte';
 
 	/**
 	 * @type {any}
@@ -124,12 +123,10 @@
 						>sequelize</a
 					>
 					documentation.
-
-					
 				</div>
 			</div>
 		</div>
-
+		<WarnPrd bind:environment></WarnPrd>
 		<EditorCode isReadOnly={false} title={'Query to be executed'} lang="sql" bind:code={query_code}
 		></EditorCode>
 	</div>
@@ -173,10 +170,9 @@
 					</p>
 
 					<div class="block">
-						If you send a parameter that is not present in the query you will get an error
-						similar to: <code>Column index out of range</code>
+						If you send a parameter that is not present in the query you will get an error similar
+						to: <code>Column index out of range</code>
 					</div>
-
 				</div>
 			{:else if row.method === 'POST'}
 				<div class="block">
@@ -191,7 +187,7 @@
 					</div>
 					<br />
 
-					<CodeHTML bind:jsonObject={sample_bind_post} />
+					<JSONView bind:jsonObject={sample_bind_post} />
 				</div>
 			{/if}
 		</div>
@@ -202,11 +198,14 @@
 	</div>
 
 	<div class={tabList[4].isActive ? '' : 'is-hidden'}>
-		<ApiTester
+
+		<WarnPrd bind:environment></WarnPrd>
+
+		<RESTTester
 			bind:this={fnApiTester}
 			bind:data={internal_data_test}
 			bind:method={row.method}
 			url={row.endpoint}
-		></ApiTester>
+		></RESTTester>
 	</div>
 </Tab>

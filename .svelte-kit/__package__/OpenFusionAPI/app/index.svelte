@@ -12,7 +12,7 @@
 		// @ts-ignore
 	} from '@edwinspire/svelte-components';
 	import { onMount } from 'svelte';
-	import { createEventDispatcher } from 'svelte';
+	//import { createEventDispatcher } from 'svelte';
 	import { userStore, getListFunction, listAppVars, url_paths } from '../utils.js';
 	import CellMethod from './cellMethod.svelte';
 	import CellAccess from './cellAccess.svelte';
@@ -25,7 +25,7 @@
 
 	import SelectEnvironment from '../widgets/Select.svelte';
 
-	const dispatch = createEventDispatcher();
+	//const dispatch = createEventDispatcher();
 	export let idapp = 0;
 
 	const default_row = {
