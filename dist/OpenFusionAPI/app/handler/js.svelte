@@ -16,7 +16,14 @@
 	$: row.data_test, setDataTest();
 
 	function setDataTest() {
-		internal_data_test = { ...row.data_test };
+
+		if(row.data_test){
+			internal_data_test = { ...row.data_test };
+		}else{
+			internal_data_test = {};
+		}
+
+		
 		console.log('internal_data_test', internal_data_test);
 	}
 

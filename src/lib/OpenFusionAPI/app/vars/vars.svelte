@@ -10,9 +10,8 @@
 	let edit_var_name = {};
 	let change_var_name = {};
 
-
 	export function getCode() {
-	//	console.log('getCode >>>> ', appVars);
+		//	console.log('getCode >>>> ', appVars);
 		return appVars;
 	}
 
@@ -21,16 +20,26 @@
 		appVars = appVars;
 	}
 
+	// Función para copiar el contenido al portapapeles
+	async function copyToClipboard(content) {
+		try {
+			await navigator.clipboard.writeText(content);
+			//alert('Texto copiado al portapapeles!');
+		} catch (err) {
+			console.error('Error al copiar al portapapeles: ', err);
+			//alert('Hubo un error al copiar.');
+		}
+	}
+
 	onMount(() => {
 		//setCode();
 	});
 </script>
 
 {#if appVars}
-	<Level
-		>
+	<Level>
 		<div slot="l01">{title}</div>
-		
+
 		<div slot="r01">
 			{#if !isReadOnly}
 				<div class="field has-addons">
@@ -132,6 +141,34 @@
 									</p>
 								{/if}
 							{/if}
+
+							<p class="control">
+								<button
+									class="button is-small"
+									title="Copy Variable Name"
+									on:click={() => {
+										copyToClipboard(varname);
+									}}
+								>
+									<span class="icon is-small has-text-info">
+										<i class="fa-solid fa-copy"></i>
+									</span>
+								</button>
+							</p>
+
+							<p class="control">
+								<button
+									class="button is-small has-text-success"
+									title="Copy Variable Value"
+									on:click={() => {
+										copyToClipboard(appVars[varname] ? JSON.stringify(appVars[varname]) : '');
+									}}
+								>
+									<span class="icon is-small">
+										<i class="fa-solid fa-clone"></i>
+									</span>
+								</button>
+							</p>
 						</div>
 					</span>
 
