@@ -2,16 +2,20 @@
 /** @typedef {typeof __propDef.events}  FetchEvents */
 /** @typedef {typeof __propDef.slots}  FetchSlots */
 export default class Fetch extends SvelteComponent<{
-    code: any;
     row: any;
-    environment: any;
-    getCode?: () => any;
     reset?: () => void;
+    getData?: () => {
+        code: string;
+        data_test: any;
+    };
 }, {
     [evt: string]: CustomEvent<any>;
 }, {}> {
     get reset(): () => void;
-    get getCode(): () => any;
+    get getData(): () => {
+        code: string;
+        data_test: any;
+    };
 }
 export type FetchProps = typeof __propDef.props;
 export type FetchEvents = typeof __propDef.events;
@@ -19,11 +23,12 @@ export type FetchSlots = typeof __propDef.slots;
 import { SvelteComponent } from "svelte";
 declare const __propDef: {
     props: {
-        code: any;
         row: any;
-        environment: any;
-        getCode?: () => any;
         reset?: () => void;
+        getData?: () => {
+            code: string;
+            data_test: any;
+        };
     };
     events: {
         [evt: string]: CustomEvent<any>;

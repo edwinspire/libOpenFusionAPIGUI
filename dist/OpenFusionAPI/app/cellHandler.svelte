@@ -1,13 +1,16 @@
 <script>
 	import BLabel from '../widgets/icon_label.svelte';
-	import { listHTTPMethods } from '../utils.js';
+	import { listHandlers } from '../utils.js';
 	import { onMount } from 'svelte';
 
+	/**
+	 * @type {any}
+	 */
 	export let value;
 	export let row = {};
 	export let props = {};
 
-	let css_class_method = '';
+	let css_class = '';
 	let css_icon = 'fas fa-home';
 
 	/**
@@ -15,12 +18,12 @@
 	 */
 	function setCSS(method) {
 		// @ts-ignore
-		let css_selected = listHTTPMethods[method];
+		let css_selected = listHandlers[method];
 		if (css_selected) {
-			css_class_method = css_selected.color;
+			css_class = css_selected.color;
 			css_icon = css_selected.icon;
 		} else {
-			css_class_method = '';
+			css_class = '';
 			css_icon = '';
 		}
 	}
@@ -31,5 +34,5 @@
 </script>
 
 <td>
-	<BLabel bind:color={css_class_method} bind:label={value} bind:icon={css_icon}></BLabel>
+	<BLabel bind:color={css_class} bind:label={value} bind:icon={css_icon}></BLabel>
 </td>

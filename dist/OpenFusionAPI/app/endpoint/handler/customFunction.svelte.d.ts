@@ -2,17 +2,21 @@
 /** @typedef {typeof __propDef.events}  CustomFunctionEvents */
 /** @typedef {typeof __propDef.slots}  CustomFunctionSlots */
 export default class CustomFunction extends SvelteComponent<{
-    code: any;
     row: {
         endpoint: any;
     };
-    environment: any;
-    getCode?: () => string;
     reset?: () => void;
+    getData?: () => {
+        code: string;
+        data_test: any;
+    };
 }, {
     [evt: string]: CustomEvent<any>;
 }, {}> {
-    get getCode(): () => string;
+    get getData(): () => {
+        code: string;
+        data_test: any;
+    };
     get reset(): () => void;
 }
 export type CustomFunctionProps = typeof __propDef.props;
@@ -21,13 +25,14 @@ export type CustomFunctionSlots = typeof __propDef.slots;
 import { SvelteComponent } from "svelte";
 declare const __propDef: {
     props: {
-        code: any;
         row: {
             endpoint: any;
         };
-        environment: any;
-        getCode?: () => string;
         reset?: () => void;
+        getData?: () => {
+            code: string;
+            data_test: any;
+        };
     };
     events: {
         [evt: string]: CustomEvent<any>;

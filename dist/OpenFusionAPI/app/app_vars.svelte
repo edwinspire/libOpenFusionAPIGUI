@@ -57,11 +57,6 @@
 		return Datavars;
 	}
 
-	let isOpen = false;
-
-	function toggleDetails() {
-		isOpen = !isOpen;
-	}
 
 	onMount(() => {
 		//setCode();

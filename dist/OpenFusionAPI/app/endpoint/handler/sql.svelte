@@ -2,15 +2,15 @@
 	// @ts-nocheck
 	import { onMount } from 'svelte';
 	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
-	import AppVars from '../app_vars.svelte';
+	import AppVars from '../../app_vars.svelte';
 	import WarnPrd from './warning_production.svelte';
+	import Endpoint from '../handler/endpoint.svelte';
 
 	/**
 	 * @type {any}
 	 */
-	export let code;
-	export let environment;
-	export let row;
+	//let code;
+	export let row = { endpoint: '', method: '', environment: '' };
 
 	let sample_bind_post_string = '{}';
 	let fnApiTester;
@@ -35,12 +35,12 @@
 	let query_code = 'SELECT 1+1;';
 	let internal_data_test;
 
-	$: code, ParseCode();
+	$: row.code, ParseCode();
 	$: row.data_test, setDataTest();
 
 	function setDataTest() {
 		internal_data_test = { ...row.data_test };
-		console.log('internal_data_test', internal_data_test);
+		//console.log('internal_data_test', internal_data_test);
 	}
 
 	export function reset() {
@@ -49,7 +49,7 @@
 
 	function ParseCode() {
 		try {
-			let params = JSON.parse(code || '{}');
+			let params = JSON.parse(row.code || '{}');
 
 			if (params && params.query) {
 				query_code = params.query;
@@ -58,6 +58,9 @@
 			if (params && params.config) {
 				params_code = JSON.stringify(params.config);
 			}
+
+	//		console.log(params, params_code, row);
+
 		} catch (error) {
 			params_code = '{}';
 			query_code = 'SELECT 1;';
@@ -67,7 +70,7 @@
 
 	export function getData() {
 		let data = { code: getCode(), data_test: internal_data_test };
-		console.log('> getData > SQL', data);
+	//	console.log('> getData > SQL', data);
 		return data;
 	}
 
@@ -76,10 +79,19 @@
 		let outcode = {};
 
 		try {
-			conf = typeof params_code === 'object' ? params_code : JSON.parse(params_code);
+	//		console.log('>>>>> ', typeof params_code, params_code);
+
+			if (typeof params_code === 'object') {
+				conf = params_code;
+			} else if (typeof params_code === 'string') {
+				conf = params_code;
+			} else {
+				conf = JSON.parse(params_code);
+			}
+
 			//return JSON.stringify(c, null, 2);
 		} catch (error) {
-			console.error('No se pudo parsear getCode', error, params_code);
+			console.warn('No se pudo parsear getCode SQL', error, params_code, typeof params_code);
 			conf = params_code;
 			//return code;
 		}
@@ -89,7 +101,7 @@
 			outcode.query = query_code;
 			return JSON.stringify(outcode, null, 2);
 		} catch (error) {
-			console.log(error);
+			console.warn(error);
 			return code;
 		}
 	}
@@ -126,7 +138,7 @@
 				</div>
 			</div>
 		</div>
-		<WarnPrd bind:environment></WarnPrd>
+		<WarnPrd bind:environment={row.environment}></WarnPrd>
 		<EditorCode isReadOnly={false} title={'Query to be executed'} lang="sql" bind:code={query_code}
 		></EditorCode>
 	</div>
@@ -194,12 +206,11 @@
 	</div>
 
 	<div class={tabList[3].isActive ? '' : 'is-hidden'}>
-		<AppVars {environment} isReadOnly={true}></AppVars>
+		<AppVars environment={row.environment} isReadOnly={true}></AppVars>
 	</div>
 
 	<div class={tabList[4].isActive ? '' : 'is-hidden'}>
-
-		<WarnPrd bind:environment></WarnPrd>
+		<WarnPrd bind:environment={row.environment}></WarnPrd>
 
 		<RESTTester
 			bind:this={fnApiTester}

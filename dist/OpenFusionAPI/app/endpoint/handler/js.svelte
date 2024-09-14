@@ -2,33 +2,29 @@
 	// @ts-nocheck
 	import { onMount } from 'svelte';
 	import { Tab, EditorCode, RESTTester } from '@edwinspire/svelte-components';
-	import AppVars from '../app_vars.svelte';
-	import WarnPrd from './warning_production.svelte';	
+	import AppVars from '../../app_vars.svelte';
+	import WarnPrd from './warning_production.svelte';
 
-	export let code;
-	export let environment;
 	export let row;
-	let internal_code = code;
+	let internal_code = '';
 	let fnApiTester;
 	let internal_data_test;
 
-	$: code, parseCode();
+	$: row.code, parseCode();
 	$: row.data_test, setDataTest();
 
 	function setDataTest() {
-
-		if(row.data_test){
+		if (row.data_test) {
 			internal_data_test = { ...row.data_test };
-		}else{
+		} else {
 			internal_data_test = {};
 		}
 
-		
 		console.log('internal_data_test', internal_data_test);
 	}
 
 	function parseCode() {
-		internal_code = code;
+		internal_code = row.code;
 	}
 
 	export function reset() {
@@ -42,9 +38,15 @@
 		{ label: 'Tester' }
 	];
 
-	export function getCode() {
+	function getCode() {
 		//    console.log(">> getCode en JS.SVELTE ", );
 		return internal_code;
+	}
+
+	export function getData() {
+		let data = { code: getCode(), data_test: internal_data_test };
+		//	console.log('> getData > SQL', data);
+		return data;
 	}
 
 	onMount(() => {});
@@ -89,11 +91,11 @@
 	</div>
 
 	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
-		<AppVars {environment} isReadOnly={true}></AppVars>
+		<AppVars bind:environment={row.environment} isReadOnly={true}></AppVars>
 	</div>
 
 	<div class={tabList[3].isActive ? '' : 'is-hidden'}>
-		<WarnPrd bind:environment></WarnPrd>
+		<WarnPrd bind:environment={row.environment}></WarnPrd>
 		<RESTTester
 			bind:this={fnApiTester}
 			bind:data={internal_data_test}

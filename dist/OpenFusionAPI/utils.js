@@ -174,3 +174,25 @@ export function validateURL(string_url) {
 		return false;
 	}
 }
+
+export function createEndpoint(method, app, resource, environment){
+	return `${method == 'WS' ? '/ws/' : '/api/'}${app}${resource}/${environment}`
+}
+
+export const listAccessMethod = [{value: 'Public', id: 0}, {value: 'Basic', id: 1}, {value: 'Bearer', id: 2}, {value: 'Basic & Bearer', id: 3}];
+export const listHTTPMethods = {
+	GET: { color: 'primary', icon: 'fa-brands fa-get-pocket' },
+	POST: { color: 'link', icon: 'fa-solid fa-signs-post' },
+	DELETE: { color: 'danger', icon: 'fa-solid fa-trash' },
+	PUT: { color: 'info', icon: 'fa-solid fa-file-pen' },
+	WS: { color: 'warning', icon: 'fa-solid fa-tower-broadcast' }
+};
+
+export const listHandlers = {
+	JS: { color: 'success', icon: 'fa-brands fa-js' },
+	SQL: { color: 'link', icon: 'fa-solid fa-database' },
+	FETCH: { color: 'primary', icon: 'fa-solid fa-globe' },
+	SOAP: { color: 'info', icon: 'fa-solid fa-soap' },
+	TEXT: { color: 'warning', icon: 'fa-regular fa-file-lines' },
+	FUNCTION: { color: 'danger', icon: 'fa-solid fa-robot' }
+};
