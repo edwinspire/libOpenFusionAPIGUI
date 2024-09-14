@@ -6,26 +6,16 @@
 	import AppVars from '../../app_vars.svelte';
 	import { parse } from 'svelte/compiler';
 	import WarnPrd from './warning_production.svelte';
-	import Endpoint from '../handler/endpoint.svelte';
+	//import Endpoint from '../handler/endpoint.svelte';
 
-	/**
-	 * @type {any}
-	 */
-	export let code;
-	export let environment;
 	export let row;
-	let internal_code = code;
+	let internal_code = '';
 	let fnApiTester;
 	let internal_data_test;
 
-	let tabList = [
-		{ label: 'Endpoint', isActive: true },
-		{ label: 'Url' },
-		{ label: 'App Variables' },
-		{ label: 'Tester' }
-	];
+	let tabList = [{ label: 'Url', isActive: true }, { label: 'App Variables' }, { label: 'Tester' }];
 
-	$: code, parseCode();
+	$: row.code, parseCode();
 	$: row.data_test, setDataTest();
 
 	function setDataTest() {
@@ -35,17 +25,23 @@
 
 	export function reset() {
 		//	fnEditorCode.reset();
-		internal_code = code;
+		internal_code = row.code;
 	}
 
-	export function getCode() {
+	export function getData() {
+		let data = { code: getCode(), data_test: internal_data_test };
+	//	console.log('> getData > SQL', data);
+		return data;
+	}
+
+	function getCode() {
 		//fnEditorCode.apply();
 		return internal_code;
 	}
 
 	function parseCode() {
-		internal_code = code;
-		console.log('>>>>>>>>', code, internal_code);
+		internal_code = row.code;
+		//	console.log('>>>>>>>>', code, internal_code);
 	}
 
 	onMount(() => {
@@ -55,10 +51,6 @@
 
 <Tab bind:tabs={tabList}>
 	<div class={tabList[0].isActive ? '' : 'is-hidden'}>
-		<Endpoint></Endpoint>
-	</div>
-
-	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
 		<div>
 			<h3 class="subtitle is-5">
 				<div class="icon-text">
@@ -87,12 +79,12 @@
 		</div>
 	</div>
 
-	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
-		<AppVars {environment} isReadOnly={true}></AppVars>
+	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
+		<AppVars bind:environment={row.environment} isReadOnly={true}></AppVars>
 	</div>
 
-	<div class={tabList[3].isActive ? '' : 'is-hidden'}>
-		<WarnPrd bind:environment></WarnPrd>
+	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
+		<WarnPrd bind:environment={row.environment}></WarnPrd>
 
 		<RESTTester
 			bind:this={fnApiTester}

@@ -100,8 +100,14 @@
 
 									fnSqlCode.reset();
 								} else if (row && row.handler == 'FETCH') {
-									value = fnFetchCode.getCode();
-									fnFetchCode.reset();
+									//value = fnFetchCode.getCode();
+
+									let v = fnFetchCode.getData();
+									value = v.code;
+									row.data_test = v.data_test;
+
+
+									// fnFetchCode.reset();
 								} else if (row && row.handler == 'FUNCTION') {
 									value = fnCustomFn.getCode();
 								} else if (row && row.handler == 'TEXT') {
@@ -160,12 +166,7 @@
 			{:else if row && row.handler == 'SQL'}
 				<SqlCode bind:this={fnSqlCode} bind:row />
 			{:else if row && row.handler == 'FETCH'}
-				<FetchCode
-					bind:this={fnFetchCode}
-					code={value}
-					bind:environment={row.environment}
-					bind:row
-				/>
+				<FetchCode bind:this={fnFetchCode} bind:row />
 			{:else if row && row.handler == 'FUNCTION'}
 				<CustomFn bind:this={fnCustomFn} code={value} bind:environment={row.environment} bind:row />
 			{:else if row && row.handler == 'TEXT'}
