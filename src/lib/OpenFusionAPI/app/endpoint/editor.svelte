@@ -86,11 +86,19 @@
 								alert('URL already exists.');
 							} else {
 								if (row && row.handler == 'JS') {
-									value = fnJsCode.getCode();
-									fnJsCode.reset();
+									//value = fnJsCode.getCode();
+									//fnJsCode.reset();
+									let v = fnJsCode.getData();
+									value = v.code;
+									row.data_test = v.data_test;
+
 								} else if (row && row.handler == 'SOAP') {
-									value = fnSoapCode.getCode();
-									fnSoapCode.reset();
+									//value = fnSoapCode.getCode();
+									//fnSoapCode.reset();
+									let v = fnSoapCode.getData();
+									value = v.code;
+									row.data_test = v.data_test;
+
 								} else if (row && row.handler == 'SQL') {
 									let v = fnSqlCode.getData();
 									value = v.code;
@@ -160,9 +168,9 @@
 
 		<div class={tabList[1].isActive ? '' : 'is-hidden'}>
 			{#if row && row.handler == 'JS'}
-				<JsCode bind:this={fnJsCode} code={value} bind:environment={row.environment} bind:row />
+				<JsCode bind:this={fnJsCode} bind:row />
 			{:else if row && row.handler == 'SOAP'}
-				<SoapCode bind:this={fnSoapCode} code={value} bind:environment={row.environment} bind:row />
+				<SoapCode bind:this={fnSoapCode} bind:row />
 			{:else if row && row.handler == 'SQL'}
 				<SqlCode bind:this={fnSqlCode} bind:row />
 			{:else if row && row.handler == 'FETCH'}
