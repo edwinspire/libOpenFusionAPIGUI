@@ -3,7 +3,7 @@ import uFetch from '@edwinspire/universal-fetch';
 import { writable } from 'svelte/store';
 import { PUBLIC_API_SERVER_HOST } from '$env/static/public';
 
-const host = PUBLIC_API_SERVER_HOST || '';
+const host = validateBaseUrl(PUBLIC_API_SERVER_HOST || '');
 
 export const url_paths = {
 	getfunctions: host + '/api/system/functions/prd',
@@ -84,6 +84,22 @@ export const getListFunction = async (
 	}
 };
 
+function validateBaseUrl(baseUrl) {
+	try {
+		// Intentamos crear una nueva instancia de URL con la baseUrl proporcionada
+		const url = new URL(baseUrl);
+
+		// Comprobamos si el protocolo es http o https para considerarla válida
+		if (url.protocol === 'http:' || url.protocol === 'https:') {
+			return baseUrl; // Es una base URL válida
+		}
+		return ''; // Si el protocolo no es válido
+	} catch (e) {
+		// Si hay un error al crear la URL, consideramos que la URL no es válida
+		return '';
+	}
+}
+
 export const getListHandler = async (/** @type {string} */ token) => {
 	let f = new uFetch();
 	f.setBearerAuthorization(token);
@@ -158,3 +174,25 @@ export function validateURL(string_url) {
 		return false;
 	}
 }
+
+export function createEndpoint(method, app, resource, environment){
+	return `${method == 'WS' ? '/ws/' : '/api/'}${app}${resource}/${environment}`
+}
+
+export const listAccessMethod = [{value: 'Public', id: 0}, {value: 'Basic', id: 1}, {value: 'Bearer', id: 2}, {value: 'Basic & Bearer', id: 3}];
+export const listHTTPMethods = {
+	GET: { color: 'primary', icon: 'fa-brands fa-get-pocket' },
+	POST: { color: 'link', icon: 'fa-solid fa-signs-post' },
+	DELETE: { color: 'danger', icon: 'fa-solid fa-trash' },
+	PUT: { color: 'info', icon: 'fa-solid fa-file-pen' },
+	WS: { color: 'warning', icon: 'fa-solid fa-tower-broadcast' }
+};
+
+export const listHandlers = {
+	JS: { color: 'success', icon: 'fa-brands fa-js' },
+	SQL: { color: 'link', icon: 'fa-solid fa-database' },
+	FETCH: { color: 'primary', icon: 'fa-solid fa-globe' },
+	SOAP: { color: 'info', icon: 'fa-solid fa-soap' },
+	TEXT: { color: 'warning', icon: 'fa-regular fa-file-lines' },
+	FUNCTION: { color: 'danger', icon: 'fa-solid fa-robot' }
+};

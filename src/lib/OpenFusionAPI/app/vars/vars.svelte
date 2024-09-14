@@ -145,9 +145,9 @@
 							<p class="control">
 								<button
 									class="button is-small"
-									title="Copy Variable Name"
-									on:click={() => {
-										copyToClipboard(varname);
+									title="Copy Name"
+									on:click={async () => {
+										await copyToClipboard(varname);
 									}}
 								>
 									<span class="icon is-small has-text-info">
@@ -159,13 +159,13 @@
 							<p class="control">
 								<button
 									class="button is-small has-text-success"
-									title="Copy Variable Value"
-									on:click={() => {
-										copyToClipboard(appVars[varname] ? JSON.stringify(appVars[varname]) : '');
+									title="Copy Value"
+									on:click={async () => {
+										await copyToClipboard(appVars[varname] ? JSON.stringify(appVars[varname]) : '');
 									}}
 								>
 									<span class="icon is-small">
-										<i class="fa-solid fa-clone"></i>
+										<i class="fa-regular fa-copy"></i>
 									</span>
 								</button>
 							</p>

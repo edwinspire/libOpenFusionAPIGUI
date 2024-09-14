@@ -5,7 +5,6 @@
 		PredictiveInput,
 		Table,
 		ColumnTypes,
-		DialogModal,
 		Level,
 		Tab,
 		sha256
@@ -16,14 +15,14 @@
 	import { userStore, getListFunction, listAppVars, url_paths } from '../utils.js';
 	import CellMethod from './cellMethod.svelte';
 	import CellAccess from './cellAccess.svelte';
-	import cellHandler from './handler/cellHandler/index.svelte';
+	import cellHandler from './cellHandler.svelte';
 	import cellPath from './cellPath.svelte';
 	import cellCacheTime from './cellCacheTime.svelte';
 	import { validateURL } from '../utils.js';
-
+	import EndPointEditor from './endpoint/editor.svelte';
 	import AppVars from './app_vars.svelte';
 
-	import SelectEnvironment from '../widgets/Select.svelte';
+	//	import SelectEnvironment from '../widgets/Select.svelte';
 
 	//const dispatch = createEventDispatcher();
 	export let idapp = 0;
@@ -165,6 +164,7 @@
 	 * @param {{ resource?: any; environment?: any; method?: any; idendpoint?: any; }} endpoint_value
 	 */
 	function checkEndpointConstraint(endpoint_value) {
+		/*
 		let check = endpoints.some((row) => {
 			//	console.log(endpoint_value, row);
 			return (
@@ -179,6 +179,7 @@
 			);
 		});
 		return !check;
+		*/
 	}
 
 	function reloadPage() {
@@ -671,14 +672,19 @@
 							cache_time: 0
 						};
 						*/
-						SelectedRow = { ...default_row };
+						console.log(app);
+						if (app && app.idapp && app.idapp.length > 0) {
+							SelectedRow = { ...default_row };
 
-						showEndpointEdit = true;
+							showEndpointEdit = true;
+						} else {
+							alert('No App selected');
+						}
 					}}
 					on:editrow={(e) => {
 						SelectedRow = { ...e.detail.data };
 						showEndpointEdit = true;
-						console.log(SelectedRow);
+						console.log('SelectedRow: ', SelectedRow);
 					}}
 				>
 					<span slot="l01"> Endpoints </span>
@@ -701,183 +707,48 @@
 	</div>
 {/if}
 
-<DialogModal
-	bind:Show={showEndpointEdit}
-	on:cancel={() => {
-		console.log('Ha cancelado');
-		//data = {};
-	}}
-	on:ok={() => {
-		//console.log('SelectedRow >>> ', SelectedRow);
-		SelectedRow.idapp = app.idapp;
-		SelectedRow.latest_updater = $userStore.iduser;
+<EndPointEditor
+	bind:showEditor={showEndpointEdit}
+	bind:row={SelectedRow}
+	{app}
+	on:data={(e) => {
+		console.log('EndPointEditor >>>> ', e);
 
-		if (validateResource && availableURL) {
-			SelectedRow.endpoint = `${SelectedRow.method == 'WS' ? '/ws/' : '/api/'}${app.app}${SelectedRow.resource}/${SelectedRow.environment}`;
+		let row_edited = e.detail.row;
 
-			console.log('SelectedRow: ', SelectedRow);
+		console.log(row_edited);
 
-			if (SelectedRow.idendpoint) {
-				// Es edición de endpoint
-				let found = endpoints.findIndex((element) => element.idendpoint == SelectedRow.idendpoint);
-				//		console.log('Se ha encontrado: ', found);
-				if (found >= 0) {
-					endpoints[found] = { ...SelectedRow };
-				}
-				//found = { ...SelectedRow };
-			} else {
-				// es nuevo endpoint
-				endpoints.unshift({
-					idapp: app.idapp,
-					idendpoint: undefined,
-					endpoint: SelectedRow.endpoint,
-					resource: SelectedRow.resource,
-					enabled: SelectedRow.enabled,
-					access: 0,
-					environment: SelectedRow.environment,
-					resource: SelectedRow.resource,
-					method: SelectedRow.method,
-					handler: 'NA',
-					cors: null,
-					code: '',
-					description: SelectedRow.description,
-					headers_test: {},
-					data_test: {},
-					rowkey: 0,
-					latest_updater: $userStore.iduser,
-					cache_time: 0
-				});
+		if (row_edited.idendpoint && row_edited.idendpoint.length > 10) {
+			// Es edición de endpoint
+			let found = endpoints.findIndex((element) => element.idendpoint == row_edited.idendpoint);
+			console.log('Se ha encontrado: ', found);
+			if (found >= 0) {
+				endpoints[found] = { ...row_edited };
 			}
-			/*
-			endpoints = endpoints.map((en) => {
-				return en;
-			});
-			*/
-
-			showEndpointEdit = false;
+			//found = { ...SelectedRow };
 		} else {
-			alert('The data has errors, please review it.');
+			// es nuevo endpoint
+			endpoints.unshift({
+				idapp: app.idapp,
+				idendpoint: undefined,
+				endpoint: row_edited.endpoint,
+				resource: row_edited.resource,
+				enabled: row_edited.enabled,
+				access: row_edited.access,
+				environment: row_edited.environment,
+				resource: row_edited.resource,
+				method: row_edited.method,
+				handler: row_edited.handler,
+				cors: row_edited.cors,
+				code: row_edited.code,
+				description: row_edited.description,
+				headers_test: row_edited.headers_test,
+				data_test: row_edited.data_test,
+				rowkey: 0,
+				latest_updater: $userStore.iduser,
+				cache_time: row_edited.cache_time
+			});
+			endpoints = endpoints; // Esto se hace para que se actualice la tabla
 		}
 	}}
->
-	<span slot="title">Endpoint Edit</span>
-
-	<div slot="body">
-		<input class="input" type="hidden" placeholder="Name" bind:value={SelectedRow.idendpoint} />
-
-		<div class="field is-horizontal">
-			<div class="field-label is-small">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Enabled</label>
-			</div>
-			<div class="field-body">
-				<div class="field">
-					<div class="control">
-						<label class="checkbox">
-							<input type="checkbox" bind:checked={SelectedRow.enabled} />
-						</label>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="field is-horizontal">
-			<div class="field-label is-small">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">Method</label>
-			</div>
-			<div class="field-body">
-				<div class="field">
-					<div class="control">
-						<CellMethod bind:value={SelectedRow.method} />
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="field">
-			<div class="field is-horizontal">
-				<div class="field-label is-small"><strong> API Resource: </strong></div>
-				<div class="field-body">
-					<div class="field is-expanded">
-						<div class="field has-addons">
-							<p class="control">
-								<!-- svelte-ignore a11y-missing-attribute -->
-								<a class="button is-small is-static">
-									{SelectedRow.method == 'WS' ? '/ws/' : '/api/'}{app.app}
-								</a>
-							</p>
-
-							<p class="control is-expanded">
-								<input
-									class="input is-small"
-									type="text"
-									placeholder="Resourse"
-									bind:value={SelectedRow.resource}
-								/>
-							</p>
-							<p class="control">
-								<!-- svelte-ignore a11y-missing-attribute -->
-								<a class="button is-small is-static"> / </a>
-							</p>
-							<p class="control">
-								<SelectEnvironment
-									bind:options={environment_list}
-									bind:option={SelectedRow.environment}
-									on:select={(e) => {
-										//	console.log(e);
-									}}
-								/>
-							</p>
-						</div>
-						<p class="help">
-							{#if validateResource}
-								<div class="icon-text is-small">
-									<span class="icon has-text-success">
-										<i class="fas fa-check-square" />
-									</span>
-									<span>Url Success</span>
-								</div>
-							{:else}
-								<div class="icon-text is-small">
-									<span class="icon has-text-danger">
-										<i class="fas fa-ban" />
-									</span>
-									<span>Url Invalid</span>
-								</div>
-							{/if}
-
-							{#if validateResource && availableURL}
-								<div class="icon-text is-small">
-									<span class="icon has-text-success">
-										<i class="fas fa-check-square" />
-									</span>
-									<span>Available URL</span>
-								</div>
-							{:else if validateResource && !availableURL}
-								<div class="icon-text is-small">
-									<span class="icon has-text-danger">
-										<i class="fas fa-ban" />
-									</span>
-									<span>Url not available</span>
-								</div>
-							{/if}
-						</p>
-					</div>
-				</div>
-			</div>
-		</div>
-
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label is-small">Description</label>
-			<div class="control">
-				<textarea
-					class="textarea is-small"
-					placeholder="Textarea"
-					bind:value={SelectedRow.description}
-				/>
-			</div>
-		</div>
-	</div>
-</DialogModal>
+></EndPointEditor>

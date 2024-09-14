@@ -2,12 +2,9 @@
 	 "use strict";
 	import SelectAccess from '../widgets/Select.svelte';
 	import { onMount } from 'svelte';
+	import { listAccessMethod } from "../utils.js";
 
-	/**
-	 * @type {any[]}
-	 */
-	let list = [{value: 'Public', id: 0}, {value: 'Basic', id: 1}, {value: 'Bearer', id: 2}, {value: 'Basic & Bearer', id: 3}];
-
+	
 	/**
 	 * @type {any}
 	 */
@@ -23,7 +20,7 @@
 <td>
 
 <SelectAccess
-bind:options={list}
+options={listAccessMethod}
 bind:option={value}
 on:select={(e) => {
 	console.log('Cambia', e, value);

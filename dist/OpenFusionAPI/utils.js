@@ -3,7 +3,7 @@ import uFetch from '@edwinspire/universal-fetch';
 import { writable } from 'svelte/store';
 import { PUBLIC_API_SERVER_HOST } from '$env/static/public';
 
-const host = PUBLIC_API_SERVER_HOST || '';
+const host = validateBaseUrl(PUBLIC_API_SERVER_HOST || '');
 
 export const url_paths = {
 	getfunctions: host + '/api/system/functions/prd',
@@ -83,6 +83,22 @@ export const getListFunction = async (
 		console.error(error);
 	}
 };
+
+function validateBaseUrl(baseUrl) {
+	try {
+		// Intentamos crear una nueva instancia de URL con la baseUrl proporcionada
+		const url = new URL(baseUrl);
+
+		// Comprobamos si el protocolo es http o https para considerarla válida
+		if (url.protocol === 'http:' || url.protocol === 'https:') {
+			return baseUrl; // Es una base URL válida
+		}
+		return ''; // Si el protocolo no es válido
+	} catch (e) {
+		// Si hay un error al crear la URL, consideramos que la URL no es válida
+		return '';
+	}
+}
 
 export const getListHandler = async (/** @type {string} */ token) => {
 	let f = new uFetch();
