@@ -106,7 +106,7 @@
 
 									//	console.log('>> fnSqlCode.getData() > ', row);
 
-									fnSqlCode.reset();
+									//fnSqlCode.reset();
 								} else if (row && row.handler == 'FETCH') {
 									//value = fnFetchCode.getCode();
 
@@ -117,7 +117,11 @@
 
 									// fnFetchCode.reset();
 								} else if (row && row.handler == 'FUNCTION') {
-									value = fnCustomFn.getCode();
+									//value = fnCustomFn.getCode();
+									let v = fnCustomFn.getData();
+									value = v.code;
+									row.data_test = v.data_test;
+
 								} else if (row && row.handler == 'TEXT') {
 									value = fnTextFn.getCode();
 									fnTextFn.reset();
@@ -176,7 +180,7 @@
 			{:else if row && row.handler == 'FETCH'}
 				<FetchCode bind:this={fnFetchCode} bind:row />
 			{:else if row && row.handler == 'FUNCTION'}
-				<CustomFn bind:this={fnCustomFn} code={value} bind:environment={row.environment} bind:row />
+				<CustomFn bind:this={fnCustomFn} bind:row />
 			{:else if row && row.handler == 'TEXT'}
 				<TextCode bind:this={fnTextFn} code={value} bind:environment={row.environment} bind:row />
 			{:else}

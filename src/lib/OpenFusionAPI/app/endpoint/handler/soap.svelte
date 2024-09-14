@@ -5,12 +5,7 @@
 	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 	import WarnPrd from './warning_production.svelte';
-	
-	/**
-	 * @type {any}
-	 */
-	export let code;
-	export let environment;
+
 	export let row;
 
 	let initial_code = '';
@@ -18,7 +13,7 @@
 	let fnApiTester;
 	let internal_data_test;
 
-	$: code, parseCode();
+	$: row.code, parseCode();
 	$: row.data_test, setDataTest();
 
 	function setDataTest() {
@@ -31,7 +26,7 @@
 	}
 
 	function parseCode() {
-		initial_code = code;
+		initial_code = row.code;
 	}
 
 	let tabList = [
@@ -51,10 +46,16 @@
 		RequestArgs: { dNum: 236.08 }
 	};
 
-	export function getCode() {
+	function getCode() {
 		//fnEditorCode.apply();
 		//return fnEditorCode.getCode();
 		return initial_code;
+	}
+
+	export function getData() {
+		let data = { code: getCode(), data_test: internal_data_test };
+		//	console.log('> getData > SQL', data);
+		return data;
 	}
 
 	onMount(() => {
@@ -128,10 +129,10 @@
 		</div>
 	</div>
 	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
-		<AppVars {environment} isReadOnly={true}></AppVars>
+		<AppVars bind:environment={row.environment} isReadOnly={true}></AppVars>
 	</div>
 	<div class={tabList[3].isActive ? '' : 'is-hidden'}>
-		<WarnPrd bind:environment></WarnPrd>
+		<WarnPrd bind:environment={row.environment}></WarnPrd>
 		<RESTTester
 			bind:this={fnApiTester}
 			bind:data={internal_data_test}

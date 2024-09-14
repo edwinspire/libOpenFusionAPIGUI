@@ -28,25 +28,24 @@
 	let selection = '';
 
 	/**
-	 * @type {any}
-	 */
-	export let environment;
-	/**
-	 * @type {any}
-	 */
-	export let code;
-	/**
 	 * @type {{ endpoint: any; }}
 	 */
 	export let row;
 
-	export function getCode() {
+
+	export function getData() {
+		let data = { code: getCode(), data_test: internal_data_test };
+	//	console.log('> getData > SQL', data);
+		return data;
+	}
+
+	function getCode() {
 		//fnEditorCode.apply();
 		return selection;
 	}
 
 	export function reset() {
-		selection = code;
+		selection = row.code;
 	}
 
 	listFunctionStoreDev.subscribe((value) => {
@@ -65,14 +64,14 @@
 	});
 
 	function setCode() {
-		selection = code;
+		selection = row.code;
 	}
 
-	$: code, setCode();
+	$: row.code, setCode();
 
 	onMount(() => {
-		//		console.log(code);
-		switch (environment) {
+				
+		switch (row.environment) {
 			case 'dev':
 				functions = functionsDev;
 				break;
@@ -83,6 +82,9 @@
 				functions = functionsPrd;
 				break;
 		}
+
+		console.warn('CUSTOM FN: ', row.environment, functions);
+
 	});
 </script>
 
