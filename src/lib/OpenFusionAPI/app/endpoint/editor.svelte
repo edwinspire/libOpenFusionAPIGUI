@@ -123,8 +123,11 @@
 									row.data_test = v.data_test;
 
 								} else if (row && row.handler == 'TEXT') {
-									value = fnTextFn.getCode();
-									fnTextFn.reset();
+									//value = fnTextFn.getCode();
+									//fnTextFn.reset();
+									let v = fnTextFn.getData();
+									value = v.code;
+									row.data_test = v.data_test;
 								}
 
 								row.code = value;
@@ -182,7 +185,7 @@
 			{:else if row && row.handler == 'FUNCTION'}
 				<CustomFn bind:this={fnCustomFn} bind:row />
 			{:else if row && row.handler == 'TEXT'}
-				<TextCode bind:this={fnTextFn} code={value} bind:environment={row.environment} bind:row />
+				<TextCode bind:this={fnTextFn} bind:row />
 			{:else}
 				<div>No Handler</div>
 			{/if}

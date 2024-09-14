@@ -4,14 +4,8 @@
 	import { Tab, EditorCode, RESTTester } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 	import SelectMimeType from '../../../widgets/Select.svelte';
-	import WarnPrd from './warning_production.svelte';	
+	import WarnPrd from './warning_production.svelte';
 
-
-	/**
-	 * @type {any}
-	 */
-	export let code;
-	export let environment;
 	export let row;
 	/**
 	 * @type {EditorCode}
@@ -60,19 +54,23 @@
 		{ id: 'text/x-component', value: 'text/x-component', enabled: true }
 	];
 
-	let tabList = [{ label: 'Payload', isActive: true }, { label: 'App Variables' }, 		{ label: 'Tester' }];
+	let tabList = [
+		{ label: 'Payload', isActive: true },
+		{ label: 'App Variables' },
+		{ label: 'Tester' }
+	];
 
 	/**
 	 * @type {EditorCode}
 	 */
 	//let fnEditorCode2;
 	let mimeType = 'text/plain';
-	let payload = code;
+	let payload = row.code;
 	let langEditor = 'txt';
-	$: code, ParseCode();
+	$: row.code, ParseCode();
 	$: row.data_test, setDataTest();
 
-	 function setDataTest() {
+	function setDataTest() {
 		internal_data_test = { ...row.data_test };
 		console.log('internal_data_test', internal_data_test);
 	}
@@ -82,11 +80,9 @@
 		ParseCode();
 	}
 
-
-
 	function ParseCode() {
 		try {
-			let params = JSON.parse(code || '{}');
+			let params = JSON.parse(row.code || '{}');
 
 			if (params && params.payload) {
 				payload = params.payload;
@@ -113,8 +109,14 @@
 			return JSON.stringify(outcode, null, 2);
 		} catch (error) {
 			console.log(error);
-			return code;
+			return row.code;
 		}
+	}
+
+	export function getData() {
+		let data = { code: getCode(), data_test: internal_data_test };
+		//	console.log('> getData > SQL', data);
+		return data;
 	}
 
 	onMount(() => {
@@ -167,17 +169,15 @@
 			</div>
 		</div>
 
-		 <EditorCode bind:lang={langEditor} bind:code={payload}></EditorCode> 
-		
+		<EditorCode bind:lang={langEditor} bind:code={payload}></EditorCode>
 	</div>
 
 	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
-		<AppVars {environment} isReadOnly={true}></AppVars>
+		<AppVars bind:environment={row.environment} isReadOnly={true}></AppVars>
 	</div>
 
 	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
-
-		<WarnPrd bind:environment></WarnPrd>
+		<WarnPrd bind:environment={row.environment}></WarnPrd>
 
 		<RESTTester
 			bind:this={fnApiTester}
@@ -186,5 +186,4 @@
 			url={row.endpoint}
 		></RESTTester>
 	</div>
-
 </Tab>
