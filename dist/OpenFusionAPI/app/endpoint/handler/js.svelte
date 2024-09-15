@@ -20,7 +20,7 @@
 			internal_data_test = {};
 		}
 
-		console.log('internal_data_test', internal_data_test);
+	//	console.log('internal_data_test', internal_data_test);
 	}
 
 	function parseCode() {
@@ -101,6 +101,7 @@
 			bind:data={internal_data_test}
 			bind:method={row.method}
 			url={row.endpoint}
+			methodDisabled={true}
 		></RESTTester>
 	</div>
 </Tab>

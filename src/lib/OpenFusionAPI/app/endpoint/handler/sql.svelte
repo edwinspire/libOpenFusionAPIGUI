@@ -217,6 +217,7 @@
 			bind:data={internal_data_test}
 			bind:method={row.method}
 			url={row.endpoint}
+			methodDisabled={true}
 		></RESTTester>
 	</div>
 </Tab>

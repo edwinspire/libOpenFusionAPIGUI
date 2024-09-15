@@ -72,7 +72,7 @@
 
 	function setDataTest() {
 		internal_data_test = { ...row.data_test };
-		console.log('internal_data_test', internal_data_test);
+		//console.log('internal_data_test', internal_data_test);
 	}
 
 	export function reset() {
@@ -184,6 +184,7 @@
 			bind:data={internal_data_test}
 			bind:method={row.method}
 			url={row.endpoint}
+			methodDisabled={true}
 		></RESTTester>
 	</div>
 </Tab>
