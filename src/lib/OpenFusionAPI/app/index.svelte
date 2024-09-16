@@ -150,8 +150,9 @@
 
 	$: idapp, getApp();
 	// @ts-ignore
-	$: SelectedRow.resource, checkResource();
+	//$: SelectedRow.resource, checkResource();
 
+	/*
 	function checkResource() {
 		// @ts-ignore
 		validateResource = validateURL(SelectedRow.resource);
@@ -159,27 +160,15 @@
 
 		availableURL = checkEndpointConstraint(SelectedRow);
 	}
+	*/
 
-	/**
-	 * @param {{ resource?: any; environment?: any; method?: any; idendpoint?: any; }} endpoint_value
-	 */
-	function checkEndpointConstraint(endpoint_value) {
-		/*
-		let check = endpoints.some((row) => {
-			//	console.log(endpoint_value, row);
-			return (
-				// @ts-ignore
-				endpoint_value.resource == row.resource &&
-				// @ts-ignore
-				endpoint_value.environment == row.environment &&
-				// @ts-ignore
-				endpoint_value.method == row.method &&
-				// @ts-ignore
-				endpoint_value.idendpoint != row.idendpoint
-			);
+	function checkChangesOnCache(cache_list) {
+		return endpoints.some((item) => {
+			//	console.log(item);
+			return cache_list.some((element) => {
+				return element.url == item.endpoint && item.cache_size != element.bytes;
+			});
 		});
-		return !check;
-		*/
 	}
 
 	function reloadPage() {
@@ -222,29 +211,39 @@
 
 				let cache_list = await get_list_cache.json();
 
-				//console.log('>> cache_list >> ', cache_list, JSON.stringify(cache_list));
+				console.log('>> cache_list >> ', checkChangesOnCache(cache_list));
 
-				// Verificar si hay cambios en los datos, si es así actualizar la tabla
-				if (cache_list && Array.isArray(cache_list)) {
-					let hash_data_cache_now = sha256(
-						JSON.stringify(cache_list.length > 0 ? cache_list : '0')
-					);
+				if (cache_list && Array.isArray(cache_list) && cache_list.length == 0) {
+					// buscamos si hay algún registro con cache mayor que cero
+					let exists_cache = endpoints.some((item) => {
+						return item.cache_size > 0;
+					});
 
-					if (hash_data_cache !== hash_data_cache_now) {
-						hash_data_cache = hash_data_cache_now;
+					if (exists_cache) {
+						console.log('SE DEBE BORRAR LA CACHE');
+
 						endpoints = endpoints.map((item) => {
-							let rItem = item;
-							let data_cache = cache_list.find((element) => element.url == item.endpoint);
-							rItem['cache_size'] = data_cache ? data_cache.bytes : 0;
-							return rItem;
+							item.cache_size = 0;
+							return item;
 						});
 					}
+				} else if (checkChangesOnCache(cache_list)) {
+					// Verificar si hay cambios en los datos, si es así actualizar la tabla
+					//console.warn('>>>>>>>>>>>--');
+
+					endpoints = endpoints.map((item) => {
+						let rItem = item;
+						let data_cache = cache_list.find((element) => element.url == item.endpoint);
+						rItem['cache_size'] = data_cache ? data_cache.bytes : 0;
+						return rItem;
+					});
 				}
 
 				//
 				//	console.log(cache_list, endpoints);
 			}
 		} catch (error) {
+			console.error(error);
 			// @ts-ignore
 			alert(error.message);
 		}
@@ -267,7 +266,7 @@
 
 				let get_list_clear_result = await get_list_clear.json();
 
-				console.log('Clear Cache', get_list_clear_result);
+				//	console.log('Clear Cache', get_list_clear_result);
 
 				alert('Cache deleted');
 			} else {
@@ -316,7 +315,7 @@
 			if (app && app.vars && typeof app.vars === 'object') {
 				listAppVars.set(app.vars);
 
-				console.log('===>>>> VARS', app.vars);
+				//				console.log('===>>>> VARS', app.vars);
 			} else if (app && app.vars && typeof app.vars === 'string') {
 				try {
 					listAppVars.set(JSON.parse(app.vars));
@@ -331,7 +330,7 @@
 			// @ts-ignore
 			getListFunction($userStore.token, app.app, app.environment);
 
-			console.log('showAppData >> ', app.endpoints);
+			//console.log('showAppData >> ', app.endpoints);
 
 			if (app.endpoints) {
 				endpoints = app.endpoints.map((/** @type {{ environment: any; resource: any; }} */ ax) => {
@@ -340,7 +339,7 @@
 						...ax
 					};
 				});
-				console.log(endpoints);
+				//	console.log(endpoints);
 			}
 		}
 	}
@@ -446,7 +445,7 @@
 			classInput="is-small"
 			bind:options
 			on:select={(/** @type {{ detail: { value: number; }; }} */ e) => {
-				console.log('>>>>>> Application > ', $userStore, userStore);
+				// console.log('>>>>>> Application > ', $userStore, userStore);
 
 				if ($userStore) {
 					idapp = e.detail.value;
@@ -509,7 +508,7 @@
 							if (confirm('Do you want to save the application data?')) {
 								app.vars = fnVars.getCode();
 
-								console.log('---> fnVars ', fnVars.getCode(), app);
+								//	console.log('---> fnVars ', fnVars.getCode(), app);
 
 								/*
 								app.vars.dev = fnVarsDev.getCode();
@@ -684,7 +683,7 @@
 					on:editrow={(e) => {
 						SelectedRow = { ...e.detail.data };
 						showEndpointEdit = true;
-						console.log('SelectedRow: ', SelectedRow);
+						//	console.log('SelectedRow: ', SelectedRow);
 					}}
 				>
 					<span slot="l01"> Endpoints </span>
@@ -712,16 +711,16 @@
 	bind:row={SelectedRow}
 	{app}
 	on:data={(e) => {
-		console.log('EndPointEditor >>>> ', e);
+		// console.log('EndPointEditor >>>> ', e);
 
 		let row_edited = e.detail.row;
 
-		console.log(row_edited);
+		//	console.log(row_edited);
 
 		if (row_edited.idendpoint && row_edited.idendpoint.length > 10) {
 			// Es edición de endpoint
 			let found = endpoints.findIndex((element) => element.idendpoint == row_edited.idendpoint);
-			console.log('Se ha encontrado: ', found);
+			//	console.log('Se ha encontrado: ', found);
 			if (found >= 0) {
 				endpoints[found] = { ...row_edited };
 			}

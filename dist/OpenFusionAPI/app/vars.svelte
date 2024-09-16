@@ -15,7 +15,7 @@
 	let newVar = '';
 
 	listAppVars.subscribe((value) => {
-		console.log('listAppVars ->>>>', value);
+		//console.log('listAppVars ->>>>', value);
 		// @ts-ignore
 		Datavars = value || {};
 	});
@@ -25,7 +25,7 @@
 		//return fnEditorCode.getCode();
 		let codes = {};
 		
-		console.log('>>> Datavars >>>', Datavars);
+		//console.log('>>> Datavars >>>', Datavars);
 
 		/*
 		Object.keys(fnEditorCodes).forEach((key) => {

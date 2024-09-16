@@ -9,7 +9,7 @@
 	let Datavars = {};
 
 	listAppVars.subscribe((value) => {
-		console.log('>>>>> listAppVars ->>>>', value);
+//		console.log('>>>>> listAppVars ->>>>', value);
 		// @ts-ignore
 		Datavars = value || {};
 		//setCode();
@@ -53,7 +53,7 @@
 	}
 
 	export function getCode() {
-		console.log('getCode >>>> ', Datavars);
+//		console.log('getCode >>>> ', Datavars);
 		return Datavars;
 	}
 
