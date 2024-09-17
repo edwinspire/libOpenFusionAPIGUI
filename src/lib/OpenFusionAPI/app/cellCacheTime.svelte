@@ -33,7 +33,12 @@
 		<div class="control">
 			{#if row && row.cache_size &&  row.cache_size > 0}
 				<!-- svelte-ignore a11y-missing-attribute -->
-			<a class="button is-small has-text-success"> {row.cache_size} KB </a>
+			<a class="button is-small has-text-success"> <span class="icon">
+				
+				<i class="fa-solid fa-hourglass-end fa-spin"></i>
+			  </span>
+			  <span>{row.cache_size} KB</span> </a>
+			
 
 			{:else}
 			<!-- svelte-ignore a11y-missing-attribute -->
