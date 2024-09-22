@@ -42,7 +42,7 @@
 
 			{:else}
 			<!-- svelte-ignore a11y-missing-attribute -->
-			<a class="button is-small"> 0 KB </a>
+			<a class="button is-small"> 0.0000 KB </a>
 			{/if}
 		</div>
 	</div>
