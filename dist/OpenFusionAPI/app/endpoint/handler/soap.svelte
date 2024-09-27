@@ -66,14 +66,6 @@
 <Tab bind:tabs={tabList}>
 	<div class={tabList[0].isActive ? '' : 'is-hidden'}>
 		<div>
-			<h3 class="subtitle is-5">
-				<div class="icon-text">
-					<span class="icon has-text-info">
-						<i class="fa-solid fa-link"></i>
-					</span>
-					<span>{row.endpoint}</span>
-				</div>
-			</h3>
 			<div>Service connection parameters.</div>
 		</div>
 

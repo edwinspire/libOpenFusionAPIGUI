@@ -32,10 +32,9 @@
 	 */
 	export let row;
 
-
 	export function getData() {
 		let data = { code: getCode(), data_test: internal_data_test };
-	//	console.log('> getData > SQL', data);
+		//	console.log('> getData > SQL', data);
 		return data;
 	}
 
@@ -70,7 +69,6 @@
 	$: row.code, setCode();
 
 	onMount(() => {
-				
 		switch (row.environment) {
 			case 'dev':
 				functions = functionsDev;
@@ -84,22 +82,10 @@
 		}
 
 		console.warn('CUSTOM FN: ', row.environment, functions);
-
 	});
 </script>
 
 <div>
-	<div>
-		<h3 class="subtitle is-5">
-			<div class="icon-text">
-				<span class="icon has-text-info">
-					<i class="fa-solid fa-link"></i>
-				</span>
-				<span>{row.endpoint}</span>
-			</div>
-		</h3>
-	</div>
-
 	<div class="content is-small">Use the selected function to return a response.</div>
 
 	<div class="field is-horizontal">

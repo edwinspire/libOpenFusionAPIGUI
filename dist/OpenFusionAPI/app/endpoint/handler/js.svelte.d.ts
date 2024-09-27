@@ -30,6 +30,8 @@ declare const __propDef: {
             data_test: any;
         };
     };
+    /** @typedef {typeof __propDef.events}  JsEvents */
+    /** @typedef {typeof __propDef.slots}  JsSlots */
     events: {
         [evt: string]: CustomEvent<any>;
     };

@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { EditorCode, Level } from '@edwinspire/svelte-components';
+	import { EditorCode, Level, copyTextToClipboard } from '@edwinspire/svelte-components';
 
 	export let isReadOnly = false;
 	export let showCode = false;
@@ -9,6 +9,8 @@
 	let new_var_name = '';
 	let edit_var_name = {};
 	let change_var_name = {};
+	let classAnimationCopyName = '';
+	let classAnimationCopyValue = '';
 
 	export function getCode() {
 		//	console.log('getCode >>>> ', appVars);
@@ -18,17 +20,6 @@
 	function removeVar(varName) {
 		delete appVars[varName];
 		appVars = appVars;
-	}
-
-	// Función para copiar el contenido al portapapeles
-	async function copyToClipboard(content) {
-		try {
-			await navigator.clipboard.writeText(content);
-			//alert('Texto copiado al portapapeles!');
-		} catch (err) {
-			console.error('Error al copiar al portapapeles: ', err);
-			//alert('Hubo un error al copiar.');
-		}
 	}
 
 	onMount(() => {
@@ -147,11 +138,22 @@
 									class="button is-small"
 									title="Copy Name"
 									on:click={async () => {
-										await copyToClipboard(varname);
+										let rc = await copyTextToClipboard(varname);
+										console.log(rc);
+										if (rc.result) {
+											classAnimationCopyName = varname;
+											setTimeout(() => {
+												classAnimationCopyName = '';
+											}, 1500);
+										}
 									}}
 								>
 									<span class="icon is-small has-text-info">
-										<i class="fa-solid fa-copy"></i>
+										<i
+											class="fa-solid fa-copy {classAnimationCopyName == varname
+												? ' fa-shake '
+												: ''}"
+										></i>
 									</span>
 								</button>
 							</p>
@@ -161,11 +163,24 @@
 									class="button is-small has-text-success"
 									title="Copy Value"
 									on:click={async () => {
-										await copyToClipboard(appVars[varname] ? JSON.stringify(appVars[varname]) : '');
+										let rc = await copyTextToClipboard(
+											appVars[varname] ? JSON.stringify(appVars[varname]) : ''
+										);
+										console.log(rc);
+										if (rc.result) {
+											classAnimationCopyValue = varname;
+											setTimeout(() => {
+												classAnimationCopyValue = '';
+											}, 1500);
+										}
 									}}
 								>
 									<span class="icon is-small">
-										<i class="fa-regular fa-copy"></i>
+										<i
+											class="fa-regular fa-copy {classAnimationCopyValue == varname
+												? ' fa-shake '
+												: ''}"
+										></i>
 									</span>
 								</button>
 							</p>

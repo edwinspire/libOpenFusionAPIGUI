@@ -59,8 +59,7 @@
 				params_code = JSON.stringify(params.config);
 			}
 
-	//		console.log(params, params_code, row);
-
+			//		console.log(params, params_code, row);
 		} catch (error) {
 			params_code = '{}';
 			query_code = 'SELECT 1;';
@@ -70,7 +69,7 @@
 
 	export function getData() {
 		let data = { code: getCode(), data_test: internal_data_test };
-	//	console.log('> getData > SQL', data);
+		//	console.log('> getData > SQL', data);
 		return data;
 	}
 
@@ -79,7 +78,7 @@
 		let outcode = {};
 
 		try {
-	//		console.log('>>>>> ', typeof params_code, params_code);
+			//		console.log('>>>>> ', typeof params_code, params_code);
 
 			if (typeof params_code === 'object') {
 				conf = params_code;
@@ -116,15 +115,6 @@
 <Tab bind:tabs={tabList}>
 	<div class={tabList[0].isActive ? '' : 'is-hidden'}>
 		<div>
-			<h3 class="subtitle is-5">
-				<div class="icon-text">
-					<span class="icon has-text-info">
-						<i class="fa-solid fa-link"></i>
-					</span>
-					<span>{row.endpoint}</span>
-				</div>
-			</h3>
-
 			<div>
 				<div class="content is-small">
 					The parameters must have a name like <span style="font-style: oblique; font-weight: bold;"
