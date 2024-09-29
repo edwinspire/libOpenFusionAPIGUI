@@ -12,6 +12,13 @@
 	let code_desc = JSON.stringify({ 'describe()': true });
 	let fnApiTester;
 	let internal_data_test;
+	let code_sample_options = {
+		wsdl_options: {
+			strictSSL: true,
+			rejectUnauthorized: false
+			//secureOptions: constants.SSL_OP_NO_TLSv1_2,
+		}
+	};
 
 	$: row.code, parseCode();
 	$: row.data_test, setDataTest();
@@ -109,14 +116,39 @@
 					is replaced by the data sent in the Query. When using <strong>POST</strong> the parameter can
 					be sent directly in the Body.
 				</li>
+				<li>
+					<strong>options:</strong> additional options passed to soap client. By example:
+					<JSONView bind:jsonObject={code_sample_options} />
+				</li>
 			</ul>
 			<br />
+
 			<div class="block">
-				If you want to <strong>get description</strong> of the SOAP service, you can send the
-				following JSON request:
-				<code>
-					{code_desc}
-				</code>
+				<div class="icon-text">
+					<span class="icon has-text-warning">
+						<i class="fas fa-exclamation-triangle"></i>
+					</span>
+					<span
+						>Warning: The parameters configured here will override those that the user sends through
+						the service.</span
+					>
+				</div>
+			</div>
+
+			<br />
+			<div class="block">
+				<div class="icon-text">
+					<span class="icon has-text-success">
+						<i class="fas fa-info-circle"></i>
+					</span>
+					<span
+						>If you want to <strong>get description</strong> of the SOAP service, you can send the
+						following JSON request:
+						<code>
+							{code_desc}
+						</code></span
+					>
+				</div>
 			</div>
 		</div>
 	</div>
