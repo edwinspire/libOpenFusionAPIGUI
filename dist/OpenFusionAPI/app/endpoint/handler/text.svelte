@@ -65,7 +65,7 @@
 	 */
 	//let fnEditorCode2;
 	let mimeType = 'text/plain';
-	let payload = row.code;
+	let payload = '';
 	let langEditor = 'txt';
 	$: row.code, ParseCode();
 	$: row.data_test, setDataTest();
@@ -81,8 +81,15 @@
 	}
 
 	function ParseCode() {
+
+		console.log('>> ParseCode >', row.code);
+
 		try {
 			let params = JSON.parse(row.code || '{}');
+
+
+			console.log('>> ParseCode >', row.code, params);
+
 
 			if (params && params.payload) {
 				payload = params.payload;
