@@ -73,6 +73,30 @@
 					about the request made by the client, such as URL parameters, headers, body data, and more.
 				</li>
 				<li>
+					<strong>$_GET_INTERNAL_URL_:</strong> Function that allows obtaining the full path of an
+					OFAPI endpoint.
+					<br /> Example:
+					<code
+						>let relative_path = '/api/test/ap001';
+						<br />let fullURL = $_GET_INTERNAL_URL_(relative_path);
+						<br />// $_GET_INTERNAL_URL_ return 'http://localhost:3000/api/test/ap001'
+					</code>
+				</li>
+				<li>
+					<strong>$_FETCH_OFAPI_:</strong> Build a <a href="https://github.com/edwinspire/universal-fetch/">uFetch </a> intance. 
+					<br/>
+					The url can be absolute or relative. When it is relative, it internally repoints to the port used by OFAPI.
+					<br />Example:
+					<code>
+						
+						let url = 'http://example.net/api/test';
+						<br />
+						let fetch_instance =  $_FETCH_OFAPI_(url);
+						
+						</code
+					>
+				</li>
+				<li>
 					<strong>$_SECUENTIAL_PROMISES_:</strong> PromiseSequence class. More information at
 					<a href="https://github.com/edwinspire/sequential-promises">sequential-promises</a>.
 				</li>
