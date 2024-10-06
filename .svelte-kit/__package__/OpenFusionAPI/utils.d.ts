@@ -24,10 +24,12 @@ export const listFunctionStoreDev: import("svelte/store").Writable<{}>;
 export const listFunctionStoreQA: import("svelte/store").Writable<{}>;
 export const listFunctionStorePRD: import("svelte/store").Writable<{}>;
 export const listAppVars: import("svelte/store").Writable<{}>;
+export const storeCacheSize: import("svelte/store").Writable<{}>;
 export function formatJsonForHtmlCode(json: any): string;
 export function getListFunction(token: string, appName: string): Promise<void>;
 export function getListHandler(token: string): Promise<void>;
 export function getListMethods(token: string): Promise<void>;
+export function getCacheSize(app_name: any, token: any): Promise<void>;
 export namespace css_handlers {
     namespace FETCH {
         let css: string;

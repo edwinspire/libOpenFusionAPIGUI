@@ -34,5 +34,7 @@
 </script>
 
 <td>
-	<BLabel bind:color={css_class} bind:label={value} bind:icon={css_icon}></BLabel>
+	{#if row.method !== 'WS'}
+		<BLabel bind:color={css_class} bind:label={value} bind:icon={css_icon}></BLabel>
+	{/if}
 </td>

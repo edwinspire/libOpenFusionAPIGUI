@@ -29,6 +29,7 @@ export const listFunctionStoreDev = writable({});
 export const listFunctionStoreQA = writable({});
 export const listFunctionStorePRD = writable({});
 export const listAppVars = writable({});
+export const storeCacheSize = writable({});
 
 export const formatJsonForHtmlCode = (/** @type {any} */ json) => {
 	return JSON.stringify(json, null, 2).replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;');
@@ -146,6 +147,25 @@ export const getListMethods = async (/** @type {string} */ token) => {
 	}
 };
 
+export const getCacheSize = async (app_name, token) => {
+	let uf = new uFetch();
+	//uf.setBearerAuthorization(token);
+	try {
+		//      console.log("getListApps > ", $userStore, uf);
+		if (app_name) {
+			let get_list_cache = await uf.GET({
+				url: url_paths.getCacheSize,
+				data: { appName: app_name }
+			});
+
+			let cache_list = await get_list_cache.json();
+			storeCacheSize.set(cache_list);
+		}
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 export const css_handlers = {
 	FETCH: { css: ' is-primary  ', label: ' Fetch ', icon: ' fa-solid fa-server ' },
 	JS: { css: ' is-dark ', label: ' Javascript ', icon: ' fa-brands fa-square-js ' },
@@ -175,11 +195,16 @@ export function validateURL(string_url) {
 	}
 }
 
-export function createEndpoint(method, app, resource, environment){
-	return `${method == 'WS' ? '/ws/' : '/api/'}${app}${resource}/${environment}`
+export function createEndpoint(method, app, resource, environment) {
+	return `${method == 'WS' ? '/ws/' : '/api/'}${app}${resource}/${environment}`;
 }
 
-export const listAccessMethod = [{value: 'Public', id: 0}, {value: 'Basic', id: 1}, {value: 'Bearer', id: 2}, {value: 'Basic & Bearer', id: 3}];
+export const listAccessMethod = [
+	{ value: 'Public', id: 0 },
+	{ value: 'Basic', id: 1 },
+	{ value: 'Bearer', id: 2 },
+	{ value: 'Basic & Bearer', id: 3 }
+];
 export const listHTTPMethods = {
 	GET: { color: 'primary', icon: 'fa-brands fa-get-pocket' },
 	POST: { color: 'link', icon: 'fa-solid fa-signs-post' },

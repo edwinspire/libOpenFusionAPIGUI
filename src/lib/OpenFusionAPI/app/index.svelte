@@ -12,7 +12,7 @@
 	} from '@edwinspire/svelte-components';
 	import { onMount } from 'svelte';
 	//import { createEventDispatcher } from 'svelte';
-	import { userStore, getListFunction, listAppVars, url_paths } from '../utils.js';
+	import { userStore, getListFunction, listAppVars, url_paths, getCacheSize } from '../utils.js';
 	import CellMethod from './cellMethod.svelte';
 	import CellAccess from './cellAccess.svelte';
 	import cellHandler from './cellHandler.svelte';
@@ -162,6 +162,7 @@
 	}
 	*/
 
+	/*
 	function checkChangesOnCache(cache_list) {
 		return endpoints.some((item) => {
 			//	console.log(item);
@@ -170,6 +171,7 @@
 			});
 		});
 	}
+	*/
 
 	function reloadPage() {
 		window.location.reload();
@@ -193,57 +195,6 @@
 				environment_list = [];
 			}
 		} catch (error) {
-			// @ts-ignore
-			alert(error.message);
-		}
-	}
-
-	async function getCacheSize() {
-		// Lógica de autenticación aquí
-
-		try {
-			//      console.log("getListApps > ", $userStore, uf);
-			if (app && app.app) {
-				let get_list_cache = await uf.GET({
-					url: url_paths.getCacheSize,
-					data: { appName: app.app }
-				});
-
-				let cache_list = await get_list_cache.json();
-
-				console.log('>> cache_list >> ', checkChangesOnCache(cache_list));
-
-				if (cache_list && Array.isArray(cache_list) && cache_list.length == 0) {
-					// buscamos si hay algún registro con cache mayor que cero
-					let exists_cache = endpoints.some((item) => {
-						return item.cache_size > 0;
-					});
-
-					if (exists_cache) {
-						console.log('SE DEBE BORRAR LA CACHE');
-
-						endpoints = endpoints.map((item) => {
-							item.cache_size = 0;
-							return item;
-						});
-					}
-				} else if (checkChangesOnCache(cache_list)) {
-					// Verificar si hay cambios en los datos, si es así actualizar la tabla
-					//console.warn('>>>>>>>>>>>--');
-
-					endpoints = endpoints.map((item) => {
-						let rItem = item;
-						let data_cache = cache_list.find((element) => element.url == item.endpoint);
-						rItem['cache_size'] = data_cache ? data_cache.bytes : 0;
-						return rItem;
-					});
-				}
-
-				//
-				//	console.log(cache_list, endpoints);
-			}
-		} catch (error) {
-			console.error(error);
 			// @ts-ignore
 			alert(error.message);
 		}
@@ -414,7 +365,7 @@
 		await getListApps();
 		await getEnvList();
 		setInterval(async () => {
-			await getCacheSize();
+			await getCacheSize(app.app, $userStore.token);
 		}, 5000);
 		// @ts-ignore
 	});
@@ -507,14 +458,6 @@
 
 							if (confirm('Do you want to save the application data?')) {
 								app.vars = fnVars.getCode();
-
-								//	console.log('---> fnVars ', fnVars.getCode(), app);
-
-								/*
-								app.vars.dev = fnVarsDev.getCode();
-								app.vars.qa = fnVarsQa.getCode();
-								app.vars.prd = fnVarsPrd.getCode();
-								*/
 								saveApp();
 							}
 						}}
