@@ -14,6 +14,7 @@
 
 	let sample_bind_post_string = '{}';
 	let fnApiTester;
+	let use_var_cnx = false;
 
 	let sample_bind_post = {
 		bind: {
@@ -56,10 +57,17 @@
 			}
 
 			if (params && params.config) {
-				params_code = JSON.stringify(params.config);
+				console.log('>>> ParseCode >> ', typeof params.config, params.config);
+
+				if (typeof params.config === 'object') {
+					use_var_cnx = true;
+					params_code = JSON.stringify(params.config);
+				} else {
+					params_code = params.config;
+				}
 			}
 
-			//		console.log(params, params_code, row);
+			console.log(params, params_code);
 		} catch (error) {
 			params_code = '{}';
 			query_code = 'SELECT 1;';
@@ -78,7 +86,7 @@
 		let outcode = {};
 
 		try {
-			//		console.log('>>>>> ', typeof params_code, params_code);
+			console.log('>>>>> ', typeof params_code, params_code);
 
 			if (typeof params_code === 'object') {
 				conf = params_code;
@@ -146,7 +154,38 @@
 			</div>
 		</div>
 
-		<EditorCode lang="json" bind:code={params_code}></EditorCode>
+		<div class="box">
+			<div class="buttons has-addons">
+				<button
+					class="button is-small {use_var_cnx ? 'is-active is-primary' : ''}"
+					on:click={() => {
+						use_var_cnx = true;
+					}}>JSON Parameters</button
+				>
+				<button
+					class="button is-small {use_var_cnx ? '' : 'is-active is-primary'}"
+					on:click={() => {
+						use_var_cnx = false;
+					}}>Use Variable</button
+				>
+			</div>
+
+			{#if use_var_cnx}
+				<EditorCode isReadOnly={false} lang="json" bind:code={params_code}></EditorCode>
+			{:else}
+				<div class="control has-icons-left">
+					<input
+						class="input is-small"
+						type="text"
+						placeholder="$_VAR_NAME"
+						bind:value={params_code}
+					/>
+					<span class="icon is-small is-left">
+						<i class="fa-regular fa-keyboard"></i>
+					</span>
+				</div>
+			{/if}
+		</div>
 	</div>
 
 	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
