@@ -57,17 +57,18 @@
 			}
 
 			if (params && params.config) {
-				console.log('>>> ParseCode >> ', typeof params.config, params.config);
+				//	console.log('>>> ParseCode >> ', typeof params.config, params.config);
 
 				if (typeof params.config === 'object') {
-					use_var_cnx = true;
+					use_var_cnx = false;
 					params_code = JSON.stringify(params.config);
 				} else {
 					params_code = params.config;
+					use_var_cnx = true;
 				}
 			}
 
-			console.log(params, params_code);
+			//console.log(params, params_code);
 		} catch (error) {
 			params_code = '{}';
 			query_code = 'SELECT 1;';
@@ -86,11 +87,19 @@
 		let outcode = {};
 
 		try {
-			console.log('>>>>> ', typeof params_code, params_code);
+			//console.log('>>>>> ', typeof params_code, params_code, use_var_cnx);
 
+			/*
 			if (typeof params_code === 'object') {
 				conf = params_code;
 			} else if (typeof params_code === 'string') {
+				conf = params_code;
+			} else {
+				conf = JSON.parse(params_code);
+			}
+			*/
+
+			if (use_var_cnx) {
 				conf = params_code;
 			} else {
 				conf = JSON.parse(params_code);
