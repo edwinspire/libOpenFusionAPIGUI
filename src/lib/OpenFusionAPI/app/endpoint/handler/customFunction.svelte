@@ -4,6 +4,10 @@
 	import { listFunctionStoreQA } from '../../../utils';
 	import { listFunctionStorePRD } from '../../../utils';
 	import SelectFns from '../../../widgets/Select.svelte';
+	import { Tab, RESTTester } from '@edwinspire/svelte-components';
+	import WarnPrd from './warning_production.svelte';
+
+	let fnApiTester;
 
 	/**
 	 * @type {any[]}
@@ -24,8 +28,10 @@
 	 * @type {any[]}
 	 */
 	let functionsPrd = [];
-
+	let internal_data_test = {};
 	let selection = '';
+
+	let tabList = [{ label: 'Function', isActive: true }, { label: 'Tester' }];
 
 	/**
 	 * @type {{ endpoint: any; }}
@@ -85,18 +91,32 @@
 	});
 </script>
 
-<div>
-	<div class="content is-small">Use the selected function to return a response.</div>
+<Tab bind:tabs={tabList}>
+	<div class={tabList[0].isActive ? '' : 'is-hidden'}>
+		<div class="content is-small">Use the selected function to return a response.</div>
 
-	<div class="field is-horizontal">
-		<div class="field-label is-normal">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label is-small">Function</label>
-		</div>
-		<div class="field-body">
-			<div class="field is-narrow">
-				<SelectFns bind:options={functions} bind:option={selection} />
+		<div class="field is-horizontal">
+			<div class="field-label is-normal">
+				<!-- svelte-ignore a11y-label-has-associated-control -->
+				<label class="label is-small">Function</label>
+			</div>
+			<div class="field-body">
+				<div class="field is-narrow">
+					<SelectFns bind:options={functions} bind:option={selection} />
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
+
+	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
+		<WarnPrd bind:environment={row.environment}></WarnPrd>
+
+		<RESTTester
+			bind:this={fnApiTester}
+			bind:data={internal_data_test}
+			bind:method={row.method}
+			url={row.endpoint}
+			methodDisabled={true}
+		></RESTTester>
+	</div>
+</Tab>

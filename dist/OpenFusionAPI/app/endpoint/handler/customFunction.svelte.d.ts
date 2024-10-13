@@ -8,14 +8,14 @@ export default class CustomFunction extends SvelteComponent<{
     reset?: () => void;
     getData?: () => {
         code: string;
-        data_test: any;
+        data_test: {};
     };
 }, {
     [evt: string]: CustomEvent<any>;
 }, {}> {
     get getData(): () => {
         code: string;
-        data_test: any;
+        data_test: {};
     };
     get reset(): () => void;
 }
@@ -31,7 +31,7 @@ declare const __propDef: {
         reset?: () => void;
         getData?: () => {
             code: string;
-            data_test: any;
+            data_test: {};
         };
     };
     events: {

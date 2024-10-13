@@ -6,7 +6,7 @@ import { PUBLIC_API_SERVER_HOST } from '$env/static/public';
 const host = validateBaseUrl(PUBLIC_API_SERVER_HOST || '');
 
 export const url_paths = {
-	getfunctions: host + '/api/system/functions/prd',
+	getfunctions: host + '/api/system/api/function_names/prd',
 	getHandler: host + '/api/system/system/handler/0.01/prd',
 	Methods: host + '/api/system/system/method/0.01/prd',
 	listEnv: host + '/api/system/system/environment/0.01/prd',
