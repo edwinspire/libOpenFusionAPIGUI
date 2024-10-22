@@ -18,7 +18,7 @@
 	import cellHandler from './cellHandler.svelte';
 	import cellPath from './cellPath.svelte';
 	import cellCacheTime from './cellCacheTime.svelte';
-	import { validateURL } from '../utils.js';
+	//import { validateURL } from '../utils.js';
 	import EndPointEditor from './endpoint/editor.svelte';
 	import AppVars from './app_vars.svelte';
 
@@ -61,14 +61,9 @@
 	let environment_list = [];
 	let showEndpointEdit = false;
 	let SelectedRow = {};
-	let validateResource = false;
-	let availableURL = false;
 	let TableSelectionType = 0;
 	let TableObject;
-
 	let fnVars;
-
-	let hash_data_cache = '-';
 	let active_tab = 0;
 
 	let columns = {
@@ -132,6 +127,12 @@
 			classIcon: 'fa-solid fa-box-archive',
 			slot: 'vars',
 			isActive: false
+		},
+		{
+			label: 'Application parameters',
+			classIcon: 'fa-regular fa-rectangle-list',
+			slot: 'params',
+			isActive: false
 		}
 	];
 
@@ -151,27 +152,6 @@
 	$: idapp, getApp();
 	// @ts-ignore
 	//$: SelectedRow.resource, checkResource();
-
-	/*
-	function checkResource() {
-		// @ts-ignore
-		validateResource = validateURL(SelectedRow.resource);
-		//		console.log('validateURL: ', SelectedRow.resource, validateResource);
-
-		availableURL = checkEndpointConstraint(SelectedRow);
-	}
-	*/
-
-	/*
-	function checkChangesOnCache(cache_list) {
-		return endpoints.some((item) => {
-			//	console.log(item);
-			return cache_list.some((element) => {
-				return element.url == item.endpoint && item.cache_size != element.bytes;
-			});
-		});
-	}
-	*/
 
 	function reloadPage() {
 		window.location.reload();
@@ -263,6 +243,21 @@
 			//appDataTable = AppToTable(app);
 			app = app_resp[0];
 
+
+			if (app && !app.params) {
+				app.params = {};
+			}
+
+			if (app && !app.params.telegram) {
+				app.params.telegram = {};
+			}
+
+			if (app && app.params.telegram && !app.params.telegram.idgroup) {
+				app.params.telegram.idgroup = '';
+			}
+
+//console.log('>>>><> ', app);
+
 			if (app && app.vars && typeof app.vars === 'object') {
 				listAppVars.set(app.vars);
 
@@ -324,9 +319,6 @@
 	function appToStore() {
 		let app_save = { ...app };
 		app_save.endpoints = endpoints;
-
-		//console.log('v >> ', app, app_save);
-
 		return app_save;
 	}
 
@@ -644,6 +636,10 @@
 						</button>
 					</span>
 				</Table>
+			</div>
+
+			<div style="display: {active_tab == 3 ? 'block' : 'none'};">
+				Not implemented
 			</div>
 		</Tab>
 	</div>
