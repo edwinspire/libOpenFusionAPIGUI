@@ -12,6 +12,7 @@
 	import { Level, SlideFullScreen, Tab } from '@edwinspire/svelte-components';
 	//import { listAccessMethod } from '../../utils.js';
 	import Endpoint from './handler/endpoint.svelte';
+	import Authorizations from './widgets/authorizations.svelte';
 
 	/**
 	 * @type {FetchCode}
@@ -52,7 +53,11 @@
 	let validateResource = false;
 	let availableURL = false;
 
-	let tabList = [{ label: 'Endpoint', isActive: true }, { label: 'Configuration' }];
+	let tabList = [
+		{ label: 'Endpoint', isActive: true },
+		{ label: 'Configuration' },
+		{ label: 'Authorizations' }
+	];
 	const dispatch = createEventDispatcher();
 
 	function accept() {
@@ -91,14 +96,12 @@
 									let v = fnJsCode.getData();
 									value = v.code;
 									row.data_test = v.data_test;
-
 								} else if (row && row.handler == 'SOAP') {
 									//value = fnSoapCode.getCode();
 									//fnSoapCode.reset();
 									let v = fnSoapCode.getData();
 									value = v.code;
 									row.data_test = v.data_test;
-
 								} else if (row && row.handler == 'SQL') {
 									let v = fnSqlCode.getData();
 									value = v.code;
@@ -114,14 +117,12 @@
 									value = v.code;
 									row.data_test = v.data_test;
 
-
 									// fnFetchCode.reset();
 								} else if (row && row.handler == 'FUNCTION') {
 									//value = fnCustomFn.getCode();
 									let v = fnCustomFn.getData();
 									value = v.code;
 									row.data_test = v.data_test;
-
 								} else if (row && row.handler == 'TEXT') {
 									//value = fnTextFn.getCode();
 									//fnTextFn.reset();
@@ -199,6 +200,10 @@
 			{:else}
 				<div>No Handler</div>
 			{/if}
+		</div>
+
+		<div class={tabList[2].isActive ? '' : 'is-hidden'}>
+			<Authorizations bind:row></Authorizations>
 		</div>
 	</Tab>
 </SlideFullScreen>

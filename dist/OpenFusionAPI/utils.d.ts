@@ -16,6 +16,7 @@ export namespace url_paths {
     let login: string;
     let getCacheSize: string;
     let clearCache: string;
+    let getUsersList: string;
 }
 export const userStore: import("svelte/store").Writable<{}>;
 export const listMethodStore: import("svelte/store").Writable<{}>;
@@ -25,7 +26,9 @@ export const listFunctionStoreQA: import("svelte/store").Writable<{}>;
 export const listFunctionStorePRD: import("svelte/store").Writable<{}>;
 export const listAppVars: import("svelte/store").Writable<{}>;
 export const storeCacheSize: import("svelte/store").Writable<{}>;
+export const storeUsersList: import("svelte/store").Writable<{}>;
 export function formatJsonForHtmlCode(json: any): string;
+export function getListUsers(token: string): Promise<void>;
 export function getListFunction(token: string, appName: string): Promise<void>;
 export function getListHandler(token: string): Promise<void>;
 export function getListMethods(token: string): Promise<void>;

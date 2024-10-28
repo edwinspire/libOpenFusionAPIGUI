@@ -12,7 +12,7 @@
 	} from '@edwinspire/svelte-components';
 	import { onMount } from 'svelte';
 	//import { createEventDispatcher } from 'svelte';
-	import { userStore, getListFunction, listAppVars, url_paths, getCacheSize } from '../utils.js';
+	import { userStore, getListFunction, listAppVars, url_paths, getCacheSize, getListUsers, storeUsersList } from '../utils.js';
 	import CellMethod from './cellMethod.svelte';
 	import CellAccess from './cellAccess.svelte';
 	import cellHandler from './cellHandler.svelte';
@@ -29,22 +29,21 @@
 
 	const default_row = {
 		idendpoint: undefined,
-		enabled: true,
+		enabled: false,
 		access: 0,
 		environment: 'dev',
 		resource: '',
 		method: 'GET',
 		handler: 'NA',
 		cors: null,
-		code: undefined,
+		code: '',
 		description: '',
 		headers_test: {},
 		data_test: {},
 		rowkey: 0,
 		latest_updater: null,
 		cache_time: 0,
-		ctrl: {},
-		cache_size: 0
+		ctrl: {}
 	};
 
 	/**
@@ -65,6 +64,7 @@
 	let TableObject;
 	let fnVars;
 	let active_tab = 0;
+	let showAuthorizations = true;
 
 	let columns = {
 		//enabled: { label: 'Enabled App' },
@@ -80,16 +80,18 @@
 				}
 			}
 		},
-		cache_time: { label: 'Cache Time', decorator: { component: cellCacheTime } },
-		method: { decorator: { component: CellMethod }, label: 'Method' },
-		handler: { decorator: { component: cellHandler }, label: 'Handler' },
-		resource: { hidden: true },
 		access: {
 			label: 'Access',
 			decorator: {
 				component: CellAccess
 			}
 		},
+		method: { decorator: { component: CellMethod }, label: 'Method' },
+		handler: { decorator: { component: cellHandler }, label: 'Handler' },
+		cache_time: { label: 'Cache Time', decorator: { component: cellCacheTime } },
+		ctrl: { hidden: true, label: 'Users' },
+		resource: { hidden: true },
+
 		code: { label: 'Code', hidden: true },
 		idapp: { hidden: true },
 		rowkey: { hidden: true },
@@ -105,9 +107,11 @@
 		data_test: { hidden: true },
 		latest_updater: { hidden: true },
 		environment: { hidden: true },
-		ctrl: { hidden: true },
+		
 		cache_size: { hidden: true }
 	};
+
+	
 
 	let tabs = [
 		{
@@ -131,7 +135,7 @@
 		{
 			label: 'Application parameters',
 			classIcon: 'fa-regular fa-rectangle-list',
-			slot: 'params',
+			slot: 'parameters',
 			isActive: false
 		}
 	];
@@ -243,7 +247,6 @@
 			//appDataTable = AppToTable(app);
 			app = app_resp[0];
 
-
 			if (app && !app.params) {
 				app.params = {};
 			}
@@ -256,7 +259,7 @@
 				app.params.telegram.idgroup = '';
 			}
 
-//console.log('>>>><> ', app);
+			//console.log('>>>><> ', app);
 
 			if (app && app.vars && typeof app.vars === 'object') {
 				listAppVars.set(app.vars);
@@ -292,7 +295,14 @@
 
 	async function getApp() {
 		if (idapp) {
+
+			
+
 			try {
+
+
+				await getListUsers();
+
 				let apps_res = await uf.GET({
 					url: url_paths.getApp,
 					data: {
@@ -575,18 +585,6 @@
 		</Level>
 
 		<Tab bind:tabs bind:active={active_tab}>
-			<div style="display: {active_tab == 1 ? 'block' : 'none'};">
-				<textarea
-					class="textarea is-small"
-					placeholder="Description"
-					bind:value={app.description}
-				/>
-			</div>
-
-			<div style="display: {active_tab == 2 ? 'block' : 'none'};">
-				<AppVars isReadOnly={false} bind:this={fnVars}></AppVars>
-			</div>
-
 			<div style="display: {active_tab == 0 ? 'block' : 'none'};">
 				<Table
 					ShowNewButton="true"
@@ -606,6 +604,7 @@
 							cache_time: 0
 						};
 						*/
+
 						console.log(app);
 						if (app && app.idapp && app.idapp.length > 0) {
 							SelectedRow = { ...default_row };
@@ -622,6 +621,29 @@
 					}}
 				>
 					<span slot="l01"> Endpoints </span>
+
+					<!-- <span slot="r09">
+						<button
+							class="button is-small"
+							on:click={() => {
+								showAuthorizations = !showAuthorizations;
+
+								if (showAuthorizations) {
+									columns.ctrl.hidden = false;
+									columns.cache_time.hidden = true;
+								} else {
+									columns.ctrl.hidden = true;
+									columns.cache_time.hidden = false;
+								}
+							}}
+						>
+							<span class="icon is-small">
+								<i class="fa-solid fa-users"></i>
+							</span>
+							<span>Users</span>
+						</button>
+					</span> -->
+
 					<span slot="r10">
 						<button
 							class="button is-small"
@@ -638,8 +660,21 @@
 				</Table>
 			</div>
 
+			<div style="display: {active_tab == 1 ? 'block' : 'none'};">
+				<textarea
+					class="textarea is-small"
+					placeholder="Description"
+					bind:value={app.description}
+				/>
+			</div>
+
+			<div style="display: {active_tab == 2 ? 'block' : 'none'};">
+				<AppVars isReadOnly={false} bind:this={fnVars}></AppVars>
+			</div>
+
 			<div style="display: {active_tab == 3 ? 'block' : 'none'};">
-				Not implemented
+				
+				
 			</div>
 		</Tab>
 	</div>

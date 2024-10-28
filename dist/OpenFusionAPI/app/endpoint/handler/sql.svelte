@@ -87,17 +87,6 @@
 		let outcode = {};
 
 		try {
-			//console.log('>>>>> ', typeof params_code, params_code, use_var_cnx);
-
-			/*
-			if (typeof params_code === 'object') {
-				conf = params_code;
-			} else if (typeof params_code === 'string') {
-				conf = params_code;
-			} else {
-				conf = JSON.parse(params_code);
-			}
-			*/
 
 			if (use_var_cnx) {
 				conf = params_code;

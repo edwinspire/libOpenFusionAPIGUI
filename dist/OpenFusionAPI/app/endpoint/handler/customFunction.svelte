@@ -87,7 +87,7 @@
 				break;
 		}
 
-		console.warn('CUSTOM FN: ', row.environment, functions);
+//		console.warn('CUSTOM FN: ', row.environment, functions);
 	});
 </script>
 

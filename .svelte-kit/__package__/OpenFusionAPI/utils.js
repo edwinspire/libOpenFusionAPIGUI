@@ -16,12 +16,10 @@ export const url_paths = {
 	saveMethod: host + '/api/system/system/method/0.01/prd',
 	login: host + '/api/system/system/login/0.01/prd',
 	getCacheSize: host + '/api/system/cache/response/size/prd',
-	clearCache: host + '/api/system/cache/clear/prd'
+	clearCache: host + '/api/system/cache/clear/prd',
+	getUsersList: host + '/api/system/users/list/prd'
 };
 
-//const path_functions = '/system/main/functions';
-
-//export const tokenStore = writable('');
 export const userStore = writable({});
 export const listMethodStore = writable({});
 export const listHandlerStore = writable({});
@@ -30,9 +28,29 @@ export const listFunctionStoreQA = writable({});
 export const listFunctionStorePRD = writable({});
 export const listAppVars = writable({});
 export const storeCacheSize = writable({});
+export const storeUsersList = writable({});
 
 export const formatJsonForHtmlCode = (/** @type {any} */ json) => {
 	return JSON.stringify(json, null, 2).replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;');
+};
+
+export const getListUsers = async (/** @type {string} */ token) => {
+	// @ts-ignore
+	let f = new uFetch();
+	f.setBearerAuthorization(token);
+	try {
+		let users = await f.GET({ url: url_paths.getUsersList });
+		let data_users = await users.json();
+
+		if (data_users && Array.isArray(data_users)) {
+			storeUsersList.set(data_users);
+		} else {
+			storeUsersList.set([]);
+		}
+	} catch (error) {
+		console.error(error);
+		storeUsersList.set([]);
+	}
 };
 
 export const getListFunction = async (
@@ -54,6 +72,7 @@ export const getListFunction = async (
 		}
 	} catch (error) {
 		console.error(error);
+		listFunctionStoreDev.set([]);
 	}
 	////////////////////////////////////
 	try {
@@ -68,6 +87,7 @@ export const getListFunction = async (
 		}
 	} catch (error) {
 		console.error(error);
+		listFunctionStoreQA.set([]);
 	}
 	////////////////////////////////////
 	try {
@@ -82,6 +102,7 @@ export const getListFunction = async (
 		}
 	} catch (error) {
 		console.error(error);
+		listFunctionStorePRD.set([]);
 	}
 };
 
@@ -121,6 +142,7 @@ export const getListHandler = async (/** @type {string} */ token) => {
 		}
 	} catch (error) {
 		console.error(error);
+		listHandlerStore.set([]);
 	}
 };
 
@@ -144,6 +166,7 @@ export const getListMethods = async (/** @type {string} */ token) => {
 		}
 	} catch (error) {
 		console.error(error);
+		listMethodStore.set([]);
 	}
 };
 
