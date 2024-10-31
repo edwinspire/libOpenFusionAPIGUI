@@ -1,8 +1,9 @@
 <script>
-	import { url_paths, storeUsersList } from '$lib/OpenFusionAPI/utils.js';
-	import uFetch from '@edwinspire/universal-fetch';
+	import { storeUsersList } from '$lib/OpenFusionAPI/utils.js';
+	//	import uFetch from '@edwinspire/universal-fetch';
 	import { onMount, createEventDispatcher } from 'svelte';
 	import { Table, ColumnTypes } from '@edwinspire/svelte-components';
+	import EndpointLabel from '../widgets/endpoint_label.svelte';
 
 	export let row = {};
 	let table_users = [];
@@ -40,7 +41,7 @@
 	$: table_users, authChange();
 
 	storeUsersList.subscribe((value) => {
-		console.log('storeUsersList >>>>>> ', value);
+	//	console.log('storeUsersList >>>>>> ', value);
 		data_users = value;
 	});
 
@@ -59,7 +60,7 @@
 	function authChange() {
 		if (row) {
 			defaultValue();
-			console.log('authChange > ', table_users, row);
+		//	console.log('authChange > ', table_users, row);
 
 			row.ctrl.users = table_users
 				.filter((u) => {
@@ -69,7 +70,7 @@
 					return u.iduser;
 				});
 
-			console.log('auth_enabled >> ', row.ctrl.users);
+		//	console.log('auth_enabled >> ', row.ctrl.users);
 		}
 	}
 
@@ -88,6 +89,5 @@
 	});
 </script>
 
-<div>{row.endpoint}</div>
-
+<EndpointLabel bind:endpoint={row.endpoint}></EndpointLabel>
 <Table bind:RawDataTable={table_users} bind:columns></Table>

@@ -12,7 +12,15 @@
 	} from '@edwinspire/svelte-components';
 	import { onMount } from 'svelte';
 	//import { createEventDispatcher } from 'svelte';
-	import { userStore, getListFunction, listAppVars, url_paths, getCacheSize, getListUsers, storeUsersList } from '../utils.js';
+	import {
+		userStore,
+		getListFunction,
+		listAppVars,
+		url_paths,
+		getCacheSize,
+		getListUsers,
+		storeUsersList
+	} from '../utils.js';
 	import CellMethod from './cellMethod.svelte';
 	import CellAccess from './cellAccess.svelte';
 	import cellHandler from './cellHandler.svelte';
@@ -107,11 +115,9 @@
 		data_test: { hidden: true },
 		latest_updater: { hidden: true },
 		environment: { hidden: true },
-		
+
 		cache_size: { hidden: true }
 	};
-
-	
 
 	let tabs = [
 		{
@@ -295,12 +301,7 @@
 
 	async function getApp() {
 		if (idapp) {
-
-			
-
 			try {
-
-
 				await getListUsers();
 
 				let apps_res = await uf.GET({
@@ -329,6 +330,9 @@
 	function appToStore() {
 		let app_save = { ...app };
 		app_save.endpoints = endpoints;
+
+		console.log('appToStore >>>> ', app_save);
+
 		return app_save;
 	}
 
@@ -358,6 +362,10 @@
 			// @ts-ignore
 			alert(error.message);
 		}
+	}
+
+	function uploadFile_checkAppname() {
+		return !(uploaded_file && uploaded_file.app && uploaded_file.app == app.app);
 	}
 
 	onMount(async () => {
@@ -544,7 +552,10 @@
 											// console.log('Contenido del archivo JSON:', uploaded_file);
 
 											// TODO: Aquí puedes realizar acciones con los datos JSON, por ejemplo, mostrarlos en la página.
-											showAppData([uploaded_file]);
+											console.log('>>>>>>>>>>>>> -> ', uploaded_file, app);
+											if (uploadFile_checkAppname()) {
+												alert('The file does not correspond to the same application.');
+											}
 										} catch (error) {
 											console.error('Error al analizar el archivo JSON:', error);
 										}
@@ -562,13 +573,57 @@
 								on:click={() => {
 									//alert('Ha hecho click');
 
-									if (uploaded_file) {
-										if (confirm('Do you want to replace app data permanently?')) {
-											app = { ...uploaded_file };
-											uploaded_file = null;
-										}
+									//showAppData([uploaded_file]);
+
+									if (uploadFile_checkAppname()) {
+										alert('The file does not correspond to the same application.');
 									} else {
-										alert('Please new select file!');
+										if (uploaded_file) {
+											if (confirm('Are you sure to merge the file with your data?')) {
+												//app = { ...uploaded_file };
+												//uploaded_file = null;
+
+												//	console.log(uploaded_file);
+
+												if (uploaded_file.endpoints && Array.isArray(uploaded_file.endpoints)) {
+													// Chequear los endpoints donde le colocamos el idenpoint
+													uploaded_file.endpoints = uploaded_file.endpoints.map((ep) => {
+														// buscar si existe el endpoint
+														let current_endpoint = app.endpoints.find((element) => {
+															return (
+																element.environment == ep.environment &&
+																element.method == ep.method &&
+																element.resource == ep.resource
+															);
+														});
+
+														//console.log(current_endpoint);
+														if (current_endpoint) {
+															ep.idendpoint = current_endpoint.idendpoint;
+														}
+														return ep;
+													});
+
+													console.log('>>> ', uploaded_file.endpoints);
+
+													// Utilizar filter() para encontrar los elementos que existen en arrayA pero no en arrayB
+													const ep_diff = app.endpoints.filter((app_ep) => {
+														return !uploaded_file.endpoints.some(
+															(uep) => app_ep.idendpoint === uep.idendpoint
+														);
+													});
+													console.log('Resultado de los que no existen: ', ep_diff);
+
+													uploaded_file.endpoints = uploaded_file.endpoints.concat(ep_diff);
+
+													//app = { ...uploaded_file };
+													showAppData([uploaded_file]);
+													uploaded_file = null;
+												}
+											}
+										} else {
+											alert('Please new select file!');
+										}
 									}
 								}}
 							>
@@ -672,10 +727,7 @@
 				<AppVars isReadOnly={false} bind:this={fnVars}></AppVars>
 			</div>
 
-			<div style="display: {active_tab == 3 ? 'block' : 'none'};">
-				
-				
-			</div>
+			<div style="display: {active_tab == 3 ? 'block' : 'none'};"></div>
 		</Tab>
 	</div>
 {/if}
