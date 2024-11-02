@@ -5,6 +5,7 @@
 	import AppVars from '../../app_vars.svelte';
 	import WarnPrd from './warning_production.svelte';
 	import Endpoint from '../handler/endpoint.svelte';
+	//import ParamsVarJSON from '../widgets/parameters_var_json.svelte';
 
 	/**
 	 * @type {any}
@@ -12,9 +13,11 @@
 	//let code;
 	export let row = { endpoint: '', method: '', environment: '' };
 
-	let sample_bind_post_string = '{}';
+	//let sample_bind_post_string = '{}';
 	let fnApiTester;
 	let use_var_cnx = false;
+	let cnx_param_json = {};
+	let cnx_param_var = '';
 
 	let sample_bind_post = {
 		bind: {
@@ -32,7 +35,6 @@
 		{ label: 'Tester' }
 	];
 
-	let params_code = '{}';
 	let query_code = 'SELECT 1+1;';
 	let internal_data_test;
 
@@ -57,20 +59,19 @@
 			}
 
 			if (params && params.config) {
-				//	console.log('>>> ParseCode >> ', typeof params.config, params.config);
+				//console.log('>>> ParseCode >> ', typeof params.config, params.config);
 
 				if (typeof params.config === 'object') {
 					use_var_cnx = false;
-					params_code = JSON.stringify(params.config);
+					cnx_param_json = params.config;
 				} else {
-					params_code = params.config;
+					cnx_param_var = params.config;
 					use_var_cnx = true;
 				}
 			}
-
-			//console.log(params, params_code);
 		} catch (error) {
-			params_code = '{}';
+			cnx_param_json = {};
+			cnx_param_var = '';
 			query_code = 'SELECT 1;';
 			console.error('Error', error);
 		}
@@ -87,17 +88,16 @@
 		let outcode = {};
 
 		try {
-
 			if (use_var_cnx) {
-				conf = params_code;
+				conf = cnx_param_var;
 			} else {
-				conf = JSON.parse(params_code);
+				conf = JSON.parse(cnx_param_json);
 			}
 
 			//return JSON.stringify(c, null, 2);
 		} catch (error) {
-			console.warn('No se pudo parsear getCode SQL', error, params_code, typeof params_code);
-			conf = params_code;
+			console.warn('No se pudo parsear getCode SQL', error, cnx_param_var, cnx_param_json);
+			conf = '';
 			//return code;
 		}
 
@@ -114,7 +114,7 @@
 	onMount(() => {
 		//	console.log(code);
 		ParseCode();
-		sample_bind_post_string = JSON.stringify(sample_bind_post);
+		//	sample_bind_post_string = JSON.stringify(sample_bind_post);
 	});
 </script>
 
@@ -152,31 +152,33 @@
 			</div>
 		</div>
 
+
+
 		<div class="box">
 			<div class="buttons has-addons">
-				<button
-					class="button is-small {use_var_cnx ? 'is-active is-primary' : ''}"
-					on:click={() => {
-						use_var_cnx = true;
-					}}>JSON Parameters</button
-				>
 				<button
 					class="button is-small {use_var_cnx ? '' : 'is-active is-primary'}"
 					on:click={() => {
 						use_var_cnx = false;
+					}}>JSON Parameters</button
+				>
+				<button
+					class="button is-small {use_var_cnx ? 'is-active is-primary' : ''}"
+					on:click={() => {
+						use_var_cnx = true;
 					}}>Use Variable</button
 				>
 			</div>
 
-			{#if use_var_cnx}
-				<EditorCode isReadOnly={false} lang="json" bind:code={params_code}></EditorCode>
+			{#if !use_var_cnx}
+				<EditorCode isReadOnly={false} lang="json" bind:code={cnx_param_json}></EditorCode>
 			{:else}
 				<div class="control has-icons-left">
 					<input
 						class="input is-small"
 						type="text"
 						placeholder="$_VAR_NAME"
-						bind:value={params_code}
+						bind:value={cnx_param_var}
 					/>
 					<span class="icon is-small is-left">
 						<i class="fa-regular fa-keyboard"></i>

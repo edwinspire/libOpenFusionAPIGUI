@@ -13,6 +13,7 @@
 	//import { listAccessMethod } from '../../utils.js';
 	import Endpoint from './handler/endpoint.svelte';
 	import Authorizations from './widgets/authorizations.svelte';
+	import EndpointLabel from './widgets/endpoint_label.svelte';
 
 	/**
 	 * @type {FetchCode}
@@ -175,16 +176,8 @@
 		</div>
 
 		<div class={tabList[1].isActive ? '' : 'is-hidden'}>
-			<div class="block">
-				<h3 class="subtitle is-5">
-					<div class="icon-text">
-						<span class="icon has-text-info">
-							<i class="fa-solid fa-link"></i>
-						</span>
-						<span>{row.endpoint}</span>
-					</div>
-				</h3>
-			</div>
+			<EndpointLabel bind:endpoint={row.endpoint}></EndpointLabel>
+
 			{#if row && row.handler == 'JS'}
 				<JsCode bind:this={fnJsCode} bind:row />
 			{:else if row && row.handler == 'SOAP'}

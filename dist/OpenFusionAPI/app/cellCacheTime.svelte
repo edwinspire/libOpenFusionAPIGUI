@@ -56,7 +56,7 @@
 					<!-- svelte-ignore a11y-missing-attribute -->
 					<a class="button is-small has-text-success">
 						<span class="icon">
-							<i class="fa-regular fa-hourglass-half fa-spin"></i>
+							<i class="fa-solid fa-sync fa-spin"></i>
 						</span>
 						<span>{value_cache.bytes} KB</span>
 					</a>
@@ -64,7 +64,7 @@
 					<!-- svelte-ignore a11y-missing-attribute -->
 					<a class="button is-small">
 						<span class="icon">
-							<i class="fa-regular fa-hourglass"></i>
+							<i class="fa-solid fa-sync"></i>
 						</span>
 						<span> 0.0000 KB </span>
 					</a>

@@ -5,6 +5,7 @@
 	import AppVars from '../../app_vars.svelte';
 	import WarnPrd from './warning_production.svelte';
 	import Endpoint from '../handler/endpoint.svelte';
+	//import ParamsVarJSON from '../widgets/parameters_var_json.svelte';
 
 	/**
 	 * @type {any}
@@ -12,7 +13,7 @@
 	//let code;
 	export let row = { endpoint: '', method: '', environment: '' };
 
-	let sample_bind_post_string = '{}';
+	//let sample_bind_post_string = '{}';
 	let fnApiTester;
 	let use_var_cnx = false;
 	let cnx_param_json = {};
@@ -113,7 +114,7 @@
 	onMount(() => {
 		//	console.log(code);
 		ParseCode();
-		sample_bind_post_string = JSON.stringify(sample_bind_post);
+		//	sample_bind_post_string = JSON.stringify(sample_bind_post);
 	});
 </script>
 
@@ -150,6 +151,8 @@
 				example <strong>"$_VAR_NAME"</strong>.
 			</div>
 		</div>
+
+
 
 		<div class="box">
 			<div class="buttons has-addons">
