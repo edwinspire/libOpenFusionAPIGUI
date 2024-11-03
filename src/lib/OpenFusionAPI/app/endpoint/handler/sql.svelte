@@ -62,8 +62,8 @@
 				//console.log('>>> ParseCode >> ', typeof params.config, params.config);
 
 				if (typeof params.config === 'object') {
-					use_var_cnx = false;
 					cnx_param_json = params.config;
+					use_var_cnx = false;
 				} else {
 					cnx_param_var = params.config;
 					use_var_cnx = true;
@@ -151,8 +151,6 @@
 				example <strong>"$_VAR_NAME"</strong>.
 			</div>
 		</div>
-
-
 
 		<div class="box">
 			<div class="buttons has-addons">
