@@ -24,7 +24,7 @@
 	$: environment, setTabs();
 
 	function setTabs() {
-		console.log(environment, tabList);
+		//console.log(environment, tabList);
 		/*
 		if (environment && tabList) {
 			

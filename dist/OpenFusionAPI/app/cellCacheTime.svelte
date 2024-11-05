@@ -19,7 +19,8 @@
 		if (cache_data && Array.isArray(cache_data)) {
 			if (cache_data.length > 0) {
 				let data = cache_data.find((item) => {
-					return item.url == row.endpoint;
+				//	console.log('>>>>>', item.url, row.endpoint, item.url == row.endpoint);
+					return item.url.toLowerCase() == row.endpoint.toLowerCase();
 				});
 
 				if (data) {

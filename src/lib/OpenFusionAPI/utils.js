@@ -61,7 +61,10 @@ export const getListFunction = async (
 	let f = new uFetch();
 	f.setBearerAuthorization(token);
 	try {
-		let fr = await f.get(url_paths.getfunctions, { appName: appName, environment: 'dev' });
+		let fr = await f.GET({
+			url: url_paths.getfunctions,
+			data: { appName: appName, environment: 'dev' }
+		});
 		let list = await fr.json();
 
 		if (list && Array.isArray(list)) {
@@ -76,7 +79,10 @@ export const getListFunction = async (
 	}
 	////////////////////////////////////
 	try {
-		let fr = await f.get(url_paths.getfunctions, { appName: appName, environment: 'qa' });
+		let fr = await f.GET({
+			url: url_paths.getfunctions,
+			data: { appName: appName, environment: 'qa' }
+		});
 		let list = await fr.json();
 
 		if (list && Array.isArray(list)) {
@@ -91,7 +97,10 @@ export const getListFunction = async (
 	}
 	////////////////////////////////////
 	try {
-		let fr = await f.get(url_paths.getfunctions, { appName: appName, environment: 'prd' });
+		let fr = await f.GET({
+			url: url_paths.getfunctions,
+			data: { appName: appName, environment: 'prd' }
+		});
 		let list = await fr.json();
 
 		if (list && Array.isArray(list)) {
@@ -126,7 +135,7 @@ export const getListHandler = async (/** @type {string} */ token) => {
 	let f = new uFetch();
 	f.setBearerAuthorization(token);
 	try {
-		let fr = await f.get(url_paths.getHandler);
+		let fr = await f.GET({ url: url_paths.getHandler });
 		let list = await fr.json();
 
 		if (list && Array.isArray(list)) {
