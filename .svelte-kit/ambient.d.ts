@@ -88,7 +88,6 @@ declare module '$env/static/private' {
 	export const npm_package_name: string;
 	export const npm_package_version: string;
 	export const NUMBER_OF_PROCESSORS: string;
-	export const OLDPWD: string;
 	export const OLLAMA_MODELS: string;
 	export const OneDrive: string;
 	export const OneDriveCommercial: string;
@@ -112,8 +111,7 @@ declare module '$env/static/private' {
 	export const PSModulePath: string;
 	export const PUBLIC: string;
 	export const PWD: string;
-	export const QIP14688: string;
-	export const QIP3720: string;
+	export const QIP13500: string;
 	export const SESSIONNAME: string;
 	export const SHELL: string;
 	export const SHLVL: string;
@@ -231,7 +229,6 @@ declare module '$env/dynamic/private' {
 		npm_package_name: string;
 		npm_package_version: string;
 		NUMBER_OF_PROCESSORS: string;
-		OLDPWD: string;
 		OLLAMA_MODELS: string;
 		OneDrive: string;
 		OneDriveCommercial: string;
@@ -255,8 +252,7 @@ declare module '$env/dynamic/private' {
 		PSModulePath: string;
 		PUBLIC: string;
 		PWD: string;
-		QIP14688: string;
-		QIP3720: string;
+		QIP13500: string;
 		SESSIONNAME: string;
 		SHELL: string;
 		SHLVL: string;

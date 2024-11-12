@@ -27,10 +27,16 @@
 		}
 	};
 
+	let sample_replace_post = {
+		replacements: {
+			your_param_01: ['0002081614', '986535OKE']
+		}
+	};
+
 	let tabList = [
 		{ label: 'Query', isActive: true },
+		{ label: 'Pass Parameters' },
 		{ label: 'Connection Parameters' },
-		{ label: 'Bind Parameters' },
 		{ label: 'App Variables' },
 		{ label: 'Tester' }
 	];
@@ -126,7 +132,9 @@
 					The parameters must have a name like <span style="font-style: oblique; font-weight: bold;"
 						>$nameparameter</span
 					>
-					which bind to the values ​​you send in the request. For more information you can consult the
+					to bind, or <span style="font-style: oblique; font-weight: bold;">:nameparameter</span> to
+					replacements. The values ​​you send in the request. For more information you can consult
+					the
 					<a href="https://sequelize.org/docs/v6/core-concepts/raw-queries/#bind-parameter"
 						>sequelize</a
 					>
@@ -140,6 +148,75 @@
 	</div>
 
 	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
+		<div class="content is-small">
+			<p>
+				In sequelize you can pass parameters using <strong>"bind"</strong> or
+				<strong>"replacements"</strong>
+				depending on the case. You can refer to
+				<a href="https://sequelize.org/docs/v6/core-concepts/raw-queries/#bind-parameter"
+					>Sequelize Parameters</a
+				> for more details.
+			</p>
+
+			{#if row.method === 'GET'}
+				<div class="block">
+					<div class="icon-text">
+						<span class="icon has-text-warning">
+							<i class="fas fa-exclamation-triangle"></i>
+						</span>
+						<span>GET Method - Warning</span>
+					</div>
+
+					<p class="block">
+						The GET method is recommended only for simple requests where there is no input
+						parameters, or failing that the parameters are key-value on query request, which will be
+						used to join with the variables of the SQL query.
+					</p>
+
+					<div class="block">
+						If you send a parameter that is not present in the query you will get an error similar
+						to: <code>Column index out of range</code>
+					</div>
+				</div>
+			{:else if row.method === 'POST'}
+				<div class="block">
+					<div class="icon-text">
+						<span class="icon has-text-info">
+							<i class="fa-solid fa-circle-exclamation"></i>
+						</span>
+						<span
+							>When you use the POST method, the input parameters must be sent in the BODY in JSON
+							format, using the following example:</span
+						>
+					</div>
+					<br />
+
+					<JSONView bind:jsonObject={sample_bind_post} />
+
+					<br />
+
+					<div class="icon-text">
+						<span class="icon has-text-info">
+							<i class="fa-solid fa-circle-exclamation"></i>
+						</span>
+						<span>You can also use "replacements" used by sequelize., for example:</span>
+					</div>
+					<br />
+
+					<JSONView bind:jsonObject={sample_replace_post} />
+				</div>
+
+				<div class="icon-text">
+					<span class="icon has-text-warning">
+						<i class="fa-solid fa-circle-exclamation"></i>
+					</span>
+					<span>Only "bind" or "replacements" can be used at the same time.</span>
+				</div>
+			{/if}
+		</div>
+	</div>
+
+	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
 		<div>
 			<div class="content is-small">
 				Configuration parameters used by sequelize, visit <a href="https://sequelize.org/"
@@ -181,52 +258,6 @@
 					<span class="icon is-small is-left">
 						<i class="fa-regular fa-keyboard"></i>
 					</span>
-				</div>
-			{/if}
-		</div>
-	</div>
-
-	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
-		<div class="content is-small">
-			For more information you can consult the
-			<a href="https://sequelize.org/docs/v6/core-concepts/raw-queries/#bind-parameter">sequelize</a
-			>
-			documentation.
-
-			{#if row.method === 'GET'}
-				<div class="block">
-					<div class="icon-text">
-						<span class="icon has-text-warning">
-							<i class="fas fa-exclamation-triangle"></i>
-						</span>
-						<span>GET Method - Warning</span>
-					</div>
-
-					<p class="block">
-						The GET method is recommended only for simple requests where there is no input
-						parameters, or failing that the parameters are key-value on query request, which will be
-						used to join with the variables of the SQL query.
-					</p>
-
-					<div class="block">
-						If you send a parameter that is not present in the query you will get an error similar
-						to: <code>Column index out of range</code>
-					</div>
-				</div>
-			{:else if row.method === 'POST'}
-				<div class="block">
-					<div class="icon-text">
-						<span class="icon has-text-info">
-							<i class="fa-solid fa-circle-exclamation"></i>
-						</span>
-						<span
-							>When you use the POST method, the input parameters must be sent in the BODY in JSON
-							format, using the following example:</span
-						>
-					</div>
-					<br />
-
-					<JSONView bind:jsonObject={sample_bind_post} />
 				</div>
 			{/if}
 		</div>
