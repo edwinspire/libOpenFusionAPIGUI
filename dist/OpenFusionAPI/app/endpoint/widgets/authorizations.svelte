@@ -21,7 +21,7 @@
 				}
 			}
 		},
-		iduser: { label: 'iduser' },
+		iduser: { label: 'iduser', hidden: true },
 		enabled: {
 			label: 'Enabled',
 			decorator: {

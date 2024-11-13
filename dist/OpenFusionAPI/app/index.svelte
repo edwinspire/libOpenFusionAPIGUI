@@ -72,13 +72,12 @@
 	let TableObject;
 	let fnVars;
 	let active_tab = 0;
-	let showAuthorizations = true;
+	//	let showAuthorizations = true;
 
 	let columns = {
 		//enabled: { label: 'Enabled App' },
-		endpoint: { label: 'Endpoint', decorator: { component: cellPath } },
 		enabled: {
-			label: 'Enabled Endpoint',
+			label: 'Enabled',
 			decorator: {
 				component: ColumnTypes.BooleanIcon,
 				props: {
@@ -88,14 +87,17 @@
 				}
 			}
 		},
+		
+		endpoint: { label: 'Endpoint', decorator: { component: cellPath } },
+		method: { decorator: { component: CellMethod }, label: 'Method' },
+		handler: { decorator: { component: cellHandler }, label: 'Handler' },
 		access: {
 			label: 'Access',
 			decorator: {
 				component: CellAccess
 			}
 		},
-		method: { decorator: { component: CellMethod }, label: 'Method' },
-		handler: { decorator: { component: cellHandler }, label: 'Handler' },
+		
 		cache_time: { label: 'Cache Time', decorator: { component: cellCacheTime } },
 		ctrl: { hidden: true, label: 'Users' },
 		resource: { hidden: true },
