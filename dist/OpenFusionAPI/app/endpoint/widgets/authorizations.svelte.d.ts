@@ -3,6 +3,7 @@
 /** @typedef {typeof __propDef.slots}  AuthorizationsSlots */
 export default class Authorizations extends SvelteComponent<{
     row?: {};
+    users?: {};
 }, {
     [evt: string]: CustomEvent<any>;
 }, {}> {
@@ -14,6 +15,7 @@ import { SvelteComponent } from "svelte";
 declare const __propDef: {
     props: {
         row?: {};
+        users?: {};
     };
     events: {
         [evt: string]: CustomEvent<any>;

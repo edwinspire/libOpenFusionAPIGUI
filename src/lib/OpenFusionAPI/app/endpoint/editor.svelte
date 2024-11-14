@@ -13,6 +13,7 @@
 	//import { listAccessMethod } from '../../utils.js';
 	import Endpoint from './handler/endpoint.svelte';
 	import Authorizations from './widgets/authorizations.svelte';
+	import Logs from './widgets/logs.svelte';
 	import EndpointLabel from './widgets/endpoint_label.svelte';
 
 	/**
@@ -57,9 +58,12 @@
 	let tabList = [
 		{ label: 'Endpoint', isActive: true },
 		{ label: 'Configuration' },
-		{ label: 'Authorizations' }
+		{ label: 'Authorizations' },
+		{ label: 'Logs' }
 	];
 	const dispatch = createEventDispatcher();
+
+	$: row, defaultValues();
 
 	function accept() {
 		let data = {
@@ -73,8 +77,29 @@
 		dispatch('data', data);
 	}
 
+	function defaultValues() {
+		if (!row) {
+			row = {};
+		}
+
+		if (!row.ctrl) {
+			row.ctrl = {};
+		}
+
+		if (!row.ctrl.users) {
+			row.ctrl.users = [];
+		}
+
+		if (!row.ctrl.log) {
+			row.ctrl.log = {};
+		}
+
+		console.log('row defaultValues', row);
+	}
+
 	onMount(() => {
 		//		await getEnvList();
+		defaultValues();
 	});
 </script>
 
@@ -196,7 +221,14 @@
 		</div>
 
 		<div class={tabList[2].isActive ? '' : 'is-hidden'}>
-			<Authorizations bind:row></Authorizations>
+			{#if row.ctrl && row.ctrl.users}
+				<Authorizations bind:users={row.ctrl.users} bind:row></Authorizations>
+			{/if}
+		</div>
+		<div class={tabList[3].isActive ? '' : 'is-hidden'}>
+			{#if row.ctrl && row.ctrl.log}
+				<Logs bind:row bind:log={row.ctrl.log}></Logs>
+			{/if}
 		</div>
 	</Tab>
 </SlideFullScreen>

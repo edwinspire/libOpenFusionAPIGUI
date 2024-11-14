@@ -6,6 +6,7 @@
 	import EndpointLabel from '../widgets/endpoint_label.svelte';
 
 	export let row = {};
+	export let users = {};
 	let table_users = [];
 	let data_users = [];
 
@@ -37,32 +38,27 @@
 		username: { label: 'username' },
 		email: { label: 'email' }
 	};
-	$: row.crtl, getUsers();
+	$: users, getUsers();
 	$: table_users, authChange();
 
 	storeUsersList.subscribe((value) => {
-	//	console.log('storeUsersList >>>>>> ', value);
+		//	console.log('storeUsersList >>>>>> ', value);
 		data_users = value;
 	});
 
 	function defaultValue() {
-		if (row) {
-			if (!row.ctrl) {
-				row.ctrl = { users: [] };
-			}
-
-			if (!row.ctrl.users) {
-				row.ctrl = { users: [] };
-			}
+		if (!users) {
+			users = [];
 		}
 	}
 
 	function authChange() {
-		if (row) {
-			defaultValue();
-		//	console.log('authChange > ', table_users, row);
+		defaultValue();
 
-			row.ctrl.users = table_users
+		if (users) {
+			//	console.log('authChange > ', table_users, row);
+
+			users = table_users
 				.filter((u) => {
 					return u.auth;
 				})
@@ -70,7 +66,7 @@
 					return u.iduser;
 				});
 
-		//	console.log('auth_enabled >> ', row.ctrl.users);
+			//	console.log('auth_enabled >> ', row.ctrl.users);
 		}
 	}
 
@@ -78,7 +74,7 @@
 		defaultValue();
 		if (data_users && Array.isArray(data_users)) {
 			table_users = data_users.map((u) => {
-				return { auth: row.ctrl.users.includes(u.iduser), ...u };
+				return { auth: users.includes(u.iduser), ...u };
 			});
 		}
 	}
