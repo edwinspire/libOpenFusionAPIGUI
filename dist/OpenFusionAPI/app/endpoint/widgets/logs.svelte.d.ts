@@ -3,6 +3,11 @@
 /** @typedef {typeof __propDef.slots}  LogsSlots */
 export default class Logs extends SvelteComponent<{
     row?: {};
+    options?: {
+        id: number;
+        value: string;
+        enabled: boolean;
+    }[];
     log?: {};
 }, {
     [evt: string]: CustomEvent<any>;
@@ -15,6 +20,11 @@ import { SvelteComponent } from "svelte";
 declare const __propDef: {
     props: {
         row?: {};
+        options?: {
+            id: number;
+            value: string;
+            enabled: boolean;
+        }[];
         log?: {};
     };
     events: {

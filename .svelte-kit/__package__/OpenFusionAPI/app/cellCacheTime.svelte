@@ -19,8 +19,8 @@
 		if (cache_data && Array.isArray(cache_data)) {
 			if (cache_data.length > 0) {
 				let data = cache_data.find((item) => {
-				//	console.log('>>>>>', item.url, row.endpoint, item.url == row.endpoint);
-					return item.url.toLowerCase() == row.endpoint.toLowerCase();
+				//	console.log('>>>>>', item, row.endpoint, row.method);
+					return item.url.toLowerCase() == `${row.endpoint}|${row.method}`.toLowerCase();
 				});
 
 				if (data) {
