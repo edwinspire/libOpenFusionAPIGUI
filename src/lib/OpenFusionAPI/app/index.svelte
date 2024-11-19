@@ -196,7 +196,8 @@
 		// Lógica de autenticación aquí
 
 		let urls_clear = TableObject.GetSelectedRows().map((u) => {
-			return u.endpoint;
+			//console.log(u);
+			return `${u.endpoint}|${u.method}`;
 		});
 
 		try {
