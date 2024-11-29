@@ -199,9 +199,7 @@
 			//console.log(u);
 			return `${u.endpoint}|${u.method}`;
 		});
-
-		console.log('>>>>>>>>>>> ', urls_clear);
-		
+	
 		try {
 			//      console.log("getListApps > ", $userStore, uf);
 			if (urls_clear && Array.isArray(urls_clear) && urls_clear.length > 0) {

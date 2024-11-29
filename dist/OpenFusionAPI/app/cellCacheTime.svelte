@@ -19,12 +19,14 @@
 		if (cache_data && Array.isArray(cache_data)) {
 			if (cache_data.length > 0) {
 				let data = cache_data.find((item) => {
-				//	console.log('>>>>>', item, row.endpoint, row.method);
+					//	console.log('>>>>>', item, row.endpoint, row.method);
 					return item.url.toLowerCase() == `${row.endpoint}|${row.method}`.toLowerCase();
 				});
 
 				if (data) {
 					value_cache = data;
+				} else {
+					value_cache.bytes = 0;
 				}
 			} else {
 				value_cache.bytes = 0;
@@ -57,7 +59,10 @@
 					<!-- svelte-ignore a11y-missing-attribute -->
 					<a class="button is-small has-text-success">
 						<span class="icon">
-							<i class="fa-solid fa-sync fa-spin"></i>
+							<i
+								class="fa-solid fa-star bolt fa-beat-fade"
+								style="--fa-beat-fade-opacity: 0.1; --fa-beat-fade-scale: 1.25;"
+							></i>
 						</span>
 						<span>{value_cache.bytes} KB</span>
 					</a>
@@ -65,7 +70,7 @@
 					<!-- svelte-ignore a11y-missing-attribute -->
 					<a class="button is-small">
 						<span class="icon">
-							<i class="fa-solid fa-sync"></i>
+							<i class="fa-regular fa-star"></i>
 						</span>
 						<span> 0.0000 KB </span>
 					</a>

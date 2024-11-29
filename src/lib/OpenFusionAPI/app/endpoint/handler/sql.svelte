@@ -34,7 +34,7 @@
 	};
 
 	let tabList = [
-		{ label: 'Query', isActive: true },
+		{ label: 'Query', isActive: true, classIcon: ' fa-solid fa-database ' },
 		{ label: 'Pass Parameters' },
 		{ label: 'Connection Parameters' },
 		{ label: 'App Variables' },

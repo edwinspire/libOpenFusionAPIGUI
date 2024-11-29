@@ -4,7 +4,7 @@
 	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 	import WarnPrd from './warning_production.svelte';
-	import Endpoint from '../handler/endpoint.svelte';
+	import Endpoint from './endpoint.svelte';
 	//import ParamsVarJSON from '../widgets/parameters_var_json.svelte';
 
 	/**
@@ -97,7 +97,7 @@
 			if (use_var_cnx) {
 				conf = cnx_param_var;
 			} else {
-				conf = JSON.parse(cnx_param_json);
+				conf = typeof cnx_param_json === 'object' ? cnx_param_json : JSON.parse(cnx_param_json);
 			}
 
 			//return JSON.stringify(c, null, 2);
@@ -129,9 +129,7 @@
 		<div>
 			<div>
 				<div class="content is-small">
-					The parameters must have a name like <span style="font-style: oblique; font-weight: bold;"
-						>$nameparameter</span
-					>
+					HANNA <span style="font-style: oblique; font-weight: bold;">$nameparameter</span>
 					to bind, or <span style="font-style: oblique; font-weight: bold;">:nameparameter</span> to
 					replacements. The values ​​you send in the request. For more information you can consult
 					the

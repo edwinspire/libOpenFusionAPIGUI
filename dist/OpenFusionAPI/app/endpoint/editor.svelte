@@ -7,6 +7,7 @@
 	import JsCode from './handler/js.svelte';
 	import SoapCode from './handler/soap.svelte';
 	import SqlCode from './handler/sql.svelte';
+	import SqlHana from './handler/sqlHana.svelte';
 	import TextCode from './handler/text.svelte';
 	import CustomFn from './handler/customFunction.svelte';
 	import { Level, SlideFullScreen, Tab } from '@edwinspire/svelte-components';
@@ -32,6 +33,7 @@
 	 * @type {SqlCode}
 	 */
 	let fnSqlCode;
+	let fnSqlHanaCode;
 
 	/**
 	 * @type {CustomFn}
@@ -132,8 +134,12 @@
 									let v = fnSqlCode.getData();
 									value = v.code;
 									row.data_test = v.data_test;
+								} else if (row && row.handler == 'HANA') {
+									let v = fnSqlHanaCode.getData();
+									value = v.code;
+									row.data_test = v.data_test;
 
-									//	console.log('>> fnSqlCode.getData() > ', row);
+									console.log('>> fnSqlHanaCode.getData() > ', row);
 
 									//fnSqlCode.reset();
 								} else if (row && row.handler == 'FETCH') {
@@ -209,6 +215,8 @@
 				<SoapCode bind:this={fnSoapCode} bind:row />
 			{:else if row && row.handler == 'SQL'}
 				<SqlCode bind:this={fnSqlCode} bind:row />
+			{:else if row && row.handler == 'HANA'}
+				<SqlHana bind:this={fnSqlHanaCode} bind:row />
 			{:else if row && row.handler == 'FETCH'}
 				<FetchCode bind:this={fnFetchCode} bind:row />
 			{:else if row && row.handler == 'FUNCTION'}
