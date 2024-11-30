@@ -19,12 +19,23 @@
 	let cnx_param_json = {};
 	let cnx_param_var = '';
 
+	let cnx_sample = {
+		host: '<host-name>',
+		port: '<port>',
+		user: 'SYSTEM',
+		password: 'manager',
+		pooling: true
+	};
+
+	let query_sample_get = 'SELECT * FROM YOUR_TABLE WHERE FIELD_01 = $value_01;';
+	let query_sample_get_result = 'SELECT * FROM YOUR_TABLE WHERE FIELD_01 = ?;';
+	let query_sample_post =
+		'SELECT * FROM YOUR_TABLE WHERE FIELD_01 = $value_01 AND FIELD_02 IN (:list_your_values);';
+	let query_sample_post_result =
+		'SELECT * FROM YOUR_TABLE WHERE FIELD_01 = ? AND FIELD_02 IN (?, ?);';
+
 	let sample_bind_post = {
-		bind: {
-			your_param_01: '0002081614',
-			your_param_02: 123,
-			your_param_03: 'ABC'
-		}
+		params: { value_01: 1234, list_your_values: ['0002000157', '0002000158'] }
 	};
 
 	let sample_replace_post = {
@@ -129,14 +140,10 @@
 		<div>
 			<div>
 				<div class="content is-small">
-					HANNA <span style="font-style: oblique; font-weight: bold;">$nameparameter</span>
+					<span style="font-style: oblique; font-weight: bold;">$nameparameter</span>
 					to bind, or <span style="font-style: oblique; font-weight: bold;">:nameparameter</span> to
-					replacements. The values ​​you send in the request. For more information you can consult
-					the
-					<a href="https://sequelize.org/docs/v6/core-concepts/raw-queries/#bind-parameter"
-						>sequelize</a
-					>
-					documentation.
+					use array bind. The values ​​you send in the request. For more information go to the "Pass
+					parameters" tab.
 				</div>
 			</div>
 		</div>
@@ -148,13 +155,64 @@
 	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
 		<div class="content is-small">
 			<p>
-				In sequelize you can pass parameters using <strong>"bind"</strong> or
-				<strong>"replacements"</strong>
-				depending on the case. You can refer to
-				<a href="https://sequelize.org/docs/v6/core-concepts/raw-queries/#bind-parameter"
-					>Sequelize Parameters</a
-				> for more details.
+				This "handler" uses <a
+					href="https://help.sap.com/docs/HANA_SERVICE_CF/1efad1691c1f496b8b580064a6536c2d/a5c332936d9f47d8b820a4ecc427352c.html"
+					>@sap/hana-client internally</a
+				>. However, the way the parameters are passed is a little different in order to facilitate
+				its use.
 			</p>
+
+			<div class="block">
+				<h4>Parameter name</h4>
+
+				<div class="block">
+					If in the query you use the parameter with the prefix <strong>"$"</strong> (<code
+						>$param_name</code
+					>), it is expected that this variable corresponds to a value that will be injected into
+					the query.
+					<br />
+					<div class="block">
+						For example the following query: <br /> <code>{query_sample_get}</code>
+						<br />
+						Internally the query becomes:: <br /> <code>{query_sample_get_result}</code>
+					</div>
+				</div>
+
+				<div class="block">
+					If in the query you use the parameter with the prefix <strong>":"</strong> (<code
+						>:param_name</code
+					>), this variable is expected to contain an array of values ​​that will be injected into
+					the query.
+					<br />
+					<div class="block">
+						For example the following query: <br /> <code>{query_sample_post}</code>
+						<br />
+						The parameters you must send should look like the following example:
+						<br />
+						<JSONView bind:jsonObject={sample_bind_post} />
+						<br />
+						Internally the query becomes: <br /> <code>{query_sample_post_result}</code>
+					</div>
+				</div>
+
+				<div class="icon-text">
+					<span class="icon has-text-warning">
+						<i class="fa-solid fa-circle-exclamation"></i>
+					</span>
+					<span
+						>Note that parameter names when sent in the request should not include the prefix.</span
+					>
+				</div>
+				<div class="icon-text">
+					<span class="icon has-text-warning">
+						<i class="fas fa-exclamation-triangle"></i>
+					</span>
+					<span
+						>If you send a parameter that is not present in the query you will get an error similar
+						to: <code>There are missing parameters.</code></span
+					>
+				</div>
+			</div>
 
 			{#if row.method === 'GET'}
 				<div class="block">
@@ -165,15 +223,10 @@
 						<span>GET Method - Warning</span>
 					</div>
 
-					<p class="block">
+					<div class="block">
 						The GET method is recommended only for simple requests where there is no input
 						parameters, or failing that the parameters are key-value on query request, which will be
-						used to join with the variables of the SQL query.
-					</p>
-
-					<div class="block">
-						If you send a parameter that is not present in the query you will get an error similar
-						to: <code>Column index out of range</code>
+						used to bind with the variables of the SQL query.
 					</div>
 				</div>
 			{:else if row.method === 'POST'}
@@ -190,25 +243,6 @@
 					<br />
 
 					<JSONView bind:jsonObject={sample_bind_post} />
-
-					<br />
-
-					<div class="icon-text">
-						<span class="icon has-text-info">
-							<i class="fa-solid fa-circle-exclamation"></i>
-						</span>
-						<span>You can also use "replacements" used by sequelize., for example:</span>
-					</div>
-					<br />
-
-					<JSONView bind:jsonObject={sample_replace_post} />
-				</div>
-
-				<div class="icon-text">
-					<span class="icon has-text-warning">
-						<i class="fa-solid fa-circle-exclamation"></i>
-					</span>
-					<span>Only "bind" or "replacements" can be used at the same time.</span>
 				</div>
 			{/if}
 		</div>
@@ -217,13 +251,11 @@
 	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
 		<div>
 			<div class="content is-small">
-				Configuration parameters used by sequelize, visit <a href="https://sequelize.org/"
-					>https://sequelize.org/</a
+				Configuration parameters used by @sap/hana-client, visit <a
+					href="https://help.sap.com/docs/HANA_SERVICE_CF/1efad1691c1f496b8b580064a6536c2d/4fe9978ebac44f35b9369ef5a4a26f4c.html"
+					>@sap/hana-client</a
 				>
 				for more information.
-				<br />
-				You can also use the name of an application variable enclosed in double quotes to use it, for
-				example <strong>"$_VAR_NAME"</strong>.
 			</div>
 		</div>
 
@@ -244,8 +276,19 @@
 			</div>
 
 			{#if !use_var_cnx}
+				<div class="content is-small">
+					In most cases the following connection parameters are sufficient:
+					<JSONView bind:jsonObject={cnx_sample} />
+				</div>
+
 				<EditorCode isReadOnly={false} lang="json" bind:code={cnx_param_json}></EditorCode>
 			{:else}
+				<div class="content is-small">
+					You can also use the name of an application variable to use it, for example <strong
+						>$_VAR_NAME</strong
+					>.
+				</div>
+
 				<div class="control has-icons-left">
 					<input
 						class="input is-small"

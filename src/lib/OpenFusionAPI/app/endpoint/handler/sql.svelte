@@ -224,8 +224,8 @@
 				>
 				for more information.
 				<br />
-				You can also use the name of an application variable enclosed in double quotes to use it, for
-				example <strong>"$_VAR_NAME"</strong>.
+				You can also use the name of an application variable to use it, for
+				example <strong>$_VAR_NAME</strong>.
 			</div>
 		</div>
 

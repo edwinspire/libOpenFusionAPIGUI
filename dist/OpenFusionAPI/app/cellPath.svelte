@@ -22,7 +22,7 @@
 			</span>
 		{:else if row.environment == 'qa'}
 			<span class="icon has-text-link">
-				<i class="fa-regular fa-rectangle-list"></i>
+				<i class="fa-regular fa-eye"></i>
 			</span>
 		{:else if row.environment == 'prd'}
 			<span class="icon has-text-success">
