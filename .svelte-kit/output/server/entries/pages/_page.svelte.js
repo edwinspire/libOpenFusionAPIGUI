@@ -2,7 +2,6 @@ import { c as create_ssr_component, d as createEventDispatcher, f as add_attribu
 import uFetch from "@edwinspire/universal-fetch";
 import "events";
 import "d3";
-import "../../chunks/client.js";
 import "acorn";
 import { x } from "code-red";
 import { fork } from "css-tree";
