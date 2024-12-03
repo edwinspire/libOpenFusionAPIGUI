@@ -138,38 +138,46 @@ export namespace listHandlers {
         export { icon_13 as icon };
     }
     export { SQL_1 as SQL };
-    export namespace HANA {
+    export namespace SQL_BULK_I {
         let color_7: string;
         export { color_7 as color };
         let icon_14: string;
         export { icon_14 as icon };
+        let label_7: string;
+        export { label_7 as label };
     }
-    export namespace FETCH_1 {
+    export namespace HANA {
         let color_8: string;
         export { color_8 as color };
         let icon_15: string;
         export { icon_15 as icon };
     }
-    export { FETCH_1 as FETCH };
-    export namespace SOAP_1 {
+    export namespace FETCH_1 {
         let color_9: string;
         export { color_9 as color };
         let icon_16: string;
         export { icon_16 as icon };
     }
-    export { SOAP_1 as SOAP };
-    export namespace TEXT_1 {
+    export { FETCH_1 as FETCH };
+    export namespace SOAP_1 {
         let color_10: string;
         export { color_10 as color };
         let icon_17: string;
         export { icon_17 as icon };
     }
-    export { TEXT_1 as TEXT };
-    export namespace FUNCTION_1 {
+    export { SOAP_1 as SOAP };
+    export namespace TEXT_1 {
         let color_11: string;
         export { color_11 as color };
         let icon_18: string;
         export { icon_18 as icon };
+    }
+    export { TEXT_1 as TEXT };
+    export namespace FUNCTION_1 {
+        let color_12: string;
+        export { color_12 as color };
+        let icon_19: string;
+        export { icon_19 as icon };
     }
     export { FUNCTION_1 as FUNCTION };
 }

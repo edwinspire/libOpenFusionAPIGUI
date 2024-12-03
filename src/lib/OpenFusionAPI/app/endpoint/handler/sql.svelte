@@ -1,7 +1,7 @@
 <script>
 	// @ts-nocheck
 	import { onMount } from 'svelte';
-	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
+	import { Tab, EditorCode, RESTTester, JSONView, BasicSelect } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 	import WarnPrd from './warning_production.svelte';
 	import Endpoint from '../handler/endpoint.svelte';
@@ -18,6 +18,82 @@
 	let use_var_cnx = false;
 	let cnx_param_json = {};
 	let cnx_param_var = '';
+
+/**
+ SELECT = 'SELECT',
+  INSERT = 'INSERT',
+  UPDATE = 'UPDATE',
+  BULKUPDATE = 'BULKUPDATE',
+  DELETE = 'DELETE',
+  UPSERT = 'UPSERT',
+  SHOWINDEXES = 'SHOWINDEXES',
+  DESCRIBE = 'DESCRIBE',
+  RAW = 'RAW',
+  SHOWCONSTRAINTS = 'SHOWCONSTRAINTS',
+  */
+
+	let QueryTypes = [
+		{
+			id: 'SELECT',
+			value: 'SELECT',
+			enabled: true,
+			description: 'SELECT'
+		},
+		{
+			id: 'INSERT',
+			value: 'INSERT',
+			enabled: true,
+			description: 'INSERT'
+		},
+		{
+			id: 'UPDATE',
+			value: 'UPDATE',
+			enabled: true,
+			description: 'UPDATE'
+		},
+		{
+			id: 'BULKUPDATE',
+			value: 'BULKUPDATE',
+			enabled: false,
+			description: 'BULKUPDATE'
+		},
+		{
+			id: 'DELETE',
+			value: 'DELETE',
+			enabled: true,
+			description: 'DELETE'
+		},
+		{
+			id: 'UPSERT',
+			value: 'UPSERT',
+			enabled: false,
+			description: 'UPSERT'
+		},
+		{
+			id: 'SHOWINDEXES',
+			value: 'SHOWINDEXES',
+			enabled: false,
+			description: 'SHOWINDEXES'
+		},
+		{
+			id: 'DESCRIBE',
+			value: 'DESCRIBE',
+			enabled: false,
+			description: 'DESCRIBE'
+		},
+		{
+			id: 'RAW',
+			value: 'RAW',
+			enabled: true,
+			description: 'RAW'
+		},
+		{
+			id: 'SHOWCONSTRAINTS',
+			value: 'SHOWCONSTRAINTS',
+			enabled: false,
+			description: 'SHOWCONSTRAINTS'
+		}
+	];
 
 	let sample_bind_post = {
 		bind: {
@@ -143,6 +219,8 @@
 			</div>
 		</div>
 		<WarnPrd bind:environment={row.environment}></WarnPrd>
+
+
 		<EditorCode isReadOnly={false} title={'Query to be executed'} lang="sql" bind:code={query_code}
 		></EditorCode>
 	</div>
@@ -224,8 +302,8 @@
 				>
 				for more information.
 				<br />
-				You can also use the name of an application variable to use it, for
-				example <strong>$_VAR_NAME</strong>.
+				You can also use the name of an application variable to use it, for example
+				<strong>$_VAR_NAME</strong>.
 			</div>
 		</div>
 

@@ -248,6 +248,7 @@ export const listHTTPMethods = {
 export const listHandlers = {
 	JS: { color: 'success', icon: 'fa-brands fa-js' },
 	SQL: { color: 'link', icon: 'fa-solid fa-database' },
+	SQL_BULK_I: { color: 'danger', icon: 'fa-solid fa-database', label: 'SQL BULK INSERT' },
 	HANA: { color: '', icon: 'fa-solid fa-database' },
 	FETCH: { color: 'primary', icon: 'fa-solid fa-globe' },
 	SOAP: { color: 'info', icon: 'fa-solid fa-soap' },

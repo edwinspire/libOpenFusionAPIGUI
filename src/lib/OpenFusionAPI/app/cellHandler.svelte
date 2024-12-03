@@ -9,6 +9,7 @@
 	export let value;
 	export let row = {};
 	export let props = {};
+	let label;
 
 	let css_class = '';
 	let css_icon = 'fas fa-home';
@@ -26,6 +27,12 @@
 			css_class = '';
 			css_icon = '';
 		}
+
+		if (css_selected && css_selected.label) {
+			label = css_selected.label;
+		} else {
+			label = value;
+		}
 	}
 
 	onMount(() => {
@@ -35,6 +42,6 @@
 
 <td>
 	{#if row.method !== 'WS'}
-		<BLabel bind:color={css_class} bind:label={value} bind:icon={css_icon}></BLabel>
+		<BLabel bind:color={css_class} bind:label bind:icon={css_icon}></BLabel>
 	{/if}
 </td>

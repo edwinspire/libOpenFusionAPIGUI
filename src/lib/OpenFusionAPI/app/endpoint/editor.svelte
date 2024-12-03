@@ -7,6 +7,7 @@
 	import JsCode from './handler/js.svelte';
 	import SoapCode from './handler/soap.svelte';
 	import SqlCode from './handler/sql.svelte';
+	import SqlBulkInsert from './handler/sqlBulkInsert.svelte';
 	import SqlHana from './handler/sqlHana.svelte';
 	import TextCode from './handler/text.svelte';
 	import CustomFn from './handler/customFunction.svelte';
@@ -34,6 +35,7 @@
 	 */
 	let fnSqlCode;
 	let fnSqlHanaCode;
+	let fnSqlBulkInsertCode;
 
 	/**
 	 * @type {CustomFn}
@@ -134,12 +136,18 @@
 									let v = fnSqlCode.getData();
 									value = v.code;
 									row.data_test = v.data_test;
+								} else if (row && row.handler == 'SQL_BULK_I') {
+									let v = fnSqlBulkInsertCode.getData();
+									value = v.code;
+									row.data_test = v.data_test;
+
+									console.log('>> fnSqlBulkInsertCode.getData() > ', row);
 								} else if (row && row.handler == 'HANA') {
 									let v = fnSqlHanaCode.getData();
 									value = v.code;
 									row.data_test = v.data_test;
 
-									console.log('>> fnSqlHanaCode.getData() > ', row);
+									//	console.log('>> fnSqlHanaCode.getData() > ', row);
 
 									//fnSqlCode.reset();
 								} else if (row && row.handler == 'FETCH') {
@@ -217,6 +225,8 @@
 				<SqlCode bind:this={fnSqlCode} bind:row />
 			{:else if row && row.handler == 'HANA'}
 				<SqlHana bind:this={fnSqlHanaCode} bind:row />
+			{:else if row && row.handler == 'SQL_BULK_I'}
+				<SqlBulkInsert bind:this={fnSqlBulkInsertCode} bind:row />
 			{:else if row && row.handler == 'FETCH'}
 				<FetchCode bind:this={fnFetchCode} bind:row />
 			{:else if row && row.handler == 'FUNCTION'}
