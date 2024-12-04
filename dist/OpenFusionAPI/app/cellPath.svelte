@@ -3,7 +3,7 @@
 
 	'use strict';
 	import { onMount } from 'svelte';
-
+	import { listEnv } from '../utils.js';
 	/**
 	 * @type {any}
 	 */
@@ -16,17 +16,9 @@
 
 <td>
 	<div class="icon-text">
-		{#if row.environment == 'dev'}
-			<span class="icon has-text-danger">
-				<i class="fa-solid fa-bug"></i>
-			</span>
-		{:else if row.environment == 'qa'}
-			<span class="icon has-text-link">
-				<i class="fa-regular fa-eye"></i>
-			</span>
-		{:else if row.environment == 'prd'}
-			<span class="icon has-text-success">
-				<i class="fa-solid fa-gear fa-spin"></i>
+		{#if listEnv && row?.environment && listEnv[row.environment]}
+			<span class="icon {listEnv[row.environment].color}">
+				<i class={listEnv[row.environment].icon}></i>
 			</span>
 		{:else}
 			<span class="icon">

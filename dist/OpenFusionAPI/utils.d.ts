@@ -181,3 +181,23 @@ export namespace listHandlers {
     }
     export { FUNCTION_1 as FUNCTION };
 }
+export namespace listEnv {
+    namespace prd {
+        let color_13: string;
+        export { color_13 as color };
+        let icon_20: string;
+        export { icon_20 as icon };
+    }
+    namespace qa {
+        let color_14: string;
+        export { color_14 as color };
+        let icon_21: string;
+        export { icon_21 as icon };
+    }
+    namespace dev {
+        let color_15: string;
+        export { color_15 as color };
+        let icon_22: string;
+        export { icon_22 as icon };
+    }
+}

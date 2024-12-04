@@ -31,6 +31,17 @@
 		{ label: 'Tester' }
 	];
 
+	let data_example = {
+		data: [
+			{ field01: 1, field02: 'demo', field03: new Date() },
+			{ field01: 2, field02: 'test', field03: new Date() },
+			{ field01: 5, field02: 'app', field03: new Date() },
+			{ field01: 12, field02: 'red', field03: new Date() },
+			{ field01: 20, field02: 'dog', field03: new Date() },
+			{ field01: 3, field02: 'edwinspire', field03: new Date() }
+		]
+	};
+
 	let table_name = '';
 	let internal_data_test;
 
@@ -126,6 +137,21 @@
 			</div>
 		</div>
 		<WarnPrd bind:environment={row.environment}></WarnPrd>
+		<br />
+
+		<div class="content is-small">
+			<h4>Bulk INSET</h4>
+			<div>Performs a bulk insert into a SQL database table.</div>
+			<div>
+				The necessary parameters are the "table name" and an array with the data.<br />
+				The data you send must contain a JSON where the key must contain the exact name of the database
+				field.
+				<br />
+
+				For example, the following JSON represents a list of rows to be inserted:<br />
+				<JSONView bind:jsonObject={data_example}></JSONView>
+			</div>
+		</div>
 	</div>
 
 	<div class={tabList[1].isActive ? '' : 'is-hidden'}>

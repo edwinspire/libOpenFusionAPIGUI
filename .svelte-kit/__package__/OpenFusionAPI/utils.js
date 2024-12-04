@@ -255,3 +255,10 @@ export const listHandlers = {
 	TEXT: { color: 'warning', icon: 'fa-regular fa-file-lines' },
 	FUNCTION: { color: 'danger', icon: 'fa-solid fa-robot' }
 };
+
+
+export const listEnv = {
+	prd: { color: ' has-text-success ', icon: ' fa-solid fa-gear fa-spin ' },
+	qa: { color: ' has-text-link ', icon: ' fa-solid fa-eye ' },
+	dev: { color: ' has-text-danger ', icon: ' fa-solid fa-bug ' }
+};

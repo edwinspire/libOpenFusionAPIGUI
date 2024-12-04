@@ -215,7 +215,7 @@
 		</div>
 
 		<div class={tabList[1].isActive ? '' : 'is-hidden'}>
-			<EndpointLabel bind:endpoint={row.endpoint}></EndpointLabel>
+			<EndpointLabel bind:endpoint={row.endpoint} bind:environment={row.environment}></EndpointLabel>
 
 			{#if row && row.handler == 'JS'}
 				<JsCode bind:this={fnJsCode} bind:row />
