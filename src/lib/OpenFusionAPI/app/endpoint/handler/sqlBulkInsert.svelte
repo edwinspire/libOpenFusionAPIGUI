@@ -151,6 +151,18 @@
 				For example, the following JSON represents a list of rows to be inserted:<br />
 				<JSONView bind:jsonObject={data_example}></JSONView>
 			</div>
+
+			<div>
+				<span class="icon-text">
+					<span class="icon has-text-warning">
+						<i class="fas fa-exclamation-triangle fa-fade"></i>
+					</span>
+					<span class="label is-small"
+						>Depending on the database engine you may have a <strong> lock </strong> on the table during the bulk insert process.</span
+					>
+				</span>
+			</div>
+
 		</div>
 	</div>
 

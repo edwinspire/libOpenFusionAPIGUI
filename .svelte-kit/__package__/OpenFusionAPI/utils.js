@@ -17,7 +17,8 @@ export const url_paths = {
 	login: host + '/api/system/system/login/0.01/prd',
 	getCacheSize: host + '/api/system/cache/response/size/prd',
 	clearCache: host + '/api/system/cache/clear/prd',
-	getUsersList: host + '/api/system/users/list/prd'
+	getUsersList: host + '/api/system/users/list/prd',
+	getResponsesCountStatusCode: host + '/api/system/responses/status_code/count/prd'
 };
 
 export const userStore = writable({});
@@ -29,6 +30,7 @@ export const listFunctionStorePRD = writable({});
 export const listAppVars = writable({});
 export const storeCacheSize = writable({});
 export const storeUsersList = writable({});
+export const storeCountResponseStatusCode = writable({});
 
 export const formatJsonForHtmlCode = (/** @type {any} */ json) => {
 	return JSON.stringify(json, null, 2).replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;');
@@ -198,6 +200,25 @@ export const getCacheSize = async (app_name, token) => {
 	}
 };
 
+export const getCountStatusCode = async (app_name, token) => {
+	let uf = new uFetch();
+	//uf.setBearerAuthorization(token);
+	try {
+		//      console.log("getListApps > ", $userStore, uf);
+		if (app_name) {
+			let get_list = await uf.GET({
+				url: url_paths.getResponsesCountStatusCode,
+				data: { appName: app_name }
+			});
+
+			let list = await get_list.json();
+			storeCountResponseStatusCode.set(list);
+		}
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 export const css_handlers = {
 	FETCH: { css: ' is-primary  ', label: ' Fetch ', icon: ' fa-solid fa-server ' },
 	JS: { css: ' is-dark ', label: ' Javascript ', icon: ' fa-brands fa-square-js ' },
@@ -255,7 +276,6 @@ export const listHandlers = {
 	TEXT: { color: 'warning', icon: 'fa-regular fa-file-lines' },
 	FUNCTION: { color: 'danger', icon: 'fa-solid fa-robot' }
 };
-
 
 export const listEnv = {
 	prd: { color: ' has-text-success ', icon: ' fa-solid fa-gear fa-spin ' },

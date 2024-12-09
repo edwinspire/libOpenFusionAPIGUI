@@ -1,15 +1,7 @@
 <script>
 	// @ts-ignore
 	import uFetch from '@edwinspire/universal-fetch';
-	import {
-		PredictiveInput,
-		Table,
-		ColumnTypes,
-		Level,
-		Tab,
-		sha256
-		// @ts-ignore
-	} from '@edwinspire/svelte-components';
+	import { PredictiveInput, Table, ColumnTypes, Level, Tab } from '@edwinspire/svelte-components';
 	import { onMount } from 'svelte';
 	//import { createEventDispatcher } from 'svelte';
 	import {
@@ -18,19 +10,17 @@
 		listAppVars,
 		url_paths,
 		getCacheSize,
-		getListUsers,
-		storeUsersList
+		getCountStatusCode,
+		getListUsers
 	} from '../utils.js';
 	import CellMethod from './cellMethod.svelte';
 	import CellAccess from './cellAccess.svelte';
 	import cellHandler from './cellHandler.svelte';
+	import cellCountStatusCode from './cellCountStatusCode.svelte';
 	import cellPath from './cellPath.svelte';
 	import cellCacheTime from './cellCacheTime.svelte';
-	//import { validateURL } from '../utils.js';
 	import EndPointEditor from './endpoint/editor.svelte';
 	import AppVars from './app_vars.svelte';
-
-	//	import SelectEnvironment from '../widgets/Select.svelte';
 
 	//const dispatch = createEventDispatcher();
 	export let idapp = 0;
@@ -87,7 +77,7 @@
 				}
 			}
 		},
-		
+
 		endpoint: { label: 'Endpoint', decorator: { component: cellPath } },
 		method: { decorator: { component: CellMethod }, label: 'Method' },
 		handler: { decorator: { component: cellHandler }, label: 'Handler' },
@@ -97,14 +87,14 @@
 				component: CellAccess
 			}
 		},
-		
+
 		cache_time: { label: 'Cache Time', decorator: { component: cellCacheTime } },
 		ctrl: { hidden: true, label: 'Users' },
 		resource: { hidden: true },
 
 		code: { label: 'Code', hidden: true },
 		idapp: { hidden: true },
-		rowkey: { hidden: true },
+		rowkey: { decorator: {component: cellCountStatusCode}, label: "Status Code" },
 		app: { hidden: true },
 		namespace: { hidden: true },
 		name: { hidden: true },
@@ -199,7 +189,7 @@
 			//console.log(u);
 			return `${u.endpoint}|${u.method}`;
 		});
-	
+
 		try {
 			//      console.log("getListApps > ", $userStore, uf);
 			if (urls_clear && Array.isArray(urls_clear) && urls_clear.length > 0) {
@@ -379,6 +369,7 @@
 		await getEnvList();
 		setInterval(async () => {
 			await getCacheSize(app.app, $userStore.token);
+			await getCountStatusCode(app.app, $userStore.token);
 		}, 5000);
 		// @ts-ignore
 	});

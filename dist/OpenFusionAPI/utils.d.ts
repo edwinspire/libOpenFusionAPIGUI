@@ -17,6 +17,7 @@ export namespace url_paths {
     let getCacheSize: string;
     let clearCache: string;
     let getUsersList: string;
+    let getResponsesCountStatusCode: string;
 }
 export const userStore: import("svelte/store").Writable<{}>;
 export const listMethodStore: import("svelte/store").Writable<{}>;
@@ -27,12 +28,14 @@ export const listFunctionStorePRD: import("svelte/store").Writable<{}>;
 export const listAppVars: import("svelte/store").Writable<{}>;
 export const storeCacheSize: import("svelte/store").Writable<{}>;
 export const storeUsersList: import("svelte/store").Writable<{}>;
+export const storeCountResponseStatusCode: import("svelte/store").Writable<{}>;
 export function formatJsonForHtmlCode(json: any): string;
 export function getListUsers(token: string): Promise<void>;
 export function getListFunction(token: string, appName: string): Promise<void>;
 export function getListHandler(token: string): Promise<void>;
 export function getListMethods(token: string): Promise<void>;
 export function getCacheSize(app_name: any, token: any): Promise<void>;
+export function getCountStatusCode(app_name: any, token: any): Promise<void>;
 export namespace css_handlers {
     namespace FETCH {
         let css: string;
