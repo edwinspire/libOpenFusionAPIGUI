@@ -2,19 +2,14 @@
 	// @ts-ignore
 	import uFetch from '@edwinspire/universal-fetch';
 	import { onMount } from 'svelte';
-	import { createEventDispatcher } from 'svelte';
-	import {
-		userStore,
-		getListMethods,
-		getListHandler,
-		url_paths
-	} from '../utils.js';
+	//	import { createEventDispatcher } from 'svelte';
+	import { userStore, getListMethods, getListHandler, url_paths } from '../utils.js';
 	import logo from '../img/favicon.png';
 
-	const dispatch = createEventDispatcher();
-
-	let username = '';
-	let password = '';
+	//	const dispatch = createEventDispatcher();
+	let { onlogin = () => {} } = $props();
+	let username = $state('');
+	let password = $state('');
 	// @ts-ignore
 	let uf = new uFetch();
 
@@ -22,7 +17,13 @@
 	 * @param {boolean} login
 	 */
 	function emitSuccess(login) {
+		/*
 		dispatch('login', {
+			login: login
+		});
+*/
+
+		onlogin({
 			login: login
 		});
 	}
@@ -93,7 +94,7 @@
 				<p class="control">
 					<button
 						class="button is-success"
-						on:click={() => {
+						onclick={() => {
 							handleSubmit();
 						}}
 					>

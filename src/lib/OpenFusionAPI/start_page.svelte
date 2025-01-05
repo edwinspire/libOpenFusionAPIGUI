@@ -40,7 +40,7 @@
 	.span01 {
 		height: 300px;
 		width: 100%;
-		/* background-image: url({flame}); */
+		
 		background-position: 0 -1000px;
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;

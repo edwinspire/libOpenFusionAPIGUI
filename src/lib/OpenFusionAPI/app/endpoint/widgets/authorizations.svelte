@@ -85,5 +85,5 @@
 	});
 </script>
 
-<EndpointLabel bind:endpoint={row.endpoint}></EndpointLabel>
+<EndpointLabel bind:endpoint={row.endpoint} bind:environment={row.environment}></EndpointLabel>
 <Table bind:RawDataTable={table_users} bind:columns></Table>

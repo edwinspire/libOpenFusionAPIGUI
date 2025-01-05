@@ -18,7 +18,8 @@ export const url_paths = {
 	getCacheSize: host + '/api/system/cache/response/size/prd',
 	clearCache: host + '/api/system/cache/clear/prd',
 	getUsersList: host + '/api/system/users/list/prd',
-	getResponsesCountStatusCode: host + '/api/system/responses/status_code/count/prd'
+	getResponsesCountStatusCode: host + '/api/system/responses/status_code/count/prd',
+	getLogs: host + '/api/system/system/log/prd'
 };
 
 export const userStore = writable({});
