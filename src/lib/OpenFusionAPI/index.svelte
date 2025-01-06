@@ -1,31 +1,31 @@
 <script>
-  import { onMount } from "svelte";
-  import Login from "./login/index.svelte";
-  import Main from "./main/index.svelte";
- 
-    let page = "login";
+	import { onMount } from 'svelte';
+	import Login from './login/index.svelte';
+	import Main from './main/index.svelte';
 
-  onMount(() => {
-    //
-  });
+	let page = 'login';
+
+	onMount(() => {
+		//
+	});
 </script>
 
-{#if page == "main"}
-  <Main
-    on:exit={() => {
-      page = "login";
-    }}
-  />
+{#if page == 'main'}
+	<Main
+		onexit={() => {
+			page = 'login';
+		}}
+	/>
 {:else}
-  <Login
-    on:login={(e) => {
-      console.log("LOGIN", e);
+	<Login
+		onlogin={(login) => {
+			console.log('LOGIN', login);
 
-      if (e.detail.login) {
-        page = "main";
-      } else {
-        page = "?";
-      }
-    }}
-  />
+			if (login) {
+				page = 'main';
+			} else {
+				page = '?';
+			}
+		}}
+	/>
 {/if}

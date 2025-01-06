@@ -13,21 +13,6 @@
 	// @ts-ignore
 	let uf = new uFetch();
 
-	/**
-	 * @param {boolean} login
-	 */
-	function emitSuccess(login) {
-		/*
-		dispatch('login', {
-			login: login
-		});
-*/
-
-		onlogin({
-			login: login
-		});
-	}
-
 	async function handleSubmit() {
 		// Lógica de autenticación aquí
 
@@ -35,18 +20,20 @@
 			// @ts-ignore
 			let user = await uf.POST({ url: url_paths.login, data: { username, password } });
 			let data = await user.json();
-			console.log(data);
+		//	console.log(data);
 
 			if (data.login) {
 				userStore.set(data);
 
 				await getListMethods(data.token);
 				await getListHandler(data.token);
+
+				onlogin({
+					login: data.login
+				});
 			} else {
 				alert('Invalid credentials');
 			}
-
-			emitSuccess(data.login);
 		} catch (error) {
 			console.trace(error);
 			// @ts-ignore
