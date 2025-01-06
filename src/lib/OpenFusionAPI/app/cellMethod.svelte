@@ -3,12 +3,10 @@
 	import { listHTTPMethods } from '../utils.js';
 	import { onMount } from 'svelte';
 
-	export let value;
-	export let row = {};
-	export let props = {};
+	let { value = $bindable(), row = $bindable() } = $props();
 
-	let css_class_method = '';
-	let css_icon = 'fas fa-home';
+	let css_class_method = $state('');
+	let css_icon = $state('fas fa-home');
 
 	/**
 	 * @param {string} method
