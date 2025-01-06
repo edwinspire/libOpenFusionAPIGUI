@@ -3,16 +3,12 @@
 	import { listHandlers } from '../utils.js';
 	import { onMount } from 'svelte';
 
-	/**
-	 * @type {any}
-	 */
-	export let value;
-	export let row = {};
-	export let props = {};
-	let label;
+	let { value = $bindable(), row = $bindable() } = $props();
 
-	let css_class = '';
-	let css_icon = 'fas fa-home';
+	let label = $state();
+
+	let css_class = $state('');
+	let css_icon = $state('fas fa-home');
 
 	/**
 	 * @param {string} method
