@@ -1,10 +1,9 @@
 <script>
-	export let environment;
+	let { environment = $bindable({}) } = $props();
 </script>
 
 {#if environment && environment == 'prd'}
-	<div  class="is-flex is-justify-content-flex-end">
-	
+	<div class="is-flex is-justify-content-flex-end">
 		<span class="icon-text">
 			<span class="icon has-text-warning">
 				<i class="fas fa-exclamation-triangle fa-fade"></i>
@@ -17,5 +16,4 @@
 {/if}
 
 <style>
-
 </style>
