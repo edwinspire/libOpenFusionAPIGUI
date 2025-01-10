@@ -3,10 +3,6 @@
 	import { Tab, Table, ColumnTypes } from '@edwinspire/svelte-components';
 	import { url_paths } from '../../../utils.js';
 
-	//	import { storeUsersList } from '$lib/OpenFusionAPI/utils.js';
-	//	import uFetch from '@edwinspire/universal-fetch';
-	//import { Table, ColumnTypes } from '@edwinspire/svelte-components';
-	import EndpointLabel from './endpoint_label.svelte';
 
 	export let log = {};
 	export let row = {};
@@ -52,8 +48,6 @@
 		defaultValue();
 	});
 </script>
-
-<EndpointLabel bind:endpoint={row.endpoint} bind:environment={row.environment}></EndpointLabel>
 
 <Tab bind:tabs bind:active={active_tab}>
 	<div style="display: {active_tab == 0 ? 'block' : 'none'};">

@@ -82,15 +82,15 @@
 		if (row && !row.handler) {
 			row.handler = '';
 		}
-		if (!row.ctrl) {
+		if (row && !row.ctrl) {
 			row.ctrl = {};
 		}
 
-		if (!row.ctrl.users) {
+		if (row && !row.ctrl.users) {
 			row.ctrl.users = [];
 		}
 
-		if (!row.ctrl.log) {
+		if (row && !row.ctrl.log) {
 			row.ctrl.log = {};
 		}
 
@@ -126,7 +126,7 @@
 					bind:row
 					onchange={(v) => {
 						handler_code[row.handler] = v;
-						console.log('----------------> ', handler_code);
+						//console.log('----------------> ', handler_code);
 					}}
 				/>
 			{:else if row && row.handler == 'SOAP'}

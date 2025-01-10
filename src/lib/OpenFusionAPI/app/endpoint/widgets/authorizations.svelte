@@ -3,7 +3,6 @@
 	//	import uFetch from '@edwinspire/universal-fetch';
 	import { onMount, createEventDispatcher } from 'svelte';
 	import { Table, ColumnTypes } from '@edwinspire/svelte-components';
-	import EndpointLabel from '../widgets/endpoint_label.svelte';
 
 	export let row = {};
 	export let users = {};
@@ -85,5 +84,4 @@
 	});
 </script>
 
-<EndpointLabel bind:endpoint={row.endpoint} bind:environment={row.environment}></EndpointLabel>
 <Table bind:RawDataTable={table_users} bind:columns></Table>
