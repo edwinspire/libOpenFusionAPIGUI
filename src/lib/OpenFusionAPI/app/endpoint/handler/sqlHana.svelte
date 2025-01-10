@@ -5,13 +5,10 @@
 	import AppVars from '../../app_vars.svelte';
 	import WarnPrd from './warning_production.svelte';
 	import Endpoint from './endpoint.svelte';
-	//import ParamsVarJSON from '../widgets/parameters_var_json.svelte';
 
 	let { row = $bindable({}), onchange = () => {} } = $props();
 	let internal_code = $state('');
 
-	//let sample_bind_post_string = '{}';
-	//	let fnApiTester;
 	let use_var_cnx = $state(false);
 	let cnx_param_json = $state({});
 	let cnx_param_var = $state('');
@@ -52,9 +49,6 @@
 	let query_code = $state('SELECT 1+1;');
 	let internal_data_test;
 
-	//	$: row.code, parseCode();
-	//	$: row.data_test, setDataTest();
-
 	$inspect(row.code).with((type) => {
 		//console.log('row.code >>>>>>>>>>>>> ', type, row);
 		if (type === 'update' || type === 'init') {
@@ -93,7 +87,6 @@
 		onchange(getData());
 	}
 
-	
 	function getData() {
 		let data = { code: getCode(), data_test: $state.snapshot(row.data_test) };
 		//	console.log('> getData > SQL', data);
