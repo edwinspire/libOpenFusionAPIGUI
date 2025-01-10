@@ -64,14 +64,9 @@
 		{ label: 'Tester', component: tab_tester }
 	]);
 
-	/**
-	 * @type {EditorCode}
-	 */
-	//let fnEditorCode2;
 	let mimeType = $state('text/plain');
 	let payload = $state('');
 	let langEditor = $state('txt');
-	//$: row.code, parseCode();
 
 	$inspect(row.code).with((type) => {
 		//console.log('row.code >>>>>>>>>>>>> ', type, row);
@@ -79,11 +74,6 @@
 			parseCode();
 		}
 	});
-
-	export function reset() {
-		//	fnEditorCode2.reset();
-		parseCode();
-	}
 
 	function parseCode() {
 		try {
@@ -103,7 +93,7 @@
 		}
 	}
 
-	export function getCode() {
+	function getCode() {
 		//let textCode = fnEditorCode2.getCode();
 		let conf = {};
 		let outcode = {};
@@ -185,7 +175,6 @@
 	<div>
 		<WarnPrd bind:environment={row.environment}></WarnPrd>
 		<RESTTester
-		
 			bind:data={row.data_test}
 			method={row.method}
 			url={row.endpoint}
