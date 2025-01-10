@@ -6,16 +6,9 @@
 	import SelectMimeType from '../../../widgets/Select.svelte';
 	import WarnPrd from './warning_production.svelte';
 
-	export let row;
-	/**
-	 * @type {EditorCode}
-	 */
-	let fnEditorCode;
-	//let internal_code = code;
-	let fnApiTester;
-	let internal_data_test;
+	let { row = $bindable({}), onchange = () => {} } = $props();
 
-	let mimeTypes = [
+	let mimeTypes = $state([
 		{ id: 'text/plain', value: 'text/plain', enabled: true },
 		{ id: 'text/html', value: 'text/html', enabled: true },
 		{ id: 'text/css', value: 'text/css', enabled: true },
@@ -52,44 +45,38 @@
 		{ id: 'text/x-vcard', value: 'text/x-vcard', enabled: true },
 		{ id: 'text/troff', value: 'text/troff', enabled: true },
 		{ id: 'text/x-component', value: 'text/x-component', enabled: true }
-	];
+	]);
 
-	let tabList = [
-		{ label: 'Payload', isActive: true },
-		{ label: 'App Variables' },
-		{ label: 'Tester' }
-	];
+	let tabList = $state([
+		{ label: 'Payload', isActive: true, component: tab_payload },
+		{ label: 'App Variables', component: tab_app_vars },
+		{ label: 'Tester', component: tab_tester }
+	]);
 
 	/**
 	 * @type {EditorCode}
 	 */
 	//let fnEditorCode2;
-	let mimeType = 'text/plain';
-	let payload = '';
-	let langEditor = 'txt';
-	$: row.code, ParseCode();
-	$: row.data_test, setDataTest();
+	let mimeType = $state('text/plain');
+	let payload = $state('');
+	let langEditor = $state('txt');
+	//$: row.code, parseCode();
 
-	function setDataTest() {
-		internal_data_test = { ...row.data_test };
-		//console.log('internal_data_test', internal_data_test);
-	}
+	$inspect(row.code).with((type) => {
+		//console.log('row.code >>>>>>>>>>>>> ', type, row);
+		if (type === 'update' || type === 'init') {
+			parseCode();
+		}
+	});
 
 	export function reset() {
 		//	fnEditorCode2.reset();
-		ParseCode();
+		parseCode();
 	}
 
-	function ParseCode() {
-
-		console.log('>> ParseCode >', row.code);
-
+	function parseCode() {
 		try {
 			let params = JSON.parse(row.code || '{}');
-
-
-			console.log('>> ParseCode >', row.code, params);
-
 
 			if (params && params.payload) {
 				payload = params.payload;
@@ -120,25 +107,27 @@
 		}
 	}
 
-	export function getData() {
-		let data = { code: getCode(), data_test: internal_data_test };
-		//	console.log('> getData > SQL', data);
-		return data;
+	function getData() {
+		return { code: $state.snapshot(getCode()), data_test: $state.snapshot(row.data_test) };
+	}
+
+	function fnOnChange() {
+		onchange(getData());
 	}
 
 	onMount(() => {
 		//console.log(code);
-		ParseCode();
+		parseCode();
 	});
 </script>
 
-<Tab bind:tabs={tabList}>
-	<div class={tabList[0].isActive ? '' : 'is-hidden'}>
+{#snippet tab_payload()}
+	<div>
 		<div>
 			<div>
 				<div class="field is-horizontal">
 					<div class="field-label is-small">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
+						<!-- svelte-ignore a11y_label_has_associated_control -->
 						<label class="label">MIME Type</label>
 					</div>
 					<div class="field-body">
@@ -148,7 +137,7 @@
 									<SelectMimeType
 										bind:options={mimeTypes}
 										bind:option={mimeType}
-										on:select={(e) => {
+										onselect={(e) => {
 											console.log('Cambia', e, mimeType);
 
 											if (mimeType.includes('xml')) {
@@ -169,20 +158,26 @@
 
 		<EditorCode bind:lang={langEditor} bind:code={payload}></EditorCode>
 	</div>
+{/snippet}
 
-	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
-		<AppVars bind:environment={row.environment} isReadOnly={true}></AppVars>
-	</div>
+{#snippet tab_app_vars()}
+	<AppVars environment={row.environment} isReadOnly={true}></AppVars>
+{/snippet}
 
-	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
+{#snippet tab_tester()}
+	<div>
 		<WarnPrd bind:environment={row.environment}></WarnPrd>
-
 		<RESTTester
-			bind:this={fnApiTester}
-			bind:data={internal_data_test}
-			bind:method={row.method}
+			bind:data={row.data_test}
+			method={row.method}
 			url={row.endpoint}
 			methodDisabled={true}
+			onchange={(c) => {
+				//console.log('++++++++++++++++ ', c);
+				fnOnChange();
+			}}
 		></RESTTester>
 	</div>
-</Tab>
+{/snippet}
+
+<Tab bind:tabs={tabList}></Tab>
