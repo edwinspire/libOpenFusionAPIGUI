@@ -1,19 +1,18 @@
 <script>
+	import { onMount, onDestroy } from 'svelte';
 	import { storeUsersList } from '$lib/OpenFusionAPI/utils.js';
-	//	import uFetch from '@edwinspire/universal-fetch';
-	import { onMount, createEventDispatcher } from 'svelte';
 	import { Table, ColumnTypes } from '@edwinspire/svelte-components';
 
-	export let row = {};
-	export let users = {};
-	let table_users = [];
+	let { users = $bindable({}) } = $props();
+
+	let table_users = $state([]);
 	let data_users = [];
 
-	let columns = {
+	let columns = $state({
 		auth: {
 			label: 'Authorization',
 			decorator: {
-				component: ColumnTypes.BooleanIcon,
+				component: ColumnTypes.Boolean,
 				props: {
 					ontrue: { label: 'Enabled' },
 					onfalse: { label: 'Unabled' },
@@ -25,24 +24,35 @@
 		enabled: {
 			label: 'Enabled',
 			decorator: {
-				component: ColumnTypes.BooleanIcon,
+				component: ColumnTypes.Boolean,
 				props: {
 					ontrue: { label: 'Enabled' },
 					onfalse: { label: 'Unabled' },
-					editInline: true
+					editInline: false
 				}
 			}
 		},
 		name: { label: 'name' },
 		username: { label: 'username' },
 		email: { label: 'email' }
-	};
-	$: users, getUsers();
-	$: table_users, authChange();
+	});
+
+	let timeoutChageAuth;
+
+	$inspect(table_users).with((type) => {
+		//console.log('row.code >>>>>>>>>>>>> ', type, row);
+		if (type === 'update') {
+			clearTimeout(timeoutChageAuth);
+			timeoutChageAuth = setTimeout(() => {
+				setUsers();
+			}, 750);
+		}
+	});
 
 	storeUsersList.subscribe((value) => {
-		//	console.log('storeUsersList >>>>>> ', value);
+		//console.log('storeUsersList >>>>>> ', value);
 		data_users = value;
+		buildTableUsers();
 	});
 
 	function defaultValue() {
@@ -51,11 +61,11 @@
 		}
 	}
 
-	function authChange() {
+	function setUsers() {
 		defaultValue();
 
 		if (users) {
-			//	console.log('authChange > ', table_users, row);
+			//	console.log('setUsers > ', table_users, row);
 
 			users = table_users
 				.filter((u) => {
@@ -69,18 +79,23 @@
 		}
 	}
 
-	function getUsers() {
+	function buildTableUsers() {
 		defaultValue();
+		//	console.log('buildTableUsers: ', data_users, table_users);
 		if (data_users && Array.isArray(data_users)) {
 			table_users = data_users.map((u) => {
 				return { auth: users.includes(u.iduser), ...u };
 			});
+			//	console.log('buildTableUsers 2: ', data_users, table_users);
 		}
 	}
 
-	onMount(async () => {
-		//		await getEnvList();
-		//	await getUsers();
+	onMount(() => {
+		defaultValue();
+	});
+
+	onDestroy(() => {
+		clearTimeout(timeoutChageAuth);
 	});
 </script>
 

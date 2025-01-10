@@ -27,7 +27,7 @@
 		}
 	} = $props();
 
-	let value = $state();
+	//let value = $state();
 	let handler_code = [];
 	let validateResource = $state(false);
 	let availableURL = $state(false);
@@ -50,6 +50,7 @@
 	});
 
 	function accept() {
+		defaultValues();
 		let data = {
 			row: $state.snapshot(row),
 			validateResource,
@@ -82,15 +83,15 @@
 		if (row && !row.handler) {
 			row.handler = '';
 		}
-		if (row && !row.ctrl) {
+		if (row && row.ctrl == null) {
 			row.ctrl = {};
 		}
 
-		if (row && !row.ctrl.users) {
+		if (row && row.ctrl.users == null) {
 			row.ctrl.users = [];
 		}
 
-		if (row && !row.ctrl.log) {
+		if (row && row.ctrl.log == null) {
 			row.ctrl.log = {};
 		}
 
@@ -102,7 +103,6 @@
 			app.endpoints = [];
 		}
 
-		
 		//		console.log('row defaultValues', row);
 	}
 
@@ -193,8 +193,8 @@
 {/snippet}
 
 {#snippet tab_auth()}
-	{#if row && row.ctrl && row.ctrl.users}
-		<Authorizations bind:users={row.ctrl.users} bind:row></Authorizations>
+	{#if row && row.ctrl}
+		<Authorizations bind:users={row.ctrl.users}></Authorizations>
 	{/if}
 {/snippet}
 
@@ -227,9 +227,13 @@
 								alert('URL already exists.');
 							} else {
 								let v = handler_code[row.handler];
-								value = v.code;
-								row.data_test = v.data_test;
-								row.code = value;
+								//value = v.code;
+								if (v) {
+									row.data_test = v.data_test;
+									row.code = v.code;
+								}
+
+								console.log('xxxxxx> ', row);
 
 								accept();
 								showEditor = false;
