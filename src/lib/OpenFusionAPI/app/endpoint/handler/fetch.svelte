@@ -5,8 +5,6 @@
 	import { Tab, RESTTester } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 	import { parse } from 'svelte/compiler';
-	import WarnPrd from './warning_production.svelte';
-	//import Endpoint from '../handler/endpoint.svelte';
 
 	export let row;
 	let internal_code = '';
@@ -74,8 +72,6 @@
 	</div>
 
 	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
-		<WarnPrd bind:environment={row.environment}></WarnPrd>
-
 		<RESTTester
 			bind:this={fnApiTester}
 			bind:data={internal_data_test}

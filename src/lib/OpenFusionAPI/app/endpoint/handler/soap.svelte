@@ -2,7 +2,6 @@
 	import { onMount } from 'svelte';
 	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
-	import WarnPrd from './warning_production.svelte';
 
 	let { row = $bindable({}), onchange = () => {} } = $props();
 
@@ -186,7 +185,7 @@
 
 {#snippet tab_tester()}
 	<div >
-		<WarnPrd bind:environment={row.environment}></WarnPrd>
+		
 		<RESTTester
 			bind:data={internal_data_test}
 			bind:method={row.method}

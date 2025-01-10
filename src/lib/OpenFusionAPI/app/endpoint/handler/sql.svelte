@@ -3,7 +3,6 @@
 	import { onMount } from 'svelte';
 	import { Tab, EditorCode, RESTTester, JSONView, BasicSelect } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
-	import WarnPrd from './warning_production.svelte';
 	import Endpoint from '../handler/endpoint.svelte';
 	//import ParamsVarJSON from '../widgets/parameters_var_json.svelte';
 
@@ -346,9 +345,7 @@
 	</div>
 
 	<div class={tabList[4].isActive ? '' : 'is-hidden'}>
-		<WarnPrd bind:environment={row.environment}></WarnPrd>
-
-		<RESTTester
+				<RESTTester
 			bind:this={fnApiTester}
 			bind:data={internal_data_test}
 			bind:method={row.method}

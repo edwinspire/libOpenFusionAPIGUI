@@ -3,7 +3,7 @@
 	import { onMount } from 'svelte';
 	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
-	import WarnPrd from './warning_production.svelte';
+
 	import Endpoint from './endpoint.svelte';
 
 	let { row = $bindable({}), onchange = () => {} } = $props();
@@ -140,7 +140,6 @@
 				</div>
 			</div>
 		</div>
-		<WarnPrd bind:environment={row.environment}></WarnPrd>
 		<EditorCode isReadOnly={false} title={'Query to be executed'} lang="sql" bind:code={query_code}
 		></EditorCode>
 	</div>

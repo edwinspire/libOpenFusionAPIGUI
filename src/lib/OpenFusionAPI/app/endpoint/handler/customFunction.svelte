@@ -5,7 +5,6 @@
 	import { listFunctionStorePRD } from '../../../utils';
 	import SelectFns from '../../../widgets/Select.svelte';
 	import { Tab, RESTTester } from '@edwinspire/svelte-components';
-	import WarnPrd from './warning_production.svelte';
 
 	let fnApiTester;
 
@@ -87,7 +86,7 @@
 				break;
 		}
 
-//		console.warn('CUSTOM FN: ', row.environment, functions);
+		//		console.warn('CUSTOM FN: ', row.environment, functions);
 	});
 </script>
 
@@ -109,8 +108,6 @@
 	</div>
 
 	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
-		<WarnPrd bind:environment={row.environment}></WarnPrd>
-
 		<RESTTester
 			bind:this={fnApiTester}
 			bind:data={internal_data_test}

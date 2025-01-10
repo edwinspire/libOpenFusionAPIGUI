@@ -4,7 +4,6 @@
 	import { Tab, EditorCode, RESTTester } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 	import SelectMimeType from '../../../widgets/Select.svelte';
-	import WarnPrd from './warning_production.svelte';
 
 	let { row = $bindable({}), onchange = () => {} } = $props();
 
@@ -173,7 +172,7 @@
 
 {#snippet tab_tester()}
 	<div>
-		<WarnPrd bind:environment={row.environment}></WarnPrd>
+		
 		<RESTTester
 			bind:data={row.data_test}
 			method={row.method}

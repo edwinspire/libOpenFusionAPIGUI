@@ -9,7 +9,6 @@
 		BasicSelect
 	} from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
-	import WarnPrd from './warning_production.svelte';
 	import Endpoint from './endpoint.svelte';
 
 	let { row = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =
@@ -122,7 +121,7 @@
 
 {#snippet tab_tablename()}
 	<div>
-		<WarnPrd bind:environment={row.environment}></WarnPrd>
+		
 		<br />
 		<div class="control">
 			<input class="input is-small" type="text" placeholder="Table name" bind:value={table_name} />
