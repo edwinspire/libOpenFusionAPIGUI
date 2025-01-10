@@ -2,7 +2,7 @@
 	// @ts-nocheck
 
 	'use strict';
-	import { onMount, createEventDispatcher } from 'svelte';
+	import { onMount } from 'svelte';
 	import FetchCode from './handler/fetch.svelte';
 	import JsCode from './handler/js.svelte';
 	import SoapCode from './handler/soap.svelte';
@@ -12,73 +12,54 @@
 	import TextCode from './handler/text.svelte';
 	import CustomFn from './handler/customFunction.svelte';
 	import { Level, SlideFullScreen, Tab } from '@edwinspire/svelte-components';
-	//import { listAccessMethod } from '../../utils.js';
+
 	import Endpoint from './handler/endpoint.svelte';
 	import Authorizations from './widgets/authorizations.svelte';
 	import Logs from './widgets/logs.svelte';
 	import EndpointLabel from './widgets/endpoint_label.svelte';
 
-	/**
-	 * @type {FetchCode}
-	 */
-	let fnFetchCode;
-	/**
-	 * @type {JsCode}
-	 */
-	let fnJsCode;
-	/**
-	 * @type {SoapCode}
-	 */
-	let fnSoapCode;
-	/**
-	 * @type {SqlCode}
-	 */
-	let fnSqlCode;
-	let fnSqlHanaCode;
-	let fnSqlBulkInsertCode;
+	let {
+		showEditor = $bindable(false),
+		row = $bindable({}),
+		app = $bindable({}),
+		ondata = (d) => {
+			console.log('ondata not implemented.');
+		}
+	} = $props();
 
-	/**
-	 * @type {CustomFn}
-	 */
-	let fnCustomFn;
+	let value = $state();
+	let handler_code = [];
+	let validateResource = $state(false);
+	let availableURL = $state(false);
 
-	/**
-	 * @type {TextFn}
-	 */
-	let fnTextFn;
+	let tabList = $state([
+		{ label: 'Endpoint', isActive: true, component: tab_endpoint },
+		{ label: 'Configuration', component: tab_config },
+		{ label: 'Authorizations', component: tab_auth },
+		{ label: 'Logs', component: tab_log }
+	]);
+	//	const dispatch = createEventDispatcher();
 
-	export let showEditor = false;
+	//$: row, defaultValues();
 
-	/**
-	 * @type {any}
-	 */
-	export let value;
-	export let row = {};
-	export let app = {};
-	//export let endpoints = [];
-	let validateResource = false;
-	let availableURL = false;
-
-	let tabList = [
-		{ label: 'Endpoint', isActive: true },
-		{ label: 'Configuration' },
-		{ label: 'Authorizations' },
-		{ label: 'Logs' }
-	];
-	const dispatch = createEventDispatcher();
-
-	$: row, defaultValues();
+	$inspect(row).with((type) => {
+		//	console.log('++++ row >>>>>>>>>>>>> ', type, row);
+		if (type === 'init') {
+			defaultValues();
+		}
+	});
 
 	function accept() {
 		let data = {
-			row,
+			row: $state.snapshot(row),
 			validateResource,
 			availableURL
 		};
 
 		console.log('ACCEPT => ', data);
 
-		dispatch('data', data);
+		//dispatch('data', data);
+		ondata(data);
 	}
 
 	function defaultValues() {
@@ -98,7 +79,15 @@
 			row.ctrl.log = {};
 		}
 
-		console.log('row defaultValues', row);
+		if (!app) {
+			app = { endpoints: [] };
+		}
+
+		if (app && !app.endpoints) {
+			app.endpoints = [];
+		}
+
+//		console.log('row defaultValues', row);
 	}
 
 	onMount(() => {
@@ -107,72 +96,118 @@
 	});
 </script>
 
+{#snippet tab_endpoint()}
+	{#if row && app}
+		<Endpoint bind:row bind:app bind:validateResource bind:availableURL></Endpoint>
+	{/if}
+{/snippet}
+
+{#snippet tab_config()}
+	{#if row}
+		<div>
+			<EndpointLabel bind:endpoint={row.endpoint} bind:environment={row.environment}
+			></EndpointLabel>
+
+			{#if row && row.handler == 'JS'}
+				<JsCode
+					bind:row
+					onchange={(v) => {
+						handler_code[row.handler] = v;
+						console.log('----------------> ', handler_code);
+					}}
+				/>
+			{:else if row && row.handler == 'SOAP'}
+				<SoapCode
+					bind:row
+					onchange={(v) => {
+						handler_code[row.handler] = v;
+						//console.log('----------------> ', handler_code);
+					}}
+				/>
+			{:else if row && row.handler == 'SQL'}
+				<SqlCode
+					bind:row
+					onchange={(v) => {
+						handler_code[row.handler] = v;
+						//console.log('----------------> ', handler_code);
+					}}
+				/>
+			{:else if row && row.handler == 'HANA'}
+				<SqlHana
+					bind:row
+					onchange={(v) => {
+						handler_code[row.handler] = v;
+						//console.log('----------------> ', handler_code);
+					}}
+				/>
+			{:else if row && row.handler == 'SQL_BULK_I'}
+				<SqlBulkInsert
+					bind:row
+					onchange={(v) => {
+						handler_code[row.handler] = v;
+						//console.log('----------------> ', handler_code);
+					}}
+				/>
+			{:else if row && row.handler == 'FETCH'}
+				<FetchCode
+					bind:row
+					onchange={(v) => {
+						handler_code[row.handler] = v;
+						//console.log('----------------> ', handler_code);
+					}}
+				/>
+			{:else if row && row.handler == 'FUNCTION'}
+				<CustomFn
+					bind:row
+					onchange={(v) => {
+						handler_code[row.handler] = v;
+						//console.log('----------------> ', handler_code);
+					}}
+				/>
+			{:else if row && row.handler == 'TEXT'}
+				<TextCode
+					bind:row
+					onchange={(v) => {
+						handler_code[row.handler] = v;
+						//console.log('----------------> ', handler_code);
+					}}
+				/>
+			{:else}
+				<div>No Handler</div>
+			{/if}
+		</div>
+	{/if}
+{/snippet}
+
+{#snippet tab_auth()}
+	{#if row && row.ctrl && row.ctrl.users}
+		<Authorizations bind:users={row.ctrl.users} bind:row></Authorizations>
+	{/if}
+{/snippet}
+
+{#snippet tab_log()}
+	{#if row && row.ctrl && row.ctrl.log}
+		<Logs bind:row bind:log={row.ctrl.log}></Logs>
+	{/if}
+{/snippet}
+
 <SlideFullScreen bind:show={showEditor}>
-	<Level>
-		<span slot="r01">
+	<Level right={[r01]}>
+		{#snippet r01()}
 			<div class="field has-addons">
 				<p class="control">
 					<button
 						class="button is-success is-small"
-						on:click={() => {
+						onclick={() => {
 							if (!validateResource) {
 								alert('URL is invalid.');
 							} else if (!availableURL) {
 								alert('URL already exists.');
 							} else {
-								if (row && row.handler == 'JS') {
-									//value = fnJsCode.getCode();
-									//fnJsCode.reset();
-									let v = fnJsCode.getData();
-									value = v.code;
-									row.data_test = v.data_test;
-								} else if (row && row.handler == 'SOAP') {
-									//value = fnSoapCode.getCode();
-									//fnSoapCode.reset();
-									let v = fnSoapCode.getData();
-									value = v.code;
-									row.data_test = v.data_test;
-								} else if (row && row.handler == 'SQL') {
-									let v = fnSqlCode.getData();
-									value = v.code;
-									row.data_test = v.data_test;
-								} else if (row && row.handler == 'SQL_BULK_I') {
-									let v = fnSqlBulkInsertCode.getData();
-									value = v.code;
-									row.data_test = v.data_test;
-
-									console.log('>> fnSqlBulkInsertCode.getData() > ', row);
-								} else if (row && row.handler == 'HANA') {
-									let v = fnSqlHanaCode.getData();
-									value = v.code;
-									row.data_test = v.data_test;
-
-									//	console.log('>> fnSqlHanaCode.getData() > ', row);
-
-									//fnSqlCode.reset();
-								} else if (row && row.handler == 'FETCH') {
-									//value = fnFetchCode.getCode();
-
-									let v = fnFetchCode.getData();
-									value = v.code;
-									row.data_test = v.data_test;
-
-									// fnFetchCode.reset();
-								} else if (row && row.handler == 'FUNCTION') {
-									//value = fnCustomFn.getCode();
-									let v = fnCustomFn.getData();
-									value = v.code;
-									row.data_test = v.data_test;
-								} else if (row && row.handler == 'TEXT') {
-									//value = fnTextFn.getCode();
-									//fnTextFn.reset();
-									let v = fnTextFn.getData();
-									value = v.code;
-									row.data_test = v.data_test;
-								}
-
+								let v = handler_code[row.handler];
+								value = v.code;
+								row.data_test = v.data_test;
 								row.code = value;
-								//								console.log('EDITOR ENDPOINT: ', row);
 
 								accept();
 								showEditor = false;
@@ -188,7 +223,7 @@
 				<p class="control">
 					<button
 						class="button is-small"
-						on:click={() => {
+						onclick={() => {
 							row = {};
 							showEditor = false;
 						}}
@@ -200,53 +235,8 @@
 					</button>
 				</p>
 			</div>
-		</span>
+		{/snippet}
 	</Level>
 
-	<Tab bind:tabs={tabList}>
-		<div class={tabList[0].isActive ? '' : 'is-hidden'}>
-			<Endpoint
-				bind:row
-				bind:app
-				bind:endpoints={app.endpoints}
-				bind:validateResource
-				bind:availableURL
-			></Endpoint>
-		</div>
-
-		<div class={tabList[1].isActive ? '' : 'is-hidden'}>
-			<EndpointLabel bind:endpoint={row.endpoint} bind:environment={row.environment}></EndpointLabel>
-
-			{#if row && row.handler == 'JS'}
-				<JsCode bind:this={fnJsCode} bind:row />
-			{:else if row && row.handler == 'SOAP'}
-				<SoapCode bind:this={fnSoapCode} bind:row />
-			{:else if row && row.handler == 'SQL'}
-				<SqlCode bind:this={fnSqlCode} bind:row />
-			{:else if row && row.handler == 'HANA'}
-				<SqlHana bind:this={fnSqlHanaCode} bind:row />
-			{:else if row && row.handler == 'SQL_BULK_I'}
-				<SqlBulkInsert bind:this={fnSqlBulkInsertCode} bind:row />
-			{:else if row && row.handler == 'FETCH'}
-				<FetchCode bind:this={fnFetchCode} bind:row />
-			{:else if row && row.handler == 'FUNCTION'}
-				<CustomFn bind:this={fnCustomFn} bind:row />
-			{:else if row && row.handler == 'TEXT'}
-				<TextCode bind:this={fnTextFn} bind:row />
-			{:else}
-				<div>No Handler</div>
-			{/if}
-		</div>
-
-		<div class={tabList[2].isActive ? '' : 'is-hidden'}>
-			{#if row.ctrl && row.ctrl.users}
-				<Authorizations bind:users={row.ctrl.users} bind:row></Authorizations>
-			{/if}
-		</div>
-		<div class={tabList[3].isActive ? '' : 'is-hidden'}>
-			{#if row.ctrl && row.ctrl.log}
-				<Logs bind:row bind:log={row.ctrl.log}></Logs>
-			{/if}
-		</div>
-	</Tab>
+	<Tab bind:tabs={tabList}></Tab>
 </SlideFullScreen>

@@ -13,20 +13,48 @@
 		listAccessMethod
 	} from '../../../utils.js';
 
-	export let row = {};
-	export let app = {};
-	export let environment_list = [];
-	export let endpoints = [];
+	let {
+		environment_list = $bindable([]),
+		row = $bindable({ method: 'X', access: 0 }),
+		app = $bindable({}),
+		validateResource = $bindable(false),
+		availableURL = $bindable(false)
+	} = $props();
 
-	//const dispatch = createEventDispatcher();
-	export let validateResource = false;
-	export let availableURL = false;
-	let handlers = [];
-	let methods = [];
+	let handlers = $state([]);
+	let methods = $state([]);
 
 	let uf = new uFetch();
+	let timeoutResource;
 
-	$: row.resource, checkResource();
+	//$: row.resource, checkResource();
+
+	$inspect(row).with((type) => {
+		//console.log('row >>>>>>>>>>>>> ', type, row);
+		if (type === 'init') {
+			defaultValues();
+		}
+	});
+
+	$inspect(row.resource).with((type) => {
+	//	console.log('row.resource >>>>>>>>>>>>> ', type, row);
+		if (type === 'update') {
+			clearTimeout(timeoutResource);
+			timeoutResource = setTimeout(() => {
+				checkResource();
+			}, 500);
+		}
+	});
+
+	function defaultValues() {
+		if (!row) {
+			row = { method: 'X', access: 0 };
+		}
+
+		if (row && row.access == undefined) {
+			row.access = 0;
+		}
+	}
 
 	listHandlerStore.subscribe((/** @type {any[]} */ value) => {
 		//console.log('listMethodStore ->>>>', value);
@@ -59,7 +87,7 @@
 	function checkEndpointConstraint() {
 		//console.log('checkEndpointConstraint => ', endpoints, row, app);
 
-		let check = endpoints.some((r) => {
+		let check = app.endpoints.some((r) => {
 			//	console.log(endpoint_value, row);
 			return (
 				row.resource == r.resource &&
@@ -104,7 +132,7 @@
 
 	<div class="field is-horizontal">
 		<div class="field-label is-small">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<!-- svelte-ignore a11y_label_has_associated_control -->
 			<label class="label">Enabled</label>
 		</div>
 		<div class="field-body">
@@ -120,62 +148,65 @@
 
 	<div class="field is-horizontal">
 		<div class="field-label is-small">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<!-- svelte-ignore a11y_label_has_associated_control -->
 			<label class="label">Method</label>
 		</div>
 		<div class="field-body">
 			<div class="field">
 				<div class="control">
-					<BasicSelect
-						bind:options={methods}
-						bind:option={row.method}
-						on:select={(/** @type {{ detail: { value: string; }; }} */ e) => {
-							console.log('Row', row);
-						}}
-					/>
+					{#if row && row.method}
+						<BasicSelect
+							bind:options={methods}
+							bind:option={row.method}
+							onselect={(/** @type {{ detail: { value: string; }; }} */ e) => {
+								console.log('Row', row);
+							}}
+						/>
+					{/if}
 				</div>
 			</div>
 		</div>
 	</div>
 
-
 	<div class="field is-horizontal">
 		<div class="field-label is-small">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<!-- svelte-ignore a11y_label_has_associated_control -->
 			<label class="label">Access</label>
 		</div>
 		<div class="field-body">
 			<div class="field">
 				<div class="control">
-					<BasicSelect
-						options={listAccessMethod}
-						bind:option={row.access}
-						on:select={(/** @type {{ detail: { value: string; }; }} */ e) => {
-							console.log('Row', row);
-						}}
-					/>
+					{#if row}
+						<BasicSelect
+							options={listAccessMethod}
+							bind:option={row.access}
+							onselect={(/** @type {{ detail: { value: string; }; }} */ e) => {
+								console.log('Row', row);
+							}}
+						/>
+					{/if}
 				</div>
 			</div>
 		</div>
 	</div>
 
-
-
 	<div class="field is-horizontal">
 		<div class="field-label is-small">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<!-- svelte-ignore a11y_label_has_associated_control -->
 			<label class="label">Handler</label>
 		</div>
 		<div class="field-body">
 			<div class="field">
 				<div class="control">
-					<BasicSelect
-						bind:options={handlers}
-						bind:option={row.handler}
-						on:select={(/** @type {{ detail: { value: string; }; }} */ e) => {
-							console.log('Row', row);
-						}}
-					/>
+					{#if row && row.handler}
+						<BasicSelect
+							bind:options={handlers}
+							bind:option={row.handler}
+							onselect={(/** @type {{ detail: { value: string; }; }} */ e) => {
+								console.log('Row', row);
+							}}
+						/>
+					{/if}
 				</div>
 			</div>
 		</div>
@@ -188,7 +219,7 @@
 				<div class="field is-expanded">
 					<div class="field has-addons">
 						<p class="control">
-							<!-- svelte-ignore a11y-missing-attribute -->
+							<!-- svelte-ignore a11y_missing_attribute -->
 							<a class="button is-small is-static">
 								{row.method == 'WS' ? '/ws/' : '/api/'}{app.app}
 							</a>
@@ -203,31 +234,33 @@
 							/>
 						</p>
 						<p class="control">
-							<!-- svelte-ignore a11y-missing-attribute -->
+							<!-- svelte-ignore a11y_missing_attribute -->
 							<a class="button is-small is-static"> / </a>
 						</p>
 						<p class="control">
-							<SelectEnvironment
-								bind:options={environment_list}
-								bind:option={row.environment}
-								on:select={(e) => {
-									//	console.log(e);
-								}}
-							/>
+							{#if row && row.environment}
+								<SelectEnvironment
+									bind:options={environment_list}
+									bind:option={row.environment}
+									onselect={(e) => {
+										//	console.log(e);
+									}}
+								/>
+							{/if}
 						</p>
 					</div>
-					<p class="help">
+					<div class="help">
 						{#if validateResource}
 							<div class="icon-text is-small">
 								<span class="icon has-text-success">
-									<i class="fas fa-check-square" />
+									<i class="fas fa-check-square"></i>
 								</span>
 								<span>Url Success</span>
 							</div>
 						{:else}
 							<div class="icon-text is-small">
 								<span class="icon has-text-danger">
-									<i class="fas fa-ban" />
+									<i class="fas fa-ban"></i>
 								</span>
 								<span>Url Invalid</span>
 							</div>
@@ -236,29 +269,30 @@
 						{#if validateResource && availableURL}
 							<div class="icon-text is-small">
 								<span class="icon has-text-success">
-									<i class="fas fa-check-square" />
+									<i class="fas fa-check-square"></i>
 								</span>
 								<span>Available URL</span>
 							</div>
 						{:else if validateResource && !availableURL}
 							<div class="icon-text is-small">
 								<span class="icon has-text-danger">
-									<i class="fas fa-ban" />
+									<i class="fas fa-ban"></i>
 								</span>
 								<span>Url not available</span>
 							</div>
 						{/if}
-					</p>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
 	<div class="field">
-		<!-- svelte-ignore a11y-label-has-associated-control -->
+		<!-- svelte-ignore a11y_label_has_associated_control -->
 		<label class="label is-small">Description</label>
 		<div class="control">
-			<textarea class="textarea is-small" placeholder="Textarea" bind:value={row.description} />
+			<textarea class="textarea is-small" placeholder="Textarea" bind:value={row.description}
+			></textarea>
 		</div>
 	</div>
 </div>

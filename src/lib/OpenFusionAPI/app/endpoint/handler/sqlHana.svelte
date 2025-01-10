@@ -7,25 +7,22 @@
 	import Endpoint from './endpoint.svelte';
 	//import ParamsVarJSON from '../widgets/parameters_var_json.svelte';
 
-	/**
-	 * @type {any}
-	 */
-	//let code;
-	export let row = { endpoint: '', method: '', environment: '' };
+	let { row = $bindable({}), onchange = () => {} } = $props();
+	let internal_code = $state('');
 
 	//let sample_bind_post_string = '{}';
-	let fnApiTester;
-	let use_var_cnx = false;
-	let cnx_param_json = {};
-	let cnx_param_var = '';
+	//	let fnApiTester;
+	let use_var_cnx = $state(false);
+	let cnx_param_json = $state({});
+	let cnx_param_var = $state('');
 
-	let cnx_sample = {
+	let cnx_sample = $state({
 		host: '<host-name>',
 		port: '<port>',
 		user: 'SYSTEM',
 		password: 'manager',
 		pooling: true
-	};
+	});
 
 	let query_sample_get = 'SELECT * FROM YOUR_TABLE WHERE FIELD_01 = $value_01;';
 	let query_sample_get_result = 'SELECT * FROM YOUR_TABLE WHERE FIELD_01 = ?;';
@@ -34,9 +31,9 @@
 	let query_sample_post_result =
 		'SELECT * FROM YOUR_TABLE WHERE FIELD_01 = ? AND FIELD_02 IN (?, ?);';
 
-	let sample_bind_post = {
+	let sample_bind_post = $state({
 		params: { value_01: 1234, list_your_values: ['0002000157', '0002000158'] }
-	};
+	});
 
 	let sample_replace_post = {
 		replacements: {
@@ -44,30 +41,28 @@
 		}
 	};
 
-	let tabList = [
-		{ label: 'Query', isActive: true, classIcon: ' fa-solid fa-database ' },
-		{ label: 'Pass Parameters' },
-		{ label: 'Connection Parameters' },
-		{ label: 'App Variables' },
-		{ label: 'Tester' }
-	];
+	let tabList = $state([
+		{ label: 'Query', isActive: true, classIcon: ' fa-solid fa-database ', component: tab_query },
+		{ label: 'Pass Parameters', component: tab_pass_params },
+		{ label: 'Connection Parameters', component: tab_cnx_params },
+		{ label: 'App Variables', component: tab_app_vars },
+		{ label: 'Tester', component: tab_tester }
+	]);
 
-	let query_code = 'SELECT 1+1;';
+	let query_code = $state('SELECT 1+1;');
 	let internal_data_test;
 
-	$: row.code, ParseCode();
-	$: row.data_test, setDataTest();
+	//	$: row.code, parseCode();
+	//	$: row.data_test, setDataTest();
 
-	function setDataTest() {
-		internal_data_test = { ...row.data_test };
-		//console.log('internal_data_test', internal_data_test);
-	}
+	$inspect(row.code).with((type) => {
+		//console.log('row.code >>>>>>>>>>>>> ', type, row);
+		if (type === 'update' || type === 'init') {
+			parseCode();
+		}
+	});
 
-	export function reset() {
-		ParseCode();
-	}
-
-	function ParseCode() {
+	function parseCode() {
 		try {
 			let params = JSON.parse(row.code || '{}');
 
@@ -76,7 +71,7 @@
 			}
 
 			if (params && params.config) {
-				//console.log('>>> ParseCode >> ', typeof params.config, params.config);
+				//console.log('>>> parseCode >> ', typeof params.config, params.config);
 
 				if (typeof params.config === 'object') {
 					cnx_param_json = params.config;
@@ -94,8 +89,13 @@
 		}
 	}
 
-	export function getData() {
-		let data = { code: getCode(), data_test: internal_data_test };
+	function fnOnChange() {
+		onchange(getData());
+	}
+
+	
+	function getData() {
+		let data = { code: getCode(), data_test: $state.snapshot(row.data_test) };
 		//	console.log('> getData > SQL', data);
 		return data;
 	}
@@ -130,13 +130,13 @@
 
 	onMount(() => {
 		//	console.log(code);
-		ParseCode();
+		parseCode();
 		//	sample_bind_post_string = JSON.stringify(sample_bind_post);
 	});
 </script>
 
-<Tab bind:tabs={tabList}>
-	<div class={tabList[0].isActive ? '' : 'is-hidden'}>
+{#snippet tab_query()}
+	<div>
 		<div>
 			<div>
 				<div class="content is-small">
@@ -151,8 +151,10 @@
 		<EditorCode isReadOnly={false} title={'Query to be executed'} lang="sql" bind:code={query_code}
 		></EditorCode>
 	</div>
+{/snippet}
 
-	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
+{#snippet tab_pass_params()}
+	<div>
 		<div class="content is-small">
 			<p>
 				This "handler" uses <a
@@ -247,8 +249,10 @@
 			{/if}
 		</div>
 	</div>
+{/snippet}
 
-	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
+{#snippet tab_cnx_params()}
+	<div>
 		<div>
 			<div class="content is-small">
 				Configuration parameters used by @sap/hana-client, visit <a
@@ -263,13 +267,13 @@
 			<div class="buttons has-addons">
 				<button
 					class="button is-small {use_var_cnx ? '' : 'is-active is-primary'}"
-					on:click={() => {
+					onclick={() => {
 						use_var_cnx = false;
 					}}>JSON Parameters</button
 				>
 				<button
 					class="button is-small {use_var_cnx ? 'is-active is-primary' : ''}"
-					on:click={() => {
+					onclick={() => {
 						use_var_cnx = true;
 					}}>Use Variable</button
 				>
@@ -277,7 +281,7 @@
 
 			{#if !use_var_cnx}
 				<div class="content is-small">
-					In most cases the following connection parameters are sufficient:
+					By example, in most cases the following connection parameters are sufficient:
 					<JSONView bind:jsonObject={cnx_sample} />
 				</div>
 
@@ -303,20 +307,25 @@
 			{/if}
 		</div>
 	</div>
+{/snippet}
 
-	<div class={tabList[3].isActive ? '' : 'is-hidden'}>
-		<AppVars environment={row.environment} isReadOnly={true}></AppVars>
-	</div>
+{#snippet tab_app_vars()}
+	<AppVars environment={row.environment} isReadOnly={true}></AppVars>
+{/snippet}
 
-	<div class={tabList[4].isActive ? '' : 'is-hidden'}>
+{#snippet tab_tester()}
+	<div>
 		<WarnPrd bind:environment={row.environment}></WarnPrd>
-
 		<RESTTester
-			bind:this={fnApiTester}
-			bind:data={internal_data_test}
+			bind:data={row.data_test}
 			bind:method={row.method}
 			url={row.endpoint}
 			methodDisabled={true}
+			onchange={(c) => {
+				//console.log('++++++++++++++++ ', c);
+				fnOnChange();
+			}}
 		></RESTTester>
 	</div>
-</Tab>
+{/snippet}
+<Tab bind:tabs={tabList}></Tab>

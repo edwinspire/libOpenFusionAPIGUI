@@ -25,6 +25,7 @@
 
 	//export let idapp = 0;
 	let intervalGetDataApp;
+	let app_vars;
 
 	const default_row = {
 		idendpoint: undefined,
@@ -61,7 +62,7 @@
 	let SelectedRow = $state({});
 	let TableSelectionType = $state(0);
 	let TableObject = $state();
-	let fnVars = $state();
+	//let fnVars;
 	let active_tab = $state(0);
 	//	let showAuthorizations = true;
 
@@ -158,7 +159,6 @@
 	//$: SelectedRow.resource, checkResource();
 
 	$inspect(idapp).with((type) => {
-		console.log('lang >>>>>>>>>>>>> ', type);
 		if (type === 'update' || type === 'init') {
 			getApp();
 		}
@@ -302,6 +302,7 @@
 	}
 
 	async function getApp() {
+		app_vars = undefined; // Esta linea es importante para que no se vayan a guardar variables de una apliacción a otra
 		if (idapp) {
 			try {
 				await getListUsers();
@@ -333,9 +334,9 @@
 		let app_save = { ...app };
 		app_save.endpoints = endpoints;
 
-		console.log('appToStore >>>> ', app_save);
+		console.log('appToStore >>>> ', $state.snapshot(app_save));
 
-		return app_save;
+		return $state.snapshot(app_save);
 	}
 
 	async function saveApp() {
@@ -389,7 +390,7 @@
 </script>
 
 {#snippet tab_endpoints()}
-	<div style="display: {active_tab == 0 ? 'block' : 'none'};">
+	<div>
 		<Table
 			ShowNewButton="true"
 			ShowEditButton="true"
@@ -397,7 +398,9 @@
 			bind:columns
 			bind:SelectionType={TableSelectionType}
 			bind:this={TableObject}
-			on:newrow={() => {
+			left_items={[lt01]}
+			right_items={[rt1]}
+			onnewrow={() => {
 				/*
 			SelectedRow = {
 				enabled: false,
@@ -418,14 +421,16 @@
 					alert('No App selected');
 				}
 			}}
-			on:editrow={(e) => {
-				SelectedRow = { ...e.detail.data };
+			oneditrow={(data) => {
+				console.log('oneditrow >>>> ', data);
+				SelectedRow = data;
 				showEndpointEdit = true;
-				//	console.log('SelectedRow: ', SelectedRow);
+				//	console.log('SelectedRow: ', {...data});
 			}}
 		>
-			<span slot="l01"> Endpoints </span>
-
+			{#snippet lt01()}
+				'Endpoints'
+			{/snippet}
 			<!-- <span slot="r09">
 			<button
 				class="button is-small"
@@ -448,19 +453,21 @@
 			</button>
 		</span> -->
 
-			<span slot="r10">
-				<button
-					class="button is-small"
-					onclick={() => {
-						clearcache();
-					}}
-				>
-					<span class="icon is-small">
-						<i class="fa-solid fa-eraser"></i>
-					</span>
-					<span>Cache</span>
-				</button>
-			</span>
+			{#snippet rt1()}
+				<span>
+					<button
+						class="button is-small"
+						onclick={() => {
+							clearcache();
+						}}
+					>
+						<span class="icon is-small">
+							<i class="fa-solid fa-eraser"></i>
+						</span>
+						<span>Cache</span>
+					</button>
+				</span>
+			{/snippet}
 		</Table>
 	</div>
 {/snippet}
@@ -551,7 +558,10 @@
 							//	console.log(fnVarsDev.getCode());
 
 							if (confirm('Do you want to save the application data?')) {
-								app.vars = fnVars.getCode();
+								//app.vars = fnVars.getCode();
+								if(app_vars){
+									app.vars = app_vars;
+								}
 								saveApp();
 							}
 						}}
@@ -730,7 +740,13 @@
 			</div>
 
 			<div style="display: {active_tab == 2 ? 'block' : 'none'};">
-				<AppVars isReadOnly={false} bind:this={fnVars}></AppVars>
+				<AppVars
+					isReadOnly={false}
+					onchanged={(data) => {
+						console.log('AppVars >>>>>> ', data);
+						app_vars = data;
+					}}
+				></AppVars>
 			</div>
 
 			<div style="display: {active_tab == 3 ? 'block' : 'none'};"></div>
@@ -741,11 +757,11 @@
 <EndPointEditor
 	bind:showEditor={showEndpointEdit}
 	bind:row={SelectedRow}
-	{app}
-	on:data={(e) => {
+	bind:app={app}
+	ondata={(e) => {
 		// console.log('EndPointEditor >>>> ', e);
 
-		let row_edited = e.detail.row;
+		let row_edited = e.row;
 
 		//	console.log(row_edited);
 

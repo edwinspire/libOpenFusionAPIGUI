@@ -3,7 +3,7 @@
 	import { listHTTPMethods } from '../utils.js';
 	import { onMount } from 'svelte';
 
-	let { value = $bindable()  } = $props();
+	let { value = $bindable(), row = $bindable() } = $props();
 
 	let css_class_method = $state('');
 	let css_icon = $state('fas fa-home');

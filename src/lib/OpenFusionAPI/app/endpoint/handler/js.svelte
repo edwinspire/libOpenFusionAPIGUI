@@ -1,121 +1,136 @@
 <script>
-	// @ts-nocheck
 	import { onMount } from 'svelte';
 	import { Tab, EditorCode, RESTTester } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 	import WarnPrd from './warning_production.svelte';
 
-	export let row;
-	let internal_code = '';
-	let fnApiTester;
-	let internal_data_test;
+	let { row = $bindable({}), onchange = () => {} } = $props();
+	let internal_code = $state('');
 
-	$: row.code, parseCode();
-	$: row.data_test, setDataTest();
+	$inspect(row).with((type) => {
+		//	console.log('row >>>>>>>>>>>>> ', type, row);
+		if (type === 'init') {
+			defaultValues();
+		}
+	});
 
-	function setDataTest() {
-		if (row.data_test) {
-			internal_data_test = { ...row.data_test };
-		} else {
-			internal_data_test = {};
+	$inspect(row.code).with((type) => {
+		//console.log('row.code >>>>>>>>>>>>> ', type, row);
+		if (type === 'update' || type === 'init') {
+			parseCode();
+		}
+	});
+
+	function defaultValues() {
+		if (!row) {
+			row = { code: {} };
 		}
 
-		//	console.log('internal_data_test', internal_data_test);
+		if (row && !row.code) {
+			row.code = {};
+		}
 	}
 
 	function parseCode() {
 		internal_code = row.code;
 	}
 
-	export function reset() {
-		parseCode();
+	function getData() {
+		return { code: $state.snapshot(internal_code), data_test: $state.snapshot(row.data_test) };
 	}
 
-	let tabList = [
-		{ label: 'Code', isActive: true },
-		{ label: 'Predefined Variables' },
-		{ label: 'App Variables' },
-		{ label: 'Tester' }
-	];
-
-	function getCode() {
-		//    console.log(">> getCode en JS.SVELTE ", );
-		return internal_code;
+	function fnOnChange() {
+		onchange(getData());
 	}
 
-	export function getData() {
-		let data = { code: getCode(), data_test: internal_data_test };
-		//	console.log('> getData > SQL', data);
-		return data;
-	}
+	let tabList = $state([
+		{ label: 'Code', isActive: true, component: tab_code },
+		{ label: 'Predefined Variables', component: tab_pred_vars },
+		{ label: 'App Variables', component: tab_appvars },
+		{ label: 'Tester', component: tab_tester }
+	]);
 
-	onMount(() => {});
+	onMount(() => {
+		defaultValues();
+	});
 </script>
 
-<Tab bind:tabs={tabList}>
-	<div class={tabList[0].isActive ? '' : 'is-hidden'}>
-		<EditorCode lang="js" bind:code={internal_code}></EditorCode>
-	</div>
+{#snippet tab_code()}
+	<EditorCode
+		lang="js"
+		bind:code={internal_code}
+		onchange={(c) => {
+			//console.log('++++++++++++++++ ', c);
+			fnOnChange();
+		}}
+	></EditorCode>
+{/snippet}
 
-	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
-		<div class="content is-small">
-			<h3>Predefined variables</h3>
-			<ul>
-				<li>
-					<strong>$_RETURN_DATA_:</strong> Variable that returns the return of the function
-				</li>
-				<li>
-					<strong>$_UFETCH_:</strong> Instance of the uFetch class. More information at
-					<a href="https://github.com/edwinspire/universal-fetch">universal-fetch</a>
-				</li>
-				<li>
-					<strong>$_REQUEST_:</strong> Represents the HTTP request received by the server. Contains information
-					about the request made by the client, such as URL parameters, headers, body data, and more.
-				</li>
-				<li>
-					<strong>$_GET_INTERNAL_URL_:</strong> Function that allows obtaining the full path of an
-					OFAPI endpoint.
-					<br /> Example:
-					<code
-						>let relative_path = '/api/test/ap001';
-						<br />let fullURL = $_GET_INTERNAL_URL_(relative_path);
-						<br />// $_GET_INTERNAL_URL_ return 'http://localhost:3000/api/test/ap001'
-					</code>
-				</li>
-				<li>
-					<strong>$_FETCH_OFAPI_:</strong> Build a <a href="https://github.com/edwinspire/universal-fetch/">uFetch </a> intance. 
-					<br/>
-					The url can be absolute or relative. When it is relative, it internally repoints to the port used by OFAPI.
-					<br />Example:
-					<code>
-						
-						let url = 'http://example.net/api/test';
-						<br />
-						let fetch_instance =  $_FETCH_OFAPI_(url);
-						
-						</code
-					>
-				</li>
-				<li>
-					<strong>$_SECUENTIAL_PROMISES_:</strong> PromiseSequence class. More information at
-					<a href="https://github.com/edwinspire/sequential-promises">sequential-promises</a>.
-				</li>
-			</ul>
-		</div>
+{#snippet tab_pred_vars()}
+	<div class="content is-small">
+		<h3>Predefined variables</h3>
+		<ul>
+			<li>
+				<strong>$_RETURN_DATA_:</strong> Variable that returns the return of the function
+			</li>
+			<li>
+				<strong>$_UFETCH_:</strong> Instance of the uFetch class. More information at
+				<a href="https://github.com/edwinspire/universal-fetch">universal-fetch</a>
+			</li>
+			<li>
+				<strong>$_REQUEST_:</strong> Represents the HTTP request received by the server. Contains information
+				about the request made by the client, such as URL parameters, headers, body data, and more.
+			</li>
+			<li>
+				<strong>$_GET_INTERNAL_URL_:</strong> Function that allows obtaining the full path of an
+				OFAPI endpoint.
+				<br /> Example:
+				<code
+					>let relative_path = '/api/test/ap001';
+					<br />let fullURL = $_GET_INTERNAL_URL_(relative_path);
+					<br />// $_GET_INTERNAL_URL_ return 'http://localhost:3000/api/test/ap001'
+				</code>
+			</li>
+			<li>
+				<strong>$_FETCH_OFAPI_:</strong> Build a
+				<a href="https://github.com/edwinspire/universal-fetch/">uFetch </a>
+				intance.
+				<br />
+				The url can be absolute or relative. When it is relative, it internally repoints to the port
+				used by OFAPI.
+				<br />Example:
+				<code>
+					let url = 'http://example.net/api/test';
+					<br />
+					let fetch_instance = $_FETCH_OFAPI_(url);
+				</code>
+			</li>
+			<li>
+				<strong>$_SECUENTIAL_PROMISES_:</strong> PromiseSequence class. More information at
+				<a href="https://github.com/edwinspire/sequential-promises">sequential-promises</a>.
+			</li>
+		</ul>
 	</div>
+{/snippet}
 
-	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
-		<AppVars bind:environment={row.environment} isReadOnly={true}></AppVars>
-	</div>
+{#snippet tab_appvars()}
+	<AppVars environment={row.environment} isReadOnly={true}></AppVars>
+{/snippet}
 
-	<div class={tabList[3].isActive ? '' : 'is-hidden'}>
+{#snippet tab_tester()}
+	<div>
 		<WarnPrd bind:environment={row.environment}></WarnPrd>
 		<RESTTester
-			bind:this={fnApiTester}
-			bind:data={internal_data_test}
-			bind:method={row.method}
+			bind:data={row.data_test}
+			method={row.method}
 			url={row.endpoint}
 			methodDisabled={true}
+			onchange={(c) => {
+				//console.log('++++++++++++++++ ', c);
+				fnOnChange();
+			}}
 		></RESTTester>
 	</div>
-</Tab>
+{/snippet}
+
+<Tab bind:tabs={tabList}></Tab>

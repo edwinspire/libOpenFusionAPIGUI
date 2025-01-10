@@ -10,10 +10,10 @@
 	let value_cache = $state({});
 
 	storeCacheSize.subscribe((cache_data) => {
-		//	console.log('>>>>> storeCacheSize ->>>>', cache_data);
+			//console.log('>>>>> storeCacheSize ->>>>', cache_data, row);
 
 		if (cache_data && Array.isArray(cache_data)) {
-			if (cache_data.length > 0) {
+			if (cache_data.length > 0 && row) {
 				let data = cache_data.find((item) => {
 					//	console.log('>>>>>', item, row.endpoint, row.method);
 					return item.url.toLowerCase() == `${row.endpoint}|${row.method}`.toLowerCase();

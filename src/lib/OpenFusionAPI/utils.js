@@ -197,7 +197,7 @@ export const getCacheSize = async (app_name, token) => {
 			storeCacheSize.set(cache_list);
 		}
 	} catch (error) {
-		console.error(error);
+		console.trace(error);
 	}
 };
 
