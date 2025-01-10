@@ -67,6 +67,21 @@
 			row = {};
 		}
 
+		if (row && !row.environment) {
+			row.environment = '?';
+		}
+
+		if (row && !row.endpoint) {
+			row.endpoint = '';
+		}
+
+		if (row && !row.method) {
+			row.method = '';
+		}
+
+		if (row && !row.handler) {
+			row.handler = '';
+		}
 		if (!row.ctrl) {
 			row.ctrl = {};
 		}
@@ -87,7 +102,8 @@
 			app.endpoints = [];
 		}
 
-//		console.log('row defaultValues', row);
+		
+		//		console.log('row defaultValues', row);
 	}
 
 	onMount(() => {
@@ -105,9 +121,6 @@
 {#snippet tab_config()}
 	{#if row}
 		<div>
-			<EndpointLabel bind:endpoint={row.endpoint} bind:environment={row.environment}
-			></EndpointLabel>
-
 			{#if row && row.handler == 'JS'}
 				<JsCode
 					bind:row
@@ -192,7 +205,16 @@
 {/snippet}
 
 <SlideFullScreen bind:show={showEditor}>
-	<Level right={[r01]}>
+	<Level left={[endpoint_path]} right={[r01]}>
+		{#snippet endpoint_path()}
+			<EndpointLabel
+				bind:endpoint={row.endpoint}
+				bind:environment={row.environment}
+				bind:method={row.method}
+				bind:handler={row.handler}
+			></EndpointLabel>
+		{/snippet}
+
 		{#snippet r01()}
 			<div class="field has-addons">
 				<p class="control">

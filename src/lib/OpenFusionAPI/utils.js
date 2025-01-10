@@ -268,18 +268,28 @@ export const listHTTPMethods = {
 };
 
 export const listHandlers = {
-	JS: { color: 'success', icon: 'fa-brands fa-js' },
-	SQL: { color: 'link', icon: 'fa-solid fa-database' },
+	JS: { color: 'success', icon: 'fa-brands fa-js', label: 'Javascript' },
+	SQL: { color: 'link', icon: 'fa-solid fa-database', label: 'SQL' },
 	SQL_BULK_I: { color: 'danger', icon: 'fa-solid fa-database', label: 'SQL BULK INSERT' },
-	HANA: { color: '', icon: 'fa-solid fa-database' },
-	FETCH: { color: 'primary', icon: 'fa-solid fa-globe' },
-	SOAP: { color: 'info', icon: 'fa-solid fa-soap' },
-	TEXT: { color: 'warning', icon: 'fa-regular fa-file-lines' },
-	FUNCTION: { color: 'danger', icon: 'fa-solid fa-robot' }
+	HANA: { color: '', icon: 'fa-solid fa-database', label: 'Hana' },
+	FETCH: { color: 'primary', icon: 'fa-solid fa-globe', label: 'Fetch' },
+	SOAP: { color: 'info', icon: 'fa-solid fa-soap', label: 'SOAP' },
+	TEXT: { color: 'warning', icon: 'fa-regular fa-file-lines', label: 'Text' },
+	FUNCTION: { color: 'danger', icon: 'fa-solid fa-robot', label: 'Function' }
 };
 
 export const listEnv = {
-	prd: { color: ' has-text-success ', icon: ' fa-solid fa-gear fa-spin ' },
-	qa: { color: ' has-text-link ', icon: ' fa-solid fa-eye ' },
-	dev: { color: ' has-text-danger ', icon: ' fa-solid fa-bug ' }
+	prd: {
+		color: ' has-text-success ',
+		background: 'success',
+		icon: ' fa-solid fa-gear fa-spin ',
+		label: 'Production'
+	},
+	qa: { color: ' has-text-link ', background: 'link', icon: ' fa-solid fa-eye ', label: 'Quality' },
+	dev: {
+		color: ' has-text-danger ',
+		background: 'danger',
+		icon: ' fa-solid fa-bug ',
+		label: 'Development'
+	}
 };
