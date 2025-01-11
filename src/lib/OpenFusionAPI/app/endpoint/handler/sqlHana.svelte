@@ -28,12 +28,6 @@
 		params: { value_01: 1234, list_your_values: ['0002000157', '0002000158'] }
 	});
 
-	let sample_replace_post = {
-		replacements: {
-			your_param_01: ['0002081614', '986535OKE']
-		}
-	};
-
 	let tabList = $state([
 		{ label: 'Query', isActive: true, classIcon: ' fa-solid fa-database ', component: tab_query },
 		{ label: 'Pass Parameters', component: tab_pass_params },

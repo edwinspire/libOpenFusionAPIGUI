@@ -1,5 +1,4 @@
 <script>
-	// @ts-nocheck
 	import { onMount } from 'svelte';
 	import {
 		Tab,
@@ -9,7 +8,6 @@
 		BasicSelect
 	} from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
-	import Endpoint from './endpoint.svelte';
 
 	let { row = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =
 		$props();
