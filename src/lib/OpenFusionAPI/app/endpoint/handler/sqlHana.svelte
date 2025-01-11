@@ -316,7 +316,6 @@
 			url={row.endpoint}
 			methodDisabled={true}
 			onchange={(c) => {
-				console.log('++++++++++++++++ ', c);
 				fnOnChange();
 			}}
 		></RESTTester>
