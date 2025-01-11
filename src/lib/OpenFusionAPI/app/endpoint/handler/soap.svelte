@@ -1,14 +1,13 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 
 	let { row = $bindable({}), onchange = () => {} } = $props();
 
-	let initial_code = $state('');
+	let internal_code = $state('');
 	let code_desc = JSON.stringify({ 'describe()': true });
 
-	let internal_data_test = $state();
 	let code_sample_options = $state({
 		wsdl_options: {
 			strictSSL: true,
@@ -17,8 +16,18 @@
 		}
 	});
 
-	// $: row.code, parseCode();
-	// $: row.data_test, setDataTest();
+
+	let timeoutChange;
+
+	$inspect(row.code).with((type) => {
+		//console.log('row.code >>>>>>>>>>>>> ', type, row);
+		if (type === 'update' || type === 'init') {
+			clearTimeout(timeoutChange);
+			timeoutChange = setTimeout(() => {
+				parseCode();
+			}, 750);
+		}
+	});
 
 	$inspect(internal_code).with((type) => {
 		//	console.log('row >>>>>>>>>>>>> ', type, row);
@@ -27,35 +36,10 @@
 		}
 	});
 
-	$inspect(row.code).with((type) => {
-		//console.log('row.code >>>>>>>>>>>>> ', type, row);
-		if (type === 'update' || type === 'init') {
-			parseCode();
-		}
-	});
 
-	let timeOutDataTest;
-	$inspect(row.data_test).with((type) => {
-		console.log('row.data_test >>>>>>>>>>>>> ', type, row);
-		if (type === 'update' || type === 'init') {
-			clearTimeout(timeOutDataTest);
-			timeOutDataTest = setTimeout(() => {
-				setDataTest();
-			}, 1000);
-		}
-	});
-
-	function setDataTest() {
-		internal_data_test = { ...row.data_test };
-		//console.log('internal_data_test', internal_data_test);
-	}
-	export function reset() {
-		//		fnEditorCode.reset();
-		parseCode();
-	}
 
 	function parseCode() {
-		initial_code = row.code;
+		internal_code = row.code;
 	}
 
 	let tabList = $state([
@@ -76,19 +60,25 @@
 	});
 
 	function getCode() {
-		//fnEditorCode.apply();
-		//return fnEditorCode.getCode();
-		return initial_code;
+		return internal_code;
 	}
 
-	export function getData() {
-		let data = { code: getCode(), data_test: internal_data_test };
+	function fnOnChange() {
+		onchange(getData());
+	}
+
+	function getData() {
+		let data = { code: getCode(), data_test: $state.snapshot(row.data_test) };
 		//	console.log('> getData > SQL', data);
 		return data;
 	}
 
 	onMount(() => {
 		// console.log(code);
+	});
+
+	onDestroy(() => {
+		clearTimeout(timeoutChange);
 	});
 </script>
 
@@ -98,7 +88,7 @@
 			<div>Service connection parameters.</div>
 		</div>
 
-		<EditorCode lang="json" bind:code={initial_code}></EditorCode>
+		<EditorCode lang="json" bind:code={internal_code}></EditorCode>
 
 		{#if row.method === 'GET'}
 			<div class="block">
@@ -180,17 +170,19 @@
 {/snippet}
 
 {#snippet tab_app_vars()}
-	<AppVars bind:environment={row.environment} isReadOnly={true}></AppVars>
+	<AppVars environment={row.environment} isReadOnly={true}></AppVars>
 {/snippet}
 
 {#snippet tab_tester()}
-	<div >
-		
+	<div>
 		<RESTTester
-			bind:data={internal_data_test}
-			bind:method={row.method}
+			bind:data={row.data_test}
+			method={row.method}
 			url={row.endpoint}
 			methodDisabled={true}
+			onchange={(c) => {
+				fnOnChange();
+			}}
 		></RESTTester>
 	</div>
 {/snippet}

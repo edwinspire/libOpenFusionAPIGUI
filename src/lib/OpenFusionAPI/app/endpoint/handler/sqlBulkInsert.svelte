@@ -1,12 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import {
-		Tab,
-		EditorCode,
-		RESTTester,
-		JSONView,
-		BasicSelect
-	} from '@edwinspire/svelte-components';
+	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 
 	let { row = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =
@@ -50,7 +44,6 @@
 
 	function parseCode() {
 		try {
-		
 			let params = JSON.parse(row.code || '{}');
 
 			if (params && params.table_name) {
@@ -128,7 +121,7 @@
 	</div>
 
 	<div class="content is-small">
-		<h4>Bulk INSET</h4>
+		<h4>Bulk INSERT</h4>
 		<div>Performs a bulk insert into a SQL database table.</div>
 		<div>
 			The necessary parameters are the "table name" and an array with the data.<br />
@@ -136,8 +129,10 @@
 			field.
 			<br />
 
-			For example, the following JSON represents a list of rows to be inserted:<br />
-			<JSONView bind:jsonObject={data_example}></JSONView>
+			<details>
+				<summary>For example, the following JSON represents a list of rows to be inserted:</summary>
+				<JSONView bind:jsonObject={data_example}></JSONView>
+			</details>
 		</div>
 
 		<div>

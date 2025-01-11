@@ -10,7 +10,8 @@
 		url_paths,
 		getCacheSize,
 		getCountStatusCode,
-		getListUsers
+		getListUsers,
+		defaultValuesRow
 	} from '../utils.js';
 	import CellMethod from './cellMethod.svelte';
 	import CellAccess from './cellAccess.svelte';
@@ -422,8 +423,8 @@
 				}
 			}}
 			oneditrow={(data) => {
-				console.log('oneditrow >>>> ', data);
-				SelectedRow = data;
+				console.log('oneditrow >>>> ', defaultValuesRow(data));
+				SelectedRow = defaultValuesRow(data);
 				showEndpointEdit = true;
 				//	console.log('SelectedRow: ', {...data});
 			}}

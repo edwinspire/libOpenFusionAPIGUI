@@ -201,6 +201,41 @@ export const getCacheSize = async (app_name, token) => {
 	}
 };
 
+export const defaultValuesRow = (row) => {
+	if (!row) {
+		row = {};
+	}
+
+	if (row && !row.environment) {
+		row.environment = '?';
+	}
+
+	if (row && !row.endpoint) {
+		row.endpoint = '';
+	}
+
+	if (row && !row.method) {
+		row.method = '';
+	}
+
+	if (row && !row.handler) {
+		row.handler = '';
+	}
+	if (row && row.ctrl == null) {
+		row.ctrl = {};
+	}
+
+	if (row && row.ctrl.users == null) {
+		row.ctrl.users = [];
+	}
+
+	if (row && row.ctrl.log == null) {
+		row.ctrl.log = {};
+	}
+
+	return row;
+};
+
 export const getCountStatusCode = async (app_name, token) => {
 	let uf = new uFetch();
 	//uf.setBearerAuthorization(token);

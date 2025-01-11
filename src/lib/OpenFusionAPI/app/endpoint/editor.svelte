@@ -197,7 +197,7 @@
 {/snippet}
 
 {#snippet tab_log()}
-	{#if row && row.ctrl && row.ctrl}
+	{#if row && row.ctrl}
 		<Logs bind:log={row.ctrl.log}></Logs>
 	{/if}
 {/snippet}
@@ -262,5 +262,10 @@
 		{/snippet}
 	</Level>
 
-	<Tab bind:tabs={tabList}></Tab>
+	<Tab
+		bind:tabs={tabList}
+		onselect={() => {
+			defaultValues();
+		}}
+	></Tab>
 </SlideFullScreen>
