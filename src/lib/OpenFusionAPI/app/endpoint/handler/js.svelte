@@ -45,7 +45,7 @@
 	let tabList = $state([
 		{ label: 'Code', isActive: true, component: tab_code },
 		{ label: 'Predefined Variables', component: tab_pred_vars },
-		{ label: 'App Variables', component: tab_appvars },
+		{ label: 'App Variables', component: tab_app_vars },
 		{ label: 'Tester', component: tab_tester }
 	]);
 
@@ -112,7 +112,7 @@
 	</div>
 {/snippet}
 
-{#snippet tab_appvars()}
+{#snippet tab_app_vars()}
 	<AppVars environment={row.environment} isReadOnly={true}></AppVars>
 {/snippet}
 
@@ -124,7 +124,6 @@
 			url={row.endpoint}
 			methodDisabled={true}
 			onchange={(c) => {
-				//console.log('++++++++++++++++ ', c);
 				fnOnChange();
 			}}
 		></RESTTester>
