@@ -1,13 +1,9 @@
 <script>
-	// @ts-nocheck
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 
-	import Endpoint from './endpoint.svelte';
-
 	let { row = $bindable({}), onchange = () => {} } = $props();
-	let internal_code = $state('');
 
 	let use_var_cnx = $state(false);
 	let cnx_param_json = $state({});
@@ -46,13 +42,16 @@
 		{ label: 'Tester', component: tab_tester }
 	]);
 
-	let query_code = $state('SELECT 1+1;');
-	let internal_data_test;
+	let query_code = $state('SELECT CURRENT_TIMESTAMP AS Fecha_Hora_Actual FROM DUMMY;');
+	let timeoutChange;
 
 	$inspect(row.code).with((type) => {
 		//console.log('row.code >>>>>>>>>>>>> ', type, row);
 		if (type === 'update' || type === 'init') {
-			parseCode();
+			clearTimeout(parseCode());
+			timeoutChange = setTimeout(() => {
+				parseCode();
+			}, 750);
 		}
 	});
 
@@ -125,6 +124,10 @@
 		//	console.log(code);
 		parseCode();
 		//	sample_bind_post_string = JSON.stringify(sample_bind_post);
+	});
+
+	onDestroy(() => {
+		clearTimeout(timeoutChange);
 	});
 </script>
 
@@ -307,14 +310,13 @@
 
 {#snippet tab_tester()}
 	<div>
-		<WarnPrd bind:environment={row.environment}></WarnPrd>
 		<RESTTester
 			bind:data={row.data_test}
-			bind:method={row.method}
+			method={row.method}
 			url={row.endpoint}
 			methodDisabled={true}
 			onchange={(c) => {
-				//console.log('++++++++++++++++ ', c);
+				console.log('++++++++++++++++ ', c);
 				fnOnChange();
 			}}
 		></RESTTester>

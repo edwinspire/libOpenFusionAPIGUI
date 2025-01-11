@@ -172,7 +172,6 @@
 
 {#snippet tab_tester()}
 	<div>
-		
 		<RESTTester
 			bind:data={row.data_test}
 			method={row.method}

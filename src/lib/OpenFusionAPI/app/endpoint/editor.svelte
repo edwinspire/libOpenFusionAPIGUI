@@ -148,7 +148,7 @@
 					bind:row
 					onchange={(v) => {
 						handler_code[row.handler] = v;
-						//console.log('----------------> ', handler_code);
+						console.log('----------------> ', handler_code);
 					}}
 				/>
 			{:else if row && row.handler == 'SQL_BULK_I'}
@@ -225,13 +225,13 @@
 								alert('URL already exists.');
 							} else {
 								let v = handler_code[row.handler];
-								//value = v.code;
+
 								if (v) {
 									row.data_test = v.data_test;
 									row.code = v.code;
 								}
 
-								console.log('xxxxxx> ', row);
+								console.log('xxxxxx> ', row, v);
 
 								accept();
 								showEditor = false;

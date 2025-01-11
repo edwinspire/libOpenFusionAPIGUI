@@ -429,7 +429,7 @@
 			}}
 		>
 			{#snippet lt01()}
-				'Endpoints'
+				Endpoints
 			{/snippet}
 			<!-- <span slot="r09">
 			<button
@@ -559,7 +559,7 @@
 
 							if (confirm('Do you want to save the application data?')) {
 								//app.vars = fnVars.getCode();
-								if(app_vars){
+								if (app_vars) {
 									app.vars = app_vars;
 								}
 								saveApp();
@@ -757,7 +757,7 @@
 <EndPointEditor
 	bind:showEditor={showEndpointEdit}
 	bind:row={SelectedRow}
-	bind:app={app}
+	bind:app
 	ondata={(e) => {
 		// console.log('EndPointEditor >>>> ', e);
 
