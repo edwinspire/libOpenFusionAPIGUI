@@ -1,6 +1,4 @@
 <script>
-	// @ts-nocheck
-
 	'use strict';
 	import { onMount } from 'svelte';
 	import FetchCode from './handler/fetch.svelte';
@@ -199,8 +197,8 @@
 {/snippet}
 
 {#snippet tab_log()}
-	{#if row && row.ctrl && row.ctrl.log}
-		<Logs bind:row bind:log={row.ctrl.log}></Logs>
+	{#if row && row.ctrl && row.ctrl}
+		<Logs bind:log={row.ctrl.log}></Logs>
 	{/if}
 {/snippet}
 
