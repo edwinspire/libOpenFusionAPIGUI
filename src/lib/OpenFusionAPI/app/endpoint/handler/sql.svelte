@@ -52,7 +52,7 @@
 	$inspect(row.code).with((type) => {
 		//console.log('row.code >>>>>>>>>>>>> ', type, row);
 		if (type === 'update' || type === 'init') {
-			clearTimeout(parseCode());
+			clearTimeout(timeoutChange);
 			timeoutChange = setTimeout(() => {
 				parseCode();
 			}, 750);
@@ -104,7 +104,7 @@
 			if (use_var_cnx) {
 				conf = cnx_param_var;
 			} else {
-				conf = JSON.parse(cnx_param_json);
+				conf = typeof cnx_param_json === 'object' ? cnx_param_json : JSON.parse(cnx_param_json);
 			}
 
 			//return JSON.stringify(c, null, 2);

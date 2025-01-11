@@ -42,13 +42,13 @@
 		{ label: 'Tester', component: tab_tester }
 	]);
 
-	let query_code = $state('SELECT CURRENT_TIMESTAMP AS Fecha_Hora_Actual FROM DUMMY;');
+	let query_code = $state('');
 	let timeoutChange;
 
 	$inspect(row.code).with((type) => {
 		//console.log('row.code >>>>>>>>>>>>> ', type, row);
 		if (type === 'update' || type === 'init') {
-			clearTimeout(parseCode());
+			clearTimeout(timeoutChange);
 			timeoutChange = setTimeout(() => {
 				parseCode();
 			}, 750);
@@ -59,8 +59,11 @@
 		try {
 			let params = JSON.parse(row.code || '{}');
 
+			//console.log('parseCode: >', params);
+
 			if (params && params.query) {
 				query_code = params.query;
+				console.log('>>>>>> PARSE', params.query, query_code);
 			}
 
 			if (params && params.config) {
@@ -88,7 +91,7 @@
 
 	function getData() {
 		let data = { code: getCode(), data_test: $state.snapshot(row.data_test) };
-		//	console.log('> getData > SQL', data);
+
 		return data;
 	}
 
@@ -113,6 +116,7 @@
 		try {
 			outcode.config = conf;
 			outcode.query = query_code;
+			console.log('outcode.query >>>> ', outcode.query);
 			return JSON.stringify(outcode, null, 2);
 		} catch (error) {
 			console.warn(error);
@@ -143,8 +147,7 @@
 				</div>
 			</div>
 		</div>
-		<EditorCode isReadOnly={false} title={'Query to be executed'} lang="sql" bind:code={query_code}
-		></EditorCode>
+		<EditorCode isReadOnly={false} lang="sql" bind:code={query_code}></EditorCode>
 	</div>
 {/snippet}
 
@@ -276,8 +279,12 @@
 
 			{#if !use_var_cnx}
 				<div class="content is-small">
-					By example, in most cases the following connection parameters are sufficient:
-					<JSONView bind:jsonObject={cnx_sample} />
+					<details>
+						<summary
+							>By example, in most cases the following connection parameters are sufficient:</summary
+						>
+						<JSONView bind:jsonObject={cnx_sample} />
+					</details>
 				</div>
 
 				<EditorCode isReadOnly={false} lang="json" bind:code={cnx_param_json}></EditorCode>
