@@ -52,6 +52,7 @@
 
 	function parseCode() {
 		try {
+		
 			let params = JSON.parse(row.code || '{}');
 
 			if (params && params.table_name) {
@@ -121,7 +122,6 @@
 
 {#snippet tab_tablename()}
 	<div>
-		
 		<br />
 		<div class="control">
 			<input class="input is-small" type="text" placeholder="Table name" bind:value={table_name} />
@@ -209,14 +209,12 @@
 
 {#snippet tab_tester()}
 	<div>
-		<WarnPrd bind:environment={row.environment}></WarnPrd>
 		<RESTTester
 			bind:data={row.data_test}
 			method={row.method}
 			url={row.endpoint}
 			methodDisabled={true}
 			onchange={(c) => {
-				//console.log('++++++++++++++++ ', c);
 				fnOnChange();
 			}}
 		></RESTTester>

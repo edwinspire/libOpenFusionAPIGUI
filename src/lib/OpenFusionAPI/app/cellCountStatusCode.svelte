@@ -8,7 +8,7 @@
 
 	storeCountResponseStatusCode.subscribe((ListCountStatusCode) => {
 			//console.log('>>>>> storeCountResponseStatusCode ->>>>', ListCountStatusCode, row);
-		if (row) {
+		if (row && row.endpoint) {
 			//console.log('>>>>> storeCountResponseStatusCode ->>>>', ListCountStatusCode, row);
 			let ep_key = `${row.endpoint.toLowerCase()}|${row.method}`;
 
