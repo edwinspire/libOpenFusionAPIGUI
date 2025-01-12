@@ -19,9 +19,7 @@
 		onchange(getData());
 	}
 
-	onMount(() => {
-		//	console.log(code);
-	});
+	onMount(() => {});
 </script>
 
 {#snippet tab_url()}

@@ -16,11 +16,9 @@
 		}
 	});
 
-
 	let timeoutChange;
 
 	$inspect(row.code).with((type) => {
-		//console.log('row.code >>>>>>>>>>>>> ', type, row);
 		if (type === 'update' || type === 'init') {
 			clearTimeout(timeoutChange);
 			timeoutChange = setTimeout(() => {
@@ -30,13 +28,10 @@
 	});
 
 	$inspect(internal_code).with((type) => {
-		//	console.log('row >>>>>>>>>>>>> ', type, row);
 		if (type === 'update') {
 			onchange(getData());
 		}
 	});
-
-
 
 	function parseCode() {
 		internal_code = row.code;
@@ -69,13 +64,11 @@
 
 	function getData() {
 		let data = { code: getCode(), data_test: $state.snapshot(row.data_test) };
-		//	console.log('> getData > SQL', data);
+
 		return data;
 	}
 
-	onMount(() => {
-		// console.log(code);
-	});
+	onMount(() => {});
 
 	onDestroy(() => {
 		clearTimeout(timeoutChange);

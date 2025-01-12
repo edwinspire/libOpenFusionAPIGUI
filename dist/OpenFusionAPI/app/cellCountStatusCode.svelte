@@ -7,19 +7,14 @@
 	let value_count_status_code = $state({});
 
 	storeCountResponseStatusCode.subscribe((ListCountStatusCode) => {
-			//console.log('>>>>> storeCountResponseStatusCode ->>>>', ListCountStatusCode, row);
 		if (row && row.endpoint) {
-			//console.log('>>>>> storeCountResponseStatusCode ->>>>', ListCountStatusCode, row);
 			let ep_key = `${row.endpoint.toLowerCase()}|${row.method}`;
 
 			if (ListCountStatusCode && Array.isArray(ListCountStatusCode)) {
 				if (ListCountStatusCode.length > 0) {
 					let this_list = ListCountStatusCode.find((item) => {
-						//		console.log('>>>>>', item, ep_key, item[ep_key]);
 						return item[ep_key];
 					});
-
-					//console.log('+++++++++++> '), this_list;
 
 					if (this_list && this_list[ep_key]) {
 						value_count_status_code = this_list[ep_key];

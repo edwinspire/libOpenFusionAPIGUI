@@ -5,7 +5,7 @@
 
 	let { value = $bindable(), row = $bindable() } = $props();
 
-	let label = $state();
+	let label = $state('');
 
 	let css_class = $state('');
 	let css_icon = $state('fas fa-home');
@@ -37,6 +37,7 @@
 </script>
 
 <td>
+	hola
 	{#if row.method !== 'WS'}
 		<BLabel bind:color={css_class} bind:label bind:icon={css_icon}></BLabel>
 	{/if}

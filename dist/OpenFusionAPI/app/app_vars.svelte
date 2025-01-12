@@ -12,16 +12,12 @@
 	let Datavars = $state({});
 
 	listAppVars.subscribe((value) => {
-		//		console.log('>>>>> listAppVars ->>>>', value);
-		// @ts-ignore
 		Datavars = value || {};
-		//setCode();
 	});
 
 	let timeoutChangeDatavars;
 
 	$inspect(Datavars).with((type) => {
-		//console.log('Datavars >>>>>>>>>>>>> ', type, Datavars);
 		if (type === 'update') {
 			clearTimeout(timeoutChangeDatavars);
 			timeoutChangeDatavars = setTimeout(() => {
@@ -30,19 +26,14 @@
 		}
 	});
 
-	onMount(() => {
-		//setCode();
-	});
+	onMount(() => {});
 </script>
 
 <div>
 	{#if environment == 'dev' || environment == '*'}
 		{#if Datavars && Datavars.dev}
 			<div class="column">
-				<VarEnv 
-				appVars={Datavars.dev} 
-				{isReadOnly} 
-				title={'DEVELOPMENT'}></VarEnv>
+				<VarEnv appVars={Datavars.dev} {isReadOnly} title={'DEVELOPMENT'}></VarEnv>
 			</div>
 		{/if}
 	{/if}

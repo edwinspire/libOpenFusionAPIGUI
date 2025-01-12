@@ -1,5 +1,4 @@
 <script>
-	'use strict';
 	import { onMount } from 'svelte';
 	import FetchCode from './handler/fetch.svelte';
 	import JsCode from './handler/js.svelte';
@@ -20,12 +19,9 @@
 		showEditor = $bindable(false),
 		row = $bindable({}),
 		app = $bindable({}),
-		ondata = (d) => {
-			console.log('ondata not implemented.');
-		}
+		ondata = (d) => {}
 	} = $props();
 
-	//let value = $state();
 	let handler_code = [];
 	let validateResource = $state(false);
 	let availableURL = $state(false);
@@ -36,12 +32,8 @@
 		{ label: 'Authorizations', component: tab_auth },
 		{ label: 'Logs', component: tab_log }
 	]);
-	//	const dispatch = createEventDispatcher();
-
-	//$: row, defaultValues();
 
 	$inspect(row).with((type) => {
-		//	console.log('++++ row >>>>>>>>>>>>> ', type, row);
 		if (type === 'init') {
 			defaultValues();
 		}
@@ -100,8 +92,6 @@
 		if (app && !app.endpoints) {
 			app.endpoints = [];
 		}
-
-		//		console.log('row defaultValues', row);
 	}
 
 	onMount(() => {
@@ -124,7 +114,6 @@
 					bind:row
 					onchange={(v) => {
 						handler_code[row.handler] = v;
-						//console.log('----------------> ', handler_code);
 					}}
 				/>
 			{:else if row && row.handler == 'SOAP'}
@@ -132,7 +121,6 @@
 					bind:row
 					onchange={(v) => {
 						handler_code[row.handler] = v;
-						//console.log('----------------> ', handler_code);
 					}}
 				/>
 			{:else if row && row.handler == 'SQL'}
@@ -140,7 +128,6 @@
 					bind:row
 					onchange={(v) => {
 						handler_code[row.handler] = v;
-						//console.log('----------------> ', handler_code);
 					}}
 				/>
 			{:else if row && row.handler == 'HANA'}
@@ -148,7 +135,6 @@
 					bind:row
 					onchange={(v) => {
 						handler_code[row.handler] = v;
-						console.log('----------------> ', handler_code);
 					}}
 				/>
 			{:else if row && row.handler == 'SQL_BULK_I'}
@@ -156,7 +142,6 @@
 					bind:row
 					onchange={(v) => {
 						handler_code[row.handler] = v;
-						//console.log('----------------> ', handler_code);
 					}}
 				/>
 			{:else if row && row.handler == 'FETCH'}
@@ -164,7 +149,6 @@
 					bind:row
 					onchange={(v) => {
 						handler_code[row.handler] = v;
-						//console.log('----------------> ', handler_code);
 					}}
 				/>
 			{:else if row && row.handler == 'FUNCTION'}
@@ -172,7 +156,6 @@
 					bind:row
 					onchange={(v) => {
 						handler_code[row.handler] = v;
-						//console.log('----------------> ', handler_code);
 					}}
 				/>
 			{:else if row && row.handler == 'TEXT'}
@@ -180,7 +163,6 @@
 					bind:row
 					onchange={(v) => {
 						handler_code[row.handler] = v;
-						//console.log('----------------> ', handler_code);
 					}}
 				/>
 			{:else}
@@ -230,8 +212,6 @@
 									row.data_test = v.data_test;
 									row.code = v.code;
 								}
-
-								console.log('xxxxxx> ', row, v);
 
 								accept();
 								showEditor = false;

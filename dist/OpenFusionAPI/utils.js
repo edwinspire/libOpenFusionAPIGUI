@@ -1,4 +1,3 @@
-// @ts-ignore
 import uFetch from '@edwinspire/universal-fetch';
 import { writable } from 'svelte/store';
 import { PUBLIC_API_SERVER_HOST } from '$env/static/public';
@@ -184,9 +183,9 @@ export const getListMethods = async (/** @type {string} */ token) => {
 
 export const getCacheSize = async (app_name, token) => {
 	let uf = new uFetch();
-	//uf.setBearerAuthorization(token);
+	
 	try {
-		//      console.log("getListApps > ", $userStore, uf);
+		
 		if (app_name) {
 			let get_list_cache = await uf.GET({
 				url: url_paths.getCacheSize,
@@ -260,7 +259,7 @@ export const getCountStatusCode = async (app_name, token) => {
 	let uf = new uFetch();
 	//uf.setBearerAuthorization(token);
 	try {
-		//      console.log("getListApps > ", $userStore, uf);
+		
 		if (app_name) {
 			let get_list = await uf.GET({
 				url: url_paths.getResponsesCountStatusCode,

@@ -23,7 +23,6 @@
 
 	let { idapp = $bindable(0) } = $props();
 
-	//export let idapp = 0;
 	let intervalGetDataApp;
 	let app_vars;
 
@@ -165,11 +164,8 @@
 		// Lógica de autenticación aquí
 
 		try {
-			//      console.log("getListApps > ", $userStore, uf);
-
 			let env_list_resp = await uf.GET({ url: url_paths.listEnv });
 			let env_list = await env_list_resp.json();
-			//console.log(apps);
 
 			if (env_list && Array.isArray(env_list) && env_list.length > 0) {
 				environment_list = env_list.map((item) => {
@@ -179,7 +175,6 @@
 				environment_list = [];
 			}
 		} catch (error) {
-			// @ts-ignore
 			alert(error.message);
 		}
 	}
@@ -188,12 +183,10 @@
 		// Lógica de autenticación aquí
 
 		let urls_clear = TableObject.GetSelectedRows().map((u) => {
-			//console.log(u);
 			return `${u.endpoint}|${u.method}`;
 		});
 
 		try {
-			//      console.log("getListApps > ", $userStore, uf);
 			if (urls_clear && Array.isArray(urls_clear) && urls_clear.length > 0) {
 				let get_list_clear = await uf.POST({
 					url: url_paths.clearCache,
@@ -202,15 +195,12 @@
 
 				let get_list_clear_result = await get_list_clear.json();
 
-				//	console.log('Clear Cache', get_list_clear_result);
-
 				alert('Cache deleted');
 			} else {
 				alert('You must select at least one record.');
 				TableSelectionType = 2;
 			}
 		} catch (error) {
-			// @ts-ignore
 			alert(error.message);
 		}
 	}
@@ -219,11 +209,8 @@
 		// Lógica de autenticación aquí
 
 		try {
-			//      console.log("getListApps > ", $userStore, uf);
-
 			let apps_res = await uf.GET({ url: url_paths.listApps });
 			let apps = await apps_res.json();
-			//console.log(apps);
 
 			if (apps && Array.isArray(apps) && apps.length > 0) {
 				options = apps.map((item) => {
@@ -233,7 +220,6 @@
 				options = [];
 			}
 		} catch (error) {
-			// @ts-ignore
 			alert(error.message);
 		}
 	}
@@ -260,12 +246,8 @@
 				app.params.telegram.idgroup = '';
 			}
 
-			//console.log('>>>><> ', app);
-
 			if (app && app.vars && typeof app.vars === 'object') {
 				listAppVars.set(app.vars);
-
-				//				console.log('===>>>> VARS', app.vars);
 			} else if (app && app.vars && typeof app.vars === 'string') {
 				try {
 					listAppVars.set(JSON.parse(app.vars));
@@ -277,10 +259,7 @@
 				listAppVars.set({});
 			}
 
-			// @ts-ignore
 			getListFunction($userStore.token, app.app, app.environment);
-
-			//console.log('showAppData >> ', app.endpoints);
 
 			if (app.endpoints) {
 				endpoints = app.endpoints.map((/** @type {{ environment: any; resource: any; }} */ ax) => {
@@ -289,7 +268,6 @@
 						...ax
 					};
 				});
-				//	console.log(endpoints);
 			}
 		}
 	}
@@ -308,18 +286,15 @@
 					}
 				});
 				let app_resp = await apps_res.json();
-				//console.log(app_resp);
+
 				showAppData(app_resp);
 			} catch (error) {
-				// @ts-ignore
 				alert(error.message);
 			}
 		}
 	}
 
 	userStore.subscribe((value) => {
-		// console.log('tokenStore ->>>>', value);
-		// @ts-ignore
 		uf.setBearerAuthorization(value.token);
 	});
 
@@ -355,7 +330,6 @@
 				alert('Error: ' + apps_res.status);
 			}
 		} catch (error) {
-			// @ts-ignore
 			alert(error.message);
 		}
 	}
@@ -365,16 +339,12 @@
 	}
 
 	onMount(async () => {
-		// dataUser = tokenVerify(tokenStore);
-		// uf.addHeader();
-		// console.log($userStore);
 		await getListApps();
 		await getEnvList();
 		intervalGetDataApp = setInterval(async () => {
 			await getCacheSize(app.app, $userStore.token);
 			await getCountStatusCode(app.app, $userStore.token);
 		}, 5000);
-		// @ts-ignore
 	});
 
 	onDestroy(() => {
@@ -391,7 +361,6 @@
 	<AppVars
 		isReadOnly={false}
 		onchanged={(data) => {
-			console.log('AppVars >>>>>> ', data);
 			app_vars = data;
 		}}
 	></AppVars>
@@ -420,7 +389,6 @@
 			};
 			*/
 
-				console.log(app);
 				if (app && app.idapp && app.idapp.length > 0) {
 					SelectedRow = { ...default_row };
 
@@ -430,10 +398,8 @@
 				}
 			}}
 			oneditrow={(data) => {
-				console.log('oneditrow >>>> ', defaultValuesRow(data));
 				SelectedRow = defaultValuesRow(data);
 				showEndpointEdit = true;
-				//	console.log('SelectedRow: ', {...data});
 			}}
 		>
 			{#snippet lt01()}
@@ -505,8 +471,6 @@
 			classInput="is-small"
 			bind:options
 			onselect={(/** @type {{ detail: { value: number; }; }} */ e) => {
-				//console.log('>>>>>> Application > ', e);
-
 				if ($userStore) {
 					idapp = e.value;
 				} else {
@@ -563,8 +527,6 @@
 					<button
 						class="button is-small is-link is-outlined"
 						onclick={() => {
-							//	console.log(fnVarsDev.getCode());
-
 							if (confirm('Do you want to save the application data?')) {
 								//app.vars = fnVars.getCode();
 								if (app_vars) {
@@ -587,8 +549,6 @@
 					<button
 						class="button is-small"
 						onclick={() => {
-							console.log('Download', app);
-
 							const now = new Date();
 							const year = now.getFullYear();
 							const month = String(now.getMonth() + 1).padStart(2, '0'); // Sumamos 1 al mes ya que en JavaScript los meses van de 0 a 11
@@ -651,10 +611,9 @@
 
 										try {
 											uploaded_file = JSON.parse(fileContent);
-											// console.log('Contenido del archivo JSON:', uploaded_file);
 
 											// TODO: Aquí puedes realizar acciones con los datos JSON, por ejemplo, mostrarlos en la página.
-											console.log('>>>>>>>>>>>>> -> ', uploaded_file, app);
+
 											if (uploadFile_checkAppname()) {
 												alert('The file does not correspond to the same application.');
 											}
@@ -682,11 +641,6 @@
 									} else {
 										if (uploaded_file) {
 											if (confirm('Are you sure to merge the file with your data?')) {
-												//app = { ...uploaded_file };
-												//uploaded_file = null;
-
-												//	console.log(uploaded_file);
-
 												if (uploaded_file.endpoints && Array.isArray(uploaded_file.endpoints)) {
 													// Chequear los endpoints donde le colocamos el idenpoint
 													uploaded_file.endpoints = uploaded_file.endpoints.map((ep) => {
@@ -699,14 +653,11 @@
 															);
 														});
 
-														//console.log(current_endpoint);
 														if (current_endpoint) {
 															ep.idendpoint = current_endpoint.idendpoint;
 														}
 														return ep;
 													});
-
-													console.log('>>> ', uploaded_file.endpoints);
 
 													// Utilizar filter() para encontrar los elementos que existen en arrayA pero no en arrayB
 													const ep_diff = app.endpoints.filter((app_ep) => {
@@ -714,7 +665,6 @@
 															(uep) => app_ep.idendpoint === uep.idendpoint
 														);
 													});
-													console.log('Resultado de los que no existen: ', ep_diff);
 
 													uploaded_file.endpoints = uploaded_file.endpoints.concat(ep_diff);
 
@@ -750,11 +700,7 @@
 	bind:row={SelectedRow}
 	bind:app
 	ondata={(e) => {
-		// console.log('EndPointEditor >>>> ', e);
-
 		let row_edited = e.row;
-
-		//	console.log(row_edited);
 
 		if (row_edited.idendpoint && row_edited.idendpoint.length > 10) {
 			// Es edición de endpoint

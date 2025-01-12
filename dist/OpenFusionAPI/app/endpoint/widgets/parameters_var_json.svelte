@@ -3,7 +3,7 @@
 	import { listAppVars } from '../../../utils.js';
 	import { onMount } from 'svelte';
 
-// TODO: es una propuesta pero no probada ni implementada aún
+	// TODO: es una propuesta pero no probada ni implementada aún
 
 	let cnx_param_json = {};
 	let cnx_param_var = '';
@@ -16,8 +16,6 @@
 	$: code, ParseCode();
 
 	listAppVars.subscribe((value) => {
-		console.log('> listAppVars > ', value);
-
 		Datavars = {};
 
 		if (value && value.dev) {
@@ -25,13 +23,13 @@
 				return { name: key, value: key };
 			});
 		}
-        
+
 		if (value && value.qa) {
 			Datavars.qa = Object.keys(value.qa).map((key) => {
 				return { name: key, value: key };
 			});
 		}
-        
+
 		if (value && value.prd) {
 			Datavars.prd = Object.keys(value.prd).map((key) => {
 				return { name: key, value: key };
@@ -58,7 +56,6 @@
 	}
 
 	onMount(() => {
-		//	console.log(code);
 		ParseCode();
 	});
 </script>
@@ -88,9 +85,7 @@
 				classLabel="is-small"
 				classInput="is-small"
 				bind:options={Datavars[environment]}
-				on:select={(/** @type {{ detail: { value: number; }; }} */ e) => {
-					// console.log('>>>>>> Application > ', e.detail.value);
-				}}
+				on:select={(/** @type {{ detail: { value: number; }; }} */ e) => {}}
 			/>
 		{:else}
 			Nada

@@ -1,5 +1,4 @@
 <script>
-    // @ts-ignore
     import uFetch from "@edwinspire/universal-fetch";
     import { onMount } from "svelte";
     import { createEventDispatcher } from "svelte";

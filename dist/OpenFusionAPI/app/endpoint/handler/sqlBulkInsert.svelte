@@ -36,7 +36,7 @@
 	let table_name = $state('');
 
 	$inspect(row.code).with((type) => {
-		//console.log('row.code >>>>>>>>>>>>> ', type, row);
+		
 		if (type === 'update' || type === 'init') {
 			parseCode();
 		}
@@ -51,7 +51,7 @@
 			}
 
 			if (params && params.config) {
-				//console.log('>>> parseCode >> ', typeof params.config, params.config);
+				
 
 				if (typeof params.config === 'object') {
 					cnx_param_json = params.config;
@@ -106,7 +106,7 @@
 	}
 
 	onMount(() => {
-		//	console.log(code);
+		
 		parseCode();
 	});
 </script>

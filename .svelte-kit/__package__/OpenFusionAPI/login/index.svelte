@@ -20,7 +20,7 @@
 			// @ts-ignore
 			let user = await uf.POST({ url: url_paths.login, data: { username, password } });
 			let data = await user.json();
-		//	console.log(data);
+		
 
 			if (data.login) {
 				userStore.set(data);

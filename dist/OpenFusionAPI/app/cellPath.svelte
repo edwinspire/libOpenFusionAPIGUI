@@ -1,15 +1,8 @@
 <script>
-	// @ts-nocheck
-
-	'use strict';
 	import { onMount } from 'svelte';
 	import { listEnv } from '../utils.js';
 
 	let { value = $bindable(), row = $bindable() } = $props();
-
-	// export let value;
-	// export let row = {};
-	// export let props = {};
 
 	onMount(() => {});
 </script>

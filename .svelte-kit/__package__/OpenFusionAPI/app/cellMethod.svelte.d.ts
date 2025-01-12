@@ -4,10 +4,10 @@ type CellMethod = {
     $set?(props: Partial<$$ComponentProps>): void;
 };
 declare const CellMethod: import("svelte").Component<{
-    value?: any;
+    value?: string;
     row?: any;
 }, {}, "value" | "row">;
 type $$ComponentProps = {
-    value?: any;
+    value?: string;
     row?: any;
 };
