@@ -202,7 +202,7 @@ export const getCacheSize = async (app_name, token) => {
 };
 
 export const defaultValuesRow = (row) => {
-	if (!row) {
+	if (row == null) {
 		row = {};
 	}
 
@@ -231,6 +231,26 @@ export const defaultValuesRow = (row) => {
 
 	if (row && row.ctrl.log == null) {
 		row.ctrl.log = {};
+	}
+
+	if (row && row.data_test == null) {
+		row.data_test = { query: {}, body: {}, headers: {}, auth: {} };
+	}
+
+	if (row && row.data_test.query == null) {
+		row.data_test.query = {};
+	}
+
+	if (row && row.data_test.body == null) {
+		row.data_test.body = {};
+	}
+
+	if (row && row.data_test.headers == null) {
+		row.data_test.headers = {};
+	}
+
+	if (row && row.data_test.auth == null) {
+		row.data_test.auth = {};
 	}
 
 	return row;
