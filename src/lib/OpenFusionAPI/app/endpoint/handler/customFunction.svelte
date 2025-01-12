@@ -79,7 +79,13 @@
 		</div>
 		<div class="field-body">
 			<div class="field is-narrow">
-				<SelectFns bind:options={functions} bind:option={row.code} />
+				<SelectFns
+					bind:options={functions}
+					bind:option={row.code}
+					onchange={(s) => {
+						fnOnChange();
+					}}
+				/>
 			</div>
 		</div>
 	</div>
