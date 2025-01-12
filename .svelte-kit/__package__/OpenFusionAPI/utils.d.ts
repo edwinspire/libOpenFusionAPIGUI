@@ -1,4 +1,3 @@
-/// <reference types="svelte" />
 /**
  * @param {string} string_url
  */
@@ -18,6 +17,7 @@ export namespace url_paths {
     let clearCache: string;
     let getUsersList: string;
     let getResponsesCountStatusCode: string;
+    let getLogs: string;
 }
 export const userStore: import("svelte/store").Writable<{}>;
 export const listMethodStore: import("svelte/store").Writable<{}>;
@@ -35,6 +35,7 @@ export function getListFunction(token: string, appName: string): Promise<void>;
 export function getListHandler(token: string): Promise<void>;
 export function getListMethods(token: string): Promise<void>;
 export function getCacheSize(app_name: any, token: any): Promise<void>;
+export function defaultValuesRow(row: any): any;
 export function getCountStatusCode(app_name: any, token: any): Promise<void>;
 export namespace css_handlers {
     namespace FETCH {
@@ -132,6 +133,8 @@ export namespace listHandlers {
         export { color_5 as color };
         let icon_12: string;
         export { icon_12 as icon };
+        let label_7: string;
+        export { label_7 as label };
     }
     export { JS_1 as JS };
     export namespace SQL_1 {
@@ -139,6 +142,8 @@ export namespace listHandlers {
         export { color_6 as color };
         let icon_13: string;
         export { icon_13 as icon };
+        let label_8: string;
+        export { label_8 as label };
     }
     export { SQL_1 as SQL };
     export namespace SQL_BULK_I {
@@ -146,20 +151,24 @@ export namespace listHandlers {
         export { color_7 as color };
         let icon_14: string;
         export { icon_14 as icon };
-        let label_7: string;
-        export { label_7 as label };
+        let label_9: string;
+        export { label_9 as label };
     }
     export namespace HANA {
         let color_8: string;
         export { color_8 as color };
         let icon_15: string;
         export { icon_15 as icon };
+        let label_10: string;
+        export { label_10 as label };
     }
     export namespace FETCH_1 {
         let color_9: string;
         export { color_9 as color };
         let icon_16: string;
         export { icon_16 as icon };
+        let label_11: string;
+        export { label_11 as label };
     }
     export { FETCH_1 as FETCH };
     export namespace SOAP_1 {
@@ -167,6 +176,8 @@ export namespace listHandlers {
         export { color_10 as color };
         let icon_17: string;
         export { icon_17 as icon };
+        let label_12: string;
+        export { label_12 as label };
     }
     export { SOAP_1 as SOAP };
     export namespace TEXT_1 {
@@ -174,6 +185,8 @@ export namespace listHandlers {
         export { color_11 as color };
         let icon_18: string;
         export { icon_18 as icon };
+        let label_13: string;
+        export { label_13 as label };
     }
     export { TEXT_1 as TEXT };
     export namespace FUNCTION_1 {
@@ -181,6 +194,8 @@ export namespace listHandlers {
         export { color_12 as color };
         let icon_19: string;
         export { icon_19 as icon };
+        let label_14: string;
+        export { label_14 as label };
     }
     export { FUNCTION_1 as FUNCTION };
 }
@@ -188,19 +203,30 @@ export namespace listEnv {
     namespace prd {
         let color_13: string;
         export { color_13 as color };
+        export let background: string;
         let icon_20: string;
         export { icon_20 as icon };
+        let label_15: string;
+        export { label_15 as label };
     }
     namespace qa {
         let color_14: string;
         export { color_14 as color };
+        let background_1: string;
+        export { background_1 as background };
         let icon_21: string;
         export { icon_21 as icon };
+        let label_16: string;
+        export { label_16 as label };
     }
     namespace dev {
         let color_15: string;
         export { color_15 as color };
+        let background_2: string;
+        export { background_2 as background };
         let icon_22: string;
         export { icon_22 as icon };
+        let label_17: string;
+        export { label_17 as label };
     }
 }

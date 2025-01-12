@@ -4,16 +4,11 @@
 	import App from '../app/index.svelte';
 
 	/**
-	 * @type {{ name: any; value: any; }[]}
-	 */
-	//  let options = [];
-
-	/**
 	 * @type {any}
 	 */
-	let app = {};
+	let app = $state({idapp: 0});
 
-	let mainTab = 'app';
+	let mainTab = $state('app');
 
 	onMount(() => {
 		// uf.addHeader(tokenStore.);
@@ -28,5 +23,3 @@
 	</div>
 </div>
 
-<style>
-</style>

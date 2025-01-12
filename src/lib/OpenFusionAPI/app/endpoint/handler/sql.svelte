@@ -50,7 +50,7 @@
 	let timeoutChange;
 
 	$inspect(row.code).with((type) => {
-		//console.log('row.code >>>>>>>>>>>>> ', type, row);
+		
 		if (type === 'update' || type === 'init') {
 			clearTimeout(timeoutChange);
 			timeoutChange = setTimeout(() => {
@@ -68,7 +68,7 @@
 			}
 
 			if (params && params.config) {
-				//console.log('>>> parseCode >> ', typeof params.config, params.config);
+				
 
 				if (typeof params.config === 'object') {
 					cnx_param_json = params.config;
@@ -92,7 +92,7 @@
 
 	function getData() {
 		let data = { code: getCode(), data_test: $state.snapshot(row.data_test) };
-		//	console.log('> getData > SQL', data);
+		
 		return data;
 	}
 
@@ -125,7 +125,7 @@
 	}
 
 	onMount(() => {
-		//	console.log(code);
+		
 		parseCode();
 		//	sample_bind_post_string = JSON.stringify(sample_bind_post);
 	});

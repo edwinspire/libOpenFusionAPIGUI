@@ -11,9 +11,7 @@
 	let mainTab = $state('app');
 
 	onMount(() => {
-		// uf.addHeader(tokenStore.);
-		// console.log(userStore);
-		// getListApps();
+		
 	});
 </script>
 

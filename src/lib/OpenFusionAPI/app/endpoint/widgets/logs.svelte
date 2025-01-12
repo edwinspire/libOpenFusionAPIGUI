@@ -12,7 +12,7 @@
 			{ id: 3, value: `Full`, enabled: true }
 		]),
 		ondata = (d) => {
-			console.log('ondata not implemented.');
+			
 		}
 	} = $props();
 

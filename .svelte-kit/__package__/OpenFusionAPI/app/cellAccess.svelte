@@ -1,30 +1,22 @@
 <script>
-	 "use strict";
+	'use strict';
 	import SelectAccess from '../widgets/Select.svelte';
 	import { onMount } from 'svelte';
-	import { listAccessMethod } from "../utils.js";
+	import { listAccessMethod } from '../utils.js';
 
-	
-	/**
-	 * @type {any}
-	 */
-	export let value;
-	export let row = {};
-	export let props = {};
+	let { value = $bindable(), row = $bindable() } = $props();
 
-	
 	onMount(() => {
-	//	setCSS(value);
+		//	setCSS(value);
 	});
 </script>
+
 <td>
-
-<SelectAccess
-options={listAccessMethod}
-bind:option={value}
-on:select={(e) => {
-	console.log('Cambia', e, value);
-}}
-/>
-
+	<SelectAccess
+		options={listAccessMethod}
+		bind:option={value}
+		onselect={(e) => {
+			console.log('Cambia', e, value);
+		}}
+	/>
 </td>

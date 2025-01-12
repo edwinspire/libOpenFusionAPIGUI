@@ -1,44 +1,13 @@
-/** @typedef {typeof __propDef.props}  CustomFunctionProps */
-/** @typedef {typeof __propDef.events}  CustomFunctionEvents */
-/** @typedef {typeof __propDef.slots}  CustomFunctionSlots */
-export default class CustomFunction extends SvelteComponent<{
-    row: {
-        endpoint: any;
-    };
-    reset?: () => void;
-    getData?: () => {
-        code: string;
-        data_test: {};
-    };
-}, {
-    [evt: string]: CustomEvent<any>;
-}, {}> {
-    get getData(): () => {
-        code: string;
-        data_test: {};
-    };
-    get reset(): () => void;
-}
-export type CustomFunctionProps = typeof __propDef.props;
-export type CustomFunctionEvents = typeof __propDef.events;
-export type CustomFunctionSlots = typeof __propDef.slots;
-import { SvelteComponent } from "svelte";
-declare const __propDef: {
-    props: {
-        row: {
-            endpoint: any;
-        };
-        reset?: () => void;
-        getData?: () => {
-            code: string;
-            data_test: {};
-        };
-    };
-    events: {
-        [evt: string]: CustomEvent<any>;
-    };
-    slots: {};
-    exports?: {};
-    bindings?: string;
+export default CustomFunction;
+type CustomFunction = {
+    $on?(type: string, callback: (e: any) => void): () => void;
+    $set?(props: Partial<$$ComponentProps>): void;
 };
-export {};
+declare const CustomFunction: import("svelte").Component<{
+    row?: Record<string, any>;
+    onchange?: Function;
+}, {}, "row">;
+type $$ComponentProps = {
+    row?: Record<string, any>;
+    onchange?: Function;
+};

@@ -1,7 +1,4 @@
 <script>
-	// @ts-nocheck
-
-	'use strict';
 	import { onMount } from 'svelte';
 	import FetchCode from '../../handler/fetch.svelte';
 	import JsCode from '../../handler/js.svelte';
@@ -103,9 +100,6 @@
 								let v = fnSqlCode.getData();
 								value = v.code;
 								row.data_test = v.data_test;
-
-								console.log('>> fnSqlCode.getData() > ', row);
-
 								fnSqlCode.reset();
 							} else if (row && row.handler == 'FETCH') {
 								value = fnFetchCode.getCode();
@@ -115,7 +109,7 @@
 							} else if (row && row.handler == 'TEXT') {
 								value = fnTextFn.getCode();
 								fnTextFn.reset();
-							} 
+							}
 
 							showCode = false;
 						}}

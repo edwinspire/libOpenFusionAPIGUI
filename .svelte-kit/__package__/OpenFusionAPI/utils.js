@@ -18,7 +18,8 @@ export const url_paths = {
 	getCacheSize: host + '/api/system/cache/response/size/prd',
 	clearCache: host + '/api/system/cache/clear/prd',
 	getUsersList: host + '/api/system/users/list/prd',
-	getResponsesCountStatusCode: host + '/api/system/responses/status_code/count/prd'
+	getResponsesCountStatusCode: host + '/api/system/responses/status_code/count/prd',
+	getLogs: host + '/api/system/system/log/prd'
 };
 
 export const userStore = writable({});
@@ -196,8 +197,63 @@ export const getCacheSize = async (app_name, token) => {
 			storeCacheSize.set(cache_list);
 		}
 	} catch (error) {
-		console.error(error);
+		console.trace(error);
 	}
+};
+
+export const defaultValuesRow = (row) => {
+	if (row == null) {
+		row = {};
+	}
+
+	if (row && !row.environment) {
+		row.environment = '?';
+	}
+
+	if (row && !row.endpoint) {
+		row.endpoint = '';
+	}
+
+	if (row && !row.method) {
+		row.method = '';
+	}
+
+	if (row && !row.handler) {
+		row.handler = '';
+	}
+	if (row && row.ctrl == null) {
+		row.ctrl = {};
+	}
+
+	if (row && row.ctrl.users == null) {
+		row.ctrl.users = [];
+	}
+
+	if (row && row.ctrl.log == null) {
+		row.ctrl.log = {};
+	}
+
+	if (row && row.data_test == null) {
+		row.data_test = { query: {}, body: {}, headers: {}, auth: {} };
+	}
+
+	if (row && row.data_test.query == null) {
+		row.data_test.query = {};
+	}
+
+	if (row && row.data_test.body == null) {
+		row.data_test.body = {};
+	}
+
+	if (row && row.data_test.headers == null) {
+		row.data_test.headers = {};
+	}
+
+	if (row && row.data_test.auth == null) {
+		row.data_test.auth = {};
+	}
+
+	return row;
 };
 
 export const getCountStatusCode = async (app_name, token) => {
@@ -267,18 +323,28 @@ export const listHTTPMethods = {
 };
 
 export const listHandlers = {
-	JS: { color: 'success', icon: 'fa-brands fa-js' },
-	SQL: { color: 'link', icon: 'fa-solid fa-database' },
+	JS: { color: 'success', icon: 'fa-brands fa-js', label: 'Javascript' },
+	SQL: { color: 'link', icon: 'fa-solid fa-database', label: 'SQL' },
 	SQL_BULK_I: { color: 'danger', icon: 'fa-solid fa-database', label: 'SQL BULK INSERT' },
-	HANA: { color: '', icon: 'fa-solid fa-database' },
-	FETCH: { color: 'primary', icon: 'fa-solid fa-globe' },
-	SOAP: { color: 'info', icon: 'fa-solid fa-soap' },
-	TEXT: { color: 'warning', icon: 'fa-regular fa-file-lines' },
-	FUNCTION: { color: 'danger', icon: 'fa-solid fa-robot' }
+	HANA: { color: '', icon: 'fa-solid fa-database', label: 'Hana' },
+	FETCH: { color: 'primary', icon: 'fa-solid fa-globe', label: 'Fetch' },
+	SOAP: { color: 'info', icon: 'fa-solid fa-soap', label: 'SOAP' },
+	TEXT: { color: 'warning', icon: 'fa-regular fa-file-lines', label: 'Text' },
+	FUNCTION: { color: 'danger', icon: 'fa-solid fa-robot', label: 'Function' }
 };
 
 export const listEnv = {
-	prd: { color: ' has-text-success ', icon: ' fa-solid fa-gear fa-spin ' },
-	qa: { color: ' has-text-link ', icon: ' fa-solid fa-eye ' },
-	dev: { color: ' has-text-danger ', icon: ' fa-solid fa-bug ' }
+	prd: {
+		color: ' has-text-success ',
+		background: 'success',
+		icon: ' fa-solid fa-gear fa-spin ',
+		label: 'Production'
+	},
+	qa: { color: ' has-text-link ', background: 'link', icon: ' fa-solid fa-eye ', label: 'Quality' },
+	dev: {
+		color: ' has-text-danger ',
+		background: 'danger',
+		icon: ' fa-solid fa-bug ',
+		label: 'Development'
+	}
 };

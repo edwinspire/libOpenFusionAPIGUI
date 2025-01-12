@@ -4,92 +4,79 @@
 	import { Tab, EditorCode, RESTTester } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 	import SelectMimeType from '../../../widgets/Select.svelte';
-	import WarnPrd from './warning_production.svelte';
 
-	export let row;
-	/**
-	 * @type {EditorCode}
-	 */
-	let fnEditorCode;
-	//let internal_code = code;
-	let fnApiTester;
-	let internal_data_test;
+	let { row = $bindable({}), onchange = () => {} } = $props();
 
-	let mimeTypes = [
-		{ id: 'text/plain', value: 'text/plain', enabled: true },
-		{ id: 'text/html', value: 'text/html', enabled: true },
-		{ id: 'text/css', value: 'text/css', enabled: true },
-		{ id: 'text/javascript', value: 'text/javascript', enabled: true },
-		{ id: 'text/xml', value: 'text/xml', enabled: true },
-		{ id: 'application/wsdl+xml', value: 'application/wsdl+xml', enabled: true },
-		{ id: 'text/csv', value: 'text/csv', enabled: true },
-		{ id: 'text/markdown', value: 'text/markdown', enabled: true },
-		{ id: 'text/cache-manifest', value: 'text/cache-manifest', enabled: true },
-		{ id: 'text/calendar', value: 'text/calendar', enabled: true },
+	let mimeTypes = $state([
+		{ id: 'text/plain', value: 'text/plain', enabled: true, editor: 'text' },
+		{ id: 'text/html', value: 'text/html', enabled: true, editor: 'html' },
+		{ id: 'text/css', value: 'text/css', enabled: true, editor: 'text' },
+		{ id: 'text/javascript', value: 'text/javascript', enabled: true, editor: 'js' },
+		{ id: 'text/xml', value: 'text/xml', enabled: true, editor: 'xml' },
+		{ id: 'application/wsdl+xml', value: 'application/wsdl+xml', enabled: true, editor: 'xml' },
+		{ id: 'text/csv', value: 'text/csv', enabled: true, editor: 'text' },
+		{ id: 'text/markdown', value: 'text/markdown', enabled: true, editor: 'text' },
+		{ id: 'text/cache-manifest', value: 'text/cache-manifest', enabled: true, editor: 'text' },
+		{ id: 'text/calendar', value: 'text/calendar', enabled: true, editor: 'text' },
 		{
 			id: 'text/vnd.sun.j2me.app-descriptor',
 			value: 'text/vnd.sun.j2me.app-descriptor',
-			enabled: true
+			enabled: true,
+			editor: 'text'
 		},
-		{ id: 'text/vnd.wap.wml', value: 'text/vnd.wap.wml', enabled: true },
-		{ id: 'text/vnd.wap.wmlscript', value: 'text/vnd.wap.wmlscript', enabled: true },
-		{ id: 'text/x-asm', value: 'text/x-asm', enabled: true },
-		{ id: 'text/x-c', value: 'text/x-c', enabled: true },
-		{ id: 'text/x-fortran', value: 'text/x-fortran', enabled: true },
-		{ id: 'text/x-java-source', value: 'text/x-java-source', enabled: true },
-		{ id: 'text/x-markdown', value: 'text/x-markdown', enabled: true },
-		{ id: 'text/x-nfo', value: 'text/x-nfo', enabled: true },
-		{ id: 'text/x-opml', value: 'text/x-opml', enabled: true },
-		{ id: 'text/x-pascal', value: 'text/x-pascal', enabled: true },
-		{ id: 'text/x-script', value: 'text/x-script', enabled: true },
-		{ id: 'text/x-script.perl', value: 'text/x-script.perl', enabled: true },
-		{ id: 'text/x-script.python', value: 'text/x-script.python', enabled: true },
-		{ id: 'text/x-server-parsed-html', value: 'text/x-server-parsed-html', enabled: true },
-		{ id: 'text/x-setext', value: 'text/x-setext', enabled: true },
-		{ id: 'text/x-sfv', value: 'text/x-sfv', enabled: true },
-		{ id: 'text/x-uuencode', value: 'text/x-uuencode', enabled: true },
-		{ id: 'text/x-vcalendar', value: 'text/x-vcalendar', enabled: true },
-		{ id: 'text/x-vcard', value: 'text/x-vcard', enabled: true },
-		{ id: 'text/troff', value: 'text/troff', enabled: true },
-		{ id: 'text/x-component', value: 'text/x-component', enabled: true }
-	];
+		{ id: 'text/vnd.wap.wml', value: 'text/vnd.wap.wml', enabled: true, editor: 'text' },
+		{
+			id: 'text/vnd.wap.wmlscript',
+			value: 'text/vnd.wap.wmlscript',
+			enabled: true,
+			editor: 'text'
+		},
+		{ id: 'text/x-asm', value: 'text/x-asm', enabled: true, editor: 'text' },
+		{ id: 'text/x-c', value: 'text/x-c', enabled: true, editor: 'text' },
+		{ id: 'text/x-fortran', value: 'text/x-fortran', enabled: true, editor: 'text' },
+		{ id: 'text/x-java-source', value: 'text/x-java-source', enabled: true, editor: 'text' },
+		{ id: 'text/x-markdown', value: 'text/x-markdown', enabled: true, editor: 'text' },
+		{ id: 'text/x-nfo', value: 'text/x-nfo', enabled: true, editor: 'text' },
+		{ id: 'text/x-opml', value: 'text/x-opml', enabled: true, editor: 'text' },
+		{ id: 'text/x-pascal', value: 'text/x-pascal', enabled: true, editor: 'text' },
+		{ id: 'text/x-script', value: 'text/x-script', enabled: true, editor: 'text' },
+		{ id: 'text/x-script.perl', value: 'text/x-script.perl', enabled: true, editor: 'text' },
+		{ id: 'text/x-script.python', value: 'text/x-script.python', enabled: true, editor: 'text' },
+		{
+			id: 'text/x-server-parsed-html',
+			value: 'text/x-server-parsed-html',
+			enabled: true,
+			editor: 'html'
+		},
+		{ id: 'text/x-setext', value: 'text/x-setext', enabled: true, editor: 'text' },
+		{ id: 'text/x-sfv', value: 'text/x-sfv', enabled: true, editor: 'text' },
+		{ id: 'text/x-uuencode', value: 'text/x-uuencode', enabled: true, editor: 'text' },
+		{ id: 'text/x-vcalendar', value: 'text/x-vcalendar', enabled: true, editor: 'text' },
+		{ id: 'text/x-vcard', value: 'text/x-vcard', enabled: true, editor: 'text' },
+		{ id: 'text/troff', value: 'text/troff', enabled: true, editor: 'text' },
+		{ id: 'text/x-component', value: 'text/x-component', enabled: true, editor: 'text' }
+	]);
 
-	let tabList = [
-		{ label: 'Payload', isActive: true },
-		{ label: 'App Variables' },
-		{ label: 'Tester' }
-	];
+	let tabList = $state([
+		{ label: 'Payload', isActive: true, component: tab_payload },
+		{ label: 'App Variables', component: tab_app_vars },
+		{ label: 'Tester', component: tab_tester }
+	]);
 
-	/**
-	 * @type {EditorCode}
-	 */
-	//let fnEditorCode2;
-	let mimeType = 'text/plain';
-	let payload = '';
-	let langEditor = 'txt';
-	$: row.code, ParseCode();
-	$: row.data_test, setDataTest();
+	let mimeType = $state('text/plain');
+	let payload = $state('');
+	let langEditor = $state('txt');
 
-	function setDataTest() {
-		internal_data_test = { ...row.data_test };
-		//console.log('internal_data_test', internal_data_test);
-	}
+	$inspect(row.code).with((type) => {
+		//console.log('row.code >>>>>>>>>>>>> ', type, row);
+		if (type === 'update' || type === 'init') {
+			parseCode();
+		}
+	});
 
-	export function reset() {
-		//	fnEditorCode2.reset();
-		ParseCode();
-	}
-
-	function ParseCode() {
-
-		console.log('>> ParseCode >', row.code);
-
+	function parseCode() {
 		try {
 			let params = JSON.parse(row.code || '{}');
-
-
-			console.log('>> ParseCode >', row.code, params);
-
 
 			if (params && params.payload) {
 				payload = params.payload;
@@ -105,7 +92,7 @@
 		}
 	}
 
-	export function getCode() {
+	function getCode() {
 		//let textCode = fnEditorCode2.getCode();
 		let conf = {};
 		let outcode = {};
@@ -120,25 +107,27 @@
 		}
 	}
 
-	export function getData() {
-		let data = { code: getCode(), data_test: internal_data_test };
-		//	console.log('> getData > SQL', data);
-		return data;
+	function getData() {
+		return { code: $state.snapshot(getCode()), data_test: $state.snapshot(row.data_test) };
+	}
+
+	function fnOnChange() {
+		onchange(getData());
 	}
 
 	onMount(() => {
 		//console.log(code);
-		ParseCode();
+		parseCode();
 	});
 </script>
 
-<Tab bind:tabs={tabList}>
-	<div class={tabList[0].isActive ? '' : 'is-hidden'}>
+{#snippet tab_payload()}
+	<div>
 		<div>
 			<div>
 				<div class="field is-horizontal">
 					<div class="field-label is-small">
-						<!-- svelte-ignore a11y-label-has-associated-control -->
+						<!-- svelte-ignore a11y_label_has_associated_control -->
 						<label class="label">MIME Type</label>
 					</div>
 					<div class="field-body">
@@ -148,13 +137,19 @@
 									<SelectMimeType
 										bind:options={mimeTypes}
 										bind:option={mimeType}
-										on:select={(e) => {
+										onchange={(e) => {
 											console.log('Cambia', e, mimeType);
 
-											if (mimeType.includes('xml')) {
-												langEditor = 'xml';
-												console.warn('langEditor', langEditor);
+											let mime_selected = mimeTypes.find((item) => {
+												return item.id == mimeType;
+											});
+
+											if (mime_selected) {
+												langEditor = mime_selected.editor;
+											} else {
+												langEditor = 'text';
 											}
+											//console.warn('langEditor', langEditor);
 										}}
 									/>
 								</div>
@@ -169,20 +164,25 @@
 
 		<EditorCode bind:lang={langEditor} bind:code={payload}></EditorCode>
 	</div>
+{/snippet}
 
-	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
-		<AppVars bind:environment={row.environment} isReadOnly={true}></AppVars>
-	</div>
+{#snippet tab_app_vars()}
+	<AppVars environment={row.environment} isReadOnly={true}></AppVars>
+{/snippet}
 
-	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
-		<WarnPrd bind:environment={row.environment}></WarnPrd>
-
+{#snippet tab_tester()}
+	<div>
 		<RESTTester
-			bind:this={fnApiTester}
-			bind:data={internal_data_test}
-			bind:method={row.method}
+			bind:data={row.data_test}
+			method={row.method}
 			url={row.endpoint}
 			methodDisabled={true}
+			onchange={(c) => {
+				//console.log('++++++++++++++++ ', c);
+				fnOnChange();
+			}}
 		></RESTTester>
 	</div>
-</Tab>
+{/snippet}
+
+<Tab bind:tabs={tabList}></Tab>

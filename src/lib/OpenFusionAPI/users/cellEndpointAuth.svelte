@@ -1,6 +1,4 @@
 <script>
-// @ts-nocheck
-
   import FetchCode from "./handler/fetch.svelte";
   import JsCode from "./handler/js.svelte";
   import SoapCode from "./handler/soap.svelte";
@@ -144,10 +142,7 @@
     bind:Show={showMethod}
     title={`Method ${methodSelected}`}
     on:ok={(e) => {
-      console.log(e);
-//      value = e.detail;
       showMethod = false;
-     // value = value;
     }}
   />
 
@@ -156,7 +151,6 @@
     on:ok={() => {
       if (value[methodSelected].handler == "js") {
         value[methodSelected].code = fnJsCode.getCode();
-        //console.log("methodSelected > ", methodSelected, fnJsCode.getCode());
       } else if (value[methodSelected].handler == "soap") {
         value[methodSelected].code = fnSoapCode.getCode();
       } else if (value[methodSelected].handler == "sql") {
@@ -164,7 +158,6 @@
       } else if (value[methodSelected].handler == "fetch") {
         value[methodSelected].code = fnFetchCode.getCode();
       }
-//      console.log(methodSelected, value, value[methodSelected]);
 
       showCode = false;
     }}

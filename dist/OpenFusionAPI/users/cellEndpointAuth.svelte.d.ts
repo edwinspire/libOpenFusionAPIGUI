@@ -1,30 +1,34 @@
-/** @typedef {typeof __propDef.props}  CellEndpointAuthProps */
-/** @typedef {typeof __propDef.events}  CellEndpointAuthEvents */
-/** @typedef {typeof __propDef.slots}  CellEndpointAuthSlots */
-export default class CellEndpointAuth extends SvelteComponent<{
+export default CellEndpointAuth;
+type CellEndpointAuth = SvelteComponent<{
     value: any;
     row?: {};
     props?: {};
 }, {
     [evt: string]: CustomEvent<any>;
-}, {}> {
-    get row(): {};
-}
-export type CellEndpointAuthProps = typeof __propDef.props;
-export type CellEndpointAuthEvents = typeof __propDef.events;
-export type CellEndpointAuthSlots = typeof __propDef.slots;
-import { SvelteComponent } from "svelte";
-declare const __propDef: {
-    props: {
-        value: any;
-        row?: {};
-        props?: {};
-    };
-    events: {
-        [evt: string]: CustomEvent<any>;
-    };
-    slots: {};
-    exports?: {};
-    bindings?: string;
+}, {}> & {
+    $$bindings?: string;
+} & {
+    row: {};
 };
-export {};
+declare const CellEndpointAuth: $$__sveltets_2_IsomorphicComponent<{
+    value: any;
+    row?: {};
+    props?: {};
+}, {
+    [evt: string]: CustomEvent<any>;
+}, {}, {
+    row: {};
+}, string>;
+interface $$__sveltets_2_IsomorphicComponent<Props extends Record<string, any> = any, Events extends Record<string, any> = any, Slots extends Record<string, any> = any, Exports = {}, Bindings = string> {
+    new (options: import("svelte").ComponentConstructorOptions<Props>): import("svelte").SvelteComponent<Props, Events, Slots> & {
+        $$bindings?: Bindings;
+    } & Exports;
+    (internal: unknown, props: Props & {
+        $$events?: Events;
+        $$slots?: Slots;
+    }): Exports & {
+        $set?: any;
+        $on?: any;
+    };
+    z_$$bindings?: Bindings;
+}

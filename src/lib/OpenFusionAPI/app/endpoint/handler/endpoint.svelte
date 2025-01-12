@@ -27,17 +27,13 @@
 	let uf = new uFetch();
 	let timeoutResource;
 
-	//$: row.resource, checkResource();
-
 	$inspect(row).with((type) => {
-		//console.log('row >>>>>>>>>>>>> ', type, row);
 		if (type === 'init') {
 			defaultValues();
 		}
 	});
 
 	$inspect(row.resource).with((type) => {
-	//	console.log('row.resource >>>>>>>>>>>>> ', type, row);
 		if (type === 'update') {
 			clearTimeout(timeoutResource);
 			timeoutResource = setTimeout(() => {
@@ -57,27 +53,19 @@
 	}
 
 	listHandlerStore.subscribe((/** @type {any[]} */ value) => {
-		//console.log('listMethodStore ->>>>', value);
-		// @ts-ignore
 		handlers = value;
 	});
 
 	userStore.subscribe((value) => {
-		// console.log('tokenStore ->>>>', value);
-		// @ts-ignore
 		uf.setBearerAuthorization(value.token);
 	});
 
 	listMethodStore.subscribe((value) => {
-		//console.log('listMethodStore ->>>>', value);
-		// @ts-ignore
 		methods = value;
 	});
 
 	function checkResource() {
-		// @ts-ignore
 		validateResource = validateURL(row.resource);
-		//		console.log('validateURL: ', SelectedRow.resource, validateResource);
 
 		availableURL = checkEndpointConstraint();
 
@@ -85,10 +73,7 @@
 	}
 
 	function checkEndpointConstraint() {
-		//console.log('checkEndpointConstraint => ', endpoints, row, app);
-
 		let check = app.endpoints.some((r) => {
-			//	console.log(endpoint_value, row);
 			return (
 				row.resource == r.resource &&
 				row.environment == r.environment &&
@@ -103,11 +88,8 @@
 		// Lógica de autenticación aquí
 
 		try {
-			//      console.log("getListApps > ", $userStore, uf);
-
 			let env_list_resp = await uf.GET({ url: url_paths.listEnv });
 			let env_list = await env_list_resp.json();
-			//console.log(apps);
 
 			if (env_list && Array.isArray(env_list) && env_list.length > 0) {
 				environment_list = env_list.map((item) => {
@@ -117,7 +99,6 @@
 				environment_list = [];
 			}
 		} catch (error) {
-			// @ts-ignore
 			alert(error.message);
 		}
 	}
@@ -242,9 +223,7 @@
 								<SelectEnvironment
 									bind:options={environment_list}
 									bind:option={row.environment}
-									onselect={(e) => {
-										//	console.log(e);
-									}}
+									onselect={(e) => {}}
 								/>
 							{/if}
 						</p>

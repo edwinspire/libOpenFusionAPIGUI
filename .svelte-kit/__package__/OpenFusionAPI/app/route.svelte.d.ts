@@ -1,31 +1,32 @@
-/** @typedef {typeof __propDef.props}  RouteProps */
-/** @typedef {typeof __propDef.events}  RouteEvents */
-/** @typedef {typeof __propDef.slots}  RouteSlots */
-export default class Route extends SvelteComponent<{
+export default Route;
+type Route = SvelteComponent<{
     route: {
         route: any;
         method: any;
     };
 }, {
     [evt: string]: CustomEvent<any>;
-}, {}> {
-}
-export type RouteProps = typeof __propDef.props;
-export type RouteEvents = typeof __propDef.events;
-export type RouteSlots = typeof __propDef.slots;
-import { SvelteComponent } from "svelte";
-declare const __propDef: {
-    props: {
-        route: {
-            route: any;
-            method: any;
-        };
-    };
-    events: {
-        [evt: string]: CustomEvent<any>;
-    };
-    slots: {};
-    exports?: {};
-    bindings?: string;
+}, {}> & {
+    $$bindings?: string;
 };
-export {};
+declare const Route: $$__sveltets_2_IsomorphicComponent<{
+    route: {
+        route: any;
+        method: any;
+    };
+}, {
+    [evt: string]: CustomEvent<any>;
+}, {}, {}, string>;
+interface $$__sveltets_2_IsomorphicComponent<Props extends Record<string, any> = any, Events extends Record<string, any> = any, Slots extends Record<string, any> = any, Exports = {}, Bindings = string> {
+    new (options: import("svelte").ComponentConstructorOptions<Props>): import("svelte").SvelteComponent<Props, Events, Slots> & {
+        $$bindings?: Bindings;
+    } & Exports;
+    (internal: unknown, props: Props & {
+        $$events?: Events;
+        $$slots?: Slots;
+    }): Exports & {
+        $set?: any;
+        $on?: any;
+    };
+    z_$$bindings?: Bindings;
+}

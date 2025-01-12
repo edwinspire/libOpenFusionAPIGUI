@@ -1,29 +1,13 @@
-/** @typedef {typeof __propDef.props}  CellCacheTimeProps */
-/** @typedef {typeof __propDef.events}  CellCacheTimeEvents */
-/** @typedef {typeof __propDef.slots}  CellCacheTimeSlots */
-export default class CellCacheTime extends SvelteComponent<{
-    value: any;
-    row?: {};
-    props?: {};
-}, {
-    [evt: string]: CustomEvent<any>;
-}, {}> {
-}
-export type CellCacheTimeProps = typeof __propDef.props;
-export type CellCacheTimeEvents = typeof __propDef.events;
-export type CellCacheTimeSlots = typeof __propDef.slots;
-import { SvelteComponent } from "svelte";
-declare const __propDef: {
-    props: {
-        value: any;
-        row?: {};
-        props?: {};
-    };
-    events: {
-        [evt: string]: CustomEvent<any>;
-    };
-    slots: {};
-    exports?: {};
-    bindings?: string;
+export default CellCacheTime;
+type CellCacheTime = {
+    $on?(type: string, callback: (e: any) => void): () => void;
+    $set?(props: Partial<$$ComponentProps>): void;
 };
-export {};
+declare const CellCacheTime: import("svelte").Component<{
+    value?: any;
+    row?: any;
+}, {}, "value" | "row">;
+type $$ComponentProps = {
+    value?: any;
+    row?: any;
+};

@@ -1,35 +1,19 @@
-/** @typedef {typeof __propDef.props}  EndpointProps */
-/** @typedef {typeof __propDef.events}  EndpointEvents */
-/** @typedef {typeof __propDef.slots}  EndpointSlots */
-export default class Endpoint extends SvelteComponent<{
-    row?: {};
-    app?: {};
+export default Endpoint;
+type Endpoint = {
+    $on?(type: string, callback: (e: any) => void): () => void;
+    $set?(props: Partial<$$ComponentProps>): void;
+};
+declare const Endpoint: import("svelte").Component<{
     environment_list?: any[];
-    endpoints?: any[];
+    row?: Record<string, any>;
+    app?: Record<string, any>;
     validateResource?: boolean;
     availableURL?: boolean;
-}, {
-    [evt: string]: CustomEvent<any>;
-}, {}> {
-}
-export type EndpointProps = typeof __propDef.props;
-export type EndpointEvents = typeof __propDef.events;
-export type EndpointSlots = typeof __propDef.slots;
-import { SvelteComponent } from "svelte";
-declare const __propDef: {
-    props: {
-        row?: {};
-        app?: {};
-        environment_list?: any[];
-        endpoints?: any[];
-        validateResource?: boolean;
-        availableURL?: boolean;
-    };
-    events: {
-        [evt: string]: CustomEvent<any>;
-    };
-    slots: {};
-    exports?: {};
-    bindings?: string;
+}, {}, "row" | "app" | "environment_list" | "validateResource" | "availableURL">;
+type $$ComponentProps = {
+    environment_list?: any[];
+    row?: Record<string, any>;
+    app?: Record<string, any>;
+    validateResource?: boolean;
+    availableURL?: boolean;
 };
-export {};

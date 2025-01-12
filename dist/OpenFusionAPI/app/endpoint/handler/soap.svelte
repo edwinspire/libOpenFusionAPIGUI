@@ -1,49 +1,55 @@
 <script>
-	// @ts-nocheck
-
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
-	import WarnPrd from './warning_production.svelte';
 
-	export let row;
+	let { row = $bindable({}), onchange = () => {} } = $props();
 
-	let initial_code = '';
+	let internal_code = $state('');
 	let code_desc = JSON.stringify({ 'describe()': true });
-	let fnApiTester;
-	let internal_data_test;
-	let code_sample_options = {
+
+	let code_sample_options = $state({
 		wsdl_options: {
 			strictSSL: true,
 			rejectUnauthorized: false
 			//secureOptions: constants.SSL_OP_NO_TLSv1_2,
 		}
-	};
+	});
 
-	$: row.code, parseCode();
-	$: row.data_test, setDataTest();
 
-	function setDataTest() {
-		internal_data_test = { ...row.data_test };
-		//console.log('internal_data_test', internal_data_test);
-	}
-	export function reset() {
-		//		fnEditorCode.reset();
-		parseCode();
-	}
+	let timeoutChange;
+
+	$inspect(row.code).with((type) => {
+		//console.log('row.code >>>>>>>>>>>>> ', type, row);
+		if (type === 'update' || type === 'init') {
+			clearTimeout(timeoutChange);
+			timeoutChange = setTimeout(() => {
+				parseCode();
+			}, 750);
+		}
+	});
+
+	$inspect(internal_code).with((type) => {
+		//	console.log('row >>>>>>>>>>>>> ', type, row);
+		if (type === 'update') {
+			onchange(getData());
+		}
+	});
+
+
 
 	function parseCode() {
-		initial_code = row.code;
+		internal_code = row.code;
 	}
 
-	let tabList = [
-		{ label: 'Parameters', isActive: true },
-		{ label: 'Information', isActive: false },
-		{ label: 'App Variables' },
-		{ label: 'Tester' }
-	];
+	let tabList = $state([
+		{ label: 'Parameters', isActive: true, component: tab_parameters },
+		{ label: 'Information', isActive: false, component: tab_infor },
+		{ label: 'App Variables', component: tab_app_vars },
+		{ label: 'Tester', component: tab_tester }
+	]);
 
-	let jsonParams = {
+	let jsonParams = $state({
 		wsdl: 'https://www.dataaccess.com/webservicesserver/numberconversion.wso?WSDL',
 		functionName: 'NumberToDollars',
 		BasicAuthSecurity: {
@@ -51,16 +57,18 @@
 			Password: 'any'
 		},
 		RequestArgs: { dNum: 236.08 }
-	};
+	});
 
 	function getCode() {
-		//fnEditorCode.apply();
-		//return fnEditorCode.getCode();
-		return initial_code;
+		return internal_code;
 	}
 
-	export function getData() {
-		let data = { code: getCode(), data_test: internal_data_test };
+	function fnOnChange() {
+		onchange(getData());
+	}
+
+	function getData() {
+		let data = { code: getCode(), data_test: $state.snapshot(row.data_test) };
 		//	console.log('> getData > SQL', data);
 		return data;
 	}
@@ -68,15 +76,19 @@
 	onMount(() => {
 		// console.log(code);
 	});
+
+	onDestroy(() => {
+		clearTimeout(timeoutChange);
+	});
 </script>
 
-<Tab bind:tabs={tabList}>
-	<div class={tabList[0].isActive ? '' : 'is-hidden'}>
+{#snippet tab_parameters()}
+	<div>
 		<div>
 			<div>Service connection parameters.</div>
 		</div>
 
-		<EditorCode lang="json" bind:code={initial_code}></EditorCode>
+		<EditorCode lang="json" bind:code={internal_code}></EditorCode>
 
 		{#if row.method === 'GET'}
 			<div class="block">
@@ -94,7 +106,10 @@
 			</div>
 		{/if}
 	</div>
-	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
+{/snippet}
+
+{#snippet tab_infor()}
+	<div>
 		Enter the parameters in json format like the following example:
 		<JSONView bind:jsonObject={jsonParams} />
 		<div style="margin-top: 1em;">
@@ -152,20 +167,27 @@
 			</div>
 		</div>
 	</div>
-	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
-		<AppVars bind:environment={row.environment} isReadOnly={true}></AppVars>
-	</div>
-	<div class={tabList[3].isActive ? '' : 'is-hidden'}>
-		<WarnPrd bind:environment={row.environment}></WarnPrd>
+{/snippet}
+
+{#snippet tab_app_vars()}
+	<AppVars environment={row.environment} isReadOnly={true}></AppVars>
+{/snippet}
+
+{#snippet tab_tester()}
+	<div>
 		<RESTTester
-			bind:this={fnApiTester}
-			bind:data={internal_data_test}
-			bind:method={row.method}
+			bind:data={row.data_test}
+			method={row.method}
 			url={row.endpoint}
 			methodDisabled={true}
+			onchange={(c) => {
+				fnOnChange();
+			}}
 		></RESTTester>
 	</div>
-</Tab>
+{/snippet}
+
+<Tab bind:tabs={tabList}></Tab>
 
 <style>
 	.list_params {

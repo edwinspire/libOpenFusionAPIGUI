@@ -7,14 +7,12 @@
 	let internal_code = $state('');
 
 	$inspect(row).with((type) => {
-		//	console.log('row >>>>>>>>>>>>> ', type, row);
 		if (type === 'init') {
 			defaultValues();
 		}
 	});
 
 	$inspect(row.code).with((type) => {
-		//console.log('row.code >>>>>>>>>>>>> ', type, row);
 		if (type === 'update' || type === 'init') {
 			parseCode();
 		}
@@ -59,7 +57,6 @@
 		lang="js"
 		bind:code={internal_code}
 		onchange={(c) => {
-			//console.log('++++++++++++++++ ', c);
 			fnOnChange();
 		}}
 	></EditorCode>

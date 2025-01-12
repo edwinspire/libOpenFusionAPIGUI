@@ -1,9 +1,7 @@
 <script>
-	// @ts-ignore
 	import uFetch from '@edwinspire/universal-fetch';
 	import { PredictiveInput, Table, ColumnTypes, Level, Tab } from '@edwinspire/svelte-components';
-	import { onMount } from 'svelte';
-	//import { createEventDispatcher } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import {
 		userStore,
 		getListFunction,
@@ -11,7 +9,8 @@
 		url_paths,
 		getCacheSize,
 		getCountStatusCode,
-		getListUsers
+		getListUsers,
+		defaultValuesRow
 	} from '../utils.js';
 	import CellMethod from './cellMethod.svelte';
 	import CellAccess from './cellAccess.svelte';
@@ -22,8 +21,11 @@
 	import EndPointEditor from './endpoint/editor.svelte';
 	import AppVars from './app_vars.svelte';
 
-	//const dispatch = createEventDispatcher();
-	export let idapp = 0;
+	let { idapp = $bindable(0) } = $props();
+
+	//export let idapp = 0;
+	let intervalGetDataApp;
+	let app_vars;
 
 	const default_row = {
 		idendpoint: undefined,
@@ -51,29 +53,31 @@
 	/**
 	 * @type {{}[]}
 	 */
-	let endpoints = [];
+	let endpoints = $state([]);
 	/**
 	 * @type {{ id: any; value: any; }[]}
 	 */
 	let environment_list = [];
-	let showEndpointEdit = false;
-	let SelectedRow = {};
-	let TableSelectionType = 0;
-	let TableObject;
-	let fnVars;
-	let active_tab = 0;
+	let showEndpointEdit = $state(false);
+	let SelectedRow = $state({});
+	let TableSelectionType = $state(0);
+	let TableObject = $state();
+	//let fnVars;
+	let active_tab = $state(0);
 	//	let showAuthorizations = true;
 
-	let columns = {
+	let columns = $state({
 		//enabled: { label: 'Enabled App' },
 		enabled: {
 			label: 'Enabled',
 			decorator: {
-				component: ColumnTypes.BooleanIcon,
+				component: ColumnTypes.Boolean,
 				props: {
-					ontrue: { label: 'Enabled' },
-					onfalse: { label: 'Unabled' },
-					editInline: true
+					custom: {
+						ontrue: { label: 'Enabled' },
+						onfalse: { label: 'Unabled' },
+						editInline: true
+					}
 				}
 			}
 		},
@@ -94,7 +98,7 @@
 
 		code: { label: 'Code', hidden: true },
 		idapp: { hidden: true },
-		rowkey: { decorator: {component: cellCountStatusCode}, label: "Status Code" },
+		rowkey: { decorator: { component: cellCountStatusCode }, label: 'Status Code' },
 		app: { hidden: true },
 		namespace: { hidden: true },
 		name: { hidden: true },
@@ -109,26 +113,27 @@
 		environment: { hidden: true },
 
 		cache_size: { hidden: true }
-	};
+	});
 
-	let tabs = [
+	let tabs = $state([
 		{
 			label: 'Endpoints',
 			classIcon: 'fa-solid fa-rectangle-list',
-			slot: 'endpoints',
-			isActive: true
+			component: tab_endpoints
 		},
 		{
 			label: 'Description',
 			classIcon: 'fa-solid fa-file-lines',
 			slot: 'description',
-			isActive: false
+			isActive: false,
+			component: tab_descrip
 		},
 		{
 			label: 'Application variables',
 			classIcon: 'fa-solid fa-box-archive',
 			slot: 'vars',
-			isActive: false
+			isActive: false,
+			component: tab_app_vars
 		},
 		{
 			label: 'Application parameters',
@@ -136,24 +141,21 @@
 			slot: 'parameters',
 			isActive: false
 		}
-	];
+	]);
 
 	/**
 	 * @type {{ name: any; value: any; }[]}
 	 */
-	let options = [];
+	let options = $state([]);
 
-	//let SelectedEndpoints = [];
-	/**
-	 * @type {any}
-	 */
-	let app = {};
-
+	let app = $state({});
 	let uf = new uFetch();
 
-	$: idapp, getApp();
-	// @ts-ignore
-	//$: SelectedRow.resource, checkResource();
+	$inspect(idapp).with((type) => {
+		if (type === 'update' || type === 'init') {
+			getApp();
+		}
+	});
 
 	function reloadPage() {
 		window.location.reload();
@@ -293,6 +295,7 @@
 	}
 
 	async function getApp() {
+		app_vars = undefined; // Esta linea es importante para que no se vayan a guardar variables de una apliacción a otra
 		if (idapp) {
 			try {
 				await getListUsers();
@@ -324,9 +327,9 @@
 		let app_save = { ...app };
 		app_save.endpoints = endpoints;
 
-		console.log('appToStore >>>> ', app_save);
+		console.log('appToStore >>>> ', $state.snapshot(app_save));
 
-		return app_save;
+		return $state.snapshot(app_save);
 	}
 
 	async function saveApp() {
@@ -367,60 +370,160 @@
 		// console.log($userStore);
 		await getListApps();
 		await getEnvList();
-		setInterval(async () => {
+		intervalGetDataApp = setInterval(async () => {
 			await getCacheSize(app.app, $userStore.token);
 			await getCountStatusCode(app.app, $userStore.token);
 		}, 5000);
 		// @ts-ignore
 	});
+
+	onDestroy(() => {
+		clearInterval(intervalGetDataApp);
+	});
 </script>
 
-<Level>
-	<span slot="r01">
+{#snippet tab_descrip()}
+	<textarea class="textarea is-small" placeholder="Description" bind:value={app.description}
+	></textarea>
+{/snippet}
+
+{#snippet tab_app_vars()}
+	<AppVars
+		isReadOnly={false}
+		onchanged={(data) => {
+			console.log('AppVars >>>>>> ', data);
+			app_vars = data;
+		}}
+	></AppVars>
+{/snippet}
+
+{#snippet tab_endpoints()}
+	<div>
+		<Table
+			ShowNewButton="true"
+			ShowEditButton="true"
+			bind:RawDataTable={endpoints}
+			bind:columns
+			bind:SelectionType={TableSelectionType}
+			bind:this={TableObject}
+			left_items={[lt01]}
+			right_items={[rt1]}
+			onnewrow={() => {
+				/*
+			SelectedRow = {
+				enabled: false,
+				environment: 'dev',
+				method: 'NA',
+				handler: 'NA',
+				resource: '',
+				cache_time: 0
+			};
+			*/
+
+				console.log(app);
+				if (app && app.idapp && app.idapp.length > 0) {
+					SelectedRow = { ...default_row };
+
+					showEndpointEdit = true;
+				} else {
+					alert('No App selected');
+				}
+			}}
+			oneditrow={(data) => {
+				console.log('oneditrow >>>> ', defaultValuesRow(data));
+				SelectedRow = defaultValuesRow(data);
+				showEndpointEdit = true;
+				//	console.log('SelectedRow: ', {...data});
+			}}
+		>
+			{#snippet lt01()}
+				Endpoints
+			{/snippet}
+			<!-- <span slot="r09">
+			<button
+				class="button is-small"
+				onclick={() => {
+					showAuthorizations = !showAuthorizations;
+
+					if (showAuthorizations) {
+						columns.ctrl.hidden = false;
+						columns.cache_time.hidden = true;
+					} else {
+						columns.ctrl.hidden = true;
+						columns.cache_time.hidden = false;
+					}
+				}}
+			>
+				<span class="icon is-small">
+					<i class="fa-solid fa-users"></i>
+				</span>
+				<span>Users</span>
+			</button>
+		</span> -->
+
+			{#snippet rt1()}
+				<span>
+					<button
+						class="button is-small"
+						onclick={() => {
+							clearcache();
+						}}
+					>
+						<span class="icon is-small">
+							<i class="fa-solid fa-eraser"></i>
+						</span>
+						<span>Cache</span>
+					</button>
+				</span>
+			{/snippet}
+		</Table>
+	</div>
+{/snippet}
+
+<Level right={[r2, r1]}>
+	{#snippet r1()}
 		{#if $userStore}
 			<button
 				class="button is-small is-primary is-outlined"
-				on:click={() => {
+				onclick={() => {
 					app = { app: '', idapp: null };
 					endpoints = [];
 				}}
 			>
 				<span class="icon is-small">
-					<i class="fab fa-github" />
+					<i class="fab fa-github"></i>
 				</span>
 				<span>New App</span>
 			</button>
 		{/if}
-	</span>
+	{/snippet}
 
-	<span slot="r02">
+	{#snippet r2()}
 		<PredictiveInput
 			label="Application: "
 			classLabel="is-small"
 			classInput="is-small"
 			bind:options
-			on:select={(/** @type {{ detail: { value: number; }; }} */ e) => {
-				// console.log('>>>>>> Application > ', $userStore, userStore);
+			onselect={(/** @type {{ detail: { value: number; }; }} */ e) => {
+				//console.log('>>>>>> Application > ', e);
 
 				if ($userStore) {
-					idapp = e.detail.value;
+					idapp = e.value;
 				} else {
 					alert('You do not have authorization');
 				}
 			}}
-		/></span
-	>
+		/>
+	{/snippet}
 </Level>
-
-<div />
 
 {#if $userStore}
 	<div>
-		<Level>
-			<span slot="l01">
+		<Level left={[l01, l02]} right={[r03, r02, r01]}>
+			{#snippet l01()}
 				<div class="field has-addons">
 					<p class="control">
-						<!-- svelte-ignore a11y-missing-attribute -->
+						<!-- svelte-ignore a11y_missing_attribute -->
 						<a class="button is-static is-small"> Application </a>
 					</p>
 					<p class="control">
@@ -432,11 +535,12 @@
 						/>
 					</p>
 				</div>
-			</span>
-			<span slot="l02">
+			{/snippet}
+
+			{#snippet l02()}
 				<div class="field has-addons">
 					<p class="control">
-						<!-- svelte-ignore a11y-missing-attribute -->
+						<!-- svelte-ignore a11y_missing_attribute -->
 						<a class="button is-static is-small"> Enabled </a>
 					</p>
 					<p class="control">
@@ -446,39 +550,43 @@
 							class={app.enabled
 								? 'button is-success is-selected is-small'
 								: 'button is-danger is-small'}
-							on:click={() => {
+							onclick={() => {
 								app.enabled = !app.enabled;
 							}}
 						/>
 					</p>
 				</div>
-			</span>
-			<span slot="r01">
+			{/snippet}
+
+			{#snippet r01()}
 				{#if $userStore}
 					<button
 						class="button is-small is-link is-outlined"
-						on:click={() => {
+						onclick={() => {
 							//	console.log(fnVarsDev.getCode());
 
 							if (confirm('Do you want to save the application data?')) {
-								app.vars = fnVars.getCode();
+								//app.vars = fnVars.getCode();
+								if (app_vars) {
+									app.vars = app_vars;
+								}
 								saveApp();
 							}
 						}}
 					>
 						<span class="icon is-small">
-							<i class="fab fa-github" />
+							<i class="fab fa-github"></i>
 						</span>
 						<span>Save</span>
 					</button>
 				{/if}
-			</span>
+			{/snippet}
 
-			<span slot="r02">
+			{#snippet r02()}
 				{#if $userStore}
 					<button
 						class="button is-small"
-						on:click={() => {
+						onclick={() => {
 							console.log('Download', app);
 
 							const now = new Date();
@@ -512,14 +620,14 @@
 						}}
 					>
 						<span class="icon is-small">
-							<i class="fa-solid fa-file-export" />
+							<i class="fa-solid fa-file-export"></i>
 						</span>
 						<span>Download</span>
 					</button>
 				{/if}
-			</span>
+			{/snippet}
 
-			<span slot="r03">
+			{#snippet r03()}
 				{#if $userStore}
 					<div class="field has-addons">
 						<p class="control file">
@@ -527,7 +635,7 @@
 								class="input is-small"
 								type="file"
 								accept=".json"
-								on:change={(event) => {
+								onchange={(event) => {
 									const selectedFile = event.target.files[0]; // Obten el primer archivo seleccionado
 
 									if (!selectedFile) {
@@ -564,7 +672,7 @@
 						<p class="control">
 							<button
 								class="button is-small"
-								on:click={() => {
+								onclick={() => {
 									//alert('Ha hecho click');
 
 									//showAppData([uploaded_file]);
@@ -622,7 +730,7 @@
 								}}
 							>
 								<span class="icon is-small">
-									<i class="fas fa-align-left" />
+									<i class="fas fa-align-left"></i>
 								</span>
 
 								<span> Upload </span>
@@ -630,110 +738,21 @@
 						</p>
 					</div>
 				{/if}
-			</span>
+			{/snippet}
 		</Level>
 
-		<Tab bind:tabs bind:active={active_tab}>
-			<div style="display: {active_tab == 0 ? 'block' : 'none'};">
-				<Table
-					ShowNewButton="true"
-					ShowEditButton="true"
-					bind:RawDataTable={endpoints}
-					bind:columns
-					bind:SelectionType={TableSelectionType}
-					bind:this={TableObject}
-					on:newrow={() => {
-						/*
-						SelectedRow = {
-							enabled: false,
-							environment: 'dev',
-							method: 'NA',
-							handler: 'NA',
-							resource: '',
-							cache_time: 0
-						};
-						*/
-
-						console.log(app);
-						if (app && app.idapp && app.idapp.length > 0) {
-							SelectedRow = { ...default_row };
-
-							showEndpointEdit = true;
-						} else {
-							alert('No App selected');
-						}
-					}}
-					on:editrow={(e) => {
-						SelectedRow = { ...e.detail.data };
-						showEndpointEdit = true;
-						//	console.log('SelectedRow: ', SelectedRow);
-					}}
-				>
-					<span slot="l01"> Endpoints </span>
-
-					<!-- <span slot="r09">
-						<button
-							class="button is-small"
-							on:click={() => {
-								showAuthorizations = !showAuthorizations;
-
-								if (showAuthorizations) {
-									columns.ctrl.hidden = false;
-									columns.cache_time.hidden = true;
-								} else {
-									columns.ctrl.hidden = true;
-									columns.cache_time.hidden = false;
-								}
-							}}
-						>
-							<span class="icon is-small">
-								<i class="fa-solid fa-users"></i>
-							</span>
-							<span>Users</span>
-						</button>
-					</span> -->
-
-					<span slot="r10">
-						<button
-							class="button is-small"
-							on:click={() => {
-								clearcache();
-							}}
-						>
-							<span class="icon is-small">
-								<i class="fa-solid fa-eraser"></i>
-							</span>
-							<span>Cache</span>
-						</button>
-					</span>
-				</Table>
-			</div>
-
-			<div style="display: {active_tab == 1 ? 'block' : 'none'};">
-				<textarea
-					class="textarea is-small"
-					placeholder="Description"
-					bind:value={app.description}
-				/>
-			</div>
-
-			<div style="display: {active_tab == 2 ? 'block' : 'none'};">
-				<AppVars isReadOnly={false} bind:this={fnVars}></AppVars>
-			</div>
-
-			<div style="display: {active_tab == 3 ? 'block' : 'none'};"></div>
-		</Tab>
+		<Tab bind:tabs bind:active={active_tab}></Tab>
 	</div>
 {/if}
 
 <EndPointEditor
 	bind:showEditor={showEndpointEdit}
 	bind:row={SelectedRow}
-	{app}
-	on:data={(e) => {
+	bind:app
+	ondata={(e) => {
 		// console.log('EndPointEditor >>>> ', e);
 
-		let row_edited = e.detail.row;
+		let row_edited = e.row;
 
 		//	console.log(row_edited);
 

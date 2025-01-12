@@ -1,26 +1,12 @@
 <script>
-	// @ts-ignore
 	import uFetch from '@edwinspire/universal-fetch';
-	import {
-		PredictiveInput,
-		Table,
-		ColumnTypes,
-		DialogModal,
-		Level
-		// @ts-ignore
-	} from '@edwinspire/svelte-components';
+	import { Table } from '@edwinspire/svelte-components';
 	import { onMount } from 'svelte';
 	import { userStore } from '../utils.js';
-	//import CellMethods from " ./cellMethods.svelte";
-	//import MethodDialog from "./method.svelte";
-	//import { AppToTable, TableToApp } from '../../db/utils.js';
 	import CellAttrs from '../app/cellMethodsAttrs.svelte';
 
 	let uf = new uFetch();
-	let methodList = [];
-	/**
-	 * @type {any[]}
-	 */
+
 	let appDataTable = [];
 
 	let columns = {
@@ -38,8 +24,6 @@
 	};
 
 	userStore.subscribe((value) => {
-		console.log('tokenStore ->>>>', value);
-		// @ts-ignore
 		//uf.setBearerAuthorization(value.token);
 	});
 
@@ -47,14 +31,10 @@
 		// Lógica de autenticación aquí
 
 		try {
-			console.log('getListApps >>>>>> ', $userStore, uf);
-
-			let apps_res = await uf.GET({url: '/system/main/role/1'});
+			let apps_res = await uf.GET({ url: '/system/main/role/1' });
 			let data = await apps_res.json();
 			appDataTable = data.attrs.endpoints;
-			console.log(data);
 		} catch (error) {
-			// @ts-ignore
 			alert(error.message);
 		}
 	}

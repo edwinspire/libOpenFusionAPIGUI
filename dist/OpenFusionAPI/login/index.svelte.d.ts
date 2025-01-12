@@ -1,29 +1,11 @@
-/** @typedef {typeof __propDef.props}  IndexProps */
-/** @typedef {typeof __propDef.events}  IndexEvents */
-/** @typedef {typeof __propDef.slots}  IndexSlots */
-export default class Index extends SvelteComponent<{
-    [x: string]: never;
-}, {
-    login: CustomEvent<any>;
-} & {
-    [evt: string]: CustomEvent<any>;
-}, {}> {
-}
-export type IndexProps = typeof __propDef.props;
-export type IndexEvents = typeof __propDef.events;
-export type IndexSlots = typeof __propDef.slots;
-import { SvelteComponent } from "svelte";
-declare const __propDef: {
-    props: {
-        [x: string]: never;
-    };
-    events: {
-        login: CustomEvent<any>;
-    } & {
-        [evt: string]: CustomEvent<any>;
-    };
-    slots: {};
-    exports?: {};
-    bindings?: string;
+export default Index;
+type Index = {
+    $on?(type: string, callback: (e: any) => void): () => void;
+    $set?(props: Partial<$$ComponentProps>): void;
 };
-export {};
+declare const Index: import("svelte").Component<{
+    onlogin?: Function;
+}, {}, "">;
+type $$ComponentProps = {
+    onlogin?: Function;
+};

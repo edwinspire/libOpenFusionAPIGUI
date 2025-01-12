@@ -16,7 +16,6 @@
 	let classAnimationCopyValue = $state('');
 
 	export function getCode() {
-		//	console.log('getCode >>>> ', appVars);
 		return appVars;
 	}
 
@@ -157,7 +156,7 @@
 										title="Copy Name"
 										onclick={async () => {
 											let rc = await copyTextToClipboard(varname);
-											console.log(rc);
+
 											if (rc.result) {
 												classAnimationCopyName = varname;
 												setTimeout(() => {
@@ -185,7 +184,7 @@
 											let rc = await copyTextToClipboard(
 												appVars[varname] ? JSON.stringify(appVars[varname]) : ''
 											);
-											console.log(rc);
+
 											if (rc.result) {
 												classAnimationCopyValue = varname;
 												setTimeout(() => {
@@ -220,7 +219,6 @@
 												if (
 													confirm('Are you sure you want to remove the variable ' + varname + '?')
 												) {
-													//	console.log(appVars[varname]);
 													removeVar(varname);
 												}
 											}}

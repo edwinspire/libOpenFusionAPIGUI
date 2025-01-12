@@ -1,34 +1,21 @@
-/** @typedef {typeof __propDef.props}  VarsProps */
-/** @typedef {typeof __propDef.events}  VarsEvents */
-/** @typedef {typeof __propDef.slots}  VarsSlots */
-export default class Vars extends SvelteComponent<{
+export default Vars;
+type Vars = {
+    $on?(type: string, callback: (e: any) => void): () => void;
+    $set?(props: Partial<$$ComponentProps>): void;
+} & {
+    getCode: () => Record<string, any>;
+};
+declare const Vars: import("svelte").Component<{
     isReadOnly?: boolean;
     showCode?: boolean;
-    appVars?: {};
+    appVars?: Record<string, any>;
     title?: string;
-    getCode?: () => {};
 }, {
-    [evt: string]: CustomEvent<any>;
-}, {}> {
-    get getCode(): () => {};
-}
-export type VarsProps = typeof __propDef.props;
-export type VarsEvents = typeof __propDef.events;
-export type VarsSlots = typeof __propDef.slots;
-import { SvelteComponent } from "svelte";
-declare const __propDef: {
-    props: {
-        isReadOnly?: boolean;
-        showCode?: boolean;
-        appVars?: {};
-        title?: string;
-        getCode?: () => {};
-    };
-    events: {
-        [evt: string]: CustomEvent<any>;
-    };
-    slots: {};
-    exports?: {};
-    bindings?: string;
+    getCode: () => Record<string, any>;
+}, "isReadOnly" | "showCode" | "appVars" | "title">;
+type $$ComponentProps = {
+    isReadOnly?: boolean;
+    showCode?: boolean;
+    appVars?: Record<string, any>;
+    title?: string;
 };
-export {};

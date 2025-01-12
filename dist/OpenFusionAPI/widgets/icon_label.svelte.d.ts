@@ -1,29 +1,30 @@
-/** @typedef {typeof __propDef.props}  IconLabelProps */
-/** @typedef {typeof __propDef.events}  IconLabelEvents */
-/** @typedef {typeof __propDef.slots}  IconLabelSlots */
-export default class IconLabel extends SvelteComponent<{
+export default IconLabel;
+type IconLabel = SvelteComponent<{
     color?: string;
     label?: string;
     icon?: string;
 }, {
     [evt: string]: CustomEvent<any>;
-}, {}> {
-}
-export type IconLabelProps = typeof __propDef.props;
-export type IconLabelEvents = typeof __propDef.events;
-export type IconLabelSlots = typeof __propDef.slots;
-import { SvelteComponent } from "svelte";
-declare const __propDef: {
-    props: {
-        color?: string;
-        label?: string;
-        icon?: string;
-    };
-    events: {
-        [evt: string]: CustomEvent<any>;
-    };
-    slots: {};
-    exports?: {};
-    bindings?: string;
+}, {}> & {
+    $$bindings?: string;
 };
-export {};
+declare const IconLabel: $$__sveltets_2_IsomorphicComponent<{
+    color?: string;
+    label?: string;
+    icon?: string;
+}, {
+    [evt: string]: CustomEvent<any>;
+}, {}, {}, string>;
+interface $$__sveltets_2_IsomorphicComponent<Props extends Record<string, any> = any, Events extends Record<string, any> = any, Slots extends Record<string, any> = any, Exports = {}, Bindings = string> {
+    new (options: import("svelte").ComponentConstructorOptions<Props>): import("svelte").SvelteComponent<Props, Events, Slots> & {
+        $$bindings?: Bindings;
+    } & Exports;
+    (internal: unknown, props: Props & {
+        $$events?: Events;
+        $$slots?: Slots;
+    }): Exports & {
+        $set?: any;
+        $on?: any;
+    };
+    z_$$bindings?: Bindings;
+}

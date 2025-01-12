@@ -2,30 +2,16 @@
 	// @ts-ignore
 	import uFetch from '@edwinspire/universal-fetch';
 	import { onMount } from 'svelte';
-	import { createEventDispatcher } from 'svelte';
-	import {
-		userStore,
-		getListMethods,
-		getListHandler,
-		url_paths
-	} from '../utils.js';
+	//	import { createEventDispatcher } from 'svelte';
+	import { userStore, getListMethods, getListHandler, url_paths } from '../utils.js';
 	import logo from '../img/favicon.png';
 
-	const dispatch = createEventDispatcher();
-
-	let username = '';
-	let password = '';
+	//	const dispatch = createEventDispatcher();
+	let { onlogin = () => {} } = $props();
+	let username = $state('');
+	let password = $state('');
 	// @ts-ignore
 	let uf = new uFetch();
-
-	/**
-	 * @param {boolean} login
-	 */
-	function emitSuccess(login) {
-		dispatch('login', {
-			login: login
-		});
-	}
 
 	async function handleSubmit() {
 		// Lógica de autenticación aquí
@@ -34,18 +20,20 @@
 			// @ts-ignore
 			let user = await uf.POST({ url: url_paths.login, data: { username, password } });
 			let data = await user.json();
-			console.log(data);
+		//	console.log(data);
 
 			if (data.login) {
 				userStore.set(data);
 
 				await getListMethods(data.token);
 				await getListHandler(data.token);
+
+				onlogin({
+					login: data.login
+				});
 			} else {
 				alert('Invalid credentials');
 			}
-
-			emitSuccess(data.login);
 		} catch (error) {
 			console.trace(error);
 			// @ts-ignore
@@ -93,7 +81,7 @@
 				<p class="control">
 					<button
 						class="button is-success"
-						on:click={() => {
+						onclick={() => {
 							handleSubmit();
 						}}
 					>

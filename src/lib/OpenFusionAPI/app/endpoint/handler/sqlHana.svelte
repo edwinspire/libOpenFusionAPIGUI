@@ -40,7 +40,6 @@
 	let timeoutChange;
 
 	$inspect(row.code).with((type) => {
-		//console.log('row.code >>>>>>>>>>>>> ', type, row);
 		if (type === 'update' || type === 'init') {
 			clearTimeout(timeoutChange);
 			timeoutChange = setTimeout(() => {
@@ -53,16 +52,11 @@
 		try {
 			let params = JSON.parse(row.code || '{}');
 
-			//console.log('parseCode: >', params);
-
 			if (params && params.query) {
 				query_code = params.query;
-				console.log('>>>>>> PARSE', params.query, query_code);
 			}
 
 			if (params && params.config) {
-				//console.log('>>> parseCode >> ', typeof params.config, params.config);
-
 				if (typeof params.config === 'object') {
 					cnx_param_json = params.config;
 					use_var_cnx = false;
@@ -110,7 +104,7 @@
 		try {
 			outcode.config = conf;
 			outcode.query = query_code;
-			console.log('outcode.query >>>> ', outcode.query);
+
 			return JSON.stringify(outcode, null, 2);
 		} catch (error) {
 			console.warn(error);
@@ -119,7 +113,6 @@
 	}
 
 	onMount(() => {
-		//	console.log(code);
 		parseCode();
 		//	sample_bind_post_string = JSON.stringify(sample_bind_post);
 	});

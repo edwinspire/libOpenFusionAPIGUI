@@ -40,7 +40,6 @@
 	let timeoutChageAuth;
 
 	$inspect(table_users).with((type) => {
-		//console.log('row.code >>>>>>>>>>>>> ', type, row);
 		if (type === 'update') {
 			clearTimeout(timeoutChageAuth);
 			timeoutChageAuth = setTimeout(() => {
@@ -50,7 +49,6 @@
 	});
 
 	storeUsersList.subscribe((value) => {
-		//console.log('storeUsersList >>>>>> ', value);
 		data_users = value;
 		buildTableUsers();
 	});
@@ -65,8 +63,6 @@
 		defaultValue();
 
 		if (users) {
-			//	console.log('setUsers > ', table_users, row);
-
 			users = table_users
 				.filter((u) => {
 					return u.auth;
@@ -74,19 +70,16 @@
 				.map((u) => {
 					return u.iduser;
 				});
-
-			//	console.log('auth_enabled >> ', row.ctrl.users);
 		}
 	}
 
 	function buildTableUsers() {
 		defaultValue();
-		//	console.log('buildTableUsers: ', data_users, table_users);
+
 		if (data_users && Array.isArray(data_users)) {
 			table_users = data_users.map((u) => {
 				return { auth: users.includes(u.iduser), ...u };
 			});
-			//	console.log('buildTableUsers 2: ', data_users, table_users);
 		}
 	}
 

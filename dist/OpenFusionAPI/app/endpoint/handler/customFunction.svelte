@@ -5,14 +5,9 @@
 	import { listFunctionStorePRD } from '../../../utils';
 	import SelectFns from '../../../widgets/Select.svelte';
 	import { Tab, RESTTester } from '@edwinspire/svelte-components';
-	import WarnPrd from './warning_production.svelte';
 
-	let fnApiTester;
-
-	/**
-	 * @type {any[]}
-	 */
-	let functions = [];
+	let { row = $bindable({}), onchange = () => {} } = $props();
+	let functions = $state([]);
 
 	/**
 	 * @type {any[]}
@@ -28,29 +23,18 @@
 	 * @type {any[]}
 	 */
 	let functionsPrd = [];
-	let internal_data_test = {};
-	let selection = '';
 
-	let tabList = [{ label: 'Function', isActive: true }, { label: 'Tester' }];
+	let tabList = $state([
+		{ label: 'Function', isActive: true, component: tab_fn },
+		{ label: 'Tester', component: tab_tester }
+	]);
 
-	/**
-	 * @type {{ endpoint: any; }}
-	 */
-	export let row;
-
-	export function getData() {
-		let data = { code: getCode(), data_test: internal_data_test };
-		//	console.log('> getData > SQL', data);
-		return data;
+	function getData() {
+		return { code: $state.snapshot(row.code), data_test: $state.snapshot(row.data_test) };
 	}
 
-	function getCode() {
-		//fnEditorCode.apply();
-		return selection;
-	}
-
-	export function reset() {
-		selection = row.code;
+	function fnOnChange() {
+		onchange(getData());
 	}
 
 	listFunctionStoreDev.subscribe((value) => {
@@ -68,12 +52,6 @@
 		functionsPrd = value;
 	});
 
-	function setCode() {
-		selection = row.code;
-	}
-
-	$: row.code, setCode();
-
 	onMount(() => {
 		switch (row.environment) {
 			case 'dev':
@@ -87,36 +65,44 @@
 				break;
 		}
 
-//		console.warn('CUSTOM FN: ', row.environment, functions);
+		//		console.warn('CUSTOM FN: ', row.environment, functions);
 	});
 </script>
 
-<Tab bind:tabs={tabList}>
-	<div class={tabList[0].isActive ? '' : 'is-hidden'}>
-		<div class="content is-small">Use the selected function to return a response.</div>
+{#snippet tab_fn()}
+	<div class="content is-small">Use the selected function to return a response.</div>
 
-		<div class="field is-horizontal">
-			<div class="field-label is-normal">
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label is-small">Function</label>
-			</div>
-			<div class="field-body">
-				<div class="field is-narrow">
-					<SelectFns bind:options={functions} bind:option={selection} />
-				</div>
+	<div class="field is-horizontal">
+		<div class="field-label is-normal">
+			<!-- svelte-ignore a11y_label_has_associated_control -->
+			<label class="label is-small">Function</label>
+		</div>
+		<div class="field-body">
+			<div class="field is-narrow">
+				<SelectFns
+					bind:options={functions}
+					bind:option={row.code}
+					onchange={(s) => {
+						fnOnChange();
+					}}
+				/>
 			</div>
 		</div>
 	</div>
+{/snippet}
 
-	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
-		<WarnPrd bind:environment={row.environment}></WarnPrd>
-
+{#snippet tab_tester()}
+	<div>
 		<RESTTester
-			bind:this={fnApiTester}
-			bind:data={internal_data_test}
-			bind:method={row.method}
+			bind:data={row.data_test}
+			method={row.method}
 			url={row.endpoint}
 			methodDisabled={true}
+			onchange={(c) => {
+				fnOnChange();
+			}}
 		></RESTTester>
 	</div>
-</Tab>
+{/snippet}
+
+<Tab bind:tabs={tabList}></Tab>

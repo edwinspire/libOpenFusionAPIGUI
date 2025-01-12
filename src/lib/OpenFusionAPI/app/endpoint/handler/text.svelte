@@ -1,5 +1,4 @@
 <script>
-	// @ts-nocheck
 	import { onMount } from 'svelte';
 	import { Tab, EditorCode, RESTTester } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
@@ -68,7 +67,6 @@
 	let langEditor = $state('txt');
 
 	$inspect(row.code).with((type) => {
-		//console.log('row.code >>>>>>>>>>>>> ', type, row);
 		if (type === 'update' || type === 'init') {
 			parseCode();
 		}
@@ -102,7 +100,6 @@
 			outcode.payload = payload;
 			return JSON.stringify(outcode, null, 2);
 		} catch (error) {
-			console.log(error);
 			return row.code;
 		}
 	}
@@ -116,7 +113,6 @@
 	}
 
 	onMount(() => {
-		//console.log(code);
 		parseCode();
 	});
 </script>
@@ -138,8 +134,6 @@
 										bind:options={mimeTypes}
 										bind:option={mimeType}
 										onchange={(e) => {
-											console.log('Cambia', e, mimeType);
-
 											let mime_selected = mimeTypes.find((item) => {
 												return item.id == mimeType;
 											});
@@ -178,7 +172,7 @@
 			url={row.endpoint}
 			methodDisabled={true}
 			onchange={(c) => {
-				//console.log('++++++++++++++++ ', c);
+				
 				fnOnChange();
 			}}
 		></RESTTester>

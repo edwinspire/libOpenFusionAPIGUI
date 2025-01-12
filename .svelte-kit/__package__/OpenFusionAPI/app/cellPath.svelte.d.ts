@@ -1,29 +1,13 @@
-/** @typedef {typeof __propDef.props}  CellPathProps */
-/** @typedef {typeof __propDef.events}  CellPathEvents */
-/** @typedef {typeof __propDef.slots}  CellPathSlots */
-export default class CellPath extends SvelteComponent<{
-    value: any;
-    row?: {};
-    props?: {};
-}, {
-    [evt: string]: CustomEvent<any>;
-}, {}> {
-}
-export type CellPathProps = typeof __propDef.props;
-export type CellPathEvents = typeof __propDef.events;
-export type CellPathSlots = typeof __propDef.slots;
-import { SvelteComponent } from "svelte";
-declare const __propDef: {
-    props: {
-        value: any;
-        row?: {};
-        props?: {};
-    };
-    events: {
-        [evt: string]: CustomEvent<any>;
-    };
-    slots: {};
-    exports?: {};
-    bindings?: string;
+export default CellPath;
+type CellPath = {
+    $on?(type: string, callback: (e: any) => void): () => void;
+    $set?(props: Partial<$$ComponentProps>): void;
 };
-export {};
+declare const CellPath: import("svelte").Component<{
+    value?: any;
+    row?: any;
+}, {}, "value" | "row">;
+type $$ComponentProps = {
+    value?: any;
+    row?: any;
+};

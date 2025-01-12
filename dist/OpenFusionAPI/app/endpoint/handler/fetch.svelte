@@ -1,47 +1,22 @@
 <script>
-	// @ts-nocheck
-
 	import { onMount } from 'svelte';
 	import { Tab, RESTTester } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
-	import { parse } from 'svelte/compiler';
-	import WarnPrd from './warning_production.svelte';
-	//import Endpoint from '../handler/endpoint.svelte';
 
-	export let row;
-	let internal_code = '';
-	let fnApiTester;
-	let internal_data_test;
+	let { row = $bindable({}), onchange = () => {} } = $props();
 
-	let tabList = [{ label: 'Url', isActive: true }, { label: 'App Variables' }, { label: 'Tester' }];
+	let tabList = $state([
+		{ label: 'Url', isActive: true, component: tab_url },
+		{ label: 'App Variables', component: tab_app_vars },
+		{ label: 'Tester', component: tab_tester }
+	]);
 
-	$: row.code, parseCode();
-	$: row.data_test, setDataTest();
-
-	function setDataTest() {
-		internal_data_test = { ...row.data_test };
-		//console.log('internal_data_test', internal_data_test);
+	function getData() {
+		return { code: $state.snapshot(row.code), data_test: $state.snapshot(row.data_test) };
 	}
 
-	export function reset() {
-		//	fnEditorCode.reset();
-		internal_code = row.code;
-	}
-
-	export function getData() {
-		let data = { code: getCode(), data_test: internal_data_test };
-	//	console.log('> getData > SQL', data);
-		return data;
-	}
-
-	function getCode() {
-		//fnEditorCode.apply();
-		return internal_code;
-	}
-
-	function parseCode() {
-		internal_code = row.code;
-		//	console.log('>>>>>>>>', code, internal_code);
+	function fnOnChange() {
+		onchange(getData());
 	}
 
 	onMount(() => {
@@ -49,39 +24,43 @@
 	});
 </script>
 
-<Tab bind:tabs={tabList}>
-	<div class={tabList[0].isActive ? '' : 'is-hidden'}>
-		
-		<div class="field">
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<label class="label">Url to make the request. The operation is similar to a proxy</label>
-			<div class="control has-icons-right">
-				<input
-					class="input is-small"
-					type="text"
-					placeholder="http://your.url/path"
-					bind:value={internal_code}
-				/>
-				<span class="icon is-small is-right">
-					<i class="fa-solid fa-globe"></i>
-				</span>
-			</div>
+{#snippet tab_url()}
+	<div class="field">
+		<!-- svelte-ignore a11y_label_has_associated_control -->
+		<label class="label">Url to make the request. The operation is similar to a proxy</label>
+		<div class="control has-icons-right">
+			<input
+				class="input is-small"
+				type="text"
+				placeholder="http://your.url/path"
+				bind:value={row.code}
+				onchange={() => {
+					fnOnChange();
+				}}
+			/>
+			<span class="icon is-small is-right">
+				<i class="fa-solid fa-globe"></i>
+			</span>
 		</div>
 	</div>
+{/snippet}
 
-	<div class={tabList[1].isActive ? '' : 'is-hidden'}>
-		<AppVars bind:environment={row.environment} isReadOnly={true}></AppVars>
-	</div>
+{#snippet tab_app_vars()}
+	<AppVars environment={row.environment} isReadOnly={true}></AppVars>
+{/snippet}
 
-	<div class={tabList[2].isActive ? '' : 'is-hidden'}>
-		<WarnPrd bind:environment={row.environment}></WarnPrd>
-
+{#snippet tab_tester()}
+	<div>
 		<RESTTester
-			bind:this={fnApiTester}
-			bind:data={internal_data_test}
-			bind:method={row.method}
+			bind:data={row.data_test}
+			method={row.method}
 			url={row.endpoint}
 			methodDisabled={true}
+			onchange={(c) => {
+				fnOnChange();
+			}}
 		></RESTTester>
 	</div>
-</Tab>
+{/snippet}
+
+<Tab bind:tabs={tabList}></Tab>
