@@ -33,6 +33,7 @@
 		}
 	});
 
+	/*
 	$inspect(row.resource).with((type) => {
 		if (type === 'update') {
 			clearTimeout(timeoutResource);
@@ -41,6 +42,7 @@
 			}, 500);
 		}
 	});
+	*/
 
 	function defaultValues() {
 		if (!row) {
@@ -63,7 +65,18 @@
 	listMethodStore.subscribe((value) => {
 		methods = value;
 	});
+	
+	$effect(() => {
+		
+		validateResource = validateURL(row.resource);
 
+		availableURL = checkEndpointConstraint();
+
+		row.endpoint = createEndpoint(row.method, app.app, row.resource, row.environment);
+		
+	});
+
+	/*
 	function checkResource() {
 		validateResource = validateURL(row.resource);
 
@@ -71,6 +84,7 @@
 
 		row.endpoint = createEndpoint(row.method, app.app, row.resource, row.environment);
 	}
+	*/
 
 	function checkEndpointConstraint() {
 		let check = app.endpoints.some((r) => {

@@ -10,7 +10,8 @@
 		getCacheSize,
 		getCountStatusCode,
 		getListUsers,
-		defaultValuesRow
+		defaultValuesRow,
+		defaultValuesApp
 	} from '../utils.js';
 	import CellMethod from './cellMethod.svelte';
 	import CellAccess from './cellAccess.svelte';
@@ -21,29 +22,10 @@
 	import EndPointEditor from './endpoint/editor.svelte';
 	import AppVars from './app_vars.svelte';
 
-	let { idapp = $bindable(0) } = $props();
+	let  idapp = 0;
 
 	let intervalGetDataApp;
 	let app_vars;
-
-	const default_row = {
-		idendpoint: undefined,
-		enabled: false,
-		access: 0,
-		environment: 'dev',
-		resource: '',
-		method: 'GET',
-		handler: 'NA',
-		cors: null,
-		code: '',
-		description: '',
-		headers_test: {},
-		data_test: {},
-		rowkey: 0,
-		latest_updater: null,
-		cache_time: 0,
-		ctrl: {}
-	};
 
 	/**
 	 * @type {any}
@@ -58,7 +40,7 @@
 	 */
 	let environment_list = [];
 	let showEndpointEdit = $state(false);
-	let SelectedRow = $state({});
+	let SelectedRow = $state(defaultValuesRow());
 	let TableSelectionType = $state(0);
 	let TableObject = $state();
 	//let fnVars;
@@ -147,12 +129,20 @@
 	 */
 	let options = $state([]);
 
-	let app = $state({});
+	let app = $state(defaultValuesApp());
 	let uf = new uFetch();
 
+	/*
 	$inspect(idapp).with((type) => {
 		if (type === 'update' || type === 'init') {
 			getApp();
+		}
+	});
+*/
+
+	$inspect(app).with((type) => {
+		if (type === 'init') {
+			app = defaultValuesApp();
 		}
 	});
 
@@ -231,20 +221,9 @@
 		if (app_resp && app_resp.length > 0) {
 			active_tab = 0;
 
-			//appDataTable = AppToTable(app);
-			app = app_resp[0];
+			app = defaultValuesApp(app_resp[0]);
 
-			if (app && !app.params) {
-				app.params = {};
-			}
-
-			if (app && !app.params.telegram) {
-				app.params.telegram = {};
-			}
-
-			if (app && app.params.telegram && !app.params.telegram.idgroup) {
-				app.params.telegram.idgroup = '';
-			}
+			console.log(app_resp[0], app);
 
 			if (app && app.vars && typeof app.vars === 'object') {
 				listAppVars.set(app.vars);
@@ -262,18 +241,22 @@
 			getListFunction($userStore.token, app.app, app.environment);
 
 			if (app.endpoints) {
+				console.log('Procesar endpoints... ');
 				endpoints = app.endpoints.map((/** @type {{ environment: any; resource: any; }} */ ax) => {
 					return {
 						endpoint: `${ax.method == 'WS' ? '/ws/' : '/api/'}${app.app}${ax.resource}/${ax.environment}`,
 						...ax
 					};
 				});
+				console.log('Procesardos endpoints... ', endpoints);
+				endpoints = endpoints;
 			}
 		}
 	}
 
 	async function getApp() {
 		app_vars = undefined; // Esta linea es importante para que no se vayan a guardar variables de una apliacción a otra
+		console.log('getapp', idapp, app);
 		if (idapp) {
 			try {
 				await getListUsers();
@@ -289,6 +272,7 @@
 
 				showAppData(app_resp);
 			} catch (error) {
+				console.error(error);
 				alert(error.message);
 			}
 		}
@@ -342,8 +326,10 @@
 		await getListApps();
 		await getEnvList();
 		intervalGetDataApp = setInterval(async () => {
-			await getCacheSize(app.app, $userStore.token);
-			await getCountStatusCode(app.app, $userStore.token);
+			if (app?.app) {
+				await getCacheSize(app.app, $userStore.token);
+				await getCountStatusCode(app.app, $userStore.token);
+			}
 		}, 5000);
 	});
 
@@ -390,7 +376,7 @@
 			*/
 
 				if (app && app.idapp && app.idapp.length > 0) {
-					SelectedRow = { ...default_row };
+					SelectedRow = defaultValuesRow();
 
 					showEndpointEdit = true;
 				} else {
@@ -471,8 +457,11 @@
 			classInput="is-small"
 			bind:options
 			onselect={(/** @type {{ detail: { value: number; }; }} */ e) => {
+				console.log('PredictiveInput =>> ', $userStore, e);
+
 				if ($userStore) {
 					idapp = e.value;
+					getApp();
 				} else {
 					alert('You do not have authorization');
 				}
@@ -491,12 +480,14 @@
 						<a class="button is-static is-small"> Application </a>
 					</p>
 					<p class="control">
-						<input
-							class="input is-small"
-							type="text"
-							placeholder="Application name"
-							bind:value={app.app}
-						/>
+						{#if app}
+							<input
+								class="input is-small"
+								type="text"
+								placeholder="Application name"
+								bind:value={app.app}
+							/>
+						{/if}
 					</p>
 				</div>
 			{/snippet}
@@ -508,16 +499,18 @@
 						<a class="button is-static is-small"> Enabled </a>
 					</p>
 					<p class="control">
-						<input
-							type="button"
-							bind:value={app.enabled}
-							class={app.enabled
-								? 'button is-success is-selected is-small'
-								: 'button is-danger is-small'}
-							onclick={() => {
-								app.enabled = !app.enabled;
-							}}
-						/>
+						{#if app}
+							<input
+								type="button"
+								bind:value={app.enabled}
+								class={app.enabled
+									? 'button is-success is-selected is-small'
+									: 'button is-danger is-small'}
+								onclick={() => {
+									app.enabled = !app.enabled;
+								}}
+							/>
+						{/if}
 					</p>
 				</div>
 			{/snippet}
@@ -695,44 +688,46 @@
 	</div>
 {/if}
 
-<EndPointEditor
-	bind:showEditor={showEndpointEdit}
-	bind:row={SelectedRow}
-	bind:app
-	ondata={(e) => {
-		let row_edited = e.row;
+{#if app}
+	<EndPointEditor
+		bind:showEditor={showEndpointEdit}
+		bind:row={SelectedRow}
+		bind:app
+		ondata={(e) => {
+			let row_edited = e.row;
 
-		if (row_edited.idendpoint && row_edited.idendpoint.length > 10) {
-			// Es edición de endpoint
-			let found = endpoints.findIndex((element) => element.idendpoint == row_edited.idendpoint);
-			//	console.log('Se ha encontrado: ', found);
-			if (found >= 0) {
-				endpoints[found] = { ...row_edited };
+			if (row_edited.idendpoint && row_edited.idendpoint.length > 10) {
+				// Es edición de endpoint
+				let found = endpoints.findIndex((element) => element.idendpoint == row_edited.idendpoint);
+				//	console.log('Se ha encontrado: ', found);
+				if (found >= 0) {
+					endpoints[found] = { ...row_edited };
+				}
+				//found = { ...SelectedRow };
+			} else {
+				// es nuevo endpoint
+				endpoints.unshift({
+					idapp: app.idapp,
+					idendpoint: undefined,
+					endpoint: row_edited.endpoint,
+					resource: row_edited.resource,
+					enabled: row_edited.enabled,
+					access: row_edited.access,
+					environment: row_edited.environment,
+					resource: row_edited.resource,
+					method: row_edited.method,
+					handler: row_edited.handler,
+					cors: row_edited.cors,
+					code: row_edited.code,
+					description: row_edited.description,
+					headers_test: row_edited.headers_test,
+					data_test: row_edited.data_test,
+					rowkey: 0,
+					latest_updater: $userStore.iduser,
+					cache_time: row_edited.cache_time
+				});
+				endpoints = endpoints; // Esto se hace para que se actualice la tabla
 			}
-			//found = { ...SelectedRow };
-		} else {
-			// es nuevo endpoint
-			endpoints.unshift({
-				idapp: app.idapp,
-				idendpoint: undefined,
-				endpoint: row_edited.endpoint,
-				resource: row_edited.resource,
-				enabled: row_edited.enabled,
-				access: row_edited.access,
-				environment: row_edited.environment,
-				resource: row_edited.resource,
-				method: row_edited.method,
-				handler: row_edited.handler,
-				cors: row_edited.cors,
-				code: row_edited.code,
-				description: row_edited.description,
-				headers_test: row_edited.headers_test,
-				data_test: row_edited.data_test,
-				rowkey: 0,
-				latest_updater: $userStore.iduser,
-				cache_time: row_edited.cache_time
-			});
-			endpoints = endpoints; // Esto se hace para que se actualice la tabla
-		}
-	}}
-></EndPointEditor>
+		}}
+	></EndPointEditor>
+{/if}

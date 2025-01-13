@@ -35,6 +35,7 @@ export function getListFunction(token: string, appName: string): Promise<void>;
 export function getListHandler(token: string): Promise<void>;
 export function getListMethods(token: string): Promise<void>;
 export function getCacheSize(app_name: any, token: any): Promise<void>;
+export function defaultValuesApp(app: any): any;
 export function defaultValuesRow(row: any): any;
 export function getCountStatusCode(app_name: any, token: any): Promise<void>;
 export namespace css_handlers {

@@ -33,7 +33,7 @@
 		{ label: 'Logs', component: tab_log }
 	]);
 
-	$inspect(row).with((type) => {
+	$inspect([row, app]).with((type) => {
 		if (type === 'init') {
 			defaultValues();
 		}
@@ -85,11 +85,11 @@
 			row.ctrl.log = {};
 		}
 
-		if (!app) {
+		if (app == null) {
 			app = { endpoints: [] };
 		}
 
-		if (app && !app.endpoints) {
+		if (app && app.endpoints == null) {
 			app.endpoints = [];
 		}
 	}

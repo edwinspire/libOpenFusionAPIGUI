@@ -183,9 +183,8 @@ export const getListMethods = async (/** @type {string} */ token) => {
 
 export const getCacheSize = async (app_name, token) => {
 	let uf = new uFetch();
-	
+
 	try {
-		
 		if (app_name) {
 			let get_list_cache = await uf.GET({
 				url: url_paths.getCacheSize,
@@ -200,9 +199,113 @@ export const getCacheSize = async (app_name, token) => {
 	}
 };
 
+export const defaultValuesApp = (app) => {
+	if (app == null) {
+		app = { app: '', params: { telegram: {} } };
+	}
+
+	if (app && app.idapp == null) {
+		app.idapp = 0;
+	}
+
+	if (app && app.app == null) {
+		app.app = '';
+	}
+
+	if (app && app.environment == null) {
+		app.environment = 'dev';
+	}
+
+	if (app && app.description == null) {
+		app.description = '';
+	}
+
+	if (app && app.endpoints == null) {
+		app.endpoints = [];
+	}
+
+	if (app && app.params == null) {
+		app.params = { telegram: { idgroup: '' } };
+	}
+
+	if (app && app.params.telegram == null) {
+		app.params.telegram = { idgroup: '' };
+	}
+
+	if (app && app.params.telegram && app.params.telegram.idgroup == null) {
+		app.params.telegram.idgroup = '';
+	}
+
+	if (app && app.vars == null) {
+		app.vars = {};
+	}
+
+	return app;
+};
+
 export const defaultValuesRow = (row) => {
 	if (row == null) {
 		row = {};
+	}
+
+	if (row && row.idendpoint == null) {
+		row.idendpoint = undefined;
+	}
+
+	if (row && row.enabled == null) {
+		row.enabled = false;
+	}
+
+	if (row && row.access == null) {
+		row.access = 0;
+	}
+
+	if (row && row.environment == null) {
+		row.environment = 'dev';
+	}
+
+	if (row && row.resource == null) {
+		row.resource = '';
+	}
+
+	if (row && row.method == null) {
+		row.method = 'GET';
+	}
+
+	if (row && row.handler == null) {
+		row.handler = 'NA';
+	}
+
+	if (row && row.cors == null) {
+		row.cors = {};
+	}
+
+	if (row && row.code == null) {
+		row.code = '';
+	}
+
+	if (row && row.description == null) {
+		row.description = '';
+	}
+
+	if (row && row.description == null) {
+		row.description = '';
+	}
+
+	if (row && row.headers_test == null) {
+		row.headers_test = {};
+	}
+
+	if (row && row.data_test == null) {
+		row.data_test = {};
+	}
+
+	if (row && row.rowkey == null) {
+		row.rowkey = 0;
+	}
+
+	if (row && row.cache_time == null) {
+		row.cache_time = 0;
 	}
 
 	if (row && !row.environment) {
@@ -259,7 +362,6 @@ export const getCountStatusCode = async (app_name, token) => {
 	let uf = new uFetch();
 	//uf.setBearerAuthorization(token);
 	try {
-		
 		if (app_name) {
 			let get_list = await uf.GET({
 				url: url_paths.getResponsesCountStatusCode,

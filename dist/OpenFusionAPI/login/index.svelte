@@ -1,27 +1,21 @@
 <script>
-	// @ts-ignore
 	import uFetch from '@edwinspire/universal-fetch';
 	import { onMount } from 'svelte';
-	//	import { createEventDispatcher } from 'svelte';
 	import { userStore, getListMethods, getListHandler, url_paths } from '../utils.js';
 	import logo from '../img/favicon.png';
 
-	//	const dispatch = createEventDispatcher();
 	let { onlogin = () => {} } = $props();
 	let username = $state('');
 	let password = $state('');
-	// @ts-ignore
 	let uf = new uFetch();
 
 	async function handleSubmit() {
-		// Lógica de autenticación aquí
 
 		try {
-			// @ts-ignore
+			
 			let user = await uf.POST({ url: url_paths.login, data: { username, password } });
 			let data = await user.json();
 		
-
 			if (data.login) {
 				userStore.set(data);
 
@@ -36,7 +30,7 @@
 			}
 		} catch (error) {
 			console.trace(error);
-			// @ts-ignore
+			
 			alert(error.message);
 		}
 	}
@@ -45,6 +39,7 @@
 </script>
 
 <div class="modal is-active">
+	
 	<div class="modal-background"></div>
 	<div class="modal-content">
 		<div class="box">
