@@ -18,12 +18,23 @@
 
 	let timeoutChange;
 
+	/*
 	$inspect(row.code).with((type) => {
 		if (type === 'update' || type === 'init') {
 			clearTimeout(timeoutChange);
 			timeoutChange = setTimeout(() => {
 				parseCode();
 			}, 750);
+		}
+	});
+	*/
+
+	$effect(() => {
+		if (row?.code) {
+			clearTimeout(timeoutChange);
+			timeoutChange = setTimeout(() => {
+				parseCode();
+			}, 500);
 		}
 	});
 

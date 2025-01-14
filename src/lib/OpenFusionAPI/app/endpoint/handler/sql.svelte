@@ -49,9 +49,20 @@
 
 	let timeoutChange;
 
+	/*
 	$inspect(row.code).with((type) => {
 		console.log('TYPE::::::::::::: ', type);
 		if (type === 'update' || type === 'init') {
+			clearTimeout(timeoutChange);
+			timeoutChange = setTimeout(() => {
+				parseCode();
+			}, 750);
+		}
+	});
+	*/
+
+	$effect(() => {
+		if (row?.code) {
 			clearTimeout(timeoutChange);
 			timeoutChange = setTimeout(() => {
 				parseCode();
@@ -68,8 +79,6 @@
 			}
 
 			if (params && params.config) {
-				
-
 				if (typeof params.config === 'object') {
 					cnx_param_json = params.config;
 					use_var_cnx = false;
@@ -92,7 +101,7 @@
 
 	function getData() {
 		let data = { code: getCode(), data_test: $state.snapshot(row.data_test) };
-		
+
 		return data;
 	}
 
@@ -125,7 +134,6 @@
 	}
 
 	onMount(() => {
-		
 		parseCode();
 		//	sample_bind_post_string = JSON.stringify(sample_bind_post);
 	});
@@ -255,7 +263,7 @@
 		</div>
 
 		{#if !use_var_cnx}
-			<EditorCode isReadOnly={false} lang="json" bind:code={cnx_param_json}></EditorCode>
+			<EditorCode isReadOnly={false} lang="sql" bind:code={cnx_param_json}></EditorCode>
 		{:else}
 			<div class="control has-icons-left">
 				<input

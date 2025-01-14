@@ -12,8 +12,9 @@
 		}
 	});
 
-	$inspect(row.code).with((type) => {
-		if (type === 'update' || type === 'init') {
+
+	$effect(() => {
+		if (row?.code) {
 			parseCode();
 		}
 	});

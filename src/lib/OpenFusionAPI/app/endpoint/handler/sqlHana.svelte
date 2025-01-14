@@ -39,6 +39,7 @@
 	let query_code = $state('');
 	let timeoutChange;
 
+	/*
 	$inspect(row.code).with((type) => {
 		if (type === 'update' || type === 'init') {
 			clearTimeout(timeoutChange);
@@ -47,7 +48,17 @@
 			}, 750);
 		}
 	});
+	*/
 
+	$effect(() => {
+		if (row?.code) {
+			clearTimeout(timeoutChange);
+			timeoutChange = setTimeout(() => {
+				parseCode();
+			}, 750);
+		}
+	});
+	
 	function parseCode() {
 		try {
 			let params = JSON.parse(row.code || '{}');
@@ -274,7 +285,7 @@
 					</details>
 				</div>
 
-				<EditorCode isReadOnly={false} lang="json" bind:code={cnx_param_json}></EditorCode>
+				<EditorCode isReadOnly={false} lang="sql" bind:code={cnx_param_json}></EditorCode>
 			{:else}
 				<div class="content is-small">
 					You can also use the name of an application variable to use it, for example <strong
