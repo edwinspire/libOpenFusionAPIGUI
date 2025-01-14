@@ -297,10 +297,12 @@
 
 			if (apps_res.status == 200) {
 				let rapp = await apps_res.json();
-				idapp = rapp?.idapp;
+				idapp = rapp?.app?.idapp;
+
+				// TODO: Mejorar información de respuesta para indicar tambien los endpoints que no se hayan guardado.
 
 				if (idapp) {
-					alert('Saved successfully.');
+					alert(rapp?.app?.name+ ' saved successfully.');
 					getApp();
 				} else {
 					alert('Could not get idapp.');
