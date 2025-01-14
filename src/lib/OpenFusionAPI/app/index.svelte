@@ -302,7 +302,7 @@
 				// TODO: Mejorar información de respuesta para indicar tambien los endpoints que no se hayan guardado.
 
 				if (idapp) {
-					alert(rapp?.app?.name+ ' saved successfully.');
+					alert(rapp?.app?.app+ ' saved successfully.');
 					getApp();
 				} else {
 					alert('Could not get idapp.');
