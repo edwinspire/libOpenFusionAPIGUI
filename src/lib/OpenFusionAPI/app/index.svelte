@@ -728,7 +728,9 @@
 					latest_updater: $userStore.iduser,
 					cache_time: row_edited.cache_time
 				});
-				endpoints = endpoints; // Esto se hace para que se actualice la tabla
+				endpoints = [...endpoints]; // Esto se hace para que se actualice la tabla
+				//endpoints = endpoints; // Esto se hace para que se actualice la tabla
+				console.log('Con nuevo endpoint:::::> ', endpoints);
 			}
 		}}
 	></EndPointEditor>
