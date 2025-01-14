@@ -22,7 +22,7 @@
 	import EndPointEditor from './endpoint/editor.svelte';
 	import AppVars from './app_vars.svelte';
 
-	let  idapp = 0;
+	let idapp = 0;
 
 	let intervalGetDataApp;
 	let app_vars;
@@ -241,14 +241,14 @@
 			getListFunction($userStore.token, app.app, app.environment);
 
 			if (app.endpoints) {
-				console.log('Procesar endpoints... ');
+				//	console.log('Procesar endpoints... ');
 				endpoints = app.endpoints.map((/** @type {{ environment: any; resource: any; }} */ ax) => {
 					return {
 						endpoint: `${ax.method == 'WS' ? '/ws/' : '/api/'}${app.app}${ax.resource}/${ax.environment}`,
 						...ax
 					};
 				});
-				console.log('Procesardos endpoints... ', endpoints);
+				//	console.log('Procesardos endpoints... ', endpoints);
 				endpoints = endpoints;
 			}
 		}
@@ -297,13 +297,13 @@
 
 			if (apps_res.status == 200) {
 				let rapp = await apps_res.json();
+				idapp = rapp?.idapp;
 
-				if (idapp == rapp.idapp) {
+				if (idapp) {
 					alert('Saved successfully.');
-
 					getApp();
 				} else {
-					idapp = rapp.idapp;
+					alert('Could not get idapp.');
 				}
 
 				await getListApps();
