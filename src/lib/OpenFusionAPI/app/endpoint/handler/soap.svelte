@@ -92,7 +92,9 @@
 			<div>Service connection parameters.</div>
 		</div>
 
-		<EditorCode lang="json" bind:code={internal_code}></EditorCode>
+		<EditorCode lang="json" bind:code={internal_code} onchange={()=>{
+			fnOnChange();
+		}}></EditorCode>
 
 		{#if row.method === 'GET'}
 			<div class="block">

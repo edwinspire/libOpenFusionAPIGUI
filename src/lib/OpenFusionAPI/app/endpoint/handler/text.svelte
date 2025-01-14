@@ -100,7 +100,7 @@
 
 	function getCode() {
 		//let textCode = fnEditorCode2.getCode();
-		let conf = {};
+		//let conf = {};
 		let outcode = {};
 
 		try {
