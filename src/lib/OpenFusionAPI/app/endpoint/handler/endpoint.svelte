@@ -25,7 +25,7 @@
 	let methods = $state([]);
 
 	let uf = new uFetch();
-	let timeoutResource;
+	//let timeoutResource;
 
 	$inspect(row).with((type) => {
 		if (type === 'init') {

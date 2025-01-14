@@ -50,7 +50,7 @@
 	let timeoutChange;
 
 	$inspect(row.code).with((type) => {
-		
+		console.log('TYPE::::::::::::: ', type);
 		if (type === 'update' || type === 'init') {
 			clearTimeout(timeoutChange);
 			timeoutChange = setTimeout(() => {
