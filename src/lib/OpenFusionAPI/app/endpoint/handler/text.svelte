@@ -164,7 +164,13 @@
 			</div>
 		</div>
 
-		<EditorCode bind:lang={langEditor} bind:code={payload}></EditorCode>
+		<EditorCode
+			bind:lang={langEditor}
+			bind:code={payload}
+			onchange={(c) => {
+				fnOnChange();
+			}}
+		></EditorCode>
 	</div>
 {/snippet}
 

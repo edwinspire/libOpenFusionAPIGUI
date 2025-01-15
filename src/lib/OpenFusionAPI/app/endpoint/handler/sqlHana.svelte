@@ -145,7 +145,9 @@
 				</div>
 			</div>
 		</div>
-		<EditorCode isReadOnly={false} lang="sql" bind:code={query_code}></EditorCode>
+		<EditorCode isReadOnly={false} lang="sql" bind:code={query_code} 	onchange={(c) => {
+			fnOnChange();
+		}}></EditorCode>
 	</div>
 {/snippet}
 
@@ -285,9 +287,14 @@
 					</details>
 				</div>
 
-				<EditorCode isReadOnly={false} lang="sql" bind:code={cnx_param_json} onchange={()=>{
-					fnOnChange();
-				}}></EditorCode>
+				<EditorCode
+					isReadOnly={false}
+					lang="json"
+					bind:code={cnx_param_json}
+					onchange={() => {
+						fnOnChange();
+					}}
+				></EditorCode>
 			{:else}
 				<div class="content is-small">
 					You can also use the name of an application variable to use it, for example <strong

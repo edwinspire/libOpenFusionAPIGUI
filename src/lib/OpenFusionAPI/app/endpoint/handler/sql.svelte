@@ -263,9 +263,14 @@
 		</div>
 
 		{#if !use_var_cnx}
-			<EditorCode isReadOnly={false} lang="sql" bind:code={cnx_param_json} onchange={()=>{
-				fnOnChange();
-			}}></EditorCode>
+			<EditorCode
+				isReadOnly={false}
+				lang="json"
+				bind:code={cnx_param_json}
+				onchange={() => {
+					fnOnChange();
+				}}
+			></EditorCode>
 		{:else}
 			<div class="control has-icons-left">
 				<input
