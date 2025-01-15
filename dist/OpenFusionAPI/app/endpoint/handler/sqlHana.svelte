@@ -90,7 +90,7 @@
 
 	function getData() {
 		let data = { code: getCode(), data_test: $state.snapshot(row.data_test) };
-
+		console.log('getData >>>>>>>>>>>>>>> ', data);
 		return data;
 	}
 
@@ -145,7 +145,14 @@
 				</div>
 			</div>
 		</div>
-		<EditorCode isReadOnly={false} lang="sql" bind:code={query_code}></EditorCode>
+		<EditorCode
+			isReadOnly={false}
+			lang="sql"
+			bind:code={query_code}
+			onchange={(c) => {
+				fnOnChange();
+			}}
+		></EditorCode>
 	</div>
 {/snippet}
 
@@ -285,9 +292,14 @@
 					</details>
 				</div>
 
-				<EditorCode isReadOnly={false} lang="sql" bind:code={cnx_param_json} onchange={()=>{
-					fnOnChange();
-				}}></EditorCode>
+				<EditorCode
+					isReadOnly={false}
+					lang="json"
+					bind:code={cnx_param_json}
+					onchange={(c) => {
+						fnOnChange();
+					}}
+				></EditorCode>
 			{:else}
 				<div class="content is-small">
 					You can also use the name of an application variable to use it, for example <strong
@@ -301,6 +313,9 @@
 						type="text"
 						placeholder="$_VAR_NAME"
 						bind:value={cnx_param_var}
+						onchange={() => {
+							fnOnChange();
+						}}
 					/>
 					<span class="icon is-small is-left">
 						<i class="fa-regular fa-keyboard"></i>

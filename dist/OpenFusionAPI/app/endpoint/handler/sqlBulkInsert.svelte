@@ -36,7 +36,6 @@
 	let table_name = $state('');
 
 	$inspect(row.code).with((type) => {
-		
 		if (type === 'update' || type === 'init') {
 			parseCode();
 		}
@@ -51,8 +50,6 @@
 			}
 
 			if (params && params.config) {
-				
-
 				if (typeof params.config === 'object') {
 					cnx_param_json = params.config;
 					use_var_cnx = false;
@@ -106,7 +103,6 @@
 	}
 
 	onMount(() => {
-		
 		parseCode();
 	});
 </script>
@@ -115,7 +111,15 @@
 	<div>
 		<br />
 		<div class="control">
-			<input class="input is-small" type="text" placeholder="Table name" bind:value={table_name} />
+			<input
+				class="input is-small"
+				type="text"
+				placeholder="Table name"
+				bind:value={table_name}
+				onchange={() => {
+					fnOnChange();
+				}}
+			/>
 		</div>
 		<br />
 	</div>
@@ -179,7 +183,14 @@
 		</div>
 
 		{#if !use_var_cnx}
-			<EditorCode isReadOnly={false} lang="json" bind:code={cnx_param_json}></EditorCode>
+			<EditorCode
+				isReadOnly={false}
+				lang="json"
+				bind:code={cnx_param_json}
+				onchange={(c) => {
+					fnOnChange();
+				}}
+			></EditorCode>
 		{:else}
 			<div class="control has-icons-left">
 				<input
@@ -187,6 +198,9 @@
 					type="text"
 					placeholder="$_VAR_NAME"
 					bind:value={cnx_param_var}
+					onchange={() => {
+						fnOnChange();
+					}}
 				/>
 				<span class="icon is-small is-left">
 					<i class="fa-regular fa-keyboard"></i>

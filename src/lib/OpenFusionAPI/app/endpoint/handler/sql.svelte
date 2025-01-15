@@ -278,6 +278,9 @@
 					type="text"
 					placeholder="$_VAR_NAME"
 					bind:value={cnx_param_var}
+					onchange={() => {
+						fnOnChange();
+					}}
 				/>
 				<span class="icon is-small is-left">
 					<i class="fa-regular fa-keyboard"></i>

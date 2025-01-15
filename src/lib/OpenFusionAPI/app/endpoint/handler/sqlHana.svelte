@@ -90,7 +90,7 @@
 
 	function getData() {
 		let data = { code: getCode(), data_test: $state.snapshot(row.data_test) };
-
+		console.log('getData >>>>>>>>>>>>>>> ', data);
 		return data;
 	}
 
@@ -145,9 +145,14 @@
 				</div>
 			</div>
 		</div>
-		<EditorCode isReadOnly={false} lang="sql" bind:code={query_code} 	onchange={(c) => {
-			fnOnChange();
-		}}></EditorCode>
+		<EditorCode
+			isReadOnly={false}
+			lang="sql"
+			bind:code={query_code}
+			onchange={(c) => {
+				fnOnChange();
+			}}
+		></EditorCode>
 	</div>
 {/snippet}
 
@@ -291,7 +296,7 @@
 					isReadOnly={false}
 					lang="json"
 					bind:code={cnx_param_json}
-					onchange={() => {
+					onchange={(c) => {
 						fnOnChange();
 					}}
 				></EditorCode>
@@ -308,6 +313,9 @@
 						type="text"
 						placeholder="$_VAR_NAME"
 						bind:value={cnx_param_var}
+						onchange={() => {
+							fnOnChange();
+						}}
 					/>
 					<span class="icon is-small is-left">
 						<i class="fa-regular fa-keyboard"></i>

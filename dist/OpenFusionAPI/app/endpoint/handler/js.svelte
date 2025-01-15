@@ -12,7 +12,6 @@
 		}
 	});
 
-
 	$effect(() => {
 		if (row?.code) {
 			parseCode();
@@ -60,7 +59,6 @@
 		onchange={(c) => {
 			fnOnChange();
 		}}
-		
 	></EditorCode>
 {/snippet}
 
