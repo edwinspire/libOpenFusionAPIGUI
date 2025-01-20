@@ -199,35 +199,43 @@ export namespace listHandlers {
         export { label_14 as label };
     }
     export { FUNCTION_1 as FUNCTION };
-}
-export namespace listEnv {
-    namespace prd {
+    export namespace MONGODB {
         let color_13: string;
         export { color_13 as color };
-        export let background: string;
         let icon_20: string;
         export { icon_20 as icon };
         let label_15: string;
         export { label_15 as label };
     }
-    namespace qa {
+}
+export namespace listEnv {
+    namespace prd {
         let color_14: string;
         export { color_14 as color };
-        let background_1: string;
-        export { background_1 as background };
+        export let background: string;
         let icon_21: string;
         export { icon_21 as icon };
         let label_16: string;
         export { label_16 as label };
     }
-    namespace dev {
+    namespace qa {
         let color_15: string;
         export { color_15 as color };
-        let background_2: string;
-        export { background_2 as background };
+        let background_1: string;
+        export { background_1 as background };
         let icon_22: string;
         export { icon_22 as icon };
         let label_17: string;
         export { label_17 as label };
+    }
+    namespace dev {
+        let color_16: string;
+        export { color_16 as color };
+        let background_2: string;
+        export { background_2 as background };
+        let icon_23: string;
+        export { icon_23 as icon };
+        let label_18: string;
+        export { label_18 as label };
     }
 }

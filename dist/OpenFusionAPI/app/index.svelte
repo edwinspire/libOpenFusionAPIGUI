@@ -302,7 +302,7 @@
 				// TODO: Mejorar información de respuesta para indicar tambien los endpoints que no se hayan guardado.
 
 				if (idapp) {
-					alert(rapp?.app?.app+ ' saved successfully.');
+					alert(rapp?.app?.app + ' saved successfully.');
 					getApp();
 				} else {
 					alert('Could not get idapp.');
@@ -708,26 +708,34 @@
 				//found = { ...SelectedRow };
 			} else {
 				// es nuevo endpoint
-				endpoints.unshift({
-					idapp: app.idapp,
-					idendpoint: undefined,
-					endpoint: row_edited.endpoint,
-					resource: row_edited.resource,
-					enabled: row_edited.enabled,
-					access: row_edited.access,
-					environment: row_edited.environment,
-					resource: row_edited.resource,
-					method: row_edited.method,
-					handler: row_edited.handler,
-					cors: row_edited.cors,
-					code: row_edited.code,
-					description: row_edited.description,
-					headers_test: row_edited.headers_test,
-					data_test: row_edited.data_test,
-					rowkey: 0,
-					latest_updater: $userStore.iduser,
-					cache_time: row_edited.cache_time
-				});
+
+				// Busca si el endpoint existe ya en la tabla, si ya existe la actualiza, si no la agrega
+				let found = endpoints.findIndex((element) => element.endpoint == row_edited.endpoint);
+				if (found >= 0) {
+					endpoints[found] = { ...row_edited };
+				} else {
+					endpoints.unshift({
+						idapp: app.idapp,
+						idendpoint: undefined,
+						endpoint: row_edited.endpoint,
+						resource: row_edited.resource,
+						enabled: row_edited.enabled,
+						access: row_edited.access,
+						environment: row_edited.environment,
+						resource: row_edited.resource,
+						method: row_edited.method,
+						handler: row_edited.handler,
+						cors: row_edited.cors,
+						code: row_edited.code,
+						description: row_edited.description,
+						headers_test: row_edited.headers_test,
+						data_test: row_edited.data_test,
+						rowkey: 0,
+						latest_updater: $userStore.iduser,
+						cache_time: row_edited.cache_time
+					});
+				}
+
 				endpoints = [...endpoints]; // Esto se hace para que se actualice la tabla
 				//endpoints = endpoints; // Esto se hace para que se actualice la tabla
 				console.log('Con nuevo endpoint:::::> ', endpoints);

@@ -431,7 +431,8 @@ export const listHandlers = {
 	FETCH: { color: 'primary', icon: 'fa-solid fa-globe', label: 'Fetch' },
 	SOAP: { color: 'info', icon: 'fa-solid fa-soap', label: 'SOAP' },
 	TEXT: { color: 'warning', icon: 'fa-regular fa-file-lines', label: 'Text' },
-	FUNCTION: { color: 'danger', icon: 'fa-solid fa-robot', label: 'Function' }
+	FUNCTION: { color: 'danger', icon: 'fa-solid fa-robot', label: 'Function' },
+	MONGODB: { color: '', icon: 'fa-solid fa-database', label: 'MongoDB' },
 };
 
 export const listEnv = {
