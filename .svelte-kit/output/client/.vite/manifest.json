@@ -1,6 +1,6 @@
 {
   ".svelte-kit/generated/client-optimized/app.js": {
-    "file": "_app/immutable/entry/app.CYIXZW4D.js",
+    "file": "_app/immutable/entry/app.boVpH-Mu.js",
     "name": "entry/app",
     "src": ".svelte-kit/generated/client-optimized/app.js",
     "isEntry": true,
@@ -30,7 +30,7 @@
     ]
   },
   ".svelte-kit/generated/client-optimized/nodes/1.js": {
-    "file": "_app/immutable/nodes/1.BSw03wY_.js",
+    "file": "_app/immutable/nodes/1.DVY_Lh55.js",
     "name": "nodes/1",
     "src": ".svelte-kit/generated/client-optimized/nodes/1.js",
     "isEntry": true,
@@ -40,11 +40,11 @@
       "_legacy.C-ksVdfU.js",
       "_runtime.CAnBjqOD.js",
       "_render.tFrWxvY-.js",
-      "_entry.ByF00xvq.js"
+      "_entry.-oB7VeQC.js"
     ]
   },
   ".svelte-kit/generated/client-optimized/nodes/2.js": {
-    "file": "_app/immutable/nodes/2.CHSi4EaK.js",
+    "file": "_app/immutable/nodes/2.BEH5sFAZ.js",
     "name": "nodes/2",
     "src": ".svelte-kit/generated/client-optimized/nodes/2.js",
     "isEntry": true,
@@ -80,8 +80,8 @@
       "_runtime.CAnBjqOD.js"
     ]
   },
-  "_entry.ByF00xvq.js": {
-    "file": "_app/immutable/chunks/entry.ByF00xvq.js",
+  "_entry.-oB7VeQC.js": {
+    "file": "_app/immutable/chunks/entry.-oB7VeQC.js",
     "name": "entry",
     "imports": [
       "_runtime.CAnBjqOD.js",
@@ -169,12 +169,12 @@
     "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-v4compatibility.woff2"
   },
   "node_modules/@sveltejs/kit/src/runtime/client/entry.js": {
-    "file": "_app/immutable/entry/start.COsQ3A6L.js",
+    "file": "_app/immutable/entry/start.CJ-UIELe.js",
     "name": "entry/start",
     "src": "node_modules/@sveltejs/kit/src/runtime/client/entry.js",
     "isEntry": true,
     "imports": [
-      "_entry.ByF00xvq.js"
+      "_entry.-oB7VeQC.js"
     ]
   },
   "src/lib/OpenFusionAPI/img/android-chrome-512x512.png": {

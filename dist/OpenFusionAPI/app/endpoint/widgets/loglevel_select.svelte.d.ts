@@ -1,13 +1,13 @@
-export default Logs;
-type Logs = {
+export default LoglevelSelect;
+type LoglevelSelect = {
     $on?(type: string, callback: (e: any) => void): () => void;
     $set?(props: Partial<$$ComponentProps>): void;
 };
-declare const Logs: import("svelte").Component<{
-    log?: Record<string, any>;
+declare const LoglevelSelect: import("svelte").Component<{
+    level?: number;
     ondata?: Function;
-}, {}, "log">;
+}, {}, "level">;
 type $$ComponentProps = {
-    log?: Record<string, any>;
+    level?: number;
     ondata?: Function;
 };
