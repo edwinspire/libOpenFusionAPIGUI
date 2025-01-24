@@ -159,7 +159,9 @@
 		</div>
 	</div>
 
-	<EditorCode isReadOnly={false} title={'Query to be executed'} lang="sql" bind:code={query_code}
+	<EditorCode isReadOnly={false} title={'Query to be executed'} lang="sql" bind:code={query_code} onchange={(c) => {
+		fnOnChange();
+	}}
 	></EditorCode>
 {/snippet}
 

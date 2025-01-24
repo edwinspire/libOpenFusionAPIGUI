@@ -10,7 +10,7 @@
 			status_success: 1,
 			status_redirect: 1,
 			status_client_error: 2,
-			status_server_error: 2
+			status_server_error: 3
 		}),
 		ondata = (d) => {}
 	} = $props();
@@ -71,7 +71,7 @@
 		}
 
 		if (log && log.status_server_error == null) {
-			log.status_server_error = 2;
+			log.status_server_error = 3;
 		}
 	}
 
