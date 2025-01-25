@@ -122,14 +122,9 @@
 	<div>
 		<div>
 			<div class="content is-small">
-				The parameters must have a name like <span style="font-style: oblique; font-weight: bold;"
-					>$nameparameter</span
-				>
-				to bind, or <span style="font-style: oblique; font-weight: bold;">:nameparameter</span> to
-				replacements. The values ​​you send in the request. For more information you can consult the
-				<a href="https://sequelize.org/docs/v6/core-concepts/raw-queries/#bind-parameter"
-					>sequelize</a
-				>
+				For more information you can consult the
+				<a href="https://mongoosejs.com/">MONGOOSE</a> and
+				<a href="https://www.mongodb.com/products/updates/version-release">MongoDB</a>
 				documentation.
 			</div>
 		</div>
@@ -148,10 +143,16 @@
 {#snippet tab_cnx_params()}
 	<div>
 		<div class="content is-small">
-			Configuration parameters used by sequelize, visit <a href="https://sequelize.org/"
-				>https://sequelize.org/</a
+			Configuration parameters used by mongoosejs, visit <a href="https://mongoosejs.com/"
+				>Mongoose</a
 			>
 			for more information.
+			<br />
+			<details>
+				<summary>Example of configuration parameters:</summary>
+				<JSONView jsonObject={cnx_param_sample}></JSONView>
+			</details>
+
 			<br />
 			You can also use the name of an application variable to use it, for example
 			<strong>$_VAR_NAME</strong>.
@@ -175,13 +176,6 @@
 		</div>
 
 		{#if !use_var_cnx}
-			<div class="content is-small">
-				<details>
-					<summary>Example of configuration parameters:</summary>
-					<JSONView jsonObject={cnx_param_sample}></JSONView>
-				</details>
-			</div>
-
 			<EditorCode
 				isReadOnly={false}
 				lang="json"
