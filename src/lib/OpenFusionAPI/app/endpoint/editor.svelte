@@ -7,6 +7,7 @@
 	import SqlBulkInsert from './handler/sqlBulkInsert.svelte';
 	import SqlHana from './handler/sqlHana.svelte';
 	import TextCode from './handler/text.svelte';
+	import MongoDB from './handler/mongodb.svelte';
 	import CustomFn from './handler/customFunction.svelte';
 	import { Level, SlideFullScreen, Tab } from '@edwinspire/svelte-components';
 
@@ -160,6 +161,13 @@
 				/>
 			{:else if row && row.handler == 'TEXT'}
 				<TextCode
+					bind:row
+					onchange={(v) => {
+						handler_code[row.handler] = v;
+					}}
+				/>
+			{:else if row && row.handler == 'MONGODB'}
+				<MongoDB
 					bind:row
 					onchange={(v) => {
 						handler_code[row.handler] = v;

@@ -2,9 +2,12 @@
 	import { onMount } from 'svelte';
 	import { Tab, EditorCode, RESTTester } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
+	import PredefinedVars from '../widgets/js_predefined_vars.svelte';
 
 	let { row = $bindable({}), onchange = () => {} } = $props();
 	let internal_code = $state('');
+
+	
 
 	$inspect(row).with((type) => {
 		if (type === 'init') {
@@ -41,7 +44,7 @@
 	}
 
 	let tabList = $state([
-		{ label: 'Code', isActive: true, component: tab_code },
+		{ label: 'Code', isActive: true, classIcon: ' fa-brands fa-node-js ', component: tab_code },
 		{ label: 'Predefined Variables', component: tab_pred_vars },
 		{ label: 'App Variables', component: tab_app_vars },
 		{ label: 'Tester', component: tab_tester }
@@ -63,50 +66,7 @@
 {/snippet}
 
 {#snippet tab_pred_vars()}
-	<div class="content is-small">
-		<h3>Predefined variables</h3>
-		<ul>
-			<li>
-				<strong>$_RETURN_DATA_:</strong> Variable that returns the return of the function
-			</li>
-			<li>
-				<strong>$_UFETCH_:</strong> Instance of the uFetch class. More information at
-				<a href="https://github.com/edwinspire/universal-fetch">universal-fetch</a>
-			</li>
-			<li>
-				<strong>$_REQUEST_:</strong> Represents the HTTP request received by the server. Contains information
-				about the request made by the client, such as URL parameters, headers, body data, and more.
-			</li>
-			<li>
-				<strong>$_GET_INTERNAL_URL_:</strong> Function that allows obtaining the full path of an
-				OFAPI endpoint.
-				<br /> Example:
-				<code
-					>let relative_path = '/api/test/ap001';
-					<br />let fullURL = $_GET_INTERNAL_URL_(relative_path);
-					<br />// $_GET_INTERNAL_URL_ return 'http://localhost:3000/api/test/ap001'
-				</code>
-			</li>
-			<li>
-				<strong>$_FETCH_OFAPI_:</strong> Build a
-				<a href="https://github.com/edwinspire/universal-fetch/">uFetch </a>
-				intance.
-				<br />
-				The url can be absolute or relative. When it is relative, it internally repoints to the port
-				used by OFAPI.
-				<br />Example:
-				<code>
-					let url = 'http://example.net/api/test';
-					<br />
-					let fetch_instance = $_FETCH_OFAPI_(url);
-				</code>
-			</li>
-			<li>
-				<strong>$_SECUENTIAL_PROMISES_:</strong> PromiseSequence class. More information at
-				<a href="https://github.com/edwinspire/sequential-promises">sequential-promises</a>.
-			</li>
-		</ul>
-	</div>
+	<PredefinedVars></PredefinedVars>
 {/snippet}
 
 {#snippet tab_app_vars()}

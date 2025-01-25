@@ -49,7 +49,7 @@
 	}
 
 	let tabList = $state([
-		{ label: 'Parameters', isActive: true, component: tab_parameters },
+		{ label: 'Parameters', isActive: true, classIcon: ' fa-solid fa-soap ', component: tab_parameters },
 		{ label: 'Information', isActive: false, component: tab_infor },
 		{ label: 'App Variables', component: tab_app_vars },
 		{ label: 'Tester', component: tab_tester }
