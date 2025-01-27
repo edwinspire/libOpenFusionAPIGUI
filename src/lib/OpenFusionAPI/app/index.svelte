@@ -359,12 +359,19 @@
 		<Table
 			ShowNewButton="true"
 			ShowEditButton="true"
+			ShowDeleteButton="true"
 			bind:RawDataTable={endpoints}
 			bind:columns
 			bind:SelectionType={TableSelectionType}
 			bind:this={TableObject}
 			left_items={[lt01]}
 			right_items={[rt1]}
+			ondeleterow={(data) => {
+			//	console.log('ondeleterow', data);
+				if (confirm('Do you want to delete the endpoints selected?')) {
+					endpoints = endpoints.filter((item) => item.idendpoint != data.rows.find((r) => r.idendpoint).idendpoint);
+				}
+			}}
 			onnewrow={() => {
 				/*
 			SelectedRow = {
