@@ -367,9 +367,12 @@
 			left_items={[lt01]}
 			right_items={[rt1]}
 			ondeleterow={(data) => {
-			//	console.log('ondeleterow', data);
+				//console.log('ondeleterow', data);
 				if (confirm('Do you want to delete the endpoints selected?')) {
-					endpoints = endpoints.filter((item) => item.idendpoint != data.rows.find((r) => r.idendpoint).idendpoint);
+					endpoints = endpoints.filter((item) => {
+						return !data.rows.some((element) => element.idendpoint == item.idendpoint);
+					});
+				//console.log('ondeleterow', endpoints);
 				}
 			}}
 			onnewrow={() => {
