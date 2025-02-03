@@ -3,8 +3,10 @@
 	import { Tab, Table } from '@edwinspire/svelte-components';
 	import { url_paths } from '../../../utils.js';
 	import LogLevelSelect from './loglevel_select.svelte';
+	import { DateTime } from 'luxon';
 
 	let {
+		row = $bindable({}),
 		log = $bindable({
 			status_info: 1,
 			status_success: 1,
@@ -15,15 +17,26 @@
 		ondata = (d) => {}
 	} = $props();
 
+	// Obtener la fecha actual en la zona horaria local
+	const now = DateTime.local();
+	// Formatear la fecha actual en el formato deseado: "yyyy-MM-dd'T'HH:mm+ZZ"
+	// Se utiliza 'ZZZ' para obtener el offset de la zona horaria sin los minutos (por ejemplo, "+05")
+	const formattedNow = now.toFormat("yyyy-MM-dd'T'HH:mm");
+
+	// Obtener la fecha restándole 24 horas
+	const nowMinus24 = now.minus({ hours: 24 });
+	const start = nowMinus24.toFormat("yyyy-MM-dd'T'HH:mm");
+
 	let active_tab = $state(0);
 	let requestData = $state({
 		url: url_paths.getLogs,
 		params: {
-			startDate: new Date(),
-			endDate: new Date()
-			//	idendpoint: null,
+			startDate: start,
+			endDate: formattedNow,
+			idendpoint: row.idendpoint,
 			//	level: null,
-			//	limit: 1000
+			limit: 1000,
+			timezone : DateTime.local().z
 		}
 	});
 	let tabs = $state([
@@ -258,7 +271,56 @@
 {/snippet}
 
 {#snippet tab_logs()}
-	<Table bind:requestData></Table>
+	<Table bind:requestData right_items={[rt1, rt2, rt3]}>
+		{#snippet rt1()}
+			<div class="field has-addons has-addons-centered">
+				<span class="control">
+					<input
+						class="input is-small"
+						type="datetime-local"
+						placeholder="Start"
+						bind:value={requestData.params.startDate}
+					/>
+				</span>
+				<span class="control">
+					<!-- svelte-ignore a11y_missing_attribute -->
+					<a class="button is-static is-small"> Start </a>
+				</span>
+			</div>
+		{/snippet}
+		{#snippet rt2()}
+			<div class="field has-addons has-addons-centered">
+				<span class="control">
+					<input
+						class="input is-small"
+						type="datetime-local"
+						placeholder="Start"
+						bind:value={requestData.params.endDate}
+					/>
+				</span>
+				<span class="control">
+					<!-- svelte-ignore a11y_missing_attribute -->
+					<a class="button is-static is-small"> End </a>
+				</span>
+			</div>
+		{/snippet}
+		{#snippet rt3()}
+			<div class="field has-addons has-addons-centered">
+				<span class="control">
+					<input
+						class="input is-small"
+						type="number"
+						placeholder="Limit"
+						bind:value={requestData.params.limit}
+					/>
+				</span>
+				<span class="control">
+					<!-- svelte-ignore a11y_missing_attribute -->
+					<a class="button is-static is-small"> Limit </a>
+				</span>
+			</div>
+		{/snippet}
+	</Table>
 {/snippet}
 
 <Tab bind:tabs bind:active={active_tab}></Tab>

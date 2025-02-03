@@ -188,7 +188,7 @@
 
 {#snippet tab_log()}
 	{#if row && row.ctrl}
-		<Logs bind:log={row.ctrl.log}></Logs>
+		<Logs bind:log={row.ctrl.log} bind:row={row}></Logs>
 	{/if}
 {/snippet}
 

@@ -544,7 +544,7 @@
 						<span class="icon is-small">
 							<i class="fab fa-github"></i>
 						</span>
-						<span>Save</span>
+						<span>Save & Deploy</span>
 					</button>
 				{/if}
 			{/snippet}

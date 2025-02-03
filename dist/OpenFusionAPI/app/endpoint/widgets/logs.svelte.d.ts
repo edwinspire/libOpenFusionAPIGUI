@@ -4,10 +4,12 @@ type Logs = {
     $set?(props: Partial<$$ComponentProps>): void;
 };
 declare const Logs: import("svelte").Component<{
+    row?: Record<string, any>;
     log?: Record<string, any>;
     ondata?: Function;
-}, {}, "log">;
+}, {}, "row" | "log">;
 type $$ComponentProps = {
+    row?: Record<string, any>;
     log?: Record<string, any>;
     ondata?: Function;
 };

@@ -7,8 +7,6 @@
 	let { row = $bindable({}), onchange = () => {} } = $props();
 	let internal_code = $state('');
 
-	
-
 	$inspect(row).with((type) => {
 		if (type === 'init') {
 			defaultValues();

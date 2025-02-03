@@ -1,7 +1,14 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
-	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
+	import {
+		Tab,
+		EditorCode,
+		RESTTester,
+		JSONView,
+		PredictiveInput
+	} from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
+	import { listAppVars } from '../../../utils.js';
 
 	let { row = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =
 		$props();
@@ -22,6 +29,16 @@
   RAW = 'RAW',
   SHOWCONSTRAINTS = 'SHOWCONSTRAINTS',
   */
+
+	let options_app_vars = $state([]);
+
+	listAppVars.subscribe((value) => {
+		options_app_vars = Object.keys(value[row.environment]).map((item) => {
+			return { name: item, value: item };
+		});
+
+//		console.log('listAppVars >>>>>>>>>> ', value, options_app_vars);
+	});
 
 	let sample_bind_post = $state({
 		bind: {
@@ -48,18 +65,6 @@
 	let query_code = $state('SELECT 1+1;');
 
 	let timeoutChange;
-
-	/*
-	$inspect(row.code).with((type) => {
-		console.log('TYPE::::::::::::: ', type);
-		if (type === 'update' || type === 'init') {
-			clearTimeout(timeoutChange);
-			timeoutChange = setTimeout(() => {
-				parseCode();
-			}, 750);
-		}
-	});
-	*/
 
 	$effect(() => {
 		if (row?.code) {
@@ -159,9 +164,14 @@
 		</div>
 	</div>
 
-	<EditorCode isReadOnly={false} title={'Query to be executed'} lang="sql" bind:code={query_code} onchange={(c) => {
-		fnOnChange();
-	}}
+	<EditorCode
+		isReadOnly={false}
+		title={'Query to be executed'}
+		lang="sql"
+		bind:code={query_code}
+		onchange={(c) => {
+			fnOnChange();
+		}}
 	></EditorCode>
 {/snippet}
 
@@ -274,20 +284,14 @@
 				}}
 			></EditorCode>
 		{:else}
-			<div class="control has-icons-left">
-				<input
-					class="input is-small"
-					type="text"
-					placeholder="$_VAR_NAME"
-					bind:value={cnx_param_var}
-					onchange={() => {
-						fnOnChange();
-					}}
-				/>
-				<span class="icon is-small is-left">
-					<i class="fa-regular fa-keyboard"></i>
-				</span>
-			</div>
+			<PredictiveInput
+				placeholder="$_VAR_NAME"
+				options={options_app_vars}
+				bind:selectedValue={cnx_param_var}
+				onselect={(selected) => {
+					fnOnChange();
+				}}
+			></PredictiveInput>
 		{/if}
 	</div>
 {/snippet}
