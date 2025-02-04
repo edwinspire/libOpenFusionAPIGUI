@@ -1,6 +1,6 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
-	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
+	import { Tab, EditorCode, RESTTester, JSONView, PredictiveInput } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 	import PredefinedVars from '../widgets/js_predefined_vars.svelte';
 
