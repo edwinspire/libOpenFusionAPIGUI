@@ -185,20 +185,16 @@
 				}}
 			></EditorCode>
 		{:else}
-			<div class="control has-icons-left">
-				<input
-					class="input is-small"
-					type="text"
-					placeholder="$_VAR_NAME"
-					bind:value={cnx_param_var}
-					onchange={() => {
-						fnOnChange();
-					}}
-				/>
-				<span class="icon is-small is-left">
-					<i class="fa-regular fa-keyboard"></i>
-				</span>
-			</div>
+			<div class="content is-small">Select an application variable.</div>
+
+			<PredictiveInput
+				placeholder="$_VAR_NAME"
+				options={options_app_vars}
+				bind:selectedValue={cnx_param_var}
+				onselect={(selected) => {
+					fnOnChange();
+				}}
+			></PredictiveInput>
 		{/if}
 	</div>
 {/snippet}
