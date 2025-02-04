@@ -284,6 +284,9 @@
 				}}
 			></EditorCode>
 		{:else}
+		<div class="content is-small">
+			Select an application variable.
+		</div>
 			<PredictiveInput
 				placeholder="$_VAR_NAME"
 				options={options_app_vars}
