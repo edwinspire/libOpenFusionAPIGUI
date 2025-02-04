@@ -37,7 +37,6 @@
 			return { name: item, value: item };
 		});
 
-//		console.log('listAppVars >>>>>>>>>> ', value, options_app_vars);
 	});
 
 	let sample_bind_post = $state({

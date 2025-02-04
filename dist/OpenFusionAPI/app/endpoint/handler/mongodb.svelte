@@ -1,8 +1,15 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
-	import { Tab, EditorCode, RESTTester, JSONView, PredictiveInput } from '@edwinspire/svelte-components';
+	import {
+		Tab,
+		EditorCode,
+		RESTTester,
+		JSONView,
+		PredictiveInput
+	} from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 	import PredefinedVars from '../widgets/js_predefined_vars.svelte';
+	import { listAppVars } from '../../../utils.js';
 
 	let { row = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =
 		$props();
@@ -22,6 +29,14 @@
 	let js_code = $state('let test = 1;');
 
 	let timeoutChange;
+
+	let options_app_vars = $state([]);
+
+	listAppVars.subscribe((value) => {
+		options_app_vars = Object.keys(value[row.environment]).map((item) => {
+			return { name: item, value: item };
+		});
+	});
 
 	let cnx_param_sample = {
 		host: 'localhost', // Dirección del servidor MongoDB

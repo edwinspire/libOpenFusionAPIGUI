@@ -1,7 +1,14 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
-	import { Tab, EditorCode, RESTTester, JSONView, PredictiveInput } from '@edwinspire/svelte-components';
+	import {
+		Tab,
+		EditorCode,
+		RESTTester,
+		JSONView,
+		PredictiveInput
+	} from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
+	import { listAppVars } from '../../../utils.js';
 
 	let { row = $bindable({}), onchange = () => {} } = $props();
 
@@ -38,6 +45,14 @@
 
 	let query_code = $state('');
 	let timeoutChange;
+
+	let options_app_vars = $state([]);
+
+	listAppVars.subscribe((value) => {
+		options_app_vars = Object.keys(value[row.environment]).map((item) => {
+			return { name: item, value: item };
+		});
+	});
 
 	/*
 	$inspect(row.code).with((type) => {

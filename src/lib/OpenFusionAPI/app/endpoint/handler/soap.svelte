@@ -2,6 +2,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
+	import { listAppVars } from '../../../utils.js';
 
 	let { row = $bindable({}), onchange = () => {} } = $props();
 
@@ -18,6 +19,13 @@
 
 	let timeoutChange;
 
+	let options_app_vars = $state([]);
+
+	listAppVars.subscribe((value) => {
+		options_app_vars = Object.keys(value[row.environment]).map((item) => {
+			return { name: item, value: item };
+		});
+	});
 	/*
 	$inspect(row.code).with((type) => {
 		if (type === 'update' || type === 'init') {
@@ -49,7 +57,12 @@
 	}
 
 	let tabList = $state([
-		{ label: 'Parameters', isActive: true, classIcon: ' fa-solid fa-soap ', component: tab_parameters },
+		{
+			label: 'Parameters',
+			isActive: true,
+			classIcon: ' fa-solid fa-soap ',
+			component: tab_parameters
+		},
 		{ label: 'Information', isActive: false, component: tab_infor },
 		{ label: 'App Variables', component: tab_app_vars },
 		{ label: 'Tester', component: tab_tester }
