@@ -18,7 +18,8 @@ export const url_paths = {
 	clearCache: host + '/api/system/cache/clear/prd',
 	getUsersList: host + '/api/system/users/list/prd',
 	getResponsesCountStatusCode: host + '/api/system/responses/status_code/count/prd',
-	getLogs: host + '/api/system/system/log/prd'
+	getLogs: host + '/api/system/system/log/prd',
+	getlistFunctionsVarsJS: host + '/api/system/system/handler/js/funtions/prd'
 };
 
 export const userStore = writable({});
@@ -432,7 +433,7 @@ export const listHandlers = {
 	SOAP: { color: 'info', icon: 'fa-solid fa-soap', label: 'SOAP' },
 	TEXT: { color: 'warning', icon: 'fa-regular fa-file-lines', label: 'Text' },
 	FUNCTION: { color: 'danger', icon: 'fa-solid fa-robot', label: 'Function' },
-	MONGODB: { color: '', icon: 'fa-solid fa-database', label: 'MongoDB' },
+	MONGODB: { color: '', icon: 'fa-solid fa-database', label: 'MongoDB' }
 };
 
 export const listEnv = {

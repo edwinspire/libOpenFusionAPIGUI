@@ -1,75 +1,63 @@
 <script>
+	import uFetch from '@edwinspire/universal-fetch';
+	import { onMount } from 'svelte';
+	import { url_paths } from '../../../utils.js';
+
+	let uF;
+	let vars_js = {};
 	let mongo_example = `$_MONGOOSE_.connect('mongodb://127.0.0.1:27017/test'); <br/>
 					
 					const Cat = $_MONGOOSE_.model('Cat', { name: String }); <br/>
 					
 					const kitty = new Cat({ name: 'Zildjian' }); <br/>
 					kitty.save().then(() => console.log('meow')); <br/>`;
+
+	onMount(async () => {
+		uF = new uFetch();
+
+		let req_uf = await uF.GET({ url: url_paths.getlistFunctionsVarsJS });
+		vars_js = await req_uf.json();
+	});
 </script>
 
 <div class="content is-small">
 	<h3>Predefined variables</h3>
+
 	<ul>
-		<li>
-			<strong>$_RETURN_DATA_:</strong> Variable that returns the return of the function
-		</li>
-		<li>
-			<strong>$_UFETCH_:</strong> Instance of the uFetch class. More information at
-			<a href="https://github.com/edwinspire/universal-fetch">universal-fetch</a>
-		</li>
-		<li>
-			<strong>$_REQUEST_:</strong> Represents the HTTP request received by the server. Contains information
-			about the request made by the client, such as URL parameters, headers, body data, and more.
-		</li>
-		<li>
-			<strong>$_GET_INTERNAL_URL_:</strong> Function that allows obtaining the full path of an OFAPI
-			endpoint.
-			<br /> Example:
-			<code
-				>let relative_path = '/api/test/ap001';
-				<br />let fullURL = $_GET_INTERNAL_URL_(relative_path);
-				<br />// $_GET_INTERNAL_URL_ return 'http://localhost:3000/api/test/ap001'
-			</code>
-		</li>
-		<li>
-			<strong>$_FETCH_OFAPI_:</strong> Build a
-			<a href="https://github.com/edwinspire/universal-fetch/">uFetch </a>
-			intance.
-			<br />
-			The url can be absolute or relative. When it is relative, it internally repoints to the port used
-			by OFAPI.
-			<br />Example:
-			<code>
-				let url = 'http://example.net/api/test';
+		{#each Object.keys(vars_js) as key_var}
+			<li>
+				<strong>{key_var}</strong> <br />
+				{vars_js[key_var].info}<br />
+				More info on
+				<a href={vars_js[key_var].web}>{vars_js[key_var].web}</a><br />
+				{#if vars_js[key_var].warn}
+					<strong>Warning:</strong> {vars_js[key_var].warn}
+				{/if}
+
+				{#if key_var == '$_GET_INTERNAL_URL_'}
+					<br /> Example:
+					<code
+						>let relative_path = '/api/test/ap001';
+						<br />let fullURL = $_GET_INTERNAL_URL_(relative_path);
+						<br />// $_GET_INTERNAL_URL_ return 'http://localhost:3000/api/test/ap001'
+					</code>
+				{:else if key_var == '$_FETCH_OFAPI_'}
+					<br />Example:
+					<code>
+						let url = 'http://example.net/api/test';
+						<br />
+						let fetch_instance = $_FETCH_OFAPI_(url);
+					</code>
+				{:else if key_var == '$_MONGOOSE_'}
 				<br />
-				let fetch_instance = $_FETCH_OFAPI_(url);
-			</code>
-		</li>
-		<li>
-			<strong>$_SECUENTIAL_PROMISES_:</strong> PromiseSequence class. More information at
-			<a href="https://github.com/edwinspire/sequential-promises">sequential-promises</a>.
-		</li>
-		<li>
-			<strong>$_EXCEPTION_:</strong>
-			It interrupts the program flow and throws an exception. It has three parameters:
-			<ul>
-				<li>message: The message that will be shown to the user. (required)</li>
-				<li>data: An object of additional data to be sent to the user. (optional)</li>
-				<li>
-					statusCode: HTTP Status Code with which the request will be responded to. (optional.
-					Default: 500)
-				</li>
-			</ul>
-			Example:
-			<code>$_EXCEPTION_('A parameter has not been entered', $_REQUEST_.body, 400);</code>
-		</li>
-		<li>
-			<strong>$_MONGOOSE_:</strong>
-			Mongoose provides a straight-forward, schema-based solution to model your MongoDB. More information
-			at
-			<a href="https://mongoosejs.com/">Mongoose</a> <br />
-			Example:
-			<code> {@html mongo_example}</code>
-		</li>
+					Example:
+					<code> {@html mongo_example}</code>
+				{:else if key_var == '$_EXCEPTION_'}
+					 Example:
+					<code>$_EXCEPTION_('A parameter has not been entered', $_REQUEST_.body, 400);</code>
+				{/if}
+			</li>
+			<br />
+		{/each}
 	</ul>
 </div>

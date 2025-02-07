@@ -18,6 +18,7 @@ export namespace url_paths {
     let getUsersList: string;
     let getResponsesCountStatusCode: string;
     let getLogs: string;
+    let getlistFunctionsVarsJS: string;
 }
 export const userStore: import("svelte/store").Writable<{}>;
 export const listMethodStore: import("svelte/store").Writable<{}>;

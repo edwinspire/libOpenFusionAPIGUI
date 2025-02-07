@@ -223,7 +223,7 @@
 
 			app = defaultValuesApp(app_resp[0]);
 
-			console.log(app_resp[0], app);
+			//		console.log(app_resp[0], app);
 
 			if (app && app.vars && typeof app.vars === 'object') {
 				listAppVars.set(app.vars);
@@ -255,7 +255,7 @@
 	}
 
 	async function getApp() {
-		app_vars = undefined; // Esta linea es importante para que no se vayan a guardar variables de una apliacción a otra
+		cleanApp(); // Esta linea es importante para que no se vayan a guardar variables de una apliacción a otra
 		console.log('getapp', idapp, app);
 		if (idapp) {
 			try {
@@ -289,6 +289,13 @@
 		console.log('appToStore >>>> ', $state.snapshot(app_save));
 
 		return $state.snapshot(app_save);
+	}
+
+	function cleanApp() {
+		app = { app: '', idapp: null };
+		endpoints = [];
+		app_vars = undefined; 
+		listAppVars.set({});
 	}
 
 	async function saveApp() {
@@ -372,7 +379,7 @@
 					endpoints = endpoints.filter((item) => {
 						return !data.rows.some((element) => element.idendpoint == item.idendpoint);
 					});
-				//console.log('ondeleterow', endpoints);
+					//console.log('ondeleterow', endpoints);
 				}
 			}}
 			onnewrow={() => {
@@ -450,8 +457,7 @@
 			<button
 				class="button is-small is-primary is-outlined"
 				onclick={() => {
-					app = { app: '', idapp: null };
-					endpoints = [];
+					cleanApp();
 				}}
 			>
 				<span class="icon is-small">
@@ -469,7 +475,7 @@
 			classInput="is-small"
 			bind:options
 			onselect={(/** @type {{ detail: { value: number; }; }} */ e) => {
-				console.log('PredictiveInput =>> ', $userStore, e);
+				//console.log('PredictiveInput =>> ', $userStore, e);
 
 				if ($userStore) {
 					idapp = e.value;

@@ -65,15 +65,13 @@
 	listMethodStore.subscribe((value) => {
 		methods = value;
 	});
-	
+
 	$effect(() => {
-		
 		validateResource = validateURL(row.resource);
 
 		availableURL = checkEndpointConstraint();
 
 		row.endpoint = createEndpoint(row.method, app.app, row.resource, row.environment);
-		
 	});
 
 	/*
@@ -87,14 +85,17 @@
 	*/
 
 	function checkEndpointConstraint() {
-		let check = app.endpoints.some((r) => {
-			return (
-				row.resource == r.resource &&
-				row.environment == r.environment &&
-				row.method == r.method &&
-				row.idendpoint != r.idendpoint
-			);
-		});
+		let check = false;
+		if (app?.endpoints) {
+			check = app.endpoints.some((r) => {
+				return (
+					row.resource == r.resource &&
+					row.environment == r.environment &&
+					row.method == r.method &&
+					row.idendpoint != r.idendpoint
+				);
+			});
+		}
 		return !check;
 	}
 
