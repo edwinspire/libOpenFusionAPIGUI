@@ -83,10 +83,7 @@
     "file": "entries/fallbacks/layout.svelte.js",
     "name": "entries/fallbacks/layout.svelte",
     "src": "node_modules/@sveltejs/kit/src/runtime/components/svelte-5/layout.svelte",
-    "isEntry": true,
-    "imports": [
-      "_index.js"
-    ]
+    "isEntry": true
   },
   "node_modules/@sveltejs/kit/src/runtime/server/index.js": {
     "file": "index.js",

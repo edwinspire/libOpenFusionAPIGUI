@@ -16,7 +16,7 @@ function attr(name, value, is_boolean = false) {
   const assignment = is_boolean ? "" : `="${escape_html(normalized, true)}"`;
   return ` ${name}${assignment}`;
 }
-const PUBLIC_API_SERVER_HOST = "http://localhost:3000";
+const PUBLIC_API_SERVER_HOST = "http://192.168.242.59:3030";
 validateBaseUrl(PUBLIC_API_SERVER_HOST);
 function validateBaseUrl(baseUrl) {
   try {

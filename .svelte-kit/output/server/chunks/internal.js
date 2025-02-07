@@ -1,9 +1,10 @@
-import { s as safe_equals, e as equals, g as get_descriptor, d as define_property, i as is_array, a as array_from } from "./equality.js";
+import { s as safe_equals, e as equals, g as get_descriptor, i as index_of, d as define_property, a as is_array, b as array_from } from "./equality.js";
 import { H as HYDRATION_ERROR, a as HYDRATION_START, b as HYDRATION_END, r as render, p as push$1, s as setContext, c as pop$1 } from "./index.js";
 import "clsx";
-const BROWSER = false;
+const DEV = false;
 let base = "";
 let assets = base;
+const app_dir = "_app";
 const initial = { base, assets };
 function override(paths) {
   base = paths.base;
@@ -65,7 +66,58 @@ function state_unsafe_mutation() {
     throw new Error(`https://svelte.dev/e/state_unsafe_mutation`);
   }
 }
-let legacy_mode_flag = false;
+let tracing_mode_flag = false;
+function hydration_mismatch(location) {
+  {
+    console.warn(`https://svelte.dev/e/hydration_mismatch`);
+  }
+}
+let component_context = null;
+function set_component_context(context) {
+  component_context = context;
+}
+function push(props, runes = false, fn) {
+  component_context = {
+    p: component_context,
+    c: null,
+    e: null,
+    m: false,
+    s: props,
+    x: null,
+    l: null
+  };
+}
+function pop(component) {
+  const context_stack_item = component_context;
+  if (context_stack_item !== null) {
+    const component_effects = context_stack_item.e;
+    if (component_effects !== null) {
+      var previous_effect = active_effect;
+      var previous_reaction = active_reaction;
+      context_stack_item.e = null;
+      try {
+        for (var i = 0; i < component_effects.length; i++) {
+          var component_effect = component_effects[i];
+          set_active_effect(component_effect.effect);
+          set_active_reaction(component_effect.reaction);
+          effect(component_effect.fn);
+        }
+      } finally {
+        set_active_effect(previous_effect);
+        set_active_reaction(previous_reaction);
+      }
+    }
+    component_context = context_stack_item.p;
+    context_stack_item.m = true;
+  }
+  return (
+    /** @type {T} */
+    {}
+  );
+}
+function is_runes() {
+  return true;
+}
 function source(v, stack) {
   var signal = {
     f: 0,
@@ -73,7 +125,8 @@ function source(v, stack) {
     v,
     reactions: null,
     equals,
-    version: 0
+    rv: 0,
+    wv: 0
   };
   return signal;
 }
@@ -86,7 +139,7 @@ function mutable_source(initial_value, immutable = false) {
   return s;
 }
 function set(source2, value) {
-  if (active_reaction !== null && is_runes() && (active_reaction.f & (DERIVED | BLOCK_EFFECT)) !== 0 && // If the source was created locally within the current derived, then
+  if (active_reaction !== null && !untracking && is_runes() && (active_reaction.f & (DERIVED | BLOCK_EFFECT)) !== 0 && // If the source was created locally within the current derived, then
   // we allow the mutation.
   (derived_sources === null || !derived_sources.includes(source2))) {
     state_unsafe_mutation();
@@ -95,19 +148,15 @@ function set(source2, value) {
 }
 function internal_set(source2, value) {
   if (!source2.equals(value)) {
+    source2.v;
     source2.v = value;
-    source2.version = increment_version();
+    source2.wv = increment_write_version();
     mark_reactions(source2, DIRTY);
-    if (active_effect !== null && (active_effect.f & CLEAN) !== 0 && (active_effect.f & BRANCH_EFFECT) === 0) {
-      if (new_deps !== null && new_deps.includes(source2)) {
-        set_signal_status(active_effect, DIRTY);
-        schedule_effect(active_effect);
+    if (active_effect !== null && (active_effect.f & CLEAN) !== 0 && (active_effect.f & (BRANCH_EFFECT | ROOT_EFFECT)) === 0) {
+      if (untracked_writes === null) {
+        set_untracked_writes([source2]);
       } else {
-        if (untracked_writes === null) {
-          set_untracked_writes([source2]);
-        } else {
-          untracked_writes.push(source2);
-        }
+        untracked_writes.push(source2);
       }
     }
   }
@@ -136,11 +185,6 @@ function mark_reactions(signal, status) {
         );
       }
     }
-  }
-}
-function hydration_mismatch(location) {
-  {
-    console.warn(`https://svelte.dev/e/hydration_mismatch`);
   }
 }
 let hydrating = false;
@@ -194,23 +238,15 @@ function get_next_sibling(node) {
 function clear_text_content(node) {
   node.textContent = "";
 }
-function destroy_derived_children(derived) {
-  var children = derived.children;
-  if (children !== null) {
-    derived.children = null;
-    for (var i = 0; i < children.length; i += 1) {
-      var child = children[i];
-      if ((child.f & DERIVED) !== 0) {
-        destroy_derived(
-          /** @type {Derived} */
-          child
-        );
-      } else {
-        destroy_effect(
-          /** @type {Effect} */
-          child
-        );
-      }
+function destroy_derived_effects(derived) {
+  var effects = derived.effects;
+  if (effects !== null) {
+    derived.effects = null;
+    for (var i = 0; i < effects.length; i += 1) {
+      destroy_effect(
+        /** @type {Effect} */
+        effects[i]
+      );
     }
   }
 }
@@ -233,7 +269,7 @@ function execute_derived(derived) {
   set_active_effect(get_derived_parent_effect(derived));
   {
     try {
-      destroy_derived_children(derived);
+      destroy_derived_effects(derived);
       value = update_reaction(derived);
     } finally {
       set_active_effect(prev_active_effect);
@@ -247,14 +283,8 @@ function update_derived(derived) {
   set_signal_status(derived, status);
   if (!derived.equals(value)) {
     derived.v = value;
-    derived.version = increment_version();
+    derived.wv = increment_write_version();
   }
-}
-function destroy_derived(derived) {
-  destroy_derived_children(derived);
-  remove_reactions(derived, 0);
-  set_signal_status(derived, DESTROYED);
-  derived.v = derived.children = derived.deps = derived.ctx = derived.reactions = null;
 }
 function push_effect(effect2, parent_effect) {
   var parent_last = parent_effect.last;
@@ -272,7 +302,6 @@ function create_effect(type, fn, sync, push2 = true) {
   var effect2 = {
     ctx: component_context,
     deps: null,
-    deriveds: null,
     nodes_start: null,
     nodes_end: null,
     f: type | DIRTY,
@@ -284,7 +313,7 @@ function create_effect(type, fn, sync, push2 = true) {
     prev: null,
     teardown: null,
     transitions: null,
-    version: 0
+    wv: 0
   };
   if (sync) {
     var previously_flushing_effect = is_flushing_effect;
@@ -301,7 +330,7 @@ function create_effect(type, fn, sync, push2 = true) {
   } else if (fn !== null) {
     schedule_effect(effect2);
   }
-  var inert = sync && effect2.deps === null && effect2.first === null && effect2.nodes_start === null && effect2.teardown === null && (effect2.f & EFFECT_HAS_DERIVED) === 0;
+  var inert = sync && effect2.deps === null && effect2.first === null && effect2.nodes_start === null && effect2.teardown === null && (effect2.f & (EFFECT_HAS_DERIVED | BOUNDARY_EFFECT)) === 0;
   if (!inert && !is_root && push2) {
     if (parent_effect !== null) {
       push_effect(effect2, parent_effect);
@@ -311,7 +340,7 @@ function create_effect(type, fn, sync, push2 = true) {
         /** @type {Derived} */
         active_reaction
       );
-      (derived.children ??= []).push(effect2);
+      (derived.effects ??= []).push(effect2);
     }
   }
   return effect2;
@@ -350,15 +379,6 @@ function execute_effect_teardown(effect2) {
     }
   }
 }
-function destroy_effect_deriveds(signal) {
-  var deriveds = signal.deriveds;
-  if (deriveds !== null) {
-    signal.deriveds = null;
-    for (var i = 0; i < deriveds.length; i += 1) {
-      destroy_derived(deriveds[i]);
-    }
-  }
-}
 function destroy_effect_children(signal, remove_dom = false) {
   var effect2 = signal.first;
   signal.first = signal.last = null;
@@ -394,7 +414,6 @@ function destroy_effect(effect2, remove_dom = true) {
     removed = true;
   }
   destroy_effect_children(effect2, remove_dom && !removed);
-  destroy_effect_deriveds(effect2);
   remove_reactions(effect2, 0);
   set_signal_status(effect2, DESTROYED);
   var transitions = effect2.transitions;
@@ -426,7 +445,7 @@ function pause_effect(effect2, callback) {
   pause_children(effect2, transitions, true);
   run_out_transitions(transitions, () => {
     destroy_effect(effect2);
-    callback();
+    if (callback) callback();
   });
 }
 function run_out_transitions(transitions, fn) {
@@ -474,6 +493,7 @@ let queued_root_effects = [];
 let flush_count = 0;
 let dev_effect_stack = [];
 let active_reaction = null;
+let untracking = false;
 function set_active_reaction(reaction) {
   active_reaction = reaction;
 }
@@ -488,14 +508,11 @@ let untracked_writes = null;
 function set_untracked_writes(value) {
   untracked_writes = value;
 }
-let current_version = 1;
+let write_version = 1;
+let read_version = 0;
 let skip_reaction = false;
-let component_context = null;
-function increment_version() {
-  return ++current_version;
-}
-function is_runes() {
-  return !legacy_mode_flag;
+function increment_write_version() {
+  return ++write_version;
 }
 function check_dirtiness(reaction) {
   var flags = reaction.f;
@@ -514,7 +531,7 @@ function check_dirtiness(reaction) {
       if (is_disconnected || is_unowned_connected) {
         for (i = 0; i < length; i++) {
           dependency = dependencies[i];
-          if (!dependency?.reactions?.includes(reaction)) {
+          if (is_disconnected || !dependency?.reactions?.includes(reaction)) {
             (dependency.reactions ??= []).push(reaction);
           }
         }
@@ -533,7 +550,7 @@ function check_dirtiness(reaction) {
             dependency
           );
         }
-        if (dependency.version > reaction.version) {
+        if (dependency.wv > reaction.wv) {
           return true;
         }
       }
@@ -581,6 +598,31 @@ function handle_error(error, effect2, previous_effect, component_context2) {
     return;
   }
 }
+function schedule_possible_effect_self_invalidation(signal, effect2, depth = 0) {
+  var reactions = signal.reactions;
+  if (reactions === null) return;
+  for (var i = 0; i < reactions.length; i++) {
+    var reaction = reactions[i];
+    if ((reaction.f & DERIVED) !== 0) {
+      schedule_possible_effect_self_invalidation(
+        /** @type {Derived} */
+        reaction,
+        effect2,
+        depth + 1
+      );
+    } else if (effect2 === reaction) {
+      if (depth === 0) {
+        set_signal_status(reaction, DIRTY);
+      } else if ((reaction.f & CLEAN) !== 0) {
+        set_signal_status(reaction, MAYBE_DIRTY);
+      }
+      schedule_effect(
+        /** @type {Effect} */
+        reaction
+      );
+    }
+  }
+}
 function update_reaction(reaction) {
   var previous_deps = new_deps;
   var previous_skipped_deps = skipped_deps;
@@ -589,15 +631,18 @@ function update_reaction(reaction) {
   var previous_skip_reaction = skip_reaction;
   var prev_derived_sources = derived_sources;
   var previous_component_context = component_context;
+  var previous_untracking = untracking;
   var flags = reaction.f;
   new_deps = /** @type {null | Value[]} */
   null;
   skipped_deps = 0;
   untracked_writes = null;
   active_reaction = (flags & (BRANCH_EFFECT | ROOT_EFFECT)) === 0 ? reaction : null;
-  skip_reaction = !is_flushing_effect && (flags & UNOWNED) !== 0;
+  skip_reaction = (flags & UNOWNED) !== 0 && (!is_flushing_effect || previous_reaction === null || previous_untracking);
   derived_sources = null;
-  component_context = reaction.ctx;
+  set_component_context(reaction.ctx);
+  untracking = false;
+  read_version++;
   try {
     var result = (
       /** @type {Function} */
@@ -624,6 +669,19 @@ function update_reaction(reaction) {
       remove_reactions(reaction, skipped_deps);
       deps.length = skipped_deps;
     }
+    if (is_runes() && untracked_writes !== null && (reaction.f & (DERIVED | MAYBE_DIRTY | DIRTY)) === 0) {
+      for (i = 0; i < /** @type {Source[]} */
+      untracked_writes.length; i++) {
+        schedule_possible_effect_self_invalidation(
+          untracked_writes[i],
+          /** @type {Effect} */
+          reaction
+        );
+      }
+    }
+    if (previous_reaction !== null) {
+      read_version++;
+    }
     return result;
   } finally {
     new_deps = previous_deps;
@@ -632,13 +690,14 @@ function update_reaction(reaction) {
     active_reaction = previous_reaction;
     skip_reaction = previous_skip_reaction;
     derived_sources = prev_derived_sources;
-    component_context = previous_component_context;
+    set_component_context(previous_component_context);
+    untracking = previous_untracking;
   }
 }
 function remove_reaction(signal, dependency) {
   let reactions = dependency.reactions;
   if (reactions !== null) {
-    var index = reactions.indexOf(signal);
+    var index = index_of.call(reactions, signal);
     if (index !== -1) {
       var new_length = reactions.length - 1;
       if (new_length === 0) {
@@ -657,6 +716,10 @@ function remove_reaction(signal, dependency) {
     if ((dependency.f & (UNOWNED | DISCONNECTED)) === 0) {
       dependency.f ^= DISCONNECTED;
     }
+    destroy_derived_effects(
+      /** @type {Derived} **/
+      dependency
+    );
     remove_reactions(
       /** @type {Derived} **/
       dependency,
@@ -686,12 +749,14 @@ function update_effect(effect2) {
     } else {
       destroy_effect_children(effect2);
     }
-    destroy_effect_deriveds(effect2);
     execute_effect_teardown(effect2);
     var teardown = update_reaction(effect2);
     effect2.teardown = typeof teardown === "function" ? teardown : null;
-    effect2.version = current_version;
-    if (BROWSER) ;
+    effect2.wv = write_version;
+    var deps = effect2.deps;
+    var dep;
+    if (DEV && tracing_mode_flag && (effect2.f & DIRTY) !== 0 && deps !== null) ;
+    if (DEV) ;
   } catch (error) {
     handle_error(error, effect2, previous_effect, previous_component_context || effect2.ctx);
   } finally {
@@ -805,12 +870,16 @@ function process_effects(effect2, collected_effects) {
         if (is_branch) {
           current_effect.f ^= CLEAN;
         } else {
+          var previous_active_reaction = active_reaction;
           try {
+            active_reaction = current_effect;
             if (check_dirtiness(current_effect)) {
               update_effect(current_effect);
             }
           } catch (error) {
             handle_error(error, current_effect, null, current_effect.ctx);
+          } finally {
+            active_reaction = previous_active_reaction;
           }
         }
         var child = current_effect.first;
@@ -861,7 +930,7 @@ function flush_sync(fn) {
     }
     flush_count = 0;
     last_scheduled_effect = null;
-    if (BROWSER) ;
+    if (DEV) ;
     return result;
   } finally {
     scheduler_mode = previous_scheduler_mode;
@@ -871,59 +940,31 @@ function flush_sync(fn) {
 function get(signal) {
   var flags = signal.f;
   var is_derived = (flags & DERIVED) !== 0;
-  if (is_derived && (flags & DESTROYED) !== 0) {
-    var value = execute_derived(
-      /** @type {Derived} */
-      signal
-    );
-    destroy_derived(
-      /** @type {Derived} */
-      signal
-    );
-    return value;
-  }
-  if (active_reaction !== null) {
+  if (active_reaction !== null && !untracking) {
     if (derived_sources !== null && derived_sources.includes(signal)) {
       state_unsafe_local_read();
     }
     var deps = active_reaction.deps;
-    if (new_deps === null && deps !== null && deps[skipped_deps] === signal) {
-      skipped_deps++;
-    } else if (new_deps === null) {
-      new_deps = [signal];
-    } else {
-      new_deps.push(signal);
-    }
-    if (untracked_writes !== null && active_effect !== null && (active_effect.f & CLEAN) !== 0 && (active_effect.f & BRANCH_EFFECT) === 0 && untracked_writes.includes(signal)) {
-      set_signal_status(active_effect, DIRTY);
-      schedule_effect(active_effect);
+    if (signal.rv < read_version) {
+      signal.rv = read_version;
+      if (new_deps === null && deps !== null && deps[skipped_deps] === signal) {
+        skipped_deps++;
+      } else if (new_deps === null) {
+        new_deps = [signal];
+      } else if (!skip_reaction || !new_deps.includes(signal)) {
+        new_deps.push(signal);
+      }
     }
   } else if (is_derived && /** @type {Derived} */
-  signal.deps === null) {
+  signal.deps === null && /** @type {Derived} */
+  signal.effects === null) {
     var derived = (
       /** @type {Derived} */
       signal
     );
     var parent = derived.parent;
-    var target = derived;
-    while (parent !== null) {
-      if ((parent.f & DERIVED) !== 0) {
-        var parent_derived = (
-          /** @type {Derived} */
-          parent
-        );
-        target = parent_derived;
-        parent = parent_derived.parent;
-      } else {
-        var parent_effect = (
-          /** @type {Effect} */
-          parent
-        );
-        if (!parent_effect.deriveds?.includes(target)) {
-          (parent_effect.deriveds ??= []).push(target);
-        }
-        break;
-      }
+    if (parent !== null && (parent.f & UNOWNED) === 0) {
+      derived.f ^= UNOWNED;
     }
   }
   if (is_derived) {
@@ -935,48 +976,9 @@ function get(signal) {
   }
   return signal.v;
 }
-const STATUS_MASK = ~(DIRTY | MAYBE_DIRTY | CLEAN);
+const STATUS_MASK = -7169;
 function set_signal_status(signal, status) {
   signal.f = signal.f & STATUS_MASK | status;
-}
-function push(props, runes = false, fn) {
-  component_context = {
-    p: component_context,
-    c: null,
-    e: null,
-    m: false,
-    s: props,
-    x: null,
-    l: null
-  };
-}
-function pop(component) {
-  const context_stack_item = component_context;
-  if (context_stack_item !== null) {
-    const component_effects = context_stack_item.e;
-    if (component_effects !== null) {
-      var previous_effect = active_effect;
-      var previous_reaction = active_reaction;
-      context_stack_item.e = null;
-      try {
-        for (var i = 0; i < component_effects.length; i++) {
-          var component_effect = component_effects[i];
-          set_active_effect(component_effect.effect);
-          set_active_reaction(component_effect.reaction);
-          effect(component_effect.fn);
-        }
-      } finally {
-        set_active_effect(previous_effect);
-        set_active_reaction(previous_reaction);
-      }
-    }
-    component_context = context_stack_item.p;
-    context_stack_item.m = true;
-  }
-  return (
-    /** @type {T} */
-    {}
-  );
 }
 const PASSIVE_EVENTS = ["touchstart", "touchmove"];
 function is_passive_event(name) {
@@ -1395,7 +1397,6 @@ function Root($$payload, $$props) {
 }
 const root = asClassComponent(Root);
 const options = {
-  app_dir: "_app",
   app_template_contains_nonce: false,
   csp: { "mode": "auto", "directives": { "upgrade-insecure-requests": false, "block-all-mixed-content": false }, "reportOnly": { "upgrade-insecure-requests": false, "block-all-mixed-content": false } },
   csrf_check_origin: true,
@@ -1481,7 +1482,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "9dhqz4"
+  version_hash: "965k1p"
 };
 async function get_hooks() {
   let handle;
@@ -1500,23 +1501,24 @@ async function get_hooks() {
   };
 }
 export {
-  BROWSER as B,
-  assets as a,
+  DEV as D,
+  app_dir as a,
   base as b,
-  read_implementation as c,
-  options as d,
-  set_private_env as e,
-  prerendering as f,
-  set_public_env as g,
-  get_hooks as h,
-  set_safe_public_env as i,
-  set_read_implementation as j,
-  set_assets as k,
-  set_building as l,
-  set_manifest as m,
-  set_prerendering as n,
+  assets as c,
+  read_implementation as d,
+  options as e,
+  set_private_env as f,
+  get_hooks as g,
+  prerendering as h,
+  set_public_env as i,
+  set_safe_public_env as j,
+  set_read_implementation as k,
+  set_assets as l,
+  set_building as m,
+  set_manifest as n,
   override as o,
   public_env as p,
+  set_prerendering as q,
   reset as r,
   safe_public_env as s
 };
