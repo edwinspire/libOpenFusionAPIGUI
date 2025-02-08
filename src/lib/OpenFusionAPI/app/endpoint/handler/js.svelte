@@ -56,6 +56,7 @@
 {#snippet tab_code()}
 	<EditorCode
 		lang="js"
+		showFormat={true}
 		bind:code={internal_code}
 		onchange={(c) => {
 			fnOnChange();

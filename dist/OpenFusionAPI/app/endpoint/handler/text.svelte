@@ -120,8 +120,21 @@
 		onchange(getData());
 	}
 
+	function setMimeTypeEditor() {
+		let mime_selected = mimeTypes.find((item) => {
+			return item.id == mimeType;
+		});
+
+		if (mime_selected) {
+			langEditor = mime_selected.editor;
+		} else {
+			langEditor = 'text';
+		}
+	}
+
 	onMount(() => {
 		parseCode();
+		setMimeTypeEditor();
 	});
 </script>
 
@@ -142,16 +155,7 @@
 										bind:options={mimeTypes}
 										bind:option={mimeType}
 										onchange={(e) => {
-											let mime_selected = mimeTypes.find((item) => {
-												return item.id == mimeType;
-											});
-
-											if (mime_selected) {
-												langEditor = mime_selected.editor;
-											} else {
-												langEditor = 'text';
-											}
-											//console.warn('langEditor', langEditor);
+											setMimeTypeEditor();
 										}}
 									/>
 								</div>
