@@ -5,6 +5,6 @@
 	onMount(() => {});
 </script>
 
-<div class="box">
+<div class="">
 	<App  />
 </div>

@@ -1,6 +1,6 @@
 <script>
 	import uFetch from '@edwinspire/universal-fetch';
-	import { PredictiveInput, Table, ColumnTypes, Level, Tab } from '@edwinspire/svelte-components';
+	import { PredictiveInput, Table, ColumnTypes, Level, Tab , MenuMega } from '@edwinspire/svelte-components';
 	import { onDestroy, onMount } from 'svelte';
 	import {
 		userStore,
@@ -21,11 +21,19 @@
 	import cellCacheTime from './cellCacheTime.svelte';
 	import EndPointEditor from './endpoint/editor.svelte';
 	import AppVars from './app_vars.svelte';
+	import Logo from '../img/favicon.png';
 
 	let idapp = 0;
 
 	let intervalGetDataApp;
 	let app_vars;
+
+	let menujson = {
+		start: [
+		],
+		brand: [{ component: logo }, {component: select_app}, ],
+		end: [ {component: new_app},{component: user}]
+	};
 
 	/**
 	 * @type {any}
@@ -239,6 +247,7 @@
 			}
 
 			getListFunction($userStore.token, app.app, app.environment);
+			console.log($userStore);
 
 			if (app.endpoints) {
 				//	console.log('Procesar endpoints... ');
@@ -347,6 +356,19 @@
 	});
 </script>
 
+{#snippet logo()}
+<img src={Logo} alt="Open Fusion API" >
+{/snippet}
+
+{#snippet user()}
+<span class="icon-text">
+	<span class="icon">
+		<i class="fa-solid fa-user"></i>
+	</span>
+	<span>{$userStore?.user?.username}</span>
+  </span>
+{/snippet}
+
 {#snippet tab_descrip()}
 	<textarea class="textarea is-small" placeholder="Description" bind:value={app.description}
 	></textarea>
@@ -451,8 +473,8 @@
 	</div>
 {/snippet}
 
-<Level right={[r2, r1]}>
-	{#snippet r1()}
+
+{#snippet new_app()}
 		{#if $userStore}
 			<button
 				class="button is-small is-primary is-outlined"
@@ -461,14 +483,14 @@
 				}}
 			>
 				<span class="icon is-small">
-					<i class="fab fa-github"></i>
+					<i class="fa-regular fa-file"></i>
 				</span>
 				<span>New App</span>
 			</button>
 		{/if}
 	{/snippet}
 
-	{#snippet r2()}
+	{#snippet select_app()}
 		<PredictiveInput
 			label="Application: "
 			classLabel="is-small"
@@ -486,7 +508,9 @@
 			}}
 		/>
 	{/snippet}
-</Level>
+
+<MenuMega brand={menujson.brand} start={menujson.start} end={menujson.end}></MenuMega>
+
 
 {#if $userStore}
 	<div>
@@ -548,7 +572,7 @@
 						}}
 					>
 						<span class="icon is-small">
-							<i class="fab fa-github"></i>
+							<i class="fa-solid fa-rocket"></i>
 						</span>
 						<span>Save & Deploy</span>
 					</button>
