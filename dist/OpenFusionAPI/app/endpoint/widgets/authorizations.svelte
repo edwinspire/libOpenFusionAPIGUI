@@ -54,7 +54,7 @@
 	});
 
 	function defaultValue() {
-		if (!users) {
+		if (users == null) {
 			users = [];
 		}
 	}

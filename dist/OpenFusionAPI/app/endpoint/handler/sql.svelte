@@ -33,10 +33,15 @@
 	let options_app_vars = $state([]);
 
 	listAppVars.subscribe((value) => {
-		options_app_vars = Object.keys(value[row.environment]).map((item) => {
-			return { name: item, value: item };
-		});
+		let keys_list = value[row.environment];
 
+		console.log(value, row.environment, keys_list);
+
+		if (keys_list) {
+			options_app_vars = Object.keys(keys_list).map((item) => {
+				return { name: item, value: item };
+			});
+		}
 	});
 
 	let sample_bind_post = $state({
@@ -283,9 +288,7 @@
 				}}
 			></EditorCode>
 		{:else}
-		<div class="content is-small">
-			Select an application variable.
-		</div>
+			<div class="content is-small">Select an application variable.</div>
 			<PredictiveInput
 				placeholder="$_VAR_NAME"
 				options={options_app_vars}
