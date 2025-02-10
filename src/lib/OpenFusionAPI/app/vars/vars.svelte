@@ -76,12 +76,15 @@
 	<div class="box">
 		{#each Object.keys(appVars) as varname}
 			{#if appVars[varname]}
+				
 				<EditorCode
 					left={left_Editor}
 					right={right_Editor}
-					{showCode}
+					{showCode}					
+					showFormat={false}
 					{isReadOnly}
 					bind:code={appVars[varname]}
+					lang='json'
 				>
 					{#snippet left_Editor()}
 						<span>
