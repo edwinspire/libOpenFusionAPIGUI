@@ -1,6 +1,14 @@
 <script>
 	import uFetch from '@edwinspire/universal-fetch';
-	import { PredictiveInput, Table, ColumnTypes, Level, Tab , MenuMega } from '@edwinspire/svelte-components';
+	import {
+		PredictiveInput,
+		Table,
+		ColumnTypes,
+		Level,
+		Tab,
+		MenuMega,
+		SlideFullScreen
+	} from '@edwinspire/svelte-components';
 	import { onDestroy, onMount } from 'svelte';
 	import {
 		userStore,
@@ -27,12 +35,17 @@
 
 	let intervalGetDataApp;
 	let app_vars;
-
+	let showEditorApp = $state(false);
+	let selectedIdApp = $state(0);
 	let menujson = {
-		start: [
-		],
-		brand: [{ component: logo }, {component: select_app}, ],
-		end: [ {component: new_app},{component: user}]
+		start: [],
+		brand: [{ component: logo }],
+		end: [
+			{ component: edit_app },
+			{ component: new_app },
+			{ component: save_deploy },
+			{ component: user }
+		]
 	};
 
 	/**
@@ -106,11 +119,6 @@
 
 	let tabs = $state([
 		{
-			label: 'Endpoints',
-			classIcon: 'fa-solid fa-rectangle-list',
-			component: tab_endpoints
-		},
-		{
 			label: 'Description',
 			classIcon: 'fa-solid fa-file-lines',
 			slot: 'description',
@@ -156,6 +164,16 @@
 
 	function reloadPage() {
 		window.location.reload();
+	}
+
+	function confirmSaveApp() {
+		if (confirm('Do you want to save the application data?')) {
+			//app.vars = fnVars.getCode();
+			if (app_vars) {
+				app.vars = app_vars;
+			}
+			saveApp();
+		}
 	}
 
 	async function getEnvList() {
@@ -301,9 +319,10 @@
 	}
 
 	function cleanApp() {
+		//idapp = 0;
 		app = { app: '', idapp: null };
-		endpoints = [];
-		app_vars = undefined; 
+		endpoints = [...new Array()];
+		app_vars = undefined;
 		listAppVars.set({});
 	}
 
@@ -356,17 +375,33 @@
 	});
 </script>
 
+{#snippet save_deploy()}
+	{#if $userStore}
+		<button
+			class="button is-small is-link is-outlined"
+			onclick={() => {
+				confirmSaveApp();
+			}}
+		>
+			<span class="icon is-small">
+				<i class="fa-solid fa-rocket"></i>
+			</span>
+			<span>Save & Deploy</span>
+		</button>
+	{/if}
+{/snippet}
+
 {#snippet logo()}
-<img src={Logo} alt="Open Fusion API" >
+	<img src={Logo} alt="Open Fusion API" />
 {/snippet}
 
 {#snippet user()}
-<span class="icon-text">
-	<span class="icon">
-		<i class="fa-solid fa-user"></i>
+	<span class="icon-text">
+		<span class="icon">
+			<i class="fa-solid fa-user"></i>
+		</span>
+		<span>{$userStore?.user?.username}</span>
 	</span>
-	<span>{$userStore?.user?.username}</span>
-  </span>
 {/snippet}
 
 {#snippet tab_descrip()}
@@ -385,200 +420,179 @@
 
 {#snippet tab_endpoints()}
 	<div>
-		<Table
-			ShowNewButton="true"
-			ShowEditButton="true"
-			ShowDeleteButton="true"
-			bind:RawDataTable={endpoints}
-			bind:columns
-			bind:SelectionType={TableSelectionType}
-			bind:this={TableObject}
-			left_items={[lt01]}
-			right_items={[rt1]}
-			ondeleterow={(data) => {
-				//console.log('ondeleterow', data);
-				if (confirm('Do you want to delete the endpoints selected?')) {
-					endpoints = endpoints.filter((item) => {
-						return !data.rows.some((element) => element.idendpoint == item.idendpoint);
-					});
-					//console.log('ondeleterow', endpoints);
-				}
-			}}
-			onnewrow={() => {
-				/*
-			SelectedRow = {
-				enabled: false,
-				environment: 'dev',
-				method: 'NA',
-				handler: 'NA',
-				resource: '',
-				cache_time: 0
-			};
-			*/
-
-				if (app && app.idapp && app.idapp.length > 0) {
-					SelectedRow = defaultValuesRow();
-
-					showEndpointEdit = true;
-				} else {
-					alert('No App selected');
-				}
-			}}
-			oneditrow={(data) => {
-				SelectedRow = defaultValuesRow(data);
-				showEndpointEdit = true;
-			}}
-		>
-			{#snippet lt01()}
-				Endpoints
-			{/snippet}
-			<!-- <span slot="r09">
-			<button
-				class="button is-small"
-				onclick={() => {
-					showAuthorizations = !showAuthorizations;
-
-					if (showAuthorizations) {
-						columns.ctrl.hidden = false;
-						columns.cache_time.hidden = true;
-					} else {
-						columns.ctrl.hidden = true;
-						columns.cache_time.hidden = false;
+		{#if app.idapp}
+			<Table
+				ShowNewButton="true"
+				ShowEditButton="true"
+				ShowDeleteButton="true"
+				bind:RawDataTable={endpoints}
+				bind:columns
+				bind:SelectionType={TableSelectionType}
+				bind:this={TableObject}
+				left_items={[lt01]}
+				right_items={[rt1]}
+				ondeleterow={(data) => {
+					//console.log('ondeleterow', data);
+					if (confirm('Do you want to delete the endpoints selected?')) {
+						endpoints = endpoints.filter((item) => {
+							return !data.rows.some((element) => element.idendpoint == item.idendpoint);
+						});
+						//console.log('ondeleterow', endpoints);
 					}
 				}}
-			>
-				<span class="icon is-small">
-					<i class="fa-solid fa-users"></i>
-				</span>
-				<span>Users</span>
-			</button>
-		</span> -->
+				onnewrow={() => {
+					/*
+		SelectedRow = {
+			enabled: false,
+			environment: 'dev',
+			method: 'NA',
+			handler: 'NA',
+			resource: '',
+			cache_time: 0
+		};
+		*/
 
-			{#snippet rt1()}
-				<span>
-					<button
-						class="button is-small"
-						onclick={() => {
-							clearcache();
-						}}
-					>
-						<span class="icon is-small">
-							<i class="fa-solid fa-eraser"></i>
-						</span>
-						<span>Cache</span>
-					</button>
-				</span>
-			{/snippet}
-		</Table>
+					if (app && app.idapp && app.idapp.length > 0) {
+						SelectedRow = defaultValuesRow();
+
+						showEndpointEdit = true;
+					} else {
+						alert('No App selected');
+					}
+				}}
+				oneditrow={(data) => {
+					SelectedRow = defaultValuesRow(data);
+					showEndpointEdit = true;
+				}}
+			>
+				{#snippet lt01()}
+					Endpoints
+				{/snippet}
+				<!-- <span slot="r09">
+		<button
+			class="button is-small"
+			onclick={() => {
+				showAuthorizations = !showAuthorizations;
+
+				if (showAuthorizations) {
+					columns.ctrl.hidden = false;
+					columns.cache_time.hidden = true;
+				} else {
+					columns.ctrl.hidden = true;
+					columns.cache_time.hidden = false;
+				}
+			}}
+		>
+			<span class="icon is-small">
+				<i class="fa-solid fa-users"></i>
+			</span>
+			<span>Users</span>
+		</button>
+	</span> -->
+
+				{#snippet rt1()}
+					<span>
+						<button
+							class="button is-small"
+							onclick={() => {
+								clearcache();
+							}}
+						>
+							<span class="icon is-small">
+								<i class="fa-solid fa-eraser"></i>
+							</span>
+							<span>Cache</span>
+						</button>
+					</span>
+				{/snippet}
+			</Table>
+		{/if}
 	</div>
 {/snippet}
 
-
 {#snippet new_app()}
-		{#if $userStore}
-			<button
-				class="button is-small is-primary is-outlined"
-				onclick={() => {
-					cleanApp();
-				}}
-			>
-				<span class="icon is-small">
-					<i class="fa-regular fa-file"></i>
-				</span>
-				<span>New App</span>
-			</button>
-		{/if}
-	{/snippet}
-
-	{#snippet select_app()}
-		<PredictiveInput
-			label="Application: "
-			classLabel="is-small"
-			classInput="is-small"
-			bind:options
-			onselect={(/** @type {{ detail: { value: number; }; }} */ e) => {
-				//console.log('PredictiveInput =>> ', $userStore, e);
-
-				if ($userStore) {
-					idapp = e.value;
-					getApp();
-				} else {
-					alert('You do not have authorization');
-				}
+	{#if $userStore}
+		<button
+			class="button is-small is-primary is-outlined"
+			onclick={() => {
+				cleanApp();
+				idapp = 0;
+				selectedIdApp = 'sdsd';
+				showEditorApp = true;
 			}}
-		/>
-	{/snippet}
+		>
+			<span class="icon is-small">
+				<i class="fa-regular fa-file"></i>
+			</span>
+			<span>New App</span>
+		</button>
+	{/if}
+{/snippet}
+
+{#snippet edit_app()}
+	{#if $userStore && app.idapp}
+		<button
+			class="button is-small is-primary is-outlined"
+			onclick={() => {
+				showEditorApp = true;
+			}}
+		>
+			<span class="icon is-small">
+				<i class="fa-regular fa-file"></i>
+			</span>
+			<span>Edit App</span>
+		</button>
+	{/if}
+{/snippet}
+
+{#snippet select_app()}
+	<PredictiveInput
+		label="Application"
+		classLabel="is-small"
+		classInput="is-small"
+		bind:options
+		bind:selectedValue={selectedIdApp}
+		onselect={(/** @type {{ detail: { value: number; }; }} */ e) => {
+			console.log('PredictiveInput =>> ', $userStore, e);
+
+			if ($userStore) {
+				idapp = e.value;
+				getApp();
+			} else {
+				alert('You do not have authorization');
+			}
+		}}
+	/>
+{/snippet}
+
+{#snippet app_enabled_field()}
+	<div class="field has-addons">
+		<p class="control">
+			<!-- svelte-ignore a11y_missing_attribute -->
+			<a class="button is-static is-small"> Enabled </a>
+		</p>
+		<p class="control">
+			{#if app}
+				<input
+					type="button"
+					bind:value={app.enabled}
+					class={app.enabled
+						? 'button is-success is-selected is-small'
+						: 'button is-danger is-small'}
+					onclick={() => {
+						app.enabled = !app.enabled;
+					}}
+				/>
+			{/if}
+		</p>
+	</div>
+{/snippet}
 
 <MenuMega brand={menujson.brand} start={menujson.start} end={menujson.end}></MenuMega>
 
-
 {#if $userStore}
 	<div>
-		<Level left={[l01, l02]} right={[r03, r02, r01]}>
-			{#snippet l01()}
-				<div class="field has-addons">
-					<p class="control">
-						<!-- svelte-ignore a11y_missing_attribute -->
-						<a class="button is-static is-small"> Application </a>
-					</p>
-					<p class="control">
-						{#if app}
-							<input
-								class="input is-small"
-								type="text"
-								placeholder="Application name"
-								bind:value={app.app}
-							/>
-						{/if}
-					</p>
-				</div>
-			{/snippet}
-
-			{#snippet l02()}
-				<div class="field has-addons">
-					<p class="control">
-						<!-- svelte-ignore a11y_missing_attribute -->
-						<a class="button is-static is-small"> Enabled </a>
-					</p>
-					<p class="control">
-						{#if app}
-							<input
-								type="button"
-								bind:value={app.enabled}
-								class={app.enabled
-									? 'button is-success is-selected is-small'
-									: 'button is-danger is-small'}
-								onclick={() => {
-									app.enabled = !app.enabled;
-								}}
-							/>
-						{/if}
-					</p>
-				</div>
-			{/snippet}
-
-			{#snippet r01()}
-				{#if $userStore}
-					<button
-						class="button is-small is-link is-outlined"
-						onclick={() => {
-							if (confirm('Do you want to save the application data?')) {
-								//app.vars = fnVars.getCode();
-								if (app_vars) {
-									app.vars = app_vars;
-								}
-								saveApp();
-							}
-						}}
-					>
-						<span class="icon is-small">
-							<i class="fa-solid fa-rocket"></i>
-						</span>
-						<span>Save & Deploy</span>
-					</button>
-				{/if}
-			{/snippet}
-
+		<Level left={[select_app, app_enabled_field]} right={[r03, r02]}>
 			{#snippet r02()}
 				{#if $userStore}
 					<button
@@ -726,7 +740,7 @@
 			{/snippet}
 		</Level>
 
-		<Tab bind:tabs bind:active={active_tab}></Tab>
+		{@render tab_endpoints()}
 	</div>
 {/if}
 
@@ -782,4 +796,70 @@
 			}
 		}}
 	></EndPointEditor>
+{/if}
+
+{#if app}
+	<SlideFullScreen bind:show={showEditorApp}>
+		<Level left={[app_name_field, app_enabled_field]} right={[r01]}>
+			{#snippet app_name_field()}
+				<div class="field has-addons">
+					<p class="control">
+						<!-- svelte-ignore a11y_missing_attribute -->
+						<a class="button is-static is-small"> Application </a>
+					</p>
+					<p class="control">
+						{#if app}
+							<input
+								class="input is-small"
+								type="text"
+								placeholder="Application name"
+								bind:value={app.app}
+							/>
+						{/if}
+					</p>
+				</div>
+			{/snippet}
+
+			{#snippet r01()}
+				<div class="field has-addons">
+					<p class="control">
+						<button
+							class="button is-small is-link"
+							onclick={() => {
+								confirmSaveApp();
+								showEditorApp = false;
+							}}
+						>
+							<span class="icon is-small">
+								<i class="fa-solid fa-rocket"></i>
+							</span>
+							<span>Save & Deploy</span>
+						</button>
+					</p>
+					<p class="control">
+						<button
+							class="button is-small"
+							onclick={() => {
+								if (
+									confirm(
+										'If you cancel, you will lose absolutely all changes made to the app. Do you want to continue?'
+									)
+								) {
+									getApp();
+									showEditorApp = false;
+								}
+							}}
+						>
+							<span class="icon is-small">
+								<i class="fa-solid fa-xmark"></i>
+							</span>
+							<span>Cancel</span>
+						</button>
+					</p>
+				</div>
+			{/snippet}
+		</Level>
+
+		<Tab bind:tabs bind:active={active_tab}></Tab>
+	</SlideFullScreen>
 {/if}
