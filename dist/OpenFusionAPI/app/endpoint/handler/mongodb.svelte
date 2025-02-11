@@ -148,6 +148,7 @@
 	<EditorCode
 		isReadOnly={false}
 		lang="js"
+		showFormat={true}
 		bind:code={js_code}
 		onchange={(c) => {
 			fnOnChange();
@@ -194,6 +195,7 @@
 			<EditorCode
 				isReadOnly={false}
 				lang="json"
+				showFormat={true}
 				bind:code={cnx_param_json}
 				onchange={() => {
 					fnOnChange();

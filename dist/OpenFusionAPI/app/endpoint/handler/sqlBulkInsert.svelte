@@ -201,6 +201,7 @@
 			<EditorCode
 				isReadOnly={false}
 				lang="json"
+				showFormat={true}
 				bind:code={cnx_param_json}
 				onchange={(c) => {
 					fnOnChange();

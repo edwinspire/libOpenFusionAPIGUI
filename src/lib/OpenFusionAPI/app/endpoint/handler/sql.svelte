@@ -172,6 +172,7 @@
 		isReadOnly={false}
 		title={'Query to be executed'}
 		lang="sql"
+		showFormat={true}
 		bind:code={query_code}
 		onchange={(c) => {
 			fnOnChange();

@@ -163,6 +163,7 @@
 		<EditorCode
 			isReadOnly={false}
 			lang="sql"
+			showFormat={true}
 			bind:code={query_code}
 			onchange={(c) => {
 				fnOnChange();

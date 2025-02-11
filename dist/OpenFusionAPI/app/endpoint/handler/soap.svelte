@@ -107,6 +107,7 @@
 
 		<EditorCode
 			lang="json"
+			showFormat={true}
 			bind:code={internal_code}
 			onchange={() => {
 				fnOnChange();

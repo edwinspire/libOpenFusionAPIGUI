@@ -171,6 +171,7 @@
 		<EditorCode
 			bind:lang={langEditor}
 			bind:code={payload}
+			showFormat={true}
 			onchange={(c) => {
 				fnOnChange();
 			}}
