@@ -26,16 +26,6 @@
 			return { name: item, value: item };
 		});
 	});
-	/*
-	$inspect(row.code).with((type) => {
-		if (type === 'update' || type === 'init') {
-			clearTimeout(timeoutChange);
-			timeoutChange = setTimeout(() => {
-				parseCode();
-			}, 750);
-		}
-	});
-	*/
 
 	$effect(() => {
 		if (row?.code) {

@@ -9,7 +9,7 @@
 	} from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 	import PredefinedVars from '../widgets/js_predefined_vars.svelte';
-	import { listAppVars } from '../../../utils.js';
+	import AppVarsSelector from '../widgets/app_vars_selector.svelte';
 
 	let { row = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =
 		$props();
@@ -29,14 +29,6 @@
 	let js_code = $state('let test = 1;');
 
 	let timeoutChange;
-
-	let options_app_vars = $state([]);
-
-	listAppVars.subscribe((value) => {
-		options_app_vars = Object.keys(value[row.environment]).map((item) => {
-			return { name: item, value: item };
-		});
-	});
 
 	let cnx_param_sample = {
 		host: 'localhost', // Dirección del servidor MongoDB
@@ -203,15 +195,13 @@
 			></EditorCode>
 		{:else}
 			<div class="content is-small">Select an application variable.</div>
-
-			<PredictiveInput
-				placeholder="$_VAR_NAME"
-				options={options_app_vars}
-				bind:selectedValue={cnx_param_var}
+			<AppVarsSelector
+				bind:value={cnx_param_var}
+				bind:environment={row.environment}
 				onselect={(selected) => {
 					fnOnChange();
 				}}
-			></PredictiveInput>
+			></AppVarsSelector>
 		{/if}
 	</div>
 {/snippet}
