@@ -1,14 +1,7 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
-	import {
-		Tab,
-		EditorCode,
-		RESTTester,
-		JSONView,
-		PredictiveInput
-	} from '@edwinspire/svelte-components';
+	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
-	import { listAppVars } from '../../../utils.js';
 	import AppVarsSelector from '../widgets/app_vars_selector.svelte';
 
 	let { row = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =
@@ -57,16 +50,10 @@
 
 	let timeoutChange;
 
-	$effect(() => {
-		if (row?.code) {
-		
+	$inspect(row.code).with((type) => {
+		console.log('zzzzzzzzzzzzzz', type);
+		if (type == 'init') {
 			parseCode();
-			/*
-			clearTimeout(timeoutChange);
-			timeoutChange = setTimeout(() => {
-				parseCode();
-			}, 500);
-			*/
 		}
 	});
 
@@ -92,7 +79,7 @@
 		} catch (error) {
 			cnx_param_json = {};
 			cnx_param_var = '';
-			query_code = 'SELECT 1;';
+			query_code = 'SELECT 2;';
 			console.error('Error', $state.snapshot(error));
 		}
 	}
@@ -128,7 +115,7 @@
 		try {
 			outcode.config = conf;
 			outcode.query = query_code;
-			return JSON.stringify(outcode, null, 2);
+			return JSON.stringify(outcode);
 		} catch (error) {
 			console.warn(error);
 			return code;
@@ -136,7 +123,7 @@
 	}
 
 	onMount(() => {
-		parseCode();
+		//parseCode();
 		//	sample_bind_post_string = JSON.stringify(sample_bind_post);
 	});
 	onDestroy(() => {
