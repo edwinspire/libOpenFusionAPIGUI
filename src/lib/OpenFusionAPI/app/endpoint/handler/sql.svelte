@@ -59,10 +59,14 @@
 
 	$effect(() => {
 		if (row?.code) {
+		
+			parseCode();
+			/*
 			clearTimeout(timeoutChange);
 			timeoutChange = setTimeout(() => {
 				parseCode();
 			}, 500);
+			*/
 		}
 	});
 
