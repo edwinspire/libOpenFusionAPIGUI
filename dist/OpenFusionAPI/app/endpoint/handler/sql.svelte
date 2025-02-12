@@ -66,7 +66,7 @@
 		{ label: 'Tester', component: tab_tester }
 	]);
 
-	let query_code = $state('SELECT 1+1;');
+	let query_code = $state('SELECT 1;');
 
 	let timeoutChange;
 
@@ -75,7 +75,7 @@
 			clearTimeout(timeoutChange);
 			timeoutChange = setTimeout(() => {
 				parseCode();
-			}, 750);
+			}, 1000);
 		}
 	});
 
@@ -96,11 +96,13 @@
 					use_var_cnx = true;
 				}
 			}
+
+			console.log('parseCode query_code', query_code);
 		} catch (error) {
 			cnx_param_json = {};
 			cnx_param_var = '';
 			query_code = 'SELECT 1;';
-			console.error('Error', error);
+			console.error('Error', $state.snapshot(error));
 		}
 	}
 
@@ -170,7 +172,6 @@
 
 	<EditorCode
 		isReadOnly={false}
-		title={'Query to be executed'}
 		lang="sql"
 		showFormat={true}
 		bind:code={query_code}

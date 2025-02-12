@@ -529,14 +529,22 @@ function check_dirtiness(reaction) {
       var is_unowned_connected = is_unowned && active_effect !== null && !skip_reaction;
       var length = dependencies.length;
       if (is_disconnected || is_unowned_connected) {
+        var derived = (
+          /** @type {Derived} */
+          reaction
+        );
+        var parent = derived.parent;
         for (i = 0; i < length; i++) {
           dependency = dependencies[i];
-          if (is_disconnected || !dependency?.reactions?.includes(reaction)) {
-            (dependency.reactions ??= []).push(reaction);
+          if (is_disconnected || !dependency?.reactions?.includes(derived)) {
+            (dependency.reactions ??= []).push(derived);
           }
         }
         if (is_disconnected) {
-          reaction.f ^= DISCONNECTED;
+          derived.f ^= DISCONNECTED;
+        }
+        if (is_unowned_connected && parent !== null && (parent.f & UNOWNED) === 0) {
+          derived.f ^= UNOWNED;
         }
       }
       for (i = 0; i < length; i++) {
@@ -1482,7 +1490,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "7j9reh"
+  version_hash: "yfqro3"
 };
 async function get_hooks() {
   let handle;
