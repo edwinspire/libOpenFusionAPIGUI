@@ -9,6 +9,7 @@
 	} from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 	import { listAppVars } from '../../../utils.js';
+	import AppVarsSelector from '../widgets/app_vars_selector.svelte';
 
 	let { row = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =
 		$props();
@@ -29,20 +30,6 @@
   RAW = 'RAW',
   SHOWCONSTRAINTS = 'SHOWCONSTRAINTS',
   */
-
-	let options_app_vars = $state([]);
-
-	listAppVars.subscribe((value) => {
-		let keys_list = value[row.environment];
-
-		console.log(value, row.environment, keys_list);
-
-		if (keys_list) {
-			options_app_vars = Object.keys(keys_list).map((item) => {
-				return { name: item, value: item };
-			});
-		}
-	});
 
 	let sample_bind_post = $state({
 		bind: {
@@ -75,7 +62,7 @@
 			clearTimeout(timeoutChange);
 			timeoutChange = setTimeout(() => {
 				parseCode();
-			}, 1000);
+			}, 500);
 		}
 	});
 
@@ -291,14 +278,13 @@
 			></EditorCode>
 		{:else}
 			<div class="content is-small">Select an application variable.</div>
-			<PredictiveInput
-				placeholder="$_VAR_NAME"
-				options={options_app_vars}
-				bind:selectedValue={cnx_param_var}
+			<AppVarsSelector
+				bind:value={cnx_param_var}
+				bind:environment={row.environment}
 				onselect={(selected) => {
 					fnOnChange();
 				}}
-			></PredictiveInput>
+			></AppVarsSelector>
 		{/if}
 	</div>
 {/snippet}
