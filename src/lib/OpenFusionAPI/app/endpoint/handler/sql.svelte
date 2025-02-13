@@ -50,10 +50,12 @@
 
 	let timeoutChange;
 
-	$inspect(row.code).with((type) => {
-		console.log('zzzzzzzzzzzzzz', type);
-		if (type == 'init') {
-			parseCode();
+	$effect(() => {
+		if (row?.code) {
+			clearTimeout(timeoutChange);
+			timeoutChange = setTimeout(() => {
+				parseCode();
+			}, 750);
 		}
 	});
 
@@ -123,7 +125,7 @@
 	}
 
 	onMount(() => {
-		//parseCode();
+		parseCode();
 		//	sample_bind_post_string = JSON.stringify(sample_bind_post);
 	});
 	onDestroy(() => {
