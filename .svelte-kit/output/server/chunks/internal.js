@@ -606,7 +606,7 @@ function handle_error(error, effect2, previous_effect, component_context2) {
     return;
   }
 }
-function schedule_possible_effect_self_invalidation(signal, effect2, depth = 0) {
+function schedule_possible_effect_self_invalidation(signal, effect2, root2 = true) {
   var reactions = signal.reactions;
   if (reactions === null) return;
   for (var i = 0; i < reactions.length; i++) {
@@ -616,10 +616,10 @@ function schedule_possible_effect_self_invalidation(signal, effect2, depth = 0) 
         /** @type {Derived} */
         reaction,
         effect2,
-        depth + 1
+        false
       );
     } else if (effect2 === reaction) {
-      if (depth === 0) {
+      if (root2) {
         set_signal_status(reaction, DIRTY);
       } else if ((reaction.f & CLEAN) !== 0) {
         set_signal_status(reaction, MAYBE_DIRTY);
@@ -677,7 +677,7 @@ function update_reaction(reaction) {
       remove_reactions(reaction, skipped_deps);
       deps.length = skipped_deps;
     }
-    if (is_runes() && untracked_writes !== null && (reaction.f & (DERIVED | MAYBE_DIRTY | DIRTY)) === 0) {
+    if (is_runes() && untracked_writes !== null && !untracking && deps !== null && (reaction.f & (DERIVED | MAYBE_DIRTY | DIRTY)) === 0) {
       for (i = 0; i < /** @type {Source[]} */
       untracked_writes.length; i++) {
         schedule_possible_effect_self_invalidation(
@@ -802,8 +802,7 @@ function flush_queued_root_effects(root_effects) {
       if ((effect2.f & CLEAN) === 0) {
         effect2.f ^= CLEAN;
       }
-      var collected_effects = [];
-      process_effects(effect2, collected_effects);
+      var collected_effects = process_effects(effect2);
       flush_queued_effects(collected_effects);
     }
   } finally {
@@ -865,38 +864,36 @@ function schedule_effect(signal) {
   }
   queued_root_effects.push(effect2);
 }
-function process_effects(effect2, collected_effects) {
-  var current_effect = effect2.first;
+function process_effects(effect2) {
   var effects = [];
+  var current_effect = effect2.first;
   main_loop: while (current_effect !== null) {
     var flags = current_effect.f;
     var is_branch = (flags & BRANCH_EFFECT) !== 0;
     var is_skippable_branch = is_branch && (flags & CLEAN) !== 0;
     var sibling = current_effect.next;
     if (!is_skippable_branch && (flags & INERT) === 0) {
-      if ((flags & RENDER_EFFECT) !== 0) {
-        if (is_branch) {
-          current_effect.f ^= CLEAN;
-        } else {
-          var previous_active_reaction = active_reaction;
-          try {
-            active_reaction = current_effect;
-            if (check_dirtiness(current_effect)) {
-              update_effect(current_effect);
-            }
-          } catch (error) {
-            handle_error(error, current_effect, null, current_effect.ctx);
-          } finally {
-            active_reaction = previous_active_reaction;
-          }
-        }
-        var child = current_effect.first;
-        if (child !== null) {
-          current_effect = child;
-          continue;
-        }
-      } else if ((flags & EFFECT) !== 0) {
+      if ((flags & EFFECT) !== 0) {
         effects.push(current_effect);
+      } else if (is_branch) {
+        current_effect.f ^= CLEAN;
+      } else {
+        var previous_active_reaction = active_reaction;
+        try {
+          active_reaction = current_effect;
+          if (check_dirtiness(current_effect)) {
+            update_effect(current_effect);
+          }
+        } catch (error) {
+          handle_error(error, current_effect, null, current_effect.ctx);
+        } finally {
+          active_reaction = previous_active_reaction;
+        }
+      }
+      var child = current_effect.first;
+      if (child !== null) {
+        current_effect = child;
+        continue;
       }
     }
     if (sibling === null) {
@@ -915,11 +912,7 @@ function process_effects(effect2, collected_effects) {
     }
     current_effect = sibling;
   }
-  for (var i = 0; i < effects.length; i++) {
-    child = effects[i];
-    collected_effects.push(child);
-    process_effects(child, collected_effects);
-  }
+  return effects;
 }
 function flush_sync(fn) {
   var previous_scheduler_mode = scheduler_mode;
@@ -1490,7 +1483,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1g0a3pz"
+  version_hash: "cn8oyh"
 };
 async function get_hooks() {
   let handle;
