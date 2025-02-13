@@ -39,14 +39,15 @@
 
 	let timeoutChageAuth;
 
-	$inspect(table_users).with((type) => {
-		if (type === 'update') {
+	$effect(() => {
+		if (table_users) {
 			clearTimeout(timeoutChageAuth);
 			timeoutChageAuth = setTimeout(() => {
 				setUsers();
 			}, 750);
 		}
 	});
+
 
 	storeUsersList.subscribe((value) => {
 		data_users = value;

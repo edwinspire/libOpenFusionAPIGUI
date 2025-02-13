@@ -25,24 +25,7 @@
 	let methods = $state([]);
 
 	let uf = new uFetch();
-	//let timeoutResource;
-
-	$inspect(row).with((type) => {
-		if (type === 'init') {
-			defaultValues();
-		}
-	});
-
-	/*
-	$inspect(row.resource).with((type) => {
-		if (type === 'update') {
-			clearTimeout(timeoutResource);
-			timeoutResource = setTimeout(() => {
-				checkResource();
-			}, 500);
-		}
-	});
-	*/
+	
 
 	function defaultValues() {
 		if (!row) {
@@ -74,15 +57,6 @@
 		row.endpoint = createEndpoint(row.method, app.app, row.resource, row.environment);
 	});
 
-	/*
-	function checkResource() {
-		validateResource = validateURL(row.resource);
-
-		availableURL = checkEndpointConstraint();
-
-		row.endpoint = createEndpoint(row.method, app.app, row.resource, row.environment);
-	}
-	*/
 
 	function checkEndpointConstraint() {
 		let check = false;
@@ -119,6 +93,7 @@
 	}
 
 	onMount(async () => {
+		defaultValues();
 		await getEnvList();
 	});
 </script>

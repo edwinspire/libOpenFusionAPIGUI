@@ -66,14 +66,7 @@
 	let payload = $state('');
 	let langEditor = $state('txt');
 
-	/*
-	$inspect(row.code).with((type) => {
-		if (type === 'update' || type === 'init') {
-			parseCode();
-		}
-	});
-	*/
-
+	
 	$effect(() => {
 		if (row?.code) {
 			parseCode();

@@ -148,19 +148,9 @@
 	let app = $state(defaultValuesApp());
 	let uf = new uFetch();
 
-	/*
-	$inspect(idapp).with((type) => {
-		if (type === 'update' || type === 'init') {
-			getApp();
-		}
-	});
-*/
 
-	$inspect(app).with((type) => {
-		if (type === 'init') {
-			app = defaultValuesApp();
-		}
-	});
+
+
 
 	function reloadPage() {
 		window.location.reload();
@@ -360,8 +350,11 @@
 	}
 
 	onMount(async () => {
+
 		await getListApps();
 		await getEnvList();
+		app = defaultValuesApp();
+		
 		intervalGetDataApp = setInterval(async () => {
 			if (app?.app) {
 				await getCacheSize(app.app, $userStore.token);

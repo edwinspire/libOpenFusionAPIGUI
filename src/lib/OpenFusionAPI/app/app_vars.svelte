@@ -17,8 +17,8 @@
 
 	let timeoutChangeDatavars;
 
-	$inspect(Datavars).with((type) => {
-		if (type === 'update') {
+	$effect(() => {
+		if (Datavars) {
 			clearTimeout(timeoutChangeDatavars);
 			timeoutChangeDatavars = setTimeout(() => {
 				onchanged($state.snapshot(Datavars));

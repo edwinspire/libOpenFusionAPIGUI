@@ -81,7 +81,7 @@
 					left={left_Editor}
 					right={right_Editor}
 					{showCode}					
-					showFormat={false}
+					showFormat={true}
 					{isReadOnly}
 					bind:code={appVars[varname]}
 					lang='json'

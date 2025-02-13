@@ -19,8 +19,6 @@
 
 	let timeoutChange;
 
-	let options_app_vars = $state([]);
-
 	listAppVars.subscribe((value) => {
 		options_app_vars = Object.keys(value[row.environment]).map((item) => {
 			return { name: item, value: item };
@@ -32,13 +30,7 @@
 			clearTimeout(timeoutChange);
 			timeoutChange = setTimeout(() => {
 				parseCode();
-			}, 500);
-		}
-	});
-
-	$inspect(internal_code).with((type) => {
-		if (type === 'update') {
-			onchange(getData());
+			}, 750);
 		}
 	});
 
@@ -82,7 +74,9 @@
 		return data;
 	}
 
-	onMount(() => {});
+	onMount(() => {
+		parseCode();
+	});
 
 	onDestroy(() => {
 		clearTimeout(timeoutChange);

@@ -34,11 +34,7 @@
 		{ label: 'Logs', component: tab_log }
 	]);
 
-	$inspect([row, app]).with((type) => {
-		if (type === 'init') {
-			defaultValues();
-		}
-	});
+	
 
 	function accept() {
 		defaultValues();

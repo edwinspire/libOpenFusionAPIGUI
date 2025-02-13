@@ -4,8 +4,7 @@
 		Tab,
 		EditorCode,
 		RESTTester,
-		JSONView,
-		PredictiveInput
+		JSONView
 	} from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 	import AppVarsSelector from '../widgets/app_vars_selector.svelte';
@@ -29,7 +28,6 @@
 		{ label: 'Tester', component: tab_tester }
 	]);
 
-	let options_app_vars = $state([]);
 
 	let data_example = $state({
 		data: [
@@ -44,9 +42,12 @@
 
 	let table_name = $state('');
 
-	$inspect(row.code).with((type) => {
-		if (type === 'update' || type === 'init') {
-			parseCode();
+	$effect(() => {
+		if (row?.code) {
+			clearTimeout(timeoutChange);
+			timeoutChange = setTimeout(() => {
+				parseCode();
+			}, 750);
 		}
 	});
 
