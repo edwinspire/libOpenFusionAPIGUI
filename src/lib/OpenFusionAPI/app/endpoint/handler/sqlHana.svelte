@@ -1,11 +1,6 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
-	import {
-		Tab,
-		EditorCode,
-		RESTTester,
-		JSONView,
-	} from '@edwinspire/svelte-components';
+	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 
 	import AppVarsSelector from '../widgets/app_vars_selector.svelte';
@@ -45,8 +40,6 @@
 
 	let query_code = $state('');
 	let timeoutChange;
-
-	
 
 	$effect(() => {
 		if (row?.code) {

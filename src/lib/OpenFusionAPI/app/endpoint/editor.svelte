@@ -34,8 +34,6 @@
 		{ label: 'Logs', component: tab_log }
 	]);
 
-	
-
 	function accept() {
 		defaultValues();
 		let data = {
@@ -184,7 +182,7 @@
 
 {#snippet tab_log()}
 	{#if row && row.ctrl}
-		<Logs bind:log={row.ctrl.log} bind:row={row}></Logs>
+		<Logs bind:log={row.ctrl.log} bind:row></Logs>
 	{/if}
 {/snippet}
 
