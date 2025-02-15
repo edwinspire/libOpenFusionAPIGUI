@@ -20,6 +20,7 @@
 	let param_data = $state('');
 	let use_var_app = $state(false);
 	let env_vars = $state({});
+	let timeoutChange;
 
 	listAppVars.subscribe((list) => {
 		env_vars = list[environment] ?? {};
@@ -29,7 +30,18 @@
 		});
 	});
 
+	$effect(() => {
+		if (value) {
+			clearTimeout(timeoutChange);
+			timeoutChange = setTimeout(() => {
+				parseCode();
+			}, 750);
+		}
+	});
+
 	function parseCode() {
+		//console.log('parseCode PARAMS SELECTOR', value, typeof value);
+
 		if (typeof value !== 'object') {
 			try {
 				param_json = JSON.parse(value);
