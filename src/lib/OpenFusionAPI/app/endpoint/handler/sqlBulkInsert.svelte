@@ -1,11 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import {
-		Tab,
-		EditorCode,
-		RESTTester,
-		JSONView
-	} from '@edwinspire/svelte-components';
+	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 	import AppVarsSelector from '../widgets/params_selector.svelte';
 
@@ -27,7 +22,6 @@
 		{ label: 'App Variables', component: tab_appvars },
 		{ label: 'Tester', component: tab_tester }
 	]);
-
 
 	let data_example = $state({
 		data: [
@@ -170,50 +164,16 @@
 				>https://sequelize.org/</a
 			>
 			for more information.
-			<br />
-			You can also use the name of an application variable to use it, for example
-			<strong>$_VAR_NAME</strong>.
 		</div>
 	</div>
 
-	<div class="box">
-		<div class="buttons has-addons">
-			<button
-				class="button is-small {use_var_cnx ? '' : 'is-active is-primary'}"
-				onclick={() => {
-					use_var_cnx = false;
-				}}>JSON Parameters</button
-			>
-			<button
-				class="button is-small {use_var_cnx ? 'is-active is-primary' : ''}"
-				onclick={() => {
-					use_var_cnx = true;
-				}}>Use Variable</button
-			>
-		</div>
-
-		{#if !use_var_cnx}
-			<EditorCode
-				isReadOnly={false}
-				lang="json"
-				showFormat={true}
-				bind:code={cnx_param_json}
-				onchange={(c) => {
-					fnOnChange();
-				}}
-			></EditorCode>
-		{:else}
-			<div class="content is-small">Select an application variable.</div>
-
-			<AppVarsSelector
-				bind:value={cnx_param_var}
-				bind:environment={row.environment}
-				onselect={(selected) => {
-					fnOnChange();
-				}}
-			></AppVarsSelector>
-		{/if}
-	</div>
+	<AppVarsSelector
+		bind:value={cnx_param_var}
+		bind:environment={row.environment}
+		onselect={(selected) => {
+			fnOnChange();
+		}}
+	></AppVarsSelector>
 {/snippet}
 
 {#snippet tab_appvars()}
