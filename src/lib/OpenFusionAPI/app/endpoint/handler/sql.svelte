@@ -7,8 +7,8 @@
 	let { row = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =
 		$props();
 
-	let use_var_cnx = $state(false);
-	let cnx_param_json = $state({});
+	//let use_var_cnx = $state(false);
+	//let cnx_param_json = $state({});
 	let cnx_param_var = $state('');
 
 	/**
@@ -68,13 +68,7 @@
 			}
 
 			if (params && params.config) {
-				if (typeof params.config === 'object') {
-					cnx_param_json = params.config;
-					use_var_cnx = false;
-				} else {
-					cnx_param_var = params.config;
-					use_var_cnx = true;
-				}
+				cnx_param_var = params.config;
 			}
 
 			console.log('parseCode query_code', query_code);
@@ -100,20 +94,8 @@
 		let conf = {};
 		let outcode = {};
 
-		try {
-			if (use_var_cnx) {
-				conf = cnx_param_var;
-			} else {
-				conf = typeof cnx_param_json === 'object' ? cnx_param_json : JSON.parse(cnx_param_json);
-			}
-
-			//return JSON.stringify(c, null, 2);
-		} catch (error) {
-			console.warn('No se pudo parsear getCode SQL', error, cnx_param_var, cnx_param_json);
-			conf = '';
-			//return code;
-		}
-
+		conf = cnx_param_var;
+	
 		try {
 			outcode.config = conf;
 			outcode.query = query_code;

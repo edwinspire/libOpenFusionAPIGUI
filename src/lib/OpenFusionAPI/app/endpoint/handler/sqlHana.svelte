@@ -6,7 +6,6 @@
 
 	let { row = $bindable({}), onchange = () => {} } = $props();
 
-	let use_var_cnx = $state(false);
 	let cnx_param_json = $state({});
 	let cnx_param_var = $state('');
 
@@ -76,6 +75,23 @@
 	}
 */
 
+	function getCode() {
+		let conf = {};
+		let outcode = {};
+
+		conf = cnx_param_var;
+
+		try {
+			outcode.config = conf;
+			outcode.query = query_code;
+			//console.log(outcode);
+			return JSON.stringify(outcode);
+		} catch (error) {
+			console.warn(error);
+			return code;
+		}
+	}
+
 	function parseCode() {
 		try {
 			let params = JSON.parse(row.code || '{}');
@@ -85,13 +101,7 @@
 			}
 
 			if (params && params.config) {
-				if (typeof params.config === 'object') {
-					cnx_param_json = params.config;
-					use_var_cnx = false;
-				} else {
-					cnx_param_var = params.config;
-					use_var_cnx = true;
-				}
+				cnx_param_var = params.config;
 			}
 
 			console.log('parseCode query_code', query_code);
@@ -111,35 +121,6 @@
 		let data = { code: getCode(), data_test: $state.snapshot(row.data_test) };
 		console.log('getData >>>>>>>>>>>>>>> ', data);
 		return data;
-	}
-
-	function getCode() {
-		let conf = {};
-		let outcode = {};
-
-		try {
-			if (use_var_cnx) {
-				conf = cnx_param_var;
-			} else {
-				conf = typeof cnx_param_json === 'object' ? cnx_param_json : JSON.parse(cnx_param_json);
-			}
-
-			//return JSON.stringify(c, null, 2);
-		} catch (error) {
-			console.warn('No se pudo parsear getCode SQL', error, cnx_param_var, cnx_param_json);
-			conf = '';
-			//return code;
-		}
-
-		try {
-			outcode.config = conf;
-			outcode.query = query_code;
-
-			return JSON.stringify(outcode, null, 2);
-		} catch (error) {
-			console.warn(error);
-			return code;
-		}
 	}
 
 	onMount(() => {
