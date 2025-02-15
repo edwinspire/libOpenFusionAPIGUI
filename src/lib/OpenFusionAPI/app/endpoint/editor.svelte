@@ -89,6 +89,14 @@
 		}
 	}
 
+	function onChangeValueHandler(v) {
+		if (row && v) {
+			row.data_test = v.data_test;
+			row.code = v.code;
+			console.log('onChangeValueHandler > ', v, $state.snapshot(row));
+		}
+	}
+
 	onMount(() => {
 		//		await getEnvList();
 		defaultValues();
@@ -123,6 +131,7 @@
 					bind:row
 					onchange={(v) => {
 						handler_code[row.handler] = v;
+						onChangeValueHandler(v);
 					}}
 				/>
 			{:else if row && row.handler == 'HANA'}

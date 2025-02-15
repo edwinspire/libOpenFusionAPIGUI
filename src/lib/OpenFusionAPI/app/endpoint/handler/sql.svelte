@@ -2,7 +2,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
-	import AppVarsSelector from '../widgets/app_vars_selector.svelte';
+	import AppVarsSelector from '../widgets/params_selector.svelte';
 
 	let { row = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =
 		$props();
@@ -117,6 +117,7 @@
 		try {
 			outcode.config = conf;
 			outcode.query = query_code;
+			//console.log(outcode);
 			return JSON.stringify(outcode);
 		} catch (error) {
 			console.warn(error);
@@ -156,6 +157,7 @@
 		showFormat={true}
 		bind:code={query_code}
 		onchange={(c) => {
+			//	console.log('onchange Editor', c);
 			fnOnChange();
 		}}
 	></EditorCode>
@@ -238,48 +240,19 @@
 				>https://sequelize.org/</a
 			>
 			for more information.
-			<br />
-			You can also use the name of an application variable to use it, for example
-			<strong>$_VAR_NAME</strong>.
 		</div>
 	</div>
 
-	<div class="box">
-		<div class="buttons has-addons">
-			<button
-				class="button is-small {use_var_cnx ? '' : 'is-active is-primary'}"
-				onclick={() => {
-					use_var_cnx = false;
-				}}>JSON Parameters</button
-			>
-			<button
-				class="button is-small {use_var_cnx ? 'is-active is-primary' : ''}"
-				onclick={() => {
-					use_var_cnx = true;
-				}}>Use Variable</button
-			>
-		</div>
+	<br />
 
-		{#if !use_var_cnx}
-			<EditorCode
-				isReadOnly={false}
-				lang="json"
-				bind:code={cnx_param_json}
-				onchange={() => {
-					fnOnChange();
-				}}
-			></EditorCode>
-		{:else}
-			<div class="content is-small">Select an application variable.</div>
-			<AppVarsSelector
-				bind:value={cnx_param_var}
-				bind:environment={row.environment}
-				onselect={(selected) => {
-					fnOnChange();
-				}}
-			></AppVarsSelector>
-		{/if}
-	</div>
+	<AppVarsSelector
+		bind:value={cnx_param_var}
+		bind:environment={row.environment}
+		onselect={(selected) => {
+			//console.log('AppVarsSelector Editor', c);
+			fnOnChange();
+		}}
+	></AppVarsSelector>
 {/snippet}
 
 {#snippet tab_app_vars()}
@@ -294,6 +267,7 @@
 			url={row.endpoint}
 			methodDisabled={true}
 			onchange={(c) => {
+				//console.log('RESTTester Editor', c);
 				fnOnChange();
 			}}
 		></RESTTester>

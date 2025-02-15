@@ -2,8 +2,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
-
-	import AppVarsSelector from '../widgets/app_vars_selector.svelte';
+	import AppVarsSelector from '../widgets/params_selector.svelte';
 
 	let { row = $bindable({}), onchange = () => {} } = $props();
 
@@ -50,6 +49,7 @@
 		}
 	});
 
+	/*
 	function parseCode() {
 		try {
 			let params = JSON.parse(row.code || '{}');
@@ -72,6 +72,34 @@
 			cnx_param_var = '';
 			query_code = 'SELECT 1;';
 			console.error('Error', error);
+		}
+	}
+*/
+
+	function parseCode() {
+		try {
+			let params = JSON.parse(row.code || '{}');
+
+			if (params && params.query) {
+				query_code = params.query;
+			}
+
+			if (params && params.config) {
+				if (typeof params.config === 'object') {
+					cnx_param_json = params.config;
+					use_var_cnx = false;
+				} else {
+					cnx_param_var = params.config;
+					use_var_cnx = true;
+				}
+			}
+
+			console.log('parseCode query_code', query_code);
+		} catch (error) {
+			cnx_param_json = {};
+			cnx_param_var = '';
+			query_code = 'SELECT 2;';
+			console.error('Error', $state.snapshot(error));
 		}
 	}
 
@@ -255,26 +283,7 @@
 					>@sap/hana-client</a
 				>
 				for more information.
-			</div>
-		</div>
 
-		<div class="box">
-			<div class="buttons has-addons">
-				<button
-					class="button is-small {use_var_cnx ? '' : 'is-active is-primary'}"
-					onclick={() => {
-						use_var_cnx = false;
-					}}>JSON Parameters</button
-				>
-				<button
-					class="button is-small {use_var_cnx ? 'is-active is-primary' : ''}"
-					onclick={() => {
-						use_var_cnx = true;
-					}}>Use Variable</button
-				>
-			</div>
-
-			{#if !use_var_cnx}
 				<div class="content is-small">
 					<details>
 						<summary
@@ -283,27 +292,17 @@
 						<JSONView bind:jsonObject={cnx_sample} />
 					</details>
 				</div>
-
-				<EditorCode
-					isReadOnly={false}
-					lang="json"
-					bind:code={cnx_param_json}
-					onchange={(c) => {
-						fnOnChange();
-					}}
-				></EditorCode>
-			{:else}
-				<div class="content is-small">Select an application variable.</div>
-
-				<AppVarsSelector
-					bind:value={cnx_param_var}
-					bind:environment={row.environment}
-					onselect={(selected) => {
-						fnOnChange();
-					}}
-				></AppVarsSelector>
-			{/if}
+			</div>
 		</div>
+
+		<AppVarsSelector
+			bind:value={cnx_param_var}
+			bind:environment={row.environment}
+			onselect={(selected) => {
+				//console.log('AppVarsSelector Editor', c);
+				fnOnChange();
+			}}
+		></AppVarsSelector>
 	</div>
 {/snippet}
 

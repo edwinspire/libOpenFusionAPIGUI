@@ -66,7 +66,6 @@
 	let payload = $state('');
 	let langEditor = $state('txt');
 
-	
 	$effect(() => {
 		if (row?.code) {
 			parseCode();
@@ -99,6 +98,9 @@
 		try {
 			outcode.mimeType = mimeType;
 			outcode.payload = payload;
+
+			console.log(outcode);
+
 			return JSON.stringify(outcode, null, 2);
 		} catch (error) {
 			return row.code;
