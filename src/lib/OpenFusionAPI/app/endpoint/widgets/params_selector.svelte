@@ -49,7 +49,7 @@
 			} catch (error) {
 				param_data = value;
 				use_var_app = true;
-				console.warn(error);
+				console.warn(error, value);
 			}
 		} else {
 			param_json = value;
