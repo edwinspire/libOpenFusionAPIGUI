@@ -71,9 +71,9 @@
 				cnx_param_var = params.config;
 			}
 
-			console.log('parseCode query_code', query_code);
+		//	console.log('parseCode query_code', query_code);
 		} catch (error) {
-			cnx_param_json = {};
+		//	cnx_param_json = {};
 			cnx_param_var = '';
 			query_code = 'SELECT 2;';
 			console.error('Error', $state.snapshot(error));

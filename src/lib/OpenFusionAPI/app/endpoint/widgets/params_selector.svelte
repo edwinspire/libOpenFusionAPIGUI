@@ -91,7 +91,7 @@
 			showFormat={true}
 			bind:code={param_json}
 			onchange={(code) => {
-				onselectInternal(code);
+				onselectInternal(code.code);
 			}}
 		></EditorCode>
 	{:else}
