@@ -44,8 +44,8 @@
 	}
 
 	function onselectInternal(val) {
-		//console.log('onselectInternal', val);
-		value = val.value;
+		//		console.log('onselectInternal app_vars_selector', val);
+		value = val;
 		onselect(val);
 	}
 
@@ -62,9 +62,9 @@
 	options={options_app_vars}
 	bind:selectedValue={value}
 	onselect={(selected) => {
-//			console.log('APP VAR SELECTOR', selected, value);
-		//		onselectInternal(selected.value);
-		value = selected.value;
+		//console.log('APP VAR SELECTOR', selected, value);
+		onselectInternal(selected.value);
+		//value = selected.value;
 	}}
 ></PredictiveInput>
 {#if env_vars[param_data]}

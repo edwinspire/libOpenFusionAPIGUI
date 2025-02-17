@@ -2,12 +2,10 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
-
-	import AppVarsSelector from '../widgets/app_vars_selector.svelte';
+	import AppVarsSelector from '../widgets/params_json_selector.svelte';
 
 	let { row = $bindable({}), onchange = () => {} } = $props();
 
-	let use_var_cnx = $state(false);
 	let cnx_param_json = $state({});
 	let cnx_param_var = $state('');
 
@@ -50,6 +48,7 @@
 		}
 	});
 
+	/*
 	function parseCode() {
 		try {
 			let params = JSON.parse(row.code || '{}');
@@ -74,6 +73,45 @@
 			console.error('Error', error);
 		}
 	}
+*/
+
+	function getCode() {
+		let conf = {};
+		let outcode = {};
+
+		conf = cnx_param_var;
+
+		try {
+			outcode.config = conf;
+			outcode.query = query_code;
+			//console.log(outcode);
+			return JSON.stringify(outcode);
+		} catch (error) {
+			console.warn(error);
+			return code;
+		}
+	}
+
+	function parseCode() {
+		try {
+			let params = JSON.parse(row.code || '{}');
+
+			if (params && params.query) {
+				query_code = params.query;
+			}
+
+			if (params && params.config) {
+				cnx_param_var = params.config;
+			}
+
+			console.log('parseCode query_code', query_code);
+		} catch (error) {
+			cnx_param_json = {};
+			cnx_param_var = '';
+			query_code = 'SELECT 2;';
+			console.error('Error', $state.snapshot(error));
+		}
+	}
 
 	function fnOnChange() {
 		onchange(getData());
@@ -83,35 +121,6 @@
 		let data = { code: getCode(), data_test: $state.snapshot(row.data_test) };
 		console.log('getData >>>>>>>>>>>>>>> ', data);
 		return data;
-	}
-
-	function getCode() {
-		let conf = {};
-		let outcode = {};
-
-		try {
-			if (use_var_cnx) {
-				conf = cnx_param_var;
-			} else {
-				conf = typeof cnx_param_json === 'object' ? cnx_param_json : JSON.parse(cnx_param_json);
-			}
-
-			//return JSON.stringify(c, null, 2);
-		} catch (error) {
-			console.warn('No se pudo parsear getCode SQL', error, cnx_param_var, cnx_param_json);
-			conf = '';
-			//return code;
-		}
-
-		try {
-			outcode.config = conf;
-			outcode.query = query_code;
-
-			return JSON.stringify(outcode, null, 2);
-		} catch (error) {
-			console.warn(error);
-			return code;
-		}
 	}
 
 	onMount(() => {
@@ -255,26 +264,7 @@
 					>@sap/hana-client</a
 				>
 				for more information.
-			</div>
-		</div>
 
-		<div class="box">
-			<div class="buttons has-addons">
-				<button
-					class="button is-small {use_var_cnx ? '' : 'is-active is-primary'}"
-					onclick={() => {
-						use_var_cnx = false;
-					}}>JSON Parameters</button
-				>
-				<button
-					class="button is-small {use_var_cnx ? 'is-active is-primary' : ''}"
-					onclick={() => {
-						use_var_cnx = true;
-					}}>Use Variable</button
-				>
-			</div>
-
-			{#if !use_var_cnx}
 				<div class="content is-small">
 					<details>
 						<summary
@@ -283,27 +273,17 @@
 						<JSONView bind:jsonObject={cnx_sample} />
 					</details>
 				</div>
-
-				<EditorCode
-					isReadOnly={false}
-					lang="json"
-					bind:code={cnx_param_json}
-					onchange={(c) => {
-						fnOnChange();
-					}}
-				></EditorCode>
-			{:else}
-				<div class="content is-small">Select an application variable.</div>
-
-				<AppVarsSelector
-					bind:value={cnx_param_var}
-					bind:environment={row.environment}
-					onselect={(selected) => {
-						fnOnChange();
-					}}
-				></AppVarsSelector>
-			{/if}
+			</div>
 		</div>
+
+		<AppVarsSelector
+			bind:value={cnx_param_var}
+			bind:environment={row.environment}
+			onselect={(selected) => {
+				//console.log('AppVarsSelector Editor', c);
+				fnOnChange();
+			}}
+		></AppVarsSelector>
 	</div>
 {/snippet}
 

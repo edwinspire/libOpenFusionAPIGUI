@@ -1,17 +1,18 @@
-export default AppVarsSelector;
-type AppVarsSelector = {
+export default ParamsJsonSelector;
+type ParamsJsonSelector = {
     $on?(type: string, callback: (e: any) => void): () => void;
     $set?(props: Partial<$$ComponentProps>): void;
 };
-declare const AppVarsSelector: import("svelte").Component<{
+declare const ParamsJsonSelector: import("svelte").Component<{
     freeTyping?: boolean;
     placeholder?: string;
     classIcon?: string;
     label?: string;
     value?: string;
     environment?: string;
+    langEditor?: string;
     onselect?: Function;
-}, {}, "value" | "label" | "environment" | "freeTyping" | "placeholder" | "classIcon">;
+}, {}, "value" | "label" | "environment" | "freeTyping" | "placeholder" | "classIcon" | "langEditor">;
 type $$ComponentProps = {
     freeTyping?: boolean;
     placeholder?: string;
@@ -19,5 +20,6 @@ type $$ComponentProps = {
     label?: string;
     value?: string;
     environment?: string;
+    langEditor?: string;
     onselect?: Function;
 };

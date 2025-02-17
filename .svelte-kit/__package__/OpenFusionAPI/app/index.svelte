@@ -157,6 +157,7 @@
 	}
 
 	function confirmSaveApp() {
+		console.log('confirmSaveApp', app);
 		if (confirm('Do you want to save the application data?')) {
 			//app.vars = fnVars.getCode();
 			if (app_vars) {
@@ -413,7 +414,7 @@
 
 {#snippet tab_endpoints()}
 	<div>
-		{#if app.idapp}
+		{#key app.idapp}
 			<Table
 				ShowNewButton="true"
 				ShowEditButton="true"
@@ -499,7 +500,7 @@
 					</span>
 				{/snippet}
 			</Table>
-		{/if}
+		{/key}
 	</div>
 {/snippet}
 

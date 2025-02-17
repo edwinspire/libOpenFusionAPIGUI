@@ -1,9 +1,9 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
-	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
+	import { Tab, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
-//	import { listAppVars } from '../../../utils.js';
-	import AppVarsSelector from '../widgets/app_vars_selector.svelte';
+	//	import { listAppVars } from '../../../utils.js';
+	import AppVarsSelector from '../widgets/params_json_selector.svelte';
 
 	let { row = $bindable({}), onchange = () => {} } = $props();
 
@@ -20,8 +20,6 @@
 
 	let timeoutChange;
 
-
-
 	$effect(() => {
 		if (row?.code) {
 			clearTimeout(timeoutChange);
@@ -33,6 +31,7 @@
 
 	function parseCode() {
 		internal_code = row.code;
+		//	console.log('parseCode SOAP', row, internal_code);
 	}
 
 	let tabList = $state([
@@ -86,14 +85,14 @@
 			<div>Service connection parameters.</div>
 		</div>
 
-		<EditorCode
-			lang="json"
-			showFormat={true}
-			bind:code={internal_code}
-			onchange={() => {
+		<AppVarsSelector
+			bind:value={internal_code}
+			bind:environment={row.environment}
+			onselect={(selected) => {
+				//console.log('AppVarsSelector Editor', c);
 				fnOnChange();
 			}}
-		></EditorCode>
+		></AppVarsSelector>
 
 		{#if row.method === 'GET'}
 			<div class="block">

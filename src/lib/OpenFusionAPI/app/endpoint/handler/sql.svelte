@@ -96,6 +96,8 @@
 
 		conf = cnx_param_var;
 	
+console.log('cnx_param_var', cnx_param_var);
+
 		try {
 			outcode.config = conf;
 			outcode.query = query_code;
@@ -231,7 +233,7 @@
 		bind:value={cnx_param_var}
 		bind:environment={row.environment}
 		onselect={(selected) => {
-			//console.log('AppVarsSelector Editor', c);
+		//	console.log('AppVarsSelector Editor', selected, cnx_param_var);
 			fnOnChange();
 		}}
 	></AppVarsSelector>

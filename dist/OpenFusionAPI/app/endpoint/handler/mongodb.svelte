@@ -9,13 +9,11 @@
 	} from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 	import PredefinedVars from '../widgets/js_predefined_vars.svelte';
-	import AppVarsSelector from '../widgets/app_vars_selector.svelte';
+	import AppVarsSelector from '../widgets/params_json_selector.svelte';
 
 	let { row = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =
 		$props();
 
-	let use_var_cnx = $state(false);
-	let cnx_param_json = $state({});
 	let cnx_param_var = $state('');
 
 	let tabList = $state([
@@ -62,18 +60,12 @@
 			}
 
 			if (params && params.config) {
-				if (typeof params.config === 'object') {
-					cnx_param_json = params.config;
-					use_var_cnx = false;
-				} else {
-					cnx_param_var = params.config;
-					use_var_cnx = true;
-				}
+				cnx_param_var = params.config;
 			}
 		} catch (error) {
-			cnx_param_json = {};
+			//	cnx_param_json = {};
 			cnx_param_var = '';
-			js_code = 'SELECT 1;';
+			js_code = '// Js Code';
 			console.error('Error', error);
 		}
 	}
@@ -92,24 +84,12 @@
 		let conf = {};
 		let outcode = {};
 
-		try {
-			if (use_var_cnx) {
-				conf = cnx_param_var;
-			} else {
-				conf = typeof cnx_param_json === 'object' ? cnx_param_json : JSON.parse(cnx_param_json);
-			}
-
-			//return JSON.stringify(c, null, 2);
-		} catch (error) {
-			console.warn('No se pudo parsear getCode SQL', error, cnx_param_var, cnx_param_json);
-			conf = '';
-			//return code;
-		}
+		conf = cnx_param_var;
 
 		try {
 			outcode.config = conf;
 			outcode.code = js_code;
-			return JSON.stringify(outcode, null, 2);
+			return JSON.stringify(outcode);
 		} catch (error) {
 			console.warn(error);
 			return code;
@@ -162,47 +142,16 @@
 			</details>
 
 			<br />
-			You can also use the name of an application variable to use it, for example
-			<strong>$_VAR_NAME</strong>.
-		</div>
-	</div>
 
-	<div class="box">
-		<div class="buttons has-addons">
-			<button
-				class="button is-small {use_var_cnx ? '' : 'is-active is-primary'}"
-				onclick={() => {
-					use_var_cnx = false;
-				}}>JSON Parameters</button
-			>
-			<button
-				class="button is-small {use_var_cnx ? 'is-active is-primary' : ''}"
-				onclick={() => {
-					use_var_cnx = true;
-				}}>Use Variable</button
-			>
-		</div>
-
-		{#if !use_var_cnx}
-			<EditorCode
-				isReadOnly={false}
-				lang="json"
-				showFormat={true}
-				bind:code={cnx_param_json}
-				onchange={() => {
-					fnOnChange();
-				}}
-			></EditorCode>
-		{:else}
-			<div class="content is-small">Select an application variable.</div>
 			<AppVarsSelector
 				bind:value={cnx_param_var}
 				bind:environment={row.environment}
 				onselect={(selected) => {
+					//console.log('AppVarsSelector Editor', c);
 					fnOnChange();
 				}}
 			></AppVarsSelector>
-		{/if}
+		</div>
 	</div>
 {/snippet}
 

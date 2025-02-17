@@ -23,7 +23,6 @@
 		ondata = (d) => {}
 	} = $props();
 
-	let handler_code = [];
 	let validateResource = $state(false);
 	let availableURL = $state(false);
 
@@ -93,13 +92,14 @@
 		if (row && v) {
 			row.data_test = v.data_test;
 			row.code = v.code;
-			console.log('onChangeValueHandler > ', v, $state.snapshot(row));
+			//	console.log('onChangeValueHandler > ', v, $state.snapshot(row));
 		}
 	}
 
 	onMount(() => {
 		//		await getEnvList();
 		defaultValues();
+		//	console.log('Editor row > ', $state.snapshot(row));
 	});
 </script>
 
@@ -116,21 +116,20 @@
 				<JsCode
 					bind:row
 					onchange={(v) => {
-						handler_code[row.handler] = v;
+						onChangeValueHandler(v);
 					}}
 				/>
 			{:else if row && row.handler == 'SOAP'}
 				<SoapCode
 					bind:row
 					onchange={(v) => {
-						handler_code[row.handler] = v;
+						onChangeValueHandler(v);
 					}}
 				/>
 			{:else if row && row.handler == 'SQL'}
 				<SqlCode
 					bind:row
 					onchange={(v) => {
-						handler_code[row.handler] = v;
 						onChangeValueHandler(v);
 					}}
 				/>
@@ -138,42 +137,42 @@
 				<SqlHana
 					bind:row
 					onchange={(v) => {
-						handler_code[row.handler] = v;
+						onChangeValueHandler(v);
 					}}
 				/>
 			{:else if row && row.handler == 'SQL_BULK_I'}
 				<SqlBulkInsert
 					bind:row
 					onchange={(v) => {
-						handler_code[row.handler] = v;
+						onChangeValueHandler(v);
 					}}
 				/>
 			{:else if row && row.handler == 'FETCH'}
 				<FetchCode
 					bind:row
 					onchange={(v) => {
-						handler_code[row.handler] = v;
+						onChangeValueHandler(v);
 					}}
 				/>
 			{:else if row && row.handler == 'FUNCTION'}
 				<CustomFn
 					bind:row
 					onchange={(v) => {
-						handler_code[row.handler] = v;
+						onChangeValueHandler(v);
 					}}
 				/>
 			{:else if row && row.handler == 'TEXT'}
 				<TextCode
 					bind:row
 					onchange={(v) => {
-						handler_code[row.handler] = v;
+						onChangeValueHandler(v);
 					}}
 				/>
 			{:else if row && row.handler == 'MONGODB'}
 				<MongoDB
 					bind:row
 					onchange={(v) => {
-						handler_code[row.handler] = v;
+						onChangeValueHandler(v);
 					}}
 				/>
 			{:else}
@@ -217,13 +216,6 @@
 							} else if (!availableURL) {
 								alert('URL already exists.');
 							} else {
-								let v = handler_code[row.handler];
-
-								if (v) {
-									row.data_test = v.data_test;
-									row.code = v.code;
-								}
-
 								accept();
 								showEditor = false;
 							}
@@ -239,6 +231,7 @@
 					<button
 						class="button is-small"
 						onclick={() => {
+							console.log('Editor Cancel', row.code);
 							row = {};
 							showEditor = false;
 						}}

@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Tab, RESTTester } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
+	import AppVarsSelector from '../widgets/app_vars_selector.svelte';
 
 	let { row = $bindable({}), onchange = () => {} } = $props();
 
@@ -23,23 +24,20 @@
 </script>
 
 {#snippet tab_url()}
-	<div class="field">
+	<div>
 		<!-- svelte-ignore a11y_label_has_associated_control -->
 		<label class="label">Url to make the request. The operation is similar to a proxy</label>
-		<div class="control has-icons-right">
-			<input
-				class="input is-small"
-				type="text"
-				placeholder="http://your.url/path"
-				bind:value={row.code}
-				onchange={() => {
-					fnOnChange();
-				}}
-			/>
-			<span class="icon is-small is-right">
-				<i class="fa-solid fa-globe"></i>
-			</span>
-		</div>
+		<AppVarsSelector
+			freeTyping={true}
+			placeholder={'http://your.url/path'}
+			classIcon={'fa-solid fa-globe'}
+			label={'Url'}
+			environment={row.environment}
+			bind:value={row.code}
+			onselect={(selected) => {
+				fnOnChange();
+			}}
+		></AppVarsSelector>
 	</div>
 {/snippet}
 
