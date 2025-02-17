@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
-	import { PredictiveInput, EditorCode, JSONView } from '@edwinspire/svelte-components';
-	import { listAppVars } from '../../../utils.js';
+	import { EditorCode } from '@edwinspire/svelte-components';
+	import AppVarsSelector from '../widgets/app_vars_selector.svelte';
 
 	let {
 		freeTyping = $bindable(false),
@@ -14,21 +14,11 @@
 		onselect = () => {}
 	} = $props();
 
-	let options_app_vars = $state([]);
-
 	let param_json = $state({});
 	let param_data = $state('');
 	let use_var_app = $state(false);
-	let env_vars = $state({});
+
 	let timeoutChange;
-
-	listAppVars.subscribe((list) => {
-		env_vars = list[environment] ?? {};
-
-		options_app_vars = Object.keys(env_vars).map((item) => {
-			return { name: item, value: item };
-		});
-	});
 
 	$effect(() => {
 		if (value) {
@@ -58,7 +48,7 @@
 	}
 
 	function onselectInternal(val) {
-		console.log('onselectInternal', val);
+//		console.log('onselectInternal', val);
 		value = val;
 		onselect(val);
 	}
@@ -95,23 +85,16 @@
 			}}
 		></EditorCode>
 	{:else}
-		<PredictiveInput
+		<AppVarsSelector
 			{freeTyping}
 			{placeholder}
 			{classIcon}
 			{label}
-			options={options_app_vars}
-			bind:selectedValue={param_data}
+			{environment}
+			bind:value={param_data}
 			onselect={(selected) => {
 				onselectInternal(selected.value);
 			}}
-		></PredictiveInput>
-		{#if !freeTyping && env_vars[param_data]}
-			<details class=" ">
-				<summary>View value</summary>
-				<br />
-				<JSONView jsonObject={env_vars[param_data]} />
-			</details>
-		{/if}
+		></AppVarsSelector>
 	{/if}
 </div>

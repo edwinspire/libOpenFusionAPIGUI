@@ -3,7 +3,7 @@
 	import { Tab, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 	//	import { listAppVars } from '../../../utils.js';
-	import AppVarsSelector from '../widgets/params_selector.svelte';
+	import AppVarsSelector from '../widgets/params_json_selector.svelte';
 
 	let { row = $bindable({}), onchange = () => {} } = $props();
 
