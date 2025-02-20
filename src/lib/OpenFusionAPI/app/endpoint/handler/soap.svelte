@@ -5,7 +5,7 @@
 	//	import { listAppVars } from '../../../utils.js';
 	import AppVarsSelector from '../widgets/params_json_selector.svelte';
 
-	let { row = $bindable({}), onchange = () => {} } = $props();
+	let { row = {}, onchange = () => {} } = $props();
 
 	let internal_code = $state('');
 	let code_desc = JSON.stringify({ 'describe()': true });
@@ -18,8 +18,11 @@
 		}
 	});
 
-	let timeoutChange;
+		let timeoutChange;
 
+	
+
+	/*
 	$effect(() => {
 		if (row?.code) {
 			clearTimeout(timeoutChange);
@@ -28,6 +31,8 @@
 			}, 750);
 		}
 	});
+	*/
+
 
 	function parseCode() {
 		internal_code = row.code;
@@ -71,7 +76,9 @@
 	}
 
 	onMount(() => {
+		
 		parseCode();
+
 	});
 
 	onDestroy(() => {
@@ -87,9 +94,9 @@
 
 		<AppVarsSelector
 			bind:value={internal_code}
-			bind:environment={row.environment}
+			environment={row.environment}
 			onselect={(selected) => {
-				//console.log('AppVarsSelector Editor', c);
+				//console.log('AppVarsSelector Editor', selected);
 				fnOnChange();
 			}}
 		></AppVarsSelector>
@@ -180,11 +187,12 @@
 {#snippet tab_tester()}
 	<div>
 		<RESTTester
-			bind:data={row.data_test}
+			data={row.data_test}
 			method={row.method}
 			url={row.endpoint}
 			methodDisabled={true}
 			onchange={(c) => {
+				//console.log('RESTTester Editor', c, row.data_test);
 				fnOnChange();
 			}}
 		></RESTTester>

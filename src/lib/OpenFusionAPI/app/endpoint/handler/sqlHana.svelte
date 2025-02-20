@@ -114,12 +114,13 @@
 	}
 
 	function fnOnChange() {
+		console.log('fnOnChange HANA');
 		onchange(getData());
 	}
 
 	function getData() {
 		let data = { code: getCode(), data_test: $state.snapshot(row.data_test) };
-		console.log('getData >>>>>>>>>>>>>>> ', data);
+		//console.log('getData >>>>>>>>>>>>>>> ', data);
 		return data;
 	}
 

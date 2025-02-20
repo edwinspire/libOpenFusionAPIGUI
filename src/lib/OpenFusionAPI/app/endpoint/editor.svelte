@@ -16,12 +16,8 @@
 	import Logs from './widgets/logs.svelte';
 	import EndpointLabel from './widgets/endpoint_label.svelte';
 
-	let {
-		showEditor = $bindable(false),
-		row = $bindable({}),
-		app = $bindable({}),
-		ondata = (d) => {}
-	} = $props();
+	let { showEditor = $bindable(false), row = {}, app = {}, ondata = (d) => {} } = $props();
+	let new_data_row = { data_test: {}, code: '' };
 
 	let validateResource = $state(false);
 	let availableURL = $state(false);
@@ -35,8 +31,14 @@
 
 	function accept() {
 		defaultValues();
+
+		let row_out = $state.snapshot(row);
+
+		row_out.data_test = new_data_row.data_test;
+		row_out.code = new_data_row.code;
+
 		let data = {
-			row: $state.snapshot(row),
+			row: row_out,
 			validateResource,
 			availableURL
 		};
@@ -79,7 +81,7 @@
 			row.ctrl.log = {};
 		}
 
-		if (app == null) {
+		if (typeof app !== 'object' || app == null) {
 			app = { endpoints: [] };
 		}
 
@@ -88,11 +90,13 @@
 		}
 	}
 
+	
+
 	function onChangeValueHandler(v) {
-		if (row && v) {
-			row.data_test = v.data_test;
-			row.code = v.code;
-			//	console.log('onChangeValueHandler > ', v, $state.snapshot(row));
+		if (v) {
+			new_data_row.data_test = v.data_test;
+			new_data_row.code = v.code;
+			//console.log('onChangeValueHandler > ', v, $state.snapshot(new_data_row));
 		}
 	}
 
@@ -121,7 +125,7 @@
 				/>
 			{:else if row && row.handler == 'SOAP'}
 				<SoapCode
-					bind:row
+					row={row}
 					onchange={(v) => {
 						onChangeValueHandler(v);
 					}}

@@ -406,7 +406,8 @@
 {#snippet tab_app_vars()}
 	<AppVars
 		isReadOnly={false}
-		onchanged={(data) => {
+		onchange={(data) => {
+			console.log('tab_app_vars', data);
 			app_vars = data;
 		}}
 	></AppVars>
@@ -741,8 +742,8 @@
 {#if app}
 	<EndPointEditor
 		bind:showEditor={showEndpointEdit}
-		bind:row={SelectedRow}
-		bind:app
+		row={SelectedRow}
+		app
 		ondata={(e) => {
 			let row_edited = e.row;
 
@@ -834,6 +835,9 @@
 						<button
 							class="button is-small"
 							onclick={() => {
+
+//console.log('app Actual', app, app_vars);
+
 								if (
 									confirm(
 										'If you cancel, you will lose absolutely all changes made to the app. Do you want to continue?'
