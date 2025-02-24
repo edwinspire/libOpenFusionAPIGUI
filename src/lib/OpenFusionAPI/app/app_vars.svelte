@@ -12,9 +12,9 @@
 	let Datavars = $state({});
 
 	listAppVars.subscribe((value) => {
+		//			console.log('listAppVars', value);
 		Datavars = value || {};
 	});
-
 
 	function internalOnchange() {
 		onchange($state.snapshot(Datavars));
@@ -23,8 +23,9 @@
 	onMount(() => {});
 </script>
 
-
 <div>
+	{environment}
+
 	{#if environment == 'dev' || environment == '*'}
 		{#if Datavars && Datavars.dev}
 			<div class="column">
@@ -44,7 +45,7 @@
 		{#if Datavars && Datavars.qa}
 			<div class="column">
 				<VarEnv
-					bind:appVars={Datavars.qa}
+					appVars={Datavars.qa}
 					{isReadOnly}
 					title={'QUALITY'}
 					onchange={() => {
@@ -59,7 +60,7 @@
 		{#if Datavars && Datavars.prd}
 			<div class="column">
 				<VarEnv
-					bind:appVars={Datavars.prd}
+					appVars={Datavars.prd}
 					{isReadOnly}
 					title={'PRODUCTION'}
 					onchange={() => {

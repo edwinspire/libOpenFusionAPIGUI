@@ -148,10 +148,6 @@
 	let app = $state(defaultValuesApp());
 	let uf = new uFetch();
 
-
-
-
-
 	function reloadPage() {
 		window.location.reload();
 	}
@@ -240,7 +236,7 @@
 
 			app = defaultValuesApp(app_resp[0]);
 
-			//		console.log(app_resp[0], app);
+			console.log('>>>>>>>>>>>>>>>>>>', app.vars);
 
 			if (app && app.vars && typeof app.vars === 'object') {
 				listAppVars.set(app.vars);
@@ -351,11 +347,10 @@
 	}
 
 	onMount(async () => {
-
 		await getListApps();
 		await getEnvList();
 		app = defaultValuesApp();
-		
+
 		intervalGetDataApp = setInterval(async () => {
 			if (app?.app) {
 				await getCacheSize(app.app, $userStore.token);
@@ -743,7 +738,7 @@
 	<EndPointEditor
 		bind:showEditor={showEndpointEdit}
 		row={SelectedRow}
-		app
+		{app}
 		ondata={(e) => {
 			let row_edited = e.row;
 
@@ -835,8 +830,7 @@
 						<button
 							class="button is-small"
 							onclick={() => {
-
-//console.log('app Actual', app, app_vars);
+								//console.log('app Actual', app, app_vars);
 
 								if (
 									confirm(

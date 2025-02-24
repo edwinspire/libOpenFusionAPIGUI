@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { EditorCode, Level, copyTextToClipboard } from '@edwinspire/svelte-components';
+	import { equalObjs } from '../utils.js';
 
 	let {
 		isReadOnly = $bindable(false),
@@ -14,11 +15,18 @@
 	let edit_var_name = $state({});
 	let change_var_name = $state({});
 	let classAnimationCopyName = $state('');
+	let appVarsInternal = $state({});
+
+	function internalOnchange(varname, vars) {
+		if (!equalObjs(appVarsInternal[varname], vars)) {
+			appVarsInternal[varname] = vars;
+			onchange($state.snapshot(appVars));
+		}
+	}
 
 	function removeVar(varName) {
 		delete appVars[varName];
-		appVars = appVars;
-		onchange($state.snapshot(appVars));
+		internalOnchange(varName, null);
 	}
 
 	onMount(() => {});
@@ -57,7 +65,8 @@
 											alert('Var ' + var_full_name + ' already exists.');
 										} else {
 											appVars[var_full_name] = {};
-											onchange($state.snapshot(appVars));
+											console.log('111111111111111111111');
+											internalOnchange(var_full_name, {});
 										}
 									}}
 								>
@@ -81,9 +90,7 @@
 					bind:code={appVars[varname]}
 					lang="json"
 					onchange={(e) => {
-						//console.log(e);
-						appVars[varname] = e.code;
-						onchange($state.snapshot(appVars));
+						internalOnchange(varname, e.code);
 					}}
 				>
 					{#snippet left_Editor()}
@@ -111,7 +118,7 @@
 												class="button is-small is-outlined is-success"
 												title="Apply"
 												onclick={() => {
-													appVars[edit_var_name[varname]] = { ...edit_var_name[varname] };
+													appVarsInternal[edit_var_name[varname]] = { ...edit_var_name[varname] };
 													removeVar(varname);
 												}}
 											>

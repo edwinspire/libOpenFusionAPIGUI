@@ -44,7 +44,7 @@
 		"!dist/**/*.spec.*"
 	],
 	"peerDependencies": {
-		"svelte": "^5.0.0"
+		"svelte": "^5.20.2"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.3",
@@ -60,7 +60,6 @@
 		"prettier": "^3.3.2",
 		"prettier-plugin-svelte": "^3.2.6",
 		"publint": "^0.1.9",
-		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
 		"tslib": "^2.4.1",
 		"typescript": "^5.0.0",

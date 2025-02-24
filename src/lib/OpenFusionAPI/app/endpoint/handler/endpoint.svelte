@@ -98,6 +98,7 @@
 	});
 </script>
 
+
 <div>
 	<input class="input" type="hidden" placeholder="Name" bind:value={row.idendpoint} />
 
