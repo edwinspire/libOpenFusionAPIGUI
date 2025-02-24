@@ -15,13 +15,10 @@
 	import Authorizations from './widgets/authorizations.svelte';
 	import Logs from './widgets/logs.svelte';
 	import EndpointLabel from './widgets/endpoint_label.svelte';
+	import { json } from '@sveltejs/kit';
 
-	let {
-		showEditor = $bindable(false),
-		row = $bindable({}),
-		app = $bindable({}),
-		ondata = (d) => {}
-	} = $props();
+	let { showEditor = $bindable(false), row = {}, app = {}, ondata = (d) => {} } = $props();
+	let new_data_row = { data_test: {}, code: '' };
 
 	let validateResource = $state(false);
 	let availableURL = $state(false);
@@ -35,8 +32,14 @@
 
 	function accept() {
 		defaultValues();
+
+		let row_out = $state.snapshot(row);
+
+		row_out.data_test = new_data_row.data_test;
+		row_out.code = new_data_row.code;
+
 		let data = {
-			row: $state.snapshot(row),
+			row: row_out,
 			validateResource,
 			availableURL
 		};
@@ -46,6 +49,16 @@
 		//dispatch('data', data);
 		ondata(data);
 	}
+
+function clearValues(){
+	defaultValues();
+	row.method = '';
+	row.environment = '?';
+	row.endpoint = '';
+	row.handler = '';
+	row.ctrl = {users: []};
+	app.endpoints = [];
+}
 
 	function defaultValues() {
 		if (!row) {
@@ -89,10 +102,10 @@
 	}
 
 	function onChangeValueHandler(v) {
-		if (row && v) {
-			row.data_test = v.data_test;
-			row.code = v.code;
-			//	console.log('onChangeValueHandler > ', v, $state.snapshot(row));
+		if (v) {
+			new_data_row.data_test = v.data_test;
+			new_data_row.code = v.code;
+			//console.log('onChangeValueHandler > ', v, $state.snapshot(new_data_row));
 		}
 	}
 
@@ -121,7 +134,7 @@
 				/>
 			{:else if row && row.handler == 'SOAP'}
 				<SoapCode
-					bind:row
+					{row}
 					onchange={(v) => {
 						onChangeValueHandler(v);
 					}}
@@ -231,8 +244,8 @@
 					<button
 						class="button is-small"
 						onclick={() => {
-							console.log('Editor Cancel', row.code);
-							row = {};
+							console.log('Editor Cancel', $state.snapshot( row.data_test));
+							clearValues();
 							showEditor = false;
 						}}
 					>

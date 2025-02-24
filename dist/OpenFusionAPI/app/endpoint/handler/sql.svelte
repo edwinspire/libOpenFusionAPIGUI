@@ -96,7 +96,7 @@
 
 		conf = cnx_param_var;
 	
-console.log('cnx_param_var', cnx_param_var);
+//console.log('cnx_param_var', cnx_param_var);
 
 		try {
 			outcode.config = conf;
@@ -251,7 +251,7 @@ console.log('cnx_param_var', cnx_param_var);
 			url={row.endpoint}
 			methodDisabled={true}
 			onchange={(c) => {
-				//console.log('RESTTester Editor', c);
+				//console.log('RESTTester Editor SQL', c, row.data_test);
 				fnOnChange();
 			}}
 		></RESTTester>

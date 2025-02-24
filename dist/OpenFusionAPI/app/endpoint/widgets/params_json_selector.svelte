@@ -2,42 +2,43 @@
 	import { onMount } from 'svelte';
 	import { EditorCode } from '@edwinspire/svelte-components';
 	import AppVarsSelector from '../widgets/app_vars_selector.svelte';
+	import { parse } from 'svelte/compiler';
 
 	let {
 		freeTyping = $bindable(false),
 		placeholder = $bindable('$_VAR_NAME'),
 		classIcon = $bindable(''),
 		label = $bindable('Application Variable'),
-		value = $bindable(''),
+		value = $bindable(),
 		environment = $bindable(''),
 		langEditor = $bindable('json'),
 		onselect = () => {}
 	} = $props();
 
 	let param_json = $state({});
-	let param_data = $state('');
+	let param_varname = $state('');
 	let use_var_app = $state(false);
+	let new_value;
+	let is_init = false;
 
 	let timeoutChange;
 
 	$effect(() => {
-		if (value) {
-			clearTimeout(timeoutChange);
-			timeoutChange = setTimeout(() => {
-				parseCode();
-			}, 750);
-		}
+		parseCode();
 	});
 
 	function parseCode() {
-		//console.log('parseCode PARAMS SELECTOR', value, typeof value);
+		//	console.log('parseCode PARAMS SELECTOR', value, typeof value);
+		if (value == null) {
+			value = {};
+		}
 
 		if (typeof value !== 'object') {
 			try {
 				param_json = JSON.parse(value);
 				use_var_app = false;
 			} catch (error) {
-				param_data = value;
+				param_varname = value;
 				use_var_app = true;
 				console.warn(error, value);
 			}
@@ -47,13 +48,34 @@
 		}
 	}
 
+	function checkUpdateValue() {
+		let updated = false;
+		let new_value_str = typeof new_value == 'object' ? JSON.stringify(new_value) : new_value;
+		let currect_value_str = typeof value == 'object' ? JSON.stringify(value) : value;
+
+		if (new_value_str != currect_value_str) {
+			updated = true;
+			value = new_value;
+		}
+		if (updated) {
+			parseCode();
+		}
+		return updated;
+	}
+
 	function onselectInternal(val) {
-		console.log('onselectInternal', val);
-		value = val;
-		onselect(val);
+		if (is_init) {
+		//	console.log('>>>>>>>>>>>>> onselectInternal', val, value);
+			new_value = val;
+
+			if (checkUpdateValue()) {
+				onselect(value);
+			}
+		}
 	}
 
 	onMount(() => {
+		is_init = true;
 		parseCode();
 	});
 </script>
@@ -79,7 +101,7 @@
 			isReadOnly={false}
 			lang={langEditor}
 			showFormat={true}
-			bind:code={param_json}
+			code={param_json}
 			onchange={(code) => {
 				onselectInternal(code.code);
 			}}
@@ -91,9 +113,9 @@
 			{classIcon}
 			{label}
 			{environment}
-			bind:value={param_data}
+			bind:value={param_varname}
 			onselect={(selected) => {
-				//console.log('onselect params_json_selector', selected, param_data);
+				//console.log('onselect params_json_selector', selected, param_varname);
 				onselectInternal(selected);
 			}}
 		></AppVarsSelector>

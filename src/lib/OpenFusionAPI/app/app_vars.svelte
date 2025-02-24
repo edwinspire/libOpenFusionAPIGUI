@@ -24,7 +24,6 @@
 </script>
 
 <div>
-	{environment}
 
 	{#if environment == 'dev' || environment == '*'}
 		{#if Datavars && Datavars.dev}

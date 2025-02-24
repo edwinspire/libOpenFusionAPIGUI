@@ -8,7 +8,7 @@ declare const ParamsJsonSelector: import("svelte").Component<{
     placeholder?: string;
     classIcon?: string;
     label?: string;
-    value?: string;
+    value?: any;
     environment?: string;
     langEditor?: string;
     onselect?: Function;
@@ -18,7 +18,7 @@ type $$ComponentProps = {
     placeholder?: string;
     classIcon?: string;
     label?: string;
-    value?: string;
+    value?: any;
     environment?: string;
     langEditor?: string;
     onselect?: Function;

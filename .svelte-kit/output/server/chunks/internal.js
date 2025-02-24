@@ -1,5 +1,5 @@
-import { s as safe_equals, e as equals, g as get_descriptor, i as index_of, d as define_property, a as is_array, b as array_from } from "./equality.js";
-import { H as HYDRATION_ERROR, a as HYDRATION_START, b as HYDRATION_END, r as render, p as push$1, s as setContext, c as pop$1 } from "./index.js";
+import { s as safe_equals, e as equals, g as get_descriptor, r as run_all, i as index_of, d as define_property, a as is_array, b as array_from } from "./equality.js";
+import { H as HYDRATION_ERROR, a as HYDRATION_START, b as HYDRATION_END, r as render, p as push$1, s as setContext, c as pop$1 } from "./index2.js";
 import "clsx";
 const DEV = false;
 let base = "";
@@ -218,7 +218,7 @@ function init_operations() {
   first_child_getter = get_descriptor(node_prototype, "firstChild").get;
   next_sibling_getter = get_descriptor(node_prototype, "nextSibling").get;
   element_prototype.__click = void 0;
-  element_prototype.__className = "";
+  element_prototype.__className = void 0;
   element_prototype.__attributes = null;
   element_prototype.__styles = null;
   element_prototype.__e = void 0;
@@ -316,16 +316,12 @@ function create_effect(type, fn, sync, push2 = true) {
     wv: 0
   };
   if (sync) {
-    var previously_flushing_effect = is_flushing_effect;
     try {
-      set_is_flushing_effect(true);
       update_effect(effect2);
       effect2.f |= EFFECT_RAN;
     } catch (e) {
       destroy_effect(effect2);
       throw e;
-    } finally {
-      set_is_flushing_effect(previously_flushing_effect);
     }
   } else if (fn !== null) {
     schedule_effect(effect2);
@@ -477,20 +473,31 @@ function pause_children(effect2, transitions, local) {
     child = sibling;
   }
 }
+let micro_tasks = [];
+let idle_tasks = [];
+function run_micro_tasks() {
+  var tasks = micro_tasks;
+  micro_tasks = [];
+  run_all(tasks);
+}
+function run_idle_tasks() {
+  var tasks = idle_tasks;
+  idle_tasks = [];
+  run_all(tasks);
+}
 function flush_tasks() {
+  if (micro_tasks.length > 0) {
+    run_micro_tasks();
+  }
+  if (idle_tasks.length > 0) {
+    run_idle_tasks();
+  }
 }
-const FLUSH_MICROTASK = 0;
-const FLUSH_SYNC = 1;
 let is_throwing_error = false;
-let scheduler_mode = FLUSH_MICROTASK;
-let is_micro_task_queued = false;
+let is_flushing = false;
 let last_scheduled_effect = null;
-let is_flushing_effect = false;
-function set_is_flushing_effect(value) {
-  is_flushing_effect = value;
-}
+let is_updating_effect = false;
 let queued_root_effects = [];
-let flush_count = 0;
 let dev_effect_stack = [];
 let active_reaction = null;
 let untracking = false;
@@ -645,8 +652,8 @@ function update_reaction(reaction) {
   null;
   skipped_deps = 0;
   untracked_writes = null;
+  skip_reaction = (flags & UNOWNED) !== 0 && (untracking || !is_updating_effect || active_reaction === null);
   active_reaction = (flags & (BRANCH_EFFECT | ROOT_EFFECT)) === 0 ? reaction : null;
-  skip_reaction = (flags & UNOWNED) !== 0 && (!is_flushing_effect || previous_reaction === null || previous_untracking);
   derived_sources = null;
   set_component_context(reaction.ctx);
   untracking = false;
@@ -750,7 +757,9 @@ function update_effect(effect2) {
   set_signal_status(effect2, CLEAN);
   var previous_effect = active_effect;
   var previous_component_context = component_context;
+  var was_updating_effect = is_updating_effect;
   active_effect = effect2;
+  is_updating_effect = true;
   try {
     if ((flags & BLOCK_EFFECT) !== 0) {
       destroy_block_effect_children(effect2);
@@ -768,45 +777,45 @@ function update_effect(effect2) {
   } catch (error) {
     handle_error(error, effect2, previous_effect, previous_component_context || effect2.ctx);
   } finally {
+    is_updating_effect = was_updating_effect;
     active_effect = previous_effect;
   }
 }
 function infinite_loop_guard() {
-  if (flush_count > 1e3) {
-    flush_count = 0;
-    try {
-      effect_update_depth_exceeded();
-    } catch (error) {
-      if (last_scheduled_effect !== null) {
-        {
-          handle_error(error, last_scheduled_effect, null);
-        }
-      } else {
-        throw error;
+  try {
+    effect_update_depth_exceeded();
+  } catch (error) {
+    if (last_scheduled_effect !== null) {
+      {
+        handle_error(error, last_scheduled_effect, null);
       }
+    } else {
+      throw error;
     }
   }
-  flush_count++;
 }
-function flush_queued_root_effects(root_effects) {
-  var length = root_effects.length;
-  if (length === 0) {
-    return;
-  }
-  infinite_loop_guard();
-  var previously_flushing_effect = is_flushing_effect;
-  is_flushing_effect = true;
+function flush_queued_root_effects() {
   try {
-    for (var i = 0; i < length; i++) {
-      var effect2 = root_effects[i];
-      if ((effect2.f & CLEAN) === 0) {
-        effect2.f ^= CLEAN;
+    var flush_count = 0;
+    while (queued_root_effects.length > 0) {
+      if (flush_count++ > 1e3) {
+        infinite_loop_guard();
       }
-      var collected_effects = process_effects(effect2);
-      flush_queued_effects(collected_effects);
+      var root_effects = queued_root_effects;
+      var length = root_effects.length;
+      queued_root_effects = [];
+      for (var i = 0; i < length; i++) {
+        var root2 = root_effects[i];
+        if ((root2.f & CLEAN) === 0) {
+          root2.f ^= CLEAN;
+        }
+        var collected_effects = process_effects(root2);
+        flush_queued_effects(collected_effects);
+      }
     }
   } finally {
-    is_flushing_effect = previously_flushing_effect;
+    is_flushing = false;
+    last_scheduled_effect = null;
   }
 }
 function flush_queued_effects(effects) {
@@ -832,28 +841,12 @@ function flush_queued_effects(effects) {
     }
   }
 }
-function process_deferred() {
-  is_micro_task_queued = false;
-  if (flush_count > 1001) {
-    return;
-  }
-  const previous_queued_root_effects = queued_root_effects;
-  queued_root_effects = [];
-  flush_queued_root_effects(previous_queued_root_effects);
-  if (!is_micro_task_queued) {
-    flush_count = 0;
-    last_scheduled_effect = null;
-  }
-}
 function schedule_effect(signal) {
-  if (scheduler_mode === FLUSH_MICROTASK) {
-    if (!is_micro_task_queued) {
-      is_micro_task_queued = true;
-      queueMicrotask(process_deferred);
-    }
+  if (!is_flushing) {
+    is_flushing = true;
+    queueMicrotask(flush_queued_root_effects);
   }
-  last_scheduled_effect = signal;
-  var effect2 = signal;
+  var effect2 = last_scheduled_effect = signal;
   while (effect2.parent !== null) {
     effect2 = effect2.parent;
     var flags = effect2.f;
@@ -914,29 +907,18 @@ function process_effects(effect2) {
   }
   return effects;
 }
-function flush_sync(fn) {
-  var previous_scheduler_mode = scheduler_mode;
-  var previous_queued_root_effects = queued_root_effects;
-  try {
-    infinite_loop_guard();
-    const root_effects = [];
-    scheduler_mode = FLUSH_SYNC;
-    queued_root_effects = root_effects;
-    is_micro_task_queued = false;
-    flush_queued_root_effects(previous_queued_root_effects);
-    var result = fn?.();
+function flushSync(fn) {
+  var result;
+  flush_tasks();
+  while (queued_root_effects.length > 0) {
+    is_flushing = true;
+    flush_queued_root_effects();
     flush_tasks();
-    if (queued_root_effects.length > 0 || root_effects.length > 0) {
-      flush_sync();
-    }
-    flush_count = 0;
-    last_scheduled_effect = null;
-    if (DEV) ;
-    return result;
-  } finally {
-    scheduler_mode = previous_scheduler_mode;
-    queued_root_effects = previous_queued_root_effects;
   }
+  return (
+    /** @type {T} */
+    result
+  );
 }
 function get(signal) {
   var flags = signal.f;
@@ -1037,8 +1019,10 @@ function handle_event_propagation(event) {
       current_target.host || null;
       try {
         var delegated = current_target["__" + event_name];
-        if (delegated !== void 0 && !/** @type {any} */
-        current_target.disabled) {
+        if (delegated !== void 0 && (!/** @type {any} */
+        current_target.disabled || // DOM could've been updated already by the time this is reached, so we check this as well
+        // -> the target could not have been disabled because it emits the event in the first place
+        event.target === current_target)) {
           if (is_array(delegated)) {
             var [fn, ...data] = delegated;
             fn.apply(current_target, [event, ...data]);
@@ -1276,7 +1260,7 @@ class Svelte4Component {
       recover: options2.recover
     });
     if (!options2?.props?.$$host || options2.sync === false) {
-      flush_sync();
+      flushSync();
     }
     this.#events = props.$$events;
     for (const key of Object.keys(this.#instance)) {
@@ -1483,7 +1467,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "sdk671"
+  version_hash: "wvv2k7"
 };
 async function get_hooks() {
   let handle;
@@ -1503,9 +1487,9 @@ async function get_hooks() {
 }
 export {
   DEV as D,
-  app_dir as a,
+  assets as a,
   base as b,
-  assets as c,
+  app_dir as c,
   read_implementation as d,
   options as e,
   set_private_env as f,

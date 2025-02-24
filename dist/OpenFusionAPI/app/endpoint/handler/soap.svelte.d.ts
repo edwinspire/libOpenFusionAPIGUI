@@ -6,7 +6,7 @@ type Soap = {
 declare const Soap: import("svelte").Component<{
     row?: Record<string, any>;
     onchange?: Function;
-}, {}, "row">;
+}, {}, "">;
 type $$ComponentProps = {
     row?: Record<string, any>;
     onchange?: Function;
