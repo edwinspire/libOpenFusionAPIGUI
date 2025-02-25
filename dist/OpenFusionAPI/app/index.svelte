@@ -740,15 +740,24 @@
 		row={SelectedRow}
 		{app}
 		ondata={(e) => {
-			let row_edited = e.row;
+			let row_edited = { ...e.row };
 
 			if (row_edited.idendpoint && row_edited.idendpoint.length > 10) {
 				// Es edición de endpoint
+				/*
 				let found = endpoints.findIndex((element) => element.idendpoint == row_edited.idendpoint);
-				//	console.log('Se ha encontrado: ', found);
+				console.log('Se ha encontrado: ', found);
 				if (found >= 0) {
 					endpoints[found] = { ...row_edited };
 				}
+				*/
+
+				endpoints = endpoints.map((org) => {
+					return row_edited.idendpoint == org.idendpoint ? row_edited : org;
+				});
+
+				console.log(endpoints);
+
 				//found = { ...SelectedRow };
 			} else {
 				// es nuevo endpoint

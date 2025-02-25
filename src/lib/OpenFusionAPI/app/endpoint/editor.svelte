@@ -47,7 +47,7 @@
 		console.log('ACCEPT => ', data);
 
 		//dispatch('data', data);
-		ondata(data);
+		ondata($state.snapshot(data));
 	}
 
 function clearValues(){
@@ -105,7 +105,7 @@ function clearValues(){
 		if (v) {
 			new_data_row.data_test = v.data_test;
 			new_data_row.code = v.code;
-			//console.log('onChangeValueHandler > ', v, $state.snapshot(new_data_row));
+			console.log('onChangeValueHandler > ', $state.snapshot(new_data_row));
 		}
 	}
 
