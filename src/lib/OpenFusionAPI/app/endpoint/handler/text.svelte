@@ -186,7 +186,7 @@
 			url={row.endpoint}
 			methodDisabled={true}
 			onchange={(c) => {
-				console.log('RESTESTER TEXT', c);
+			//	console.log('RESTESTER TEXT', c);
 				fnOnChange();
 			}}
 		></RESTTester>

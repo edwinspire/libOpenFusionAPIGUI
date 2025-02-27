@@ -67,6 +67,7 @@
 	//let fnVars;
 	let active_tab = $state(0);
 	//	let showAuthorizations = true;
+	let deploying = false;
 
 	let columns = $state({
 		//enabled: { label: 'Enabled App' },
@@ -314,6 +315,7 @@
 	}
 
 	async function saveApp() {
+		deploying = true;
 		try {
 			let apps_res = await uf.POST({ url: url_paths.saveApp, data: appToStore() });
 
@@ -340,6 +342,7 @@
 		} catch (error) {
 			alert(error.message);
 		}
+		deploying = false;
 	}
 
 	function uploadFile_checkAppname() {
@@ -367,6 +370,7 @@
 {#snippet save_deploy()}
 	{#if $userStore}
 		<button
+			disabled={deploying}
 			class="button is-small is-link is-outlined"
 			onclick={() => {
 				confirmSaveApp();
@@ -864,3 +868,17 @@
 		<Tab bind:tabs bind:active={active_tab}></Tab>
 	</SlideFullScreen>
 {/if}
+
+<div class="modal {deploying ? 'is-active' : ''}">
+	<div class="modal-background"></div>
+
+	<div class="modal-content">
+		<div class="box">
+			<p>Deploying...</p>
+			<br />
+			<progress class="progress is-small is-primary" max="100">15%</progress>
+
+			<!-- Your content -->
+		</div>
+	</div>
+</div>
