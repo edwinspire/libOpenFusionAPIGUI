@@ -67,7 +67,8 @@
 	//let fnVars;
 	let active_tab = $state(0);
 	//	let showAuthorizations = true;
-	let deploying = false;
+	let deploying = $state({ show: false, msg: 'Deploying...', error: false });
+	//let deployingMsg = 'Deploying...';
 
 	let columns = $state({
 		//enabled: { label: 'Enabled App' },
@@ -179,7 +180,8 @@
 				environment_list = [];
 			}
 		} catch (error) {
-			alert(error.message);
+			//alert(error.message);
+			console.error(error);
 		}
 	}
 
@@ -224,7 +226,8 @@
 				options = [];
 			}
 		} catch (error) {
-			alert(error.message);
+			//alert(error.message);
+			console.error(error);
 		}
 	}
 
@@ -288,7 +291,8 @@
 				showAppData(app_resp);
 			} catch (error) {
 				console.error(error);
-				alert(error.message);
+				//alert(error.message);
+				deploying.msg = error.message;
 			}
 		}
 	}
@@ -315,34 +319,46 @@
 	}
 
 	async function saveApp() {
-		deploying = true;
+		deploying.show = true;
+		deploying.msg = 'Deploying...';
+		deploying.error = null;
 		try {
 			let apps_res = await uf.POST({ url: url_paths.saveApp, data: appToStore() });
 
 			if (apps_res.status == 200) {
 				let rapp = await apps_res.json();
 				idapp = rapp?.app?.idapp;
+				deploying.msg = 'Deploying successfully...';
 
 				// TODO: Mejorar información de respuesta para indicar tambien los endpoints que no se hayan guardado.
 
 				if (idapp) {
-					alert(rapp?.app?.app + ' saved successfully.');
+					//alert(rapp?.app?.app + ' saved successfully.');
+					deploying.msg = 'Getting app data...';
 					getApp();
+					deploying.show = false;
 				} else {
-					alert('Could not get idapp.');
+					//alert('Could not get idapp.');
+					deploying.msg = 'Could not save App!';
+					deploying.error = true;
 				}
 
 				await getListApps();
 			} else if (apps_res.status == 401) {
-				alert('The session has expired.');
+				//alert('The session has expired.');
+				deploying.msg = 'The session has expired.';
+				deploying.error = true;
 				reloadPage();
 			} else {
-				alert('Error: ' + apps_res.status);
+				//alert('Error: ' + apps_res.status);
+				deploying.msg = 'Not save app. Error: ' + apps_res.status;
+				deploying.error = true;
 			}
 		} catch (error) {
-			alert(error.message);
+			//alert(error.message);
+			deploying.msg = 'Not save app. Error: ' + error.message;
+			deploying.error = true;
 		}
-		deploying = false;
 	}
 
 	function uploadFile_checkAppname() {
@@ -370,7 +386,7 @@
 {#snippet save_deploy()}
 	{#if $userStore}
 		<button
-			disabled={deploying}
+			disabled={deploying.show}
 			class="button is-small is-link is-outlined"
 			onclick={() => {
 				confirmSaveApp();
@@ -532,7 +548,7 @@
 			}}
 		>
 			<span class="icon is-small">
-				<i class="fa-regular fa-file"></i>
+				<i class="fa-solid fa-pen"></i>
 			</span>
 			<span>Edit App</span>
 		</button>
@@ -869,16 +885,32 @@
 	</SlideFullScreen>
 {/if}
 
-<div class="modal {deploying ? 'is-active' : ''}">
+<div class="modal {deploying.show ? 'is-active' : ''}">
 	<div class="modal-background"></div>
 
 	<div class="modal-content">
 		<div class="box">
-			<p>Deploying...</p>
+			<p>{deploying.msg}</p>
 			<br />
-			<progress class="progress is-small is-primary" max="100">15%</progress>
+			{#if deploying.error}
+				<progress class="progress is-small is-danger" max="100" value="10">Loading...</progress>
+			{:else}
+				<progress class="progress is-small is-primary" max="100">Loading...</progress>
+			{/if}
 
 			<!-- Your content -->
 		</div>
 	</div>
+
+	{#if deploying.error}
+		<button
+			class="modal-close is-large"
+			aria-label="close"
+			onclick={() => {
+				deploying.show = false;
+				deploying.msg = '';
+				deploying.error = null;
+			}}
+		></button>
+	{/if}
 </div>

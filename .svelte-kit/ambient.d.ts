@@ -112,6 +112,7 @@ declare module '$env/static/private' {
 	export const PUBLIC: string;
 	export const PWD: string;
 	export const QIP14844: string;
+	export const QIP24036: string;
 	export const SESSIONNAME: string;
 	export const SHELL: string;
 	export const SHLVL: string;
@@ -253,6 +254,7 @@ declare module '$env/dynamic/private' {
 		PUBLIC: string;
 		PWD: string;
 		QIP14844: string;
+		QIP24036: string;
 		SESSIONNAME: string;
 		SHELL: string;
 		SHLVL: string;
