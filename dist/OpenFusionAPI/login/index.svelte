@@ -8,14 +8,16 @@
 	let username = $state('');
 	let password = $state('');
 	let uf = new uFetch();
+	let processing = $state({ waiting: false, error: null });
 
 	async function handleSubmit() {
-
 		try {
-			
+			processing.waiting = true;
+			processing.error = '';
+
 			let user = await uf.POST({ url: url_paths.login, data: { username, password } });
 			let data = await user.json();
-		
+
 			if (data.login) {
 				userStore.set(data);
 
@@ -26,12 +28,15 @@
 					login: data.login
 				});
 			} else {
-				alert('Invalid credentials');
+				//	alert('Invalid credentials');
+				processing.error = 'Invalid credentials';
+				processing.waiting = false;
 			}
 		} catch (error) {
 			console.trace(error);
-			
-			alert(error.message);
+
+			processing.waiting = false;
+			processing.error = error.message;
 		}
 	}
 
@@ -39,7 +44,6 @@
 </script>
 
 <div class="modal is-active">
-	
 	<div class="modal-background"></div>
 	<div class="modal-content">
 		<div class="box">
@@ -74,16 +78,35 @@
 			</div>
 			<div class="field">
 				<p class="control">
-					<button
-						class="button is-success"
-						onclick={() => {
-							handleSubmit();
-						}}
-					>
-						Login
-					</button>
+					{#if processing.waiting}
+						<button
+							class="button is-success is-loading"
+							onclick={() => {
+								handleSubmit();
+							}}
+						>
+							Login
+						</button>
+					{:else}
+						<button
+							class="button is-success"
+							onclick={() => {
+								handleSubmit();
+							}}
+						>
+							Login
+						</button>
+					{/if}
 				</p>
 			</div>
+			{#if !processing.waiting && processing.error}
+				<div class="icon-text">
+					<span class="icon has-text-warning">
+						<i class="fas fa-exclamation-triangle"></i>
+					</span>
+					<span>{processing.error}</span>
+				</div>
+			{/if}
 		</div>
 	</div>
 </div>

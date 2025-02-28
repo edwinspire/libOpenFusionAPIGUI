@@ -51,7 +51,16 @@ function Login($$payload, $$props) {
   let username = "";
   let password = "";
   new uFetch();
-  $$payload.out += `<div class="modal is-active"><div class="modal-background"></div> <div class="modal-content"><div class="box"><div class="media t1 svelte-fhc20z"><div class="media-left"><figure class="image is-48x48"><img${attr("src", Logo)} alt="OpenFusionAPI"></figure></div> <div class="media-content"><p class="title is-family-sans-serif">Open Fusion API</p></div></div> <div class="field"><p class="control has-icons-left has-icons-right"><input class="input" type="text" placeholder="Username"${attr("value", username)}> <span class="icon is-small is-left"><i class="fa-solid fa-user"></i></span></p></div> <div class="field"><p class="control has-icons-left"><input class="input" type="password" placeholder="Password"${attr("value", password)}> <span class="icon is-small is-left"><i class="fas fa-lock"></i></span></p></div> <div class="field"><p class="control"><button class="button is-success">Login</button></p></div></div></div></div>`;
+  $$payload.out += `<div class="modal is-active"><div class="modal-background"></div> <div class="modal-content"><div class="box"><div class="media t1 svelte-fhc20z"><div class="media-left"><figure class="image is-48x48"><img${attr("src", Logo)} alt="OpenFusionAPI"></figure></div> <div class="media-content"><p class="title is-family-sans-serif">Open Fusion API</p></div></div> <div class="field"><p class="control has-icons-left has-icons-right"><input class="input" type="text" placeholder="Username"${attr("value", username)}> <span class="icon is-small is-left"><i class="fa-solid fa-user"></i></span></p></div> <div class="field"><p class="control has-icons-left"><input class="input" type="password" placeholder="Password"${attr("value", password)}> <span class="icon is-small is-left"><i class="fas fa-lock"></i></span></p></div> <div class="field"><p class="control">`;
+  {
+    $$payload.out += "<!--[!-->";
+    $$payload.out += `<button class="button is-success">Login</button>`;
+  }
+  $$payload.out += `<!--]--></p></div> `;
+  {
+    $$payload.out += "<!--[!-->";
+  }
+  $$payload.out += `<!--]--></div></div></div>`;
   pop();
 }
 let source;

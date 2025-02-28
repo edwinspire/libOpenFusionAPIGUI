@@ -39,7 +39,7 @@
 	let selectedIdApp = $state(0);
 	let menujson = {
 		start: [],
-		brand: [{ component: logo }],
+		brand: [{ component: logo }, { component: select_app }, { component: app_enabled_field }],
 		end: [
 			{ component: edit_app },
 			{ component: new_app },
@@ -430,28 +430,28 @@
 
 {#snippet tab_endpoints()}
 	<div>
-		{#key app.idapp}
-			<Table
-				ShowNewButton="true"
-				ShowEditButton="true"
-				ShowDeleteButton="true"
-				bind:RawDataTable={endpoints}
-				bind:columns
-				bind:SelectionType={TableSelectionType}
-				bind:this={TableObject}
-				left_items={[lt01]}
-				right_items={[rt1]}
-				ondeleterow={(data) => {
-					//console.log('ondeleterow', data);
-					if (confirm('Do you want to delete the endpoints selected?')) {
-						endpoints = endpoints.filter((item) => {
-							return !data.rows.some((element) => element.idendpoint == item.idendpoint);
-						});
-						//console.log('ondeleterow', endpoints);
-					}
-				}}
-				onnewrow={() => {
-					/*
+		<Table
+			showEditRow="true"
+			ShowNewButton="true"
+			ShowEditButton="true"
+			ShowDeleteButton="true"
+			bind:RawDataTable={endpoints}
+			bind:columns
+			bind:SelectionType={TableSelectionType}
+			bind:this={TableObject}
+			left_items={[lt01]}
+			right_items={[rt1]}
+			ondeleterow={(data) => {
+				//console.log('ondeleterow', data);
+				if (confirm('Do you want to delete the endpoints selected?')) {
+					endpoints = endpoints.filter((item) => {
+						return !data.rows.some((element) => element.idendpoint == item.idendpoint);
+					});
+					//console.log('ondeleterow', endpoints);
+				}
+			}}
+			onnewrow={() => {
+				/*
 		SelectedRow = {
 			enabled: false,
 			environment: 'dev',
@@ -462,23 +462,23 @@
 		};
 		*/
 
-					if (app && app.idapp && app.idapp.length > 0) {
-						SelectedRow = defaultValuesRow();
+				if (app && app.idapp && app.idapp.length > 0) {
+					SelectedRow = defaultValuesRow();
 
-						showEndpointEdit = true;
-					} else {
-						alert('No App selected');
-					}
-				}}
-				oneditrow={(data) => {
-					SelectedRow = defaultValuesRow(data);
 					showEndpointEdit = true;
-				}}
-			>
-				{#snippet lt01()}
-					Endpoints
-				{/snippet}
-				<!-- <span slot="r09">
+				} else {
+					alert('No App selected');
+				}
+			}}
+			oneditrow={(data) => {
+				SelectedRow = defaultValuesRow(data);
+				showEndpointEdit = true;
+			}}
+		>
+			{#snippet lt01()}
+				Endpoints
+			{/snippet}
+			<!-- <span slot="r09">
 		<button
 			class="button is-small"
 			onclick={() => {
@@ -500,23 +500,22 @@
 		</button>
 	</span> -->
 
-				{#snippet rt1()}
-					<span>
-						<button
-							class="button is-small"
-							onclick={() => {
-								clearcache();
-							}}
-						>
-							<span class="icon is-small">
-								<i class="fa-solid fa-eraser"></i>
-							</span>
-							<span>Cache</span>
-						</button>
-					</span>
-				{/snippet}
-			</Table>
-		{/key}
+			{#snippet rt1()}
+				<span>
+					<button
+						class="button is-small"
+						onclick={() => {
+							clearcache();
+						}}
+					>
+						<span class="icon is-small">
+							<i class="fa-solid fa-eraser"></i>
+						</span>
+						<span>Cache</span>
+					</button>
+				</span>
+			{/snippet}
+		</Table>
 	</div>
 {/snippet}
 
@@ -602,8 +601,139 @@
 
 {#if $userStore}
 	<div>
-		<Level left={[select_app, app_enabled_field]} right={[r03, r02]}>
-			{#snippet r02()}
+		{@render tab_endpoints()}
+	</div>
+{/if}
+
+{#if app}
+	<EndPointEditor
+		bind:showEditor={showEndpointEdit}
+		row={SelectedRow}
+		{app}
+		ondata={(e) => {
+			let row_edited = { ...e.row };
+
+			if (row_edited.idendpoint && row_edited.idendpoint.length > 10) {
+				// Es edición de endpoint
+				/*
+				let found = endpoints.findIndex((element) => element.idendpoint == row_edited.idendpoint);
+				console.log('Se ha encontrado: ', found);
+				if (found >= 0) {
+					endpoints[found] = { ...row_edited };
+				}
+				*/
+
+				endpoints = endpoints.map((org) => {
+					return row_edited.idendpoint == org.idendpoint ? row_edited : org;
+				});
+
+				console.log(endpoints);
+
+				//found = { ...SelectedRow };
+			} else {
+				// es nuevo endpoint
+
+				// Busca si el endpoint existe ya en la tabla, si ya existe la actualiza, si no la agrega
+				let found = endpoints.findIndex((element) => element.endpoint == row_edited.endpoint);
+				if (found >= 0) {
+					endpoints[found] = { ...row_edited };
+				} else {
+					endpoints.unshift({
+						idapp: app.idapp,
+						idendpoint: undefined,
+						endpoint: row_edited.endpoint,
+						resource: row_edited.resource,
+						enabled: row_edited.enabled,
+						access: row_edited.access,
+						environment: row_edited.environment,
+						resource: row_edited.resource,
+						method: row_edited.method,
+						handler: row_edited.handler,
+						cors: row_edited.cors,
+						code: row_edited.code,
+						description: row_edited.description,
+						headers_test: row_edited.headers_test,
+						data_test: row_edited.data_test,
+						rowkey: 0,
+						latest_updater: $userStore.iduser,
+						cache_time: row_edited.cache_time
+					});
+				}
+
+				endpoints = [...endpoints]; // Esto se hace para que se actualice la tabla
+				//endpoints = endpoints; // Esto se hace para que se actualice la tabla
+				console.log('Con nuevo endpoint:::::> ', endpoints);
+			}
+		}}
+	></EndPointEditor>
+{/if}
+
+{#if app}
+	<SlideFullScreen bind:show={showEditorApp}>
+		<Level left={[]} right={[r01]}>
+			{#snippet r01()}
+				<div class="field has-addons">
+					<p class="control">
+						<button
+							class="button is-small is-link"
+							onclick={() => {
+								confirmSaveApp();
+								showEditorApp = false;
+							}}
+						>
+							<span class="icon is-small">
+								<i class="fa-solid fa-rocket"></i>
+							</span>
+							<span>Save & Deploy</span>
+						</button>
+					</p>
+					<p class="control">
+						<button
+							class="button is-small"
+							onclick={() => {
+								//console.log('app Actual', app, app_vars);
+
+								if (
+									confirm(
+										'If you cancel, you will lose absolutely all changes made to the app. Do you want to continue?'
+									)
+								) {
+									getApp();
+									showEditorApp = false;
+								}
+							}}
+						>
+							<span class="icon is-small">
+								<i class="fa-solid fa-xmark"></i>
+							</span>
+							<span>Cancel</span>
+						</button>
+					</p>
+				</div>
+			{/snippet}
+		</Level>
+
+		<Level left={[app_name_field, app_enabled_field]} right={[upload_app, download_app]}>
+			{#snippet app_name_field()}
+				<div class="field has-addons">
+					<p class="control">
+						<!-- svelte-ignore a11y_missing_attribute -->
+						<a class="button is-static is-small"> Application </a>
+					</p>
+					<p class="control">
+						{#if app}
+							<input
+								class="input is-small"
+								type="text"
+								placeholder="Application name"
+								bind:value={app.app}
+							/>
+						{/if}
+					</p>
+				</div>
+			{/snippet}
+
+			{#snippet download_app()}
 				{#if $userStore}
 					<button
 						class="button is-small"
@@ -646,7 +776,7 @@
 				{/if}
 			{/snippet}
 
-			{#snippet r03()}
+			{#snippet upload_app()}
 				{#if $userStore}
 					<div class="field has-addons">
 						<p class="control file">
@@ -747,137 +877,6 @@
 						</p>
 					</div>
 				{/if}
-			{/snippet}
-		</Level>
-
-		{@render tab_endpoints()}
-	</div>
-{/if}
-
-{#if app}
-	<EndPointEditor
-		bind:showEditor={showEndpointEdit}
-		row={SelectedRow}
-		{app}
-		ondata={(e) => {
-			let row_edited = { ...e.row };
-
-			if (row_edited.idendpoint && row_edited.idendpoint.length > 10) {
-				// Es edición de endpoint
-				/*
-				let found = endpoints.findIndex((element) => element.idendpoint == row_edited.idendpoint);
-				console.log('Se ha encontrado: ', found);
-				if (found >= 0) {
-					endpoints[found] = { ...row_edited };
-				}
-				*/
-
-				endpoints = endpoints.map((org) => {
-					return row_edited.idendpoint == org.idendpoint ? row_edited : org;
-				});
-
-				console.log(endpoints);
-
-				//found = { ...SelectedRow };
-			} else {
-				// es nuevo endpoint
-
-				// Busca si el endpoint existe ya en la tabla, si ya existe la actualiza, si no la agrega
-				let found = endpoints.findIndex((element) => element.endpoint == row_edited.endpoint);
-				if (found >= 0) {
-					endpoints[found] = { ...row_edited };
-				} else {
-					endpoints.unshift({
-						idapp: app.idapp,
-						idendpoint: undefined,
-						endpoint: row_edited.endpoint,
-						resource: row_edited.resource,
-						enabled: row_edited.enabled,
-						access: row_edited.access,
-						environment: row_edited.environment,
-						resource: row_edited.resource,
-						method: row_edited.method,
-						handler: row_edited.handler,
-						cors: row_edited.cors,
-						code: row_edited.code,
-						description: row_edited.description,
-						headers_test: row_edited.headers_test,
-						data_test: row_edited.data_test,
-						rowkey: 0,
-						latest_updater: $userStore.iduser,
-						cache_time: row_edited.cache_time
-					});
-				}
-
-				endpoints = [...endpoints]; // Esto se hace para que se actualice la tabla
-				//endpoints = endpoints; // Esto se hace para que se actualice la tabla
-				console.log('Con nuevo endpoint:::::> ', endpoints);
-			}
-		}}
-	></EndPointEditor>
-{/if}
-
-{#if app}
-	<SlideFullScreen bind:show={showEditorApp}>
-		<Level left={[app_name_field, app_enabled_field]} right={[r01]}>
-			{#snippet app_name_field()}
-				<div class="field has-addons">
-					<p class="control">
-						<!-- svelte-ignore a11y_missing_attribute -->
-						<a class="button is-static is-small"> Application </a>
-					</p>
-					<p class="control">
-						{#if app}
-							<input
-								class="input is-small"
-								type="text"
-								placeholder="Application name"
-								bind:value={app.app}
-							/>
-						{/if}
-					</p>
-				</div>
-			{/snippet}
-
-			{#snippet r01()}
-				<div class="field has-addons">
-					<p class="control">
-						<button
-							class="button is-small is-link"
-							onclick={() => {
-								confirmSaveApp();
-								showEditorApp = false;
-							}}
-						>
-							<span class="icon is-small">
-								<i class="fa-solid fa-rocket"></i>
-							</span>
-							<span>Save & Deploy</span>
-						</button>
-					</p>
-					<p class="control">
-						<button
-							class="button is-small"
-							onclick={() => {
-								//console.log('app Actual', app, app_vars);
-
-								if (
-									confirm(
-										'If you cancel, you will lose absolutely all changes made to the app. Do you want to continue?'
-									)
-								) {
-									getApp();
-									showEditorApp = false;
-								}
-							}}
-						>
-							<span class="icon is-small">
-								<i class="fa-solid fa-xmark"></i>
-							</span>
-							<span>Cancel</span>
-						</button>
-					</p>
-				</div>
 			{/snippet}
 		</Level>
 
