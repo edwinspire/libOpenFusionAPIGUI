@@ -240,7 +240,7 @@
 
 			app = defaultValuesApp(app_resp[0]);
 
-			console.log('>>>>>>>>>>>>>>>>>>', app.vars);
+			//console.log('>>>>>>>>>>>>>>>>>>', app.vars);
 
 			if (app && app.vars && typeof app.vars === 'object') {
 				listAppVars.set(app.vars);
@@ -256,7 +256,7 @@
 			}
 
 			getListFunction($userStore.token, app.app, app.environment);
-			console.log($userStore);
+			//console.log($userStore);
 
 			if (app.endpoints) {
 				//	console.log('Procesar endpoints... ');
@@ -267,7 +267,7 @@
 					};
 				});
 				//	console.log('Procesardos endpoints... ', endpoints);
-				endpoints = endpoints;
+				endpoints = [...endpoints];
 			}
 		}
 	}
@@ -432,9 +432,9 @@
 	<div>
 		<Table
 			showEditRow="true"
-			ShowNewButton="true"
-			ShowEditButton="true"
-			ShowDeleteButton="true"
+			showNewButton="true"
+			showEditButton="true"
+			showDeleteButton="true"
 			bind:RawDataTable={endpoints}
 			bind:columns
 			bind:SelectionType={TableSelectionType}
