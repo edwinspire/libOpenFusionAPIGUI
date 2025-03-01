@@ -240,7 +240,7 @@
 
 			app = defaultValuesApp(app_resp[0]);
 
-			console.log('>>>>>>>>>>>>>>>>>>', app.vars);
+			//console.log('>>>>>>>>>>>>>>>>>>', app.vars);
 
 			if (app && app.vars && typeof app.vars === 'object') {
 				listAppVars.set(app.vars);
@@ -256,7 +256,7 @@
 			}
 
 			getListFunction($userStore.token, app.app, app.environment);
-			console.log($userStore);
+			//console.log($userStore);
 
 			if (app.endpoints) {
 				//	console.log('Procesar endpoints... ');
@@ -267,7 +267,7 @@
 					};
 				});
 				//	console.log('Procesardos endpoints... ', endpoints);
-				endpoints = endpoints;
+				endpoints = [...endpoints];
 			}
 		}
 	}
@@ -405,12 +405,51 @@
 {/snippet}
 
 {#snippet user()}
-	<span class="icon-text">
-		<span class="icon">
-			<i class="fa-solid fa-user"></i>
-		</span>
-		<span>{$userStore?.user?.username}</span>
-	</span>
+	<div class="dropdown is-hoverable">
+		<div class="dropdown-trigger">
+			<button
+				class="button is-small is-success is-outlined"
+				aria-haspopup="true"
+				aria-controls="dropdown-menu3"
+			>
+				<span class="icon is-small">
+					<i class="fa-solid fa-user"></i>
+				</span>
+				<span> {$userStore?.user?.username}</span>
+				<span class="icon is-small">
+					<i class="fas fa-angle-down" aria-hidden="true"></i>
+				</span>
+			</button>
+		</div>
+		<div class="dropdown-menu" role="menu">
+			<div class="dropdown-content">
+				<a href="https://github.com/edwinspire/OpenFusionAPI" target="_blank" class="dropdown-item">
+					<div class="icon-text">
+						<span class="icon ">
+							<i class="fa-brands fa-github"></i>
+						</span>
+						<span>Github</span>
+					</div>
+				</a>
+				<hr class="dropdown-divider" />
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
+				<div
+					class="dropdown-item"
+					onclick={() => {
+						location.reload();
+					}}
+				>
+					<div class="icon-text">
+						<span class="icon has-text-danger">
+							<i class="fa-solid fa-arrow-right-from-bracket"></i>
+						</span>
+						<span>Logout</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 {/snippet}
 
 {#snippet tab_descrip()}
@@ -432,9 +471,9 @@
 	<div>
 		<Table
 			showEditRow="true"
-			ShowNewButton="true"
-			ShowEditButton="true"
-			ShowDeleteButton="true"
+			showNewButton="true"
+			showEditButton="true"
+			showDeleteButton="true"
 			bind:RawDataTable={endpoints}
 			bind:columns
 			bind:SelectionType={TableSelectionType}
@@ -769,7 +808,7 @@
 						}}
 					>
 						<span class="icon is-small">
-							<i class="fa-solid fa-file-export"></i>
+							<i class="fa-solid fa-download"></i>
 						</span>
 						<span>Download</span>
 					</button>
@@ -869,7 +908,7 @@
 								}}
 							>
 								<span class="icon is-small">
-									<i class="fas fa-align-left"></i>
+									<i class="fa-solid fa-upload"></i>
 								</span>
 
 								<span> Upload </span>
