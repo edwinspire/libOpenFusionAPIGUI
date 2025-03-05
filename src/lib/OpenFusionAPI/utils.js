@@ -379,16 +379,6 @@ export const getCountStatusCode = async (app_name, token) => {
 	}
 };
 
-export const css_handlers = {
-	FETCH: { css: ' is-primary  ', label: ' Fetch ', icon: ' fa-solid fa-server ' },
-	JS: { css: ' is-dark ', label: ' Javascript ', icon: ' fa-brands fa-square-js ' },
-	SOAP: { css: ' is-warning ', label: ' SOAP ', icon: ' fa-solid fa-soap ' },
-	SOAPFn: { css: ' is-warning ', label: ' SOAP FUNCTION', icon: ' fa-solid fa-soap ' },
-	SQL: { css: ' is-link ', label: ' SQL ', icon: 'fa-solid fa-database ' },
-	TEXT: { css: ' is-success ', label: ' TEXT ', icon: 'fa-regular fa-file-lines ' },
-	FUNCTION: { css: ' is-info  ', label: ' Function ', icon: ' fa-brands fa-node-js ' }
-};
-
 /**
  * @param {string} string_url
  */
@@ -445,7 +435,7 @@ export const listEnv = {
 		icon: ' fa-solid fa-gear fa-spin ',
 		label: 'Production'
 	},
-	qa: { color: ' has-text-link ', background: 'link', icon: ' fa-solid fa-eye ', label: 'Quality' },
+	qa: { color: ' has-text-warning ', background: 'warning', icon: ' fa-solid fa-eye ', label: 'Quality' },
 	dev: {
 		color: ' has-text-danger ',
 		background: 'danger',

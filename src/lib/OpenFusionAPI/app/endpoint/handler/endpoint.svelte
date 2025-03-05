@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { BasicSelect } from '@edwinspire/svelte-components';
+	import { BasicSelect, DialogModal, Level } from '@edwinspire/svelte-components';
 	import SelectEnvironment from '../../../widgets/Select.svelte';
 	import uFetch from '@edwinspire/universal-fetch';
 	import {
@@ -18,14 +18,17 @@
 		row = $bindable({ method: 'X', access: 0 }),
 		app = $bindable({}),
 		validateResource = $bindable(false),
-		availableURL = $bindable(false)
+		availableURL = $bindable(false),
+		oncopy = () => {}
 	} = $props();
 
 	let handlers = $state([]);
 	let methods = $state([]);
 
 	let uf = new uFetch();
-	
+
+	let ShowDialogCopyEndpoint = $state(false);
+	//let ShowDialogCopyEndpointError = $state('');
 
 	function defaultValues() {
 		if (!row) {
@@ -36,6 +39,17 @@
 			row.access = 0;
 		}
 	}
+
+	let available_environments_list = $derived.by(() => {
+		return environment_list.filter((el) => {
+			console.log(el, row.environment);
+			return el.id != row.environment;
+		});
+	});
+
+	let endpoint_copied = $state();
+	let endpoint_env_copy = $state('');
+	let endpoint_replace_copy = $state(false);
 
 	listHandlerStore.subscribe((/** @type {any[]} */ value) => {
 		handlers = value;
@@ -56,7 +70,6 @@
 
 		row.endpoint = createEndpoint(row.method, app.app, row.resource, row.environment);
 	});
-
 
 	function checkEndpointConstraint() {
 		let check = false;
@@ -93,13 +106,36 @@
 	}
 
 	onMount(async () => {
+		endpoint_copied = {};
 		defaultValues();
 		await getEnvList();
 	});
 </script>
 
-
 <div>
+	{#if row.idendpoint && row.idendpoint.length > 0}
+		<Level left={[]} right={[copy_endpoint]}>
+			{#snippet copy_endpoint()}
+				<div class="field has-addons">
+					<p class="control">
+						<button
+							class="button is-small is-warning"
+							onclick={() => {
+								console.log('<<<<<<<<<<<<---- ', $state.snapshot(app));
+								ShowDialogCopyEndpoint = true;
+							}}
+						>
+							<span class="icon is-small">
+								<i class="fa-solid fa-copy"></i>
+							</span>
+							<span>Copy to</span>
+						</button>
+					</p>
+				</div>
+			{/snippet}
+		</Level>
+	{/if}
+
 	<input class="input" type="hidden" placeholder="Name" bind:value={row.idendpoint} />
 
 	<div class="field is-horizontal">
@@ -266,3 +302,117 @@
 		</div>
 	</div>
 </div>
+
+<DialogModal
+	bind:Show={ShowDialogCopyEndpoint}
+	title={titleModal}
+	body={bodyDialogModal}
+	onaccept={() => {
+		//console.log(app);
+		let eps = [...app.endpoints];
+
+		if (endpoint_copied && endpoint_copied.idendpoint) {
+			// Se reemplaza en endpoint
+			eps = eps.map((ep) => {
+				if (ep.idendpoint == endpoint_copied.idendpoint) {
+					//console.log('----------------------------', endpoint_copied);
+					ep = { ...endpoint_copied };
+				}
+				return ep;
+			});
+		} else {
+			// Se agrega el endpoint
+			eps.push(endpoint_copied);
+		}
+
+		if (endpoint_env_copy != '') {
+			//	console.log('>>>>< ', eps.length);
+			oncopy($state.snapshot(eps));
+			ShowDialogCopyEndpoint = false;
+		}
+	}}
+>
+	{#snippet titleModal()}
+		<span>Copy endpoint to...</span>
+	{/snippet}
+
+	{#snippet bodyDialogModal()}
+		<div>
+			Copy the endpoint to another environment including all configuration and testing parameters.
+		</div>
+		<br />
+
+		<div class="field has-addons">
+			<p class="control">
+				<!-- svelte-ignore a11y_missing_attribute -->
+				<a class="button is-small is-static"> Copy to: </a>
+			</p>
+
+			<p class="control">
+				<SelectEnvironment
+					options={available_environments_list}
+					bind:option={endpoint_env_copy}
+					onchange={(e) => {
+						//			console.log('SSSSSSSSSSSS> ', $state.snapshot(app));
+						if (app && app.endpoints) {
+							let endpoint_find = app.endpoints.find((ep) => {
+								//console.log('-------> ', ep.environment, endpoint_env_copy);
+								return (
+									ep.environment == endpoint_env_copy &&
+									ep.handler == row.handler &&
+									ep.method == row.method &&
+									ep.resource == row.resource
+								);
+							});
+
+							endpoint_copied = { ...row };
+							endpoint_copied.environment = endpoint_env_copy;
+							endpoint_copied.idendpoint = null;
+							endpoint_copied.endpoint = createEndpoint(endpoint_copied.method, app.app, endpoint_copied.resource, endpoint_copied.environment);
+							if (endpoint_find) {
+								// Existe ya un endpoint, avisar al usuario si lo quiere reemplazar
+								//endpoint_copied.environment = endpoint_env_copy;
+								endpoint_copied.idendpoint = endpoint_find.idendpoint;
+
+							}
+						//	console.log('zzzzzzzzzzzzzzz ', endpoint_copied);
+							//console.log($state.snapshot(endpoint_copied));
+						} else {
+							endpoint_copied = {};
+						}
+					}}
+				/>
+			</p>
+		</div>
+
+		<!-- svelte-ignore block_empty -->
+		{#if endpoint_copied && endpoint_copied.idendpoint && endpoint_copied.idendpoint.length > 0}
+			<label class="checkbox">
+				<input type="checkbox" bind:checked={endpoint_replace_copy} />
+				I agree to replace all data on the endpoint.
+			</label>
+
+			{#if !endpoint_replace_copy}
+				<br />
+				<div class="icon-text">
+					<span class="icon has-text-warning">
+						<i class="fas fa-exclamation-triangle"></i>
+					</span>
+					<span>You are required to accept the replacement in order to continue. </span>
+				</div>
+			{/if}
+		{/if}
+
+		{#if endpoint_env_copy == ''}
+			<div class="icon-text">
+				<span class="icon has-text-warning">
+					<i class="fas fa-exclamation-triangle"></i>
+				</span>
+				<span>Select an environment to copy. </span>
+			</div>
+		{/if}
+
+		<br />
+		<div class="">If you use application variables you must copy or create them individually.</div>
+	{/snippet}
+</DialogModal>
