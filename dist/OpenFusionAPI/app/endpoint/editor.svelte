@@ -15,9 +15,14 @@
 	import Authorizations from './widgets/authorizations.svelte';
 	import Logs from './widgets/logs.svelte';
 	import EndpointLabel from './widgets/endpoint_label.svelte';
-	import { json } from '@sveltejs/kit';
 
-	let { showEditor = $bindable(false), row = {}, app = {}, ondata = (d) => {} } = $props();
+	let {
+		showEditor = $bindable(false),
+		row = {},
+		app = $bindable({}),
+		ondata = (d) => {},
+		oncopy = () => {}
+	} = $props();
 	let new_data_row = { data_test: {}, code: '' };
 
 	let validateResource = $state(false);
@@ -50,15 +55,15 @@
 		ondata($state.snapshot(data));
 	}
 
-function clearValues(){
-	defaultValues();
-	row.method = '';
-	row.environment = '?';
-	row.endpoint = '';
-	row.handler = '';
-	row.ctrl = {users: []};
-	app.endpoints = [];
-}
+	function clearValues() {
+		defaultValues();
+		row.method = '';
+		row.environment = '?';
+		row.endpoint = '';
+		row.handler = '';
+		row.ctrl = { users: [] };
+		//app.endpoints = [];
+	}
 
 	function defaultValues() {
 		if (!row) {
@@ -118,7 +123,15 @@ function clearValues(){
 
 {#snippet tab_endpoint()}
 	{#if row && app}
-		<Endpoint bind:row bind:app bind:validateResource bind:availableURL></Endpoint>
+		<Endpoint
+			bind:row
+			bind:app
+			bind:validateResource
+			bind:availableURL
+			oncopy={(ep) => {
+				oncopy(ep);
+			}}
+		></Endpoint>
 	{/if}
 {/snippet}
 
@@ -244,7 +257,7 @@ function clearValues(){
 					<button
 						class="button is-small"
 						onclick={() => {
-							console.log('Editor Cancel', $state.snapshot( row.data_test));
+							console.log('Editor Cancel', $state.snapshot(row.data_test));
 							clearValues();
 							showEditor = false;
 						}}

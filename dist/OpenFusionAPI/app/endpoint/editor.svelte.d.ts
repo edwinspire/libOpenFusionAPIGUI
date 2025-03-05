@@ -8,10 +8,12 @@ declare const Editor: import("svelte").Component<{
     row?: Record<string, any>;
     app?: Record<string, any>;
     ondata?: Function;
-}, {}, "showEditor">;
+    oncopy?: Function;
+}, {}, "app" | "showEditor">;
 type $$ComponentProps = {
     showEditor?: boolean;
     row?: Record<string, any>;
     app?: Record<string, any>;
     ondata?: Function;
+    oncopy?: Function;
 };

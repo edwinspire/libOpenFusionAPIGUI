@@ -1,5 +1,5 @@
 import "clsx";
-import { c as pop, p as push } from "../../chunks/index2.js";
+import { c as pop, p as push } from "../../chunks/index.js";
 import { e as escape_html } from "../../chunks/escaping.js";
 import uFetch from "@edwinspire/universal-fetch";
 import "events";
@@ -19,7 +19,6 @@ import { AXObjects, elementAXObjects } from "axobject-query";
 import "esrap";
 import "@ampproject/remapping";
 import "@jridgewell/sourcemap-codec";
-import "../../chunks/index.js";
 const replacements = {
   translate: /* @__PURE__ */ new Map([
     [true, "yes"],
@@ -32,7 +31,7 @@ function attr(name, value, is_boolean = false) {
   const assignment = is_boolean ? "" : `="${escape_html(normalized, true)}"`;
   return ` ${name}${assignment}`;
 }
-const PUBLIC_API_SERVER_HOST = "http://192.168.242.59:3030";
+const PUBLIC_API_SERVER_HOST = "http://localhost:3000";
 validateBaseUrl(PUBLIC_API_SERVER_HOST);
 function validateBaseUrl(baseUrl) {
   try {

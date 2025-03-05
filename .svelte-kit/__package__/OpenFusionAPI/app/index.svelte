@@ -19,7 +19,8 @@
 		getCountStatusCode,
 		getListUsers,
 		defaultValuesRow,
-		defaultValuesApp
+		defaultValuesApp,
+		createEndpoint
 	} from '../utils.js';
 	import CellMethod from './cellMethod.svelte';
 	import CellAccess from './cellAccess.svelte';
@@ -211,6 +212,17 @@
 		}
 	}
 
+	function setpathEdpoint(endpoint_list) {
+
+		return endpoint_list.map((ax) => {
+			return {
+				//endpoint: `${ax.method == 'WS' ? '/ws/' : '/api/'}${app.app}${ax.resource}/${ax.environment}`,
+				endpoint: createEndpoint(ax.method, app.app, ax.resource, ax.environment),
+				...ax
+			};
+		});
+	}
+
 	async function getListApps() {
 		// Lógica de autenticación aquí
 
@@ -260,14 +272,16 @@
 
 			if (app.endpoints) {
 				//	console.log('Procesar endpoints... ');
-				endpoints = app.endpoints.map((/** @type {{ environment: any; resource: any; }} */ ax) => {
+				/*
+				endpoints = app.endpoints.map(( ax) => {
 					return {
 						endpoint: `${ax.method == 'WS' ? '/ws/' : '/api/'}${app.app}${ax.resource}/${ax.environment}`,
 						...ax
 					};
 				});
+				*/
 				//	console.log('Procesardos endpoints... ', endpoints);
-				endpoints = [...endpoints];
+				endpoints = setpathEdpoint(app.endpoints);
 			}
 		}
 	}
@@ -425,7 +439,7 @@
 			<div class="dropdown-content">
 				<a href="https://github.com/edwinspire/OpenFusionAPI" target="_blank" class="dropdown-item">
 					<div class="icon-text">
-						<span class="icon ">
+						<span class="icon">
 							<i class="fa-brands fa-github"></i>
 						</span>
 						<span>Github</span>
@@ -648,7 +662,11 @@
 	<EndPointEditor
 		bind:showEditor={showEndpointEdit}
 		row={SelectedRow}
-		{app}
+		bind:app
+		oncopy={(eps) => {
+			console.log(eps);
+			endpoints = setpathEdpoint(eps);
+		}}
 		ondata={(e) => {
 			let row_edited = { ...e.row };
 
@@ -666,7 +684,7 @@
 					return row_edited.idendpoint == org.idendpoint ? row_edited : org;
 				});
 
-				console.log(endpoints);
+				//console.log(endpoints);
 
 				//found = { ...SelectedRow };
 			} else {
