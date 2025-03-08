@@ -7,7 +7,7 @@
 		Level,
 		Tab,
 		MenuMega,
-		SlideFullScreen
+		SlideFullScreen, Modal
 	} from '@edwinspire/svelte-components';
 	import { onDestroy, onMount } from 'svelte';
 	import {
@@ -31,6 +31,9 @@
 	import EndPointEditor from './endpoint/editor.svelte';
 	import AppVars from './app_vars.svelte';
 	import Logo from '../img/favicon.png';
+	import { Notifications} from "@edwinspire/svelte-components";
+
+let notify = new Notifications();
 
 	let idapp = 0;
 
@@ -181,6 +184,7 @@
 				environment_list = [];
 			}
 		} catch (error) {
+			notify.push({message: error.message, color: 'danger'});
 			//alert(error.message);
 			console.error(error);
 		}
@@ -202,13 +206,18 @@
 
 				let get_list_clear_result = await get_list_clear.json();
 
-				alert('Cache deleted');
+				notify.push({message: 'Cache deleted', color: 'success'});
+
 			} else {
-				alert('You must select at least one record.');
+				//alert('You must select at least one record.');
+				
 				TableSelectionType = 2;
+				notify.push({message: 'You must select at least one record.', color: 'warning'});
 			}
 		} catch (error) {
-			alert(error.message);
+			//alert(error.message);
+			notify.push({message: error.message, color: 'danger'});
+
 		}
 	}
 
@@ -240,6 +249,7 @@
 		} catch (error) {
 			//alert(error.message);
 			console.error(error);
+			notify.push({message: error.message, color: 'danger'});
 		}
 	}
 
@@ -306,6 +316,7 @@
 			} catch (error) {
 				console.error(error);
 				//alert(error.message);
+				notify.push({message: error.message, color: 'danger'});
 				deploying.msg = error.message;
 			}
 		}
@@ -355,6 +366,7 @@
 					//alert('Could not get idapp.');
 					deploying.msg = 'Could not save App!';
 					deploying.error = true;
+					notify.push({message: 'Could not save App!', color: 'danger'});
 				}
 
 				await getListApps();
@@ -367,11 +379,13 @@
 				//alert('Error: ' + apps_res.status);
 				deploying.msg = 'Not save app. Error: ' + apps_res.status;
 				deploying.error = true;
+				notify.push({message: 'Not save app. Error: ' + apps_res.status, color: 'danger'});
 			}
 		} catch (error) {
 			//alert(error.message);
 			deploying.msg = 'Not save app. Error: ' + error.message;
 			deploying.error = true;
+			notify.push({message: 'Not save app. Error: ' + error.message, color: 'danger'});
 		}
 	}
 
@@ -380,6 +394,9 @@
 	}
 
 	onMount(async () => {
+
+		notify.push({message: 'Welcome ', color: 'success'});
+
 		await getListApps();
 		await getEnvList();
 		app = defaultValuesApp();
@@ -490,7 +507,7 @@
 			showDeleteButton="true"
 			bind:RawDataTable={endpoints}
 			bind:columns
-			bind:SelectionType={TableSelectionType}
+			bind:selectionType={TableSelectionType}
 			bind:this={TableObject}
 			left_items={[lt01]}
 			right_items={[rt1]}
@@ -520,7 +537,8 @@
 
 					showEndpointEdit = true;
 				} else {
-					alert('No App selected');
+					//alert('No App selected');
+					notify.push({message: 'Not app selected', color: 'warning'});
 				}
 			}}
 			oneditrow={(data) => {
@@ -621,7 +639,8 @@
 				idapp = e.value;
 				getApp();
 			} else {
-				alert('You do not have authorization');
+				//alert('You do not have authorization');
+				notify.push({message: 'You do not have authorization', color: 'warning'});
 			}
 		}}
 	/>
@@ -845,7 +864,8 @@
 									const selectedFile = event.target.files[0]; // Obten el primer archivo seleccionado
 
 									if (!selectedFile) {
-										alert('Por favor, selecciona un archivo JSON válido.');
+										//alert('Por favor, selecciona un archivo JSON válido.');
+										notify.push({message: 'Invalid JSON file', color: 'warning'});
 										return;
 									}
 
@@ -861,9 +881,11 @@
 											// TODO: Aquí puedes realizar acciones con los datos JSON, por ejemplo, mostrarlos en la página.
 
 											if (uploadFile_checkAppname()) {
-												alert('The file does not correspond to the same application.');
+											//	alert('The file does not correspond to the same application.');
+											notify.push({message: 'The file does not correspond to the same application.', color: 'warning'});
 											}
 										} catch (error) {
+											notify.push({message: error.message, color: 'danger'});
 											console.error('Error al analizar el archivo JSON:', error);
 										}
 									};
@@ -883,7 +905,8 @@
 									//showAppData([uploaded_file]);
 
 									if (uploadFile_checkAppname()) {
-										alert('The file does not correspond to the same application.');
+										//alert('The file does not correspond to the same application.');
+										notify.push({message: 'The file does not correspond to the same application.', color: 'warning'});
 									} else {
 										if (uploaded_file) {
 											if (confirm('Are you sure to merge the file with your data?')) {
@@ -920,7 +943,8 @@
 												}
 											}
 										} else {
-											alert('Please new select file!');
+											//alert('Please new select file!');
+											notify.push({message: 'Please new select file!', color: 'warning'});
 										}
 									}
 								}}
@@ -941,32 +965,16 @@
 	</SlideFullScreen>
 {/if}
 
-<div class="modal {deploying.show ? 'is-active' : ''}">
-	<div class="modal-background"></div>
+<Modal bind:show={deploying.show} bind:showDeleteButton={deploying.error}>
+	<div class="box">
+		<p>{deploying.msg}</p>
+		<br />
+		{#if deploying.error}
+			<progress class="progress is-small is-danger" max="100" value="10">Loading...</progress>
+		{:else}
+			<progress class="progress is-small is-primary" max="100">Loading...</progress>
+		{/if}
 
-	<div class="modal-content">
-		<div class="box">
-			<p>{deploying.msg}</p>
-			<br />
-			{#if deploying.error}
-				<progress class="progress is-small is-danger" max="100" value="10">Loading...</progress>
-			{:else}
-				<progress class="progress is-small is-primary" max="100">Loading...</progress>
-			{/if}
-
-			<!-- Your content -->
-		</div>
+		<!-- Your content -->
 	</div>
-
-	{#if deploying.error}
-		<button
-			class="modal-close is-large"
-			aria-label="close"
-			onclick={() => {
-				deploying.show = false;
-				deploying.msg = '';
-				deploying.error = null;
-			}}
-		></button>
-	{/if}
-</div>
+</Modal>

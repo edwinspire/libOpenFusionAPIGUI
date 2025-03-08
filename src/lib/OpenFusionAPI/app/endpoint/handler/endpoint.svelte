@@ -304,7 +304,7 @@
 </div>
 
 <DialogModal
-	bind:Show={ShowDialogCopyEndpoint}
+	bind:show={ShowDialogCopyEndpoint}
 	title={titleModal}
 	body={bodyDialogModal}
 	onaccept={() => {
@@ -363,7 +363,7 @@
 									ep.method == row.method &&
 									ep.resource == row.resource
 								);
-							});
+							}); // 
 
 							endpoint_copied = { ...row };
 							endpoint_copied.environment = endpoint_env_copy;

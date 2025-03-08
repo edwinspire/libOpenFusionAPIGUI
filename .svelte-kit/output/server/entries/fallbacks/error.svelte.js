@@ -1,8 +1,7 @@
-import { e as escape_html } from "../../chunks/escaping.js";
+import { n as noop, l as getContext, m as escape_html, k as pop, p as push } from "../../chunks/index2.js";
 import "clsx";
-import { g as getContext, c as pop, p as push } from "../../chunks/index.js";
-import { n as noop } from "../../chunks/equality.js";
-import { w as writable } from "../../chunks/exports.js";
+import "../../chunks/exports.js";
+import { w as writable } from "../../chunks/index.js";
 const SNAPSHOT_KEY = "sveltekit:snapshot";
 const SCROLL_KEY = "sveltekit:scroll";
 function create_updated_store() {

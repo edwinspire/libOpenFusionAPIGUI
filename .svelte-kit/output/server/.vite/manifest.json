@@ -8,31 +8,26 @@
       "_internal.js"
     ]
   },
-  "_equality.js": {
-    "file": "chunks/equality.js",
-    "name": "equality"
-  },
-  "_escaping.js": {
-    "file": "chunks/escaping.js",
-    "name": "escaping"
-  },
   "_exports.js": {
     "file": "chunks/exports.js",
-    "name": "exports",
-    "imports": [
-      "_equality.js"
-    ]
+    "name": "exports"
   },
   "_index.js": {
     "file": "chunks/index.js",
+    "name": "index",
+    "imports": [
+      "_index2.js"
+    ]
+  },
+  "_index2.js": {
+    "file": "chunks/index2.js",
     "name": "index"
   },
   "_internal.js": {
     "file": "chunks/internal.js",
     "name": "internal",
     "imports": [
-      "_equality.js",
-      "_index.js"
+      "_index2.js"
     ]
   },
   "node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf": {
@@ -73,10 +68,9 @@
     "src": "node_modules/@sveltejs/kit/src/runtime/components/svelte-5/error.svelte",
     "isEntry": true,
     "imports": [
-      "_escaping.js",
-      "_index.js",
-      "_equality.js",
-      "_exports.js"
+      "_index2.js",
+      "_exports.js",
+      "_index.js"
     ]
   },
   "node_modules/@sveltejs/kit/src/runtime/components/svelte-5/layout.svelte": {
@@ -92,7 +86,8 @@
     "isEntry": true,
     "imports": [
       "_internal.js",
-      "_exports.js"
+      "_exports.js",
+      "_index.js"
     ]
   },
   "src/lib/OpenFusionAPI/img/android-chrome-512x512.png": {
@@ -109,11 +104,11 @@
     "src": "src/routes/+page.svelte",
     "isEntry": true,
     "imports": [
-      "_index.js",
-      "_escaping.js"
+      "_index2.js",
+      "_index.js"
     ],
     "css": [
-      "_app/immutable/assets/_page.QmSb5A3i.css"
+      "_app/immutable/assets/_page.CNQ2pKbi.css"
     ],
     "assets": [
       "_app/immutable/assets/fa-brands-400.D_cYUPeE.woff2",

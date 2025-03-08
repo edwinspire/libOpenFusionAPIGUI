@@ -1,5 +1,4 @@
-import { s as safe_equals, e as equals, g as get_descriptor, r as run_all, i as index_of, d as define_property, a as is_array, b as array_from } from "./equality.js";
-import { H as HYDRATION_ERROR, a as HYDRATION_START, b as HYDRATION_END, r as render, p as push$1, s as setContext, c as pop$1 } from "./index.js";
+import { s as safe_equals, e as equals, H as HYDRATION_ERROR, g as get_descriptor, r as run_all, i as index_of, d as define_property, a as is_array, b as HYDRATION_START, c as HYDRATION_END, f as array_from, h as render, p as push$1, j as setContext, k as pop$1 } from "./index2.js";
 import "clsx";
 const DEV = false;
 let base = "";
@@ -220,7 +219,7 @@ function init_operations() {
   element_prototype.__click = void 0;
   element_prototype.__className = void 0;
   element_prototype.__attributes = null;
-  element_prototype.__styles = null;
+  element_prototype.__style = void 0;
   element_prototype.__e = void 0;
   Text.prototype.__t = void 0;
 }
@@ -297,8 +296,7 @@ function push_effect(effect2, parent_effect) {
   }
 }
 function create_effect(type, fn, sync, push2 = true) {
-  var is_root = (type & ROOT_EFFECT) !== 0;
-  var parent_effect = active_effect;
+  var parent = active_effect;
   var effect2 = {
     ctx: component_context,
     deps: null,
@@ -309,7 +307,7 @@ function create_effect(type, fn, sync, push2 = true) {
     fn,
     last: null,
     next: null,
-    parent: is_root ? null : parent_effect,
+    parent,
     prev: null,
     teardown: null,
     transitions: null,
@@ -327,9 +325,9 @@ function create_effect(type, fn, sync, push2 = true) {
     schedule_effect(effect2);
   }
   var inert = sync && effect2.deps === null && effect2.first === null && effect2.nodes_start === null && effect2.teardown === null && (effect2.f & (EFFECT_HAS_DERIVED | BOUNDARY_EFFECT)) === 0;
-  if (!inert && !is_root && push2) {
-    if (parent_effect !== null) {
-      push_effect(effect2, parent_effect);
+  if (!inert && push2) {
+    if (parent !== null) {
+      push_effect(effect2, parent);
     }
     if (active_reaction !== null && (active_reaction.f & DERIVED) !== 0) {
       var derived = (
@@ -380,7 +378,11 @@ function destroy_effect_children(signal, remove_dom = false) {
   signal.first = signal.last = null;
   while (effect2 !== null) {
     var next = effect2.next;
-    destroy_effect(effect2, remove_dom);
+    if ((effect2.f & ROOT_EFFECT) !== 0) {
+      effect2.parent = null;
+    } else {
+      destroy_effect(effect2, remove_dom);
+    }
     effect2 = next;
   }
 }
@@ -795,8 +797,10 @@ function infinite_loop_guard() {
   }
 }
 function flush_queued_root_effects() {
+  var was_updating_effect = is_updating_effect;
   try {
     var flush_count = 0;
+    is_updating_effect = true;
     while (queued_root_effects.length > 0) {
       if (flush_count++ > 1e3) {
         infinite_loop_guard();
@@ -805,16 +809,13 @@ function flush_queued_root_effects() {
       var length = root_effects.length;
       queued_root_effects = [];
       for (var i = 0; i < length; i++) {
-        var root2 = root_effects[i];
-        if ((root2.f & CLEAN) === 0) {
-          root2.f ^= CLEAN;
-        }
-        var collected_effects = process_effects(root2);
+        var collected_effects = process_effects(root_effects[i]);
         flush_queued_effects(collected_effects);
       }
     }
   } finally {
     is_flushing = false;
+    is_updating_effect = was_updating_effect;
     last_scheduled_effect = null;
   }
 }
@@ -857,53 +858,43 @@ function schedule_effect(signal) {
   }
   queued_root_effects.push(effect2);
 }
-function process_effects(effect2) {
+function process_effects(root2) {
   var effects = [];
-  var current_effect = effect2.first;
-  main_loop: while (current_effect !== null) {
-    var flags = current_effect.f;
-    var is_branch = (flags & BRANCH_EFFECT) !== 0;
+  var effect2 = root2;
+  while (effect2 !== null) {
+    var flags = effect2.f;
+    var is_branch = (flags & (BRANCH_EFFECT | ROOT_EFFECT)) !== 0;
     var is_skippable_branch = is_branch && (flags & CLEAN) !== 0;
-    var sibling = current_effect.next;
     if (!is_skippable_branch && (flags & INERT) === 0) {
       if ((flags & EFFECT) !== 0) {
-        effects.push(current_effect);
+        effects.push(effect2);
       } else if (is_branch) {
-        current_effect.f ^= CLEAN;
+        effect2.f ^= CLEAN;
       } else {
         var previous_active_reaction = active_reaction;
         try {
-          active_reaction = current_effect;
-          if (check_dirtiness(current_effect)) {
-            update_effect(current_effect);
+          active_reaction = effect2;
+          if (check_dirtiness(effect2)) {
+            update_effect(effect2);
           }
         } catch (error) {
-          handle_error(error, current_effect, null, current_effect.ctx);
+          handle_error(error, effect2, null, effect2.ctx);
         } finally {
           active_reaction = previous_active_reaction;
         }
       }
-      var child = current_effect.first;
+      var child = effect2.first;
       if (child !== null) {
-        current_effect = child;
+        effect2 = child;
         continue;
       }
     }
-    if (sibling === null) {
-      let parent = current_effect.parent;
-      while (parent !== null) {
-        if (effect2 === parent) {
-          break main_loop;
-        }
-        var parent_sibling = parent.next;
-        if (parent_sibling !== null) {
-          current_effect = parent_sibling;
-          continue main_loop;
-        }
-        parent = parent.parent;
-      }
+    var parent = effect2.parent;
+    effect2 = effect2.next;
+    while (effect2 === null && parent !== null) {
+      effect2 = parent.next;
+      parent = parent.parent;
     }
-    current_effect = sibling;
   }
   return effects;
 }
@@ -1019,7 +1010,7 @@ function handle_event_propagation(event) {
       current_target.host || null;
       try {
         var delegated = current_target["__" + event_name];
-        if (delegated !== void 0 && (!/** @type {any} */
+        if (delegated != null && (!/** @type {any} */
         current_target.disabled || // DOM could've been updated already by the time this is reached, so we check this as well
         // -> the target could not have been disabled because it emits the event in the first place
         event.target === current_target)) {
@@ -1467,7 +1458,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "10pjad3"
+  version_hash: "15096m5"
 };
 async function get_hooks() {
   let handle;
