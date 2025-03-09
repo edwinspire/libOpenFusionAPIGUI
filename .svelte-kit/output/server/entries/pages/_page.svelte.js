@@ -52,35 +52,7 @@ function Modal($$payload, $$props) {
   bind_props($$props, { show, showCloseButton });
 }
 let notifications_store = writable([]);
-let Notifications$1 = class Notifications {
-  constructor() {
-    notifications_store.subscribe((value) => {
-      console.log("notifications_store: ", value);
-    });
-  }
-  push(new_notify) {
-    console.log(notifications_store);
-    new_notify.id = `${Date.now()}-${Math.floor(Math.random() * 1e3)}`;
-    notifications_store.update((u) => {
-      u.push(new_notify);
-      setTimeout(() => {
-        this.removeNotify(new_notify.id);
-      }, new_notify.timeout || 5e3);
-      return u;
-    });
-  }
-  removeNotify(id) {
-    notifications_store.update((u) => {
-      const index = u.findIndex((obj) => obj.id === id);
-      if (index !== -1) {
-        u.splice(index, 1);
-        console.log(`Objeto con ID ${id} eliminado. Lista actualizada:`, u);
-      }
-      return u;
-    });
-  }
-};
-function Notifications2($$payload, $$props) {
+function Notifications($$payload, $$props) {
   push();
   let list_notify = [];
   notifications_store.subscribe((value) => {
@@ -110,7 +82,6 @@ function Notifications2($$payload, $$props) {
 }
 function Login($$payload, $$props) {
   push();
-  new Notifications$1();
   let username = "";
   let password = "";
   new uFetch();
@@ -2795,7 +2766,7 @@ function throw_error(msg) {
 }
 function OpenFusionAPI($$payload, $$props) {
   push();
-  Notifications2($$payload);
+  Notifications($$payload);
   $$payload.out += `<!----> `;
   {
     $$payload.out += "<!--[!-->";
