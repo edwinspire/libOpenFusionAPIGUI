@@ -965,7 +965,7 @@ let notify = new Notifications();
 	</SlideFullScreen>
 {/if}
 
-<Modal bind:show={deploying.show} bind:showDeleteButton={deploying.error}>
+<Modal bind:show={deploying.show} bind:showCloseButton={deploying.error}>
 	<div class="box">
 		<p>{deploying.msg}</p>
 		<br />
