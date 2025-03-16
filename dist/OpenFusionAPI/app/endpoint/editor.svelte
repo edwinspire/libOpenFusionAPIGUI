@@ -9,7 +9,7 @@
 	import TextCode from './handler/text.svelte';
 	import MongoDB from './handler/mongodb.svelte';
 	import CustomFn from './handler/customFunction.svelte';
-	import { Level, SlideFullScreen, Tab } from '@edwinspire/svelte-components';
+	import { Level, SlideFullScreen, Tab, EditorContent } from '@edwinspire/svelte-components';
 
 	import Endpoint from './handler/endpoint.svelte';
 	import Authorizations from './widgets/authorizations.svelte';
@@ -23,12 +23,75 @@
 		ondata = (d) => {},
 		oncopy = () => {}
 	} = $props();
-	let new_data_row = { data_test: {}, code: '' };
+
+	function doc_app_header() {
+		return {
+			id: 'qomiKhnfSk',
+			type: 'header',
+			data: {
+				text: `Application: ${app.app}`,
+				level: 2
+			}
+		};
+	}
+
+	let doc_row_resource = {
+		id: 'NsMuckns3e',
+		type: 'header',
+		data: {
+			text: `Resource: ${row.endpoint}`,
+			level: 3
+		}
+	};
+
+	let doc_row_params = {
+		id: 'coNrlHnl5r',
+		type: 'table',
+		data: {
+			withHeadings: false,
+			stretched: false,
+			content: [
+				[`<b>Enabled:</b> ${row.enabled}`, `<b>Method: </b> ${row.method}`],
+				[`<b>Handler:</b> ${row.handler}`, `<b>Environment: </b> ${row.environment}`],
+				[`<b>Access:</b> ${row.access}`, `<b>Handler: </b> ${row.handler}`],
+				[`<b>Environment: </b> ${row.environment}`, ``]
+			]
+		}
+	};
+
+	let doc_row_description_label = {
+		id: 'TVnfeWbUYi',
+		type: 'header',
+		data: {
+			text: 'Description:',
+			level: 3
+		}
+	};
+
+	let doc_row_description = {
+		id: 'sHiRVy9Eyh',
+		type: 'paragraph',
+		data: {
+			text: `${row.description}`,
+			level: 3
+		}
+	};
+
+	let default_docs = [
+		doc_app_header(),
+		doc_row_resource,
+		doc_row_params,
+		doc_row_description_label,
+		doc_row_description
+	];
+
+	let new_data_row = { data_test: {}, code: '', docs: default_docs };
 
 	let validateResource = $state(false);
 	let availableURL = $state(false);
 
 	let tabList = $state([
+		//		{ label: 'Documentation', isActive: true, component: tab_docs },
 		{ label: 'Endpoint', isActive: true, component: tab_endpoint },
 		{ label: 'Configuration', component: tab_config },
 		{ label: 'Authorizations', component: tab_auth },
@@ -42,6 +105,7 @@
 
 		row_out.data_test = new_data_row.data_test;
 		row_out.code = new_data_row.code;
+		row_out.docs = new_data_row.docs;
 
 		let data = {
 			row: row_out,
@@ -49,9 +113,6 @@
 			availableURL
 		};
 
-		console.log('ACCEPT => ', data);
-
-		//dispatch('data', data);
 		ondata($state.snapshot(data));
 	}
 
@@ -62,7 +123,6 @@
 		row.endpoint = '';
 		row.handler = '';
 		row.ctrl = { users: [] };
-		//app.endpoints = [];
 	}
 
 	function defaultValues() {
@@ -97,6 +157,10 @@
 			row.ctrl.log = {};
 		}
 
+		if (row && row.docs == null) {
+			row.docs = { blocks: default_docs };
+		}
+
 		if (app == null) {
 			app = { endpoints: [] };
 		}
@@ -106,10 +170,22 @@
 		}
 	}
 
+	function setDocReadOnly() {
+		if (!new_data_row?.docs) {
+			new_data_row.docs = default_docs;
+		}
+
+		new_data_row.docs.blocks[0] = doc_app_header();
+		new_data_row.docs.blocks[1] = doc_row_resource;
+		new_data_row.docs.blocks[2] = doc_row_params;
+		new_data_row.docs.blocks[4] = doc_row_description;
+	}
+
 	function onChangeValueHandler(v) {
 		if (v) {
 			new_data_row.data_test = v.data_test;
 			new_data_row.code = v.code;
+			//		new_data_row.docs = row.docs;
 			console.log('onChangeValueHandler > ', $state.snapshot(new_data_row));
 		}
 	}
@@ -133,6 +209,18 @@
 			}}
 		></Endpoint>
 	{/if}
+{/snippet}
+
+{#snippet tab_docs()}
+	<EditorContent
+		bind:content={new_data_row.docs}
+		readOnly={true}
+		onchange={(doc) => {
+			console.log('onchange', doc);
+			new_data_row.docs = doc;
+			setDocReadOnly();
+		}}
+	></EditorContent>
 {/snippet}
 
 {#snippet tab_config()}

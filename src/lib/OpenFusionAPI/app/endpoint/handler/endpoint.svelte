@@ -114,7 +114,25 @@
 
 <div>
 	{#if row.idendpoint && row.idendpoint.length > 0}
-		<Level left={[]} right={[copy_endpoint]}>
+		<Level left={[enabled_endpoint]} right={[copy_endpoint]}>
+			{#snippet enabled_endpoint()}
+				<div class="field is-horizontal">
+					<div class="field-label is-small">
+						<!-- svelte-ignore a11y_label_has_associated_control -->
+						<label class="label">Enabled</label>
+					</div>
+					<div class="field-body">
+						<div class="field">
+							<div class="control">
+								<label class="checkbox">
+									<input type="checkbox" bind:checked={row.enabled} />
+								</label>
+							</div>
+						</div>
+					</div>
+				</div>
+			{/snippet}
+
 			{#snippet copy_endpoint()}
 				<div class="field has-addons">
 					<p class="control">
@@ -138,155 +156,167 @@
 
 	<input class="input" type="hidden" placeholder="Name" bind:value={row.idendpoint} />
 
-	<div class="field is-horizontal">
-		<div class="field-label is-small">
-			<!-- svelte-ignore a11y_label_has_associated_control -->
-			<label class="label">Enabled</label>
+	<div class="field is-expanded">
+		<div class="field has-addons">
+			<p class="control">
+				<!-- svelte-ignore a11y_missing_attribute -->
+				<a class="button is-small is-static">
+					{row.method == 'WS' ? 'API Resource: /ws/' : 'API Resource: /api/'}{app.app}
+				</a>
+			</p>
+
+			<p class="control is-expanded">
+				<input
+					class="input is-small"
+					type="text"
+					placeholder="Resourse"
+					bind:value={row.resource}
+				/>
+			</p>
+			<p class="control">
+				<!-- svelte-ignore a11y_missing_attribute -->
+				<a class="button is-small is-static"> / </a>
+			</p>
+			<p class="control">
+				{#if row && row.environment}
+					<SelectEnvironment
+						bind:options={environment_list}
+						bind:option={row.environment}
+						onselect={(e) => {}}
+					/>
+				{/if}
+			</p>
 		</div>
-		<div class="field-body">
-			<div class="field">
-				<div class="control">
-					<label class="checkbox">
-						<input type="checkbox" bind:checked={row.enabled} />
-					</label>
+		<div class="help">
+			{#if validateResource}
+				<div class="icon-text is-small">
+					<span class="icon has-text-success">
+						<i class="fas fa-check-square"></i>
+					</span>
+					<span>Url Success</span>
 				</div>
-			</div>
+			{:else}
+				<div class="icon-text is-small">
+					<span class="icon has-text-danger">
+						<i class="fas fa-ban"></i>
+					</span>
+					<span>Url Invalid</span>
+				</div>
+			{/if}
+
+			{#if validateResource && availableURL}
+				<div class="icon-text is-small">
+					<span class="icon has-text-success">
+						<i class="fas fa-check-square"></i>
+					</span>
+					<span>Available URL</span>
+				</div>
+			{:else if validateResource && !availableURL}
+				<div class="icon-text is-small">
+					<span class="icon has-text-danger">
+						<i class="fas fa-ban"></i>
+					</span>
+					<span>Url not available</span>
+				</div>
+			{/if}
 		</div>
 	</div>
 
-	<div class="field is-horizontal">
-		<div class="field-label is-small">
-			<!-- svelte-ignore a11y_label_has_associated_control -->
-			<label class="label">Method</label>
-		</div>
-		<div class="field-body">
-			<div class="field">
-				<div class="control">
-					{#if row && row.method}
-						<BasicSelect
-							bind:options={methods}
-							bind:option={row.method}
-							onselect={(/** @type {{ detail: { value: string; }; }} */ e) => {
-								console.log('Row', row);
-							}}
-						/>
-					{/if}
-				</div>
-			</div>
-		</div>
-	</div>
+	<hr class="" />
 
-	<div class="field is-horizontal">
-		<div class="field-label is-small">
-			<!-- svelte-ignore a11y_label_has_associated_control -->
-			<label class="label">Access</label>
-		</div>
-		<div class="field-body">
-			<div class="field">
-				<div class="control">
-					{#if row}
-						<BasicSelect
-							options={listAccessMethod}
-							bind:option={row.access}
-							onselect={(/** @type {{ detail: { value: string; }; }} */ e) => {
-								console.log('Row', row);
-							}}
-						/>
-					{/if}
-				</div>
-			</div>
-		</div>
-	</div>
+	<div class="fixed-grid has-2-cols">
+		<div class="grid">
+			
 
-	<div class="field is-horizontal">
-		<div class="field-label is-small">
-			<!-- svelte-ignore a11y_label_has_associated_control -->
-			<label class="label">Handler</label>
-		</div>
-		<div class="field-body">
-			<div class="field">
-				<div class="control">
-					{#if row && row.handler}
-						<BasicSelect
-							bind:options={handlers}
-							bind:option={row.handler}
-							onselect={(/** @type {{ detail: { value: string; }; }} */ e) => {
-								console.log('Row', row);
-							}}
-						/>
-					{/if}
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<div class="field">
-		<div class="field is-horizontal">
-			<div class="field-label is-small"><strong> API Resource: </strong></div>
-			<div class="field-body">
-				<div class="field is-expanded">
-					<div class="field has-addons">
-						<p class="control">
-							<!-- svelte-ignore a11y_missing_attribute -->
-							<a class="button is-small is-static">
-								{row.method == 'WS' ? '/ws/' : '/api/'}{app.app}
-							</a>
-						</p>
-
-						<p class="control is-expanded">
-							<input
-								class="input is-small"
-								type="text"
-								placeholder="Resourse"
-								bind:value={row.resource}
-							/>
-						</p>
-						<p class="control">
-							<!-- svelte-ignore a11y_missing_attribute -->
-							<a class="button is-small is-static"> / </a>
-						</p>
-						<p class="control">
-							{#if row && row.environment}
-								<SelectEnvironment
-									bind:options={environment_list}
-									bind:option={row.environment}
-									onselect={(e) => {}}
-								/>
-							{/if}
-						</p>
+			<div class="cell">
+				<div class="field is-horizontal">
+					<div class="field-label is-small">
+						<!-- svelte-ignore a11y_label_has_associated_control -->
+						<label class="label">Method</label>
 					</div>
-					<div class="help">
-						{#if validateResource}
-							<div class="icon-text is-small">
-								<span class="icon has-text-success">
-									<i class="fas fa-check-square"></i>
-								</span>
-								<span>Url Success</span>
+					<div class="field-body">
+						<div class="field">
+							<div class="control">
+								{#if row && row.method}
+									<BasicSelect
+										bind:options={methods}
+										bind:option={row.method}
+										onselect={(/** @type {{ detail: { value: string; }; }} */ e) => {
+											console.log('Row', row);
+										}}
+									/>
+								{/if}
 							</div>
-						{:else}
-							<div class="icon-text is-small">
-								<span class="icon has-text-danger">
-									<i class="fas fa-ban"></i>
-								</span>
-								<span>Url Invalid</span>
-							</div>
-						{/if}
+						</div>
+					</div>
+				</div>
+			</div>
 
-						{#if validateResource && availableURL}
-							<div class="icon-text is-small">
-								<span class="icon has-text-success">
-									<i class="fas fa-check-square"></i>
-								</span>
-								<span>Available URL</span>
+			<div class="cell">
+				<div class="field is-horizontal">
+					<div class="field-label is-small">
+						<!-- svelte-ignore a11y_label_has_associated_control -->
+						<label class="label">Access</label>
+					</div>
+					<div class="field-body">
+						<div class="field">
+							<div class="control">
+								{#if row}
+									<BasicSelect
+										options={listAccessMethod}
+										bind:option={row.access}
+										onselect={(/** @type {{ detail: { value: string; }; }} */ e) => {
+											console.log('Row', row);
+										}}
+									/>
+								{/if}
 							</div>
-						{:else if validateResource && !availableURL}
-							<div class="icon-text is-small">
-								<span class="icon has-text-danger">
-									<i class="fas fa-ban"></i>
-								</span>
-								<span>Url not available</span>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="cell">
+				<div class="field is-horizontal">
+					<div class="field-label is-small">
+						<!-- svelte-ignore a11y_label_has_associated_control -->
+						<label class="label">Handler</label>
+					</div>
+					<div class="field-body">
+						<div class="field">
+							<div class="control">
+								{#if row && row.handler}
+									<BasicSelect
+										bind:options={handlers}
+										bind:option={row.handler}
+										onselect={(/** @type {{ detail: { value: string; }; }} */ e) => {
+											console.log('Row', row);
+										}}
+									/>
+								{/if}
 							</div>
-						{/if}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="cell">
+				<div class="field">
+					<div class="field is-horizontal">
+						<div class="field-label is-small"><strong> Timeout Cache: </strong></div>
+						<div class="field-body">
+							<div class="field is-expanded">
+								<div class="field has-addons">
+									<p class="control is-expanded">
+										<input class="input is-small" type="number" bind:value={row.cache_time} />
+									</p>
+									<p class="control">
+										<!-- svelte-ignore a11y_missing_attribute -->
+										<a class="button is-small is-static"> seconds. </a>
+									</p>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -363,19 +393,23 @@
 									ep.method == row.method &&
 									ep.resource == row.resource
 								);
-							}); // 
+							}); //
 
 							endpoint_copied = { ...row };
 							endpoint_copied.environment = endpoint_env_copy;
 							endpoint_copied.idendpoint = null;
-							endpoint_copied.endpoint = createEndpoint(endpoint_copied.method, app.app, endpoint_copied.resource, endpoint_copied.environment);
+							endpoint_copied.endpoint = createEndpoint(
+								endpoint_copied.method,
+								app.app,
+								endpoint_copied.resource,
+								endpoint_copied.environment
+							);
 							if (endpoint_find) {
 								// Existe ya un endpoint, avisar al usuario si lo quiere reemplazar
 								//endpoint_copied.environment = endpoint_env_copy;
 								endpoint_copied.idendpoint = endpoint_find.idendpoint;
-
 							}
-						//	console.log('zzzzzzzzzzzzzzz ', endpoint_copied);
+							//	console.log('zzzzzzzzzzzzzzz ', endpoint_copied);
 							//console.log($state.snapshot(endpoint_copied));
 						} else {
 							endpoint_copied = {};
