@@ -160,11 +160,14 @@
 		<div class="field has-addons">
 			<p class="control">
 				<!-- svelte-ignore a11y_missing_attribute -->
+				<a class="button is-small is-static"> API Resource: </a>
+			</p>
+			<p class="control">
+				<!-- svelte-ignore a11y_missing_attribute -->
 				<a class="button is-small is-static">
-					{row.method == 'WS' ? 'API Resource: /ws/' : 'API Resource: /api/'}{app.app}
+					{row.method == 'WS' ? '/ws/' : '/api/'}{app.app}
 				</a>
 			</p>
-
 			<p class="control is-expanded">
 				<input
 					class="input is-small"
@@ -226,8 +229,6 @@
 
 	<div class="fixed-grid has-2-cols">
 		<div class="grid">
-			
-
 			<div class="cell">
 				<div class="field is-horizontal">
 					<div class="field-label is-small">
@@ -307,8 +308,8 @@
 						<div class="field-body">
 							<div class="field is-expanded">
 								<div class="field has-addons">
-									<p class="control is-expanded">
-										<input class="input is-small" type="number" bind:value={row.cache_time} />
+									<p class="control">
+										<input class="input is-small" type="number" min="0" step="1" bind:value={row.cache_time} />
 									</p>
 									<p class="control">
 										<!-- svelte-ignore a11y_missing_attribute -->
