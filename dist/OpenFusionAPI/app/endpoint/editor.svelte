@@ -103,6 +103,7 @@
 
 		let row_out = $state.snapshot(row);
 
+
 		row_out.data_test = new_data_row.data_test;
 		row_out.code = new_data_row.code;
 		row_out.docs = new_data_row.docs;
@@ -112,6 +113,9 @@
 			validateResource,
 			availableURL
 		};
+
+		
+		//console.log('data ->', $state.snapshot(data));
 
 		ondata($state.snapshot(data));
 	}
@@ -238,6 +242,7 @@
 					{row}
 					onchange={(v) => {
 						onChangeValueHandler(v);
+						console.log('SOAP onchange', v);
 					}}
 				/>
 			{:else if row && row.handler == 'SQL'}
