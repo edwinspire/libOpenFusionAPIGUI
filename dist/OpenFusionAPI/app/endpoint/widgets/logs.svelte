@@ -33,7 +33,7 @@
 		params: {
 			startDate: start,
 			endDate: formattedNow,
-			idendpoint: row.idendpoint,
+			idendpoint: row.idendpoint||'ffffffff-ffff-ffff-ffff-ffffffffffff',
 			//	level: null,
 			limit: 1000,
 			timezone : DateTime.local().z

@@ -19,6 +19,8 @@ export namespace url_paths {
     let getResponsesCountStatusCode: string;
     let getLogs: string;
     let getlistFunctionsVarsJS: string;
+    let getListIntervalTasksByIdApp: string;
+    let upsertIntervalTasksByIdTask: string;
 }
 export const userStore: import("svelte/store").Writable<{}>;
 export const listMethodStore: import("svelte/store").Writable<{}>;

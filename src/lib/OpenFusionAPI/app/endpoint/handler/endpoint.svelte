@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { BasicSelect, DialogModal, Level } from '@edwinspire/svelte-components';
 	import SelectEnvironment from '../../../widgets/Select.svelte';
+	import MethodSelect from '$lib/OpenFusionAPI/app/widgets/methods_select.svelte';
 	import uFetch from '@edwinspire/universal-fetch';
 	import {
 		url_paths,
@@ -9,7 +10,6 @@
 		validateURL,
 		listHandlerStore,
 		createEndpoint,
-		listMethodStore,
 		listAccessMethod
 	} from '../../../utils.js';
 
@@ -23,7 +23,6 @@
 	} = $props();
 
 	let handlers = $state([]);
-	let methods = $state([]);
 
 	let uf = new uFetch();
 
@@ -42,7 +41,7 @@
 
 	let available_environments_list = $derived.by(() => {
 		return environment_list.filter((el) => {
-			console.log(el, row.environment);
+			//console.log(el, row.environment);
 			return el.id != row.environment;
 		});
 	});
@@ -59,11 +58,8 @@
 		uf.setBearerAuthorization(value.token);
 	});
 
-	listMethodStore.subscribe((value) => {
-		methods = value;
-	});
-
 	$effect(() => {
+		// console.log('::::::::::..> Row', row);
 		validateResource = validateURL(row.resource);
 
 		availableURL = checkEndpointConstraint();
@@ -106,6 +102,7 @@
 	}
 
 	onMount(async () => {
+		console.log('onMount endpoint');
 		endpoint_copied = {};
 		defaultValues();
 		await getEnvList();
@@ -113,33 +110,33 @@
 </script>
 
 <div>
-	{#if row.idendpoint && row.idendpoint.length > 0}
-		<Level left={[enabled_endpoint]} right={[copy_endpoint]}>
-			{#snippet enabled_endpoint()}
-				<div class="field is-horizontal">
-					<div class="field-label is-small">
-						<!-- svelte-ignore a11y_label_has_associated_control -->
-						<label class="label">Enabled</label>
-					</div>
-					<div class="field-body">
-						<div class="field">
-							<div class="control">
-								<label class="checkbox">
-									<input type="checkbox" bind:checked={row.enabled} />
-								</label>
-							</div>
+	<Level left={[enabled_endpoint]} right={[copy_endpoint]}>
+		{#snippet enabled_endpoint()}
+			<div class="field is-horizontal">
+				<div class="field-label is-small">
+					<!-- svelte-ignore a11y_label_has_associated_control -->
+					<label class="label">Enabled</label>
+				</div>
+				<div class="field-body">
+					<div class="field">
+						<div class="control">
+							<label class="checkbox">
+								<input type="checkbox" bind:checked={row.enabled} />
+							</label>
 						</div>
 					</div>
 				</div>
-			{/snippet}
+			</div>
+		{/snippet}
 
-			{#snippet copy_endpoint()}
+		{#snippet copy_endpoint()}
+			{#if row.idendpoint && row.idendpoint.length > 0}
 				<div class="field has-addons">
 					<p class="control">
 						<button
 							class="button is-small is-warning"
 							onclick={() => {
-								console.log('<<<<<<<<<<<<---- ', $state.snapshot(app));
+								//console.log('<<<<<<<<<<<<---- ', $state.snapshot(app));
 								ShowDialogCopyEndpoint = true;
 							}}
 						>
@@ -150,9 +147,9 @@
 						</button>
 					</p>
 				</div>
-			{/snippet}
-		</Level>
-	{/if}
+			{/if}
+		{/snippet}
+	</Level>
 
 	<input class="input" type="hidden" placeholder="Name" bind:value={row.idendpoint} />
 
@@ -238,14 +235,8 @@
 					<div class="field-body">
 						<div class="field">
 							<div class="control">
-								{#if row && row.method}
-									<BasicSelect
-										bind:options={methods}
-										bind:option={row.method}
-										onselect={(/** @type {{ detail: { value: string; }; }} */ e) => {
-											console.log('Row', row);
-										}}
-									/>
+								{#if row?.method}
+									<MethodSelect bind:option={row.method}></MethodSelect>
 								{/if}
 							</div>
 						</div>
@@ -286,7 +277,7 @@
 					<div class="field-body">
 						<div class="field">
 							<div class="control">
-								{#if row && row.handler}
+								{#if row?.handler}
 									<BasicSelect
 										bind:options={handlers}
 										bind:option={row.handler}
@@ -309,7 +300,13 @@
 							<div class="field is-expanded">
 								<div class="field has-addons">
 									<p class="control">
-										<input class="input is-small" type="number" min="0" step="1" bind:value={row.cache_time} />
+										<input
+											class="input is-small"
+											type="number"
+											min="0"
+											step="1"
+											bind:value={row.cache_time}
+										/>
 									</p>
 									<p class="control">
 										<!-- svelte-ignore a11y_missing_attribute -->

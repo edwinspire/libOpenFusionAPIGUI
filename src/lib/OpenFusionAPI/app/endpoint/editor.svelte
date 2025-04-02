@@ -103,7 +103,6 @@
 
 		let row_out = $state.snapshot(row);
 
-
 		row_out.data_test = new_data_row.data_test;
 		row_out.code = new_data_row.code;
 		row_out.docs = new_data_row.docs;
@@ -114,8 +113,7 @@
 			availableURL
 		};
 
-		
-		//console.log('data ->', $state.snapshot(data));
+		console.log('ENDPOINT data ->', $state.snapshot(data));
 
 		ondata($state.snapshot(data));
 	}
@@ -190,7 +188,7 @@
 			new_data_row.data_test = v.data_test;
 			new_data_row.code = v.code;
 			//		new_data_row.docs = row.docs;
-			console.log('onChangeValueHandler > ', $state.snapshot(new_data_row));
+			//console.log('onChangeValueHandler > ', $state.snapshot(new_data_row));
 		}
 	}
 
@@ -230,14 +228,14 @@
 {#snippet tab_config()}
 	{#if row}
 		<div>
-			{#if row && row.handler == 'JS'}
+			{#if row?.handler == 'JS'}
 				<JsCode
 					bind:row
 					onchange={(v) => {
 						onChangeValueHandler(v);
 					}}
 				/>
-			{:else if row && row.handler == 'SOAP'}
+			{:else if row?.handler == 'SOAP'}
 				<SoapCode
 					{row}
 					onchange={(v) => {
@@ -245,49 +243,49 @@
 						console.log('SOAP onchange', v);
 					}}
 				/>
-			{:else if row && row.handler == 'SQL'}
+			{:else if row?.handler == 'SQL'}
 				<SqlCode
 					bind:row
 					onchange={(v) => {
 						onChangeValueHandler(v);
 					}}
 				/>
-			{:else if row && row.handler == 'HANA'}
+			{:else if row?.handler == 'HANA'}
 				<SqlHana
 					bind:row
 					onchange={(v) => {
 						onChangeValueHandler(v);
 					}}
 				/>
-			{:else if row && row.handler == 'SQL_BULK_I'}
+			{:else if row?.handler == 'SQL_BULK_I'}
 				<SqlBulkInsert
 					bind:row
 					onchange={(v) => {
 						onChangeValueHandler(v);
 					}}
 				/>
-			{:else if row && row.handler == 'FETCH'}
+			{:else if row?.handler == 'FETCH'}
 				<FetchCode
 					bind:row
 					onchange={(v) => {
 						onChangeValueHandler(v);
 					}}
 				/>
-			{:else if row && row.handler == 'FUNCTION'}
+			{:else if row?.handler == 'FUNCTION'}
 				<CustomFn
 					bind:row
 					onchange={(v) => {
 						onChangeValueHandler(v);
 					}}
 				/>
-			{:else if row && row.handler == 'TEXT'}
+			{:else if row?.handler == 'TEXT'}
 				<TextCode
 					bind:row
 					onchange={(v) => {
 						onChangeValueHandler(v);
 					}}
 				/>
-			{:else if row && row.handler == 'MONGODB'}
+			{:else if row?.handler == 'MONGODB'}
 				<MongoDB
 					bind:row
 					onchange={(v) => {
@@ -308,7 +306,7 @@
 {/snippet}
 
 {#snippet tab_log()}
-	{#if row && row.ctrl}
+	{#if row?.ctrl?.log}
 		<Logs bind:log={row.ctrl.log} bind:row></Logs>
 	{/if}
 {/snippet}

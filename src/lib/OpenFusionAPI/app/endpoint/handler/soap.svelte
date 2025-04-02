@@ -18,21 +18,7 @@
 		}
 	});
 
-		let timeoutChange;
-
-	
-
-	/*
-	$effect(() => {
-		if (row?.code) {
-			clearTimeout(timeoutChange);
-			timeoutChange = setTimeout(() => {
-				parseCode();
-			}, 750);
-		}
-	});
-	*/
-
+	let timeoutChange;
 
 	function parseCode() {
 		internal_code = row.code;
@@ -76,9 +62,7 @@
 	}
 
 	onMount(() => {
-		
 		parseCode();
-
 	});
 
 	onDestroy(() => {
@@ -185,18 +169,20 @@
 {/snippet}
 
 {#snippet tab_tester()}
-	<div>
-		<RESTTester
-			data={row.data_test}
-			method={row.method}
-			url={row.endpoint}
-			methodDisabled={true}
-			onchange={(c) => {
-				//console.log('RESTTester Editor', c, row.data_test);
-				fnOnChange();
-			}}
-		></RESTTester>
-	</div>
+	{#if row}
+		<div>
+			<RESTTester
+				bind:data={row.data_test}
+				method={row.method}
+				url={row.endpoint}
+				methodDisabled={true}
+				onchange={(c) => {
+					//console.log('RESTTester Editor', c, row.data_test);
+					fnOnChange();
+				}}
+			></RESTTester>
+		</div>
+	{/if}
 {/snippet}
 
 <Tab bind:tabs={tabList}></Tab>

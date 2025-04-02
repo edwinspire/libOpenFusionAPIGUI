@@ -7,7 +7,8 @@
 		Level,
 		Tab,
 		MenuMega,
-		SlideFullScreen, Modal
+		SlideFullScreen,
+		Modal
 	} from '@edwinspire/svelte-components';
 	import { onDestroy, onMount } from 'svelte';
 	import {
@@ -31,22 +32,24 @@
 	import EndPointEditor from './endpoint/editor.svelte';
 	import AppVars from './app_vars.svelte';
 	import Logo from '../img/favicon.png';
-	import { Notifications} from "@edwinspire/svelte-components";
+	import { Notifications } from '@edwinspire/svelte-components';
+	import IntervalTasks from '$lib/OpenFusionAPI/app/interval_tasks/index.svelte';
 
-let notify = new Notifications();
+	let notify = new Notifications();
 
-	let idapp = 0;
+	let idapp = $state(0);
 
 	let intervalGetDataApp;
 	let app_vars;
 	let showEditorApp = $state(false);
+	let showEditorIntervalTasks = $state(false);
 	let selectedIdApp = $state(0);
 	let menujson = {
 		start: [],
 		brand: [{ component: logo }, { component: select_app }, { component: app_enabled_field }],
 		end: [
-			{ component: edit_app },
 			{ component: new_app },
+			{ component: edit_app },
 			{ component: save_deploy },
 			{ component: user }
 		]
@@ -137,12 +140,23 @@ let notify = new Notifications();
 			slot: 'vars',
 			isActive: false,
 			component: tab_app_vars
+		}
+	]);
+
+	let tabs_main = $state([
+		{
+			label: 'Endpoints',
+			classIcon: 'fa-solid fa-globe',
+			alias: 'endpoints',
+			isActive: true,
+			component: tab_endpoints
 		},
 		{
-			label: 'Application parameters',
-			classIcon: 'fa-regular fa-rectangle-list',
-			slot: 'parameters',
-			isActive: false
+			label: 'Interval Tasks',
+			classIcon: 'fa-solid fa-clock-rotate-left',
+			alias: 'interval_tasks',
+			isActive: false,
+			component: interva_task_tab
 		}
 	]);
 
@@ -159,7 +173,7 @@ let notify = new Notifications();
 	}
 
 	function confirmSaveApp() {
-		console.log('confirmSaveApp', app);
+		//console.log('confirmSaveApp', app);
 		if (confirm('Do you want to save the application data?')) {
 			//app.vars = fnVars.getCode();
 			if (app_vars) {
@@ -184,7 +198,7 @@ let notify = new Notifications();
 				environment_list = [];
 			}
 		} catch (error) {
-			notify.push({message: error.message, color: 'danger'});
+			notify.push({ message: error.message, color: 'danger' });
 			//alert(error.message);
 			console.error(error);
 		}
@@ -206,23 +220,20 @@ let notify = new Notifications();
 
 				let get_list_clear_result = await get_list_clear.json();
 
-				notify.push({message: 'Cache deleted', color: 'success'});
-
+				notify.push({ message: 'Cache deleted', color: 'success' });
 			} else {
 				//alert('You must select at least one record.');
-				
+
 				TableSelectionType = 2;
-				notify.push({message: 'You must select at least one record.', color: 'warning'});
+				notify.push({ message: 'You must select at least one record.', color: 'warning' });
 			}
 		} catch (error) {
 			//alert(error.message);
-			notify.push({message: error.message, color: 'danger'});
-
+			notify.push({ message: error.message, color: 'danger' });
 		}
 	}
 
 	function setpathEdpoint(endpoint_list) {
-
 		return endpoint_list.map((ax) => {
 			return {
 				//endpoint: `${ax.method == 'WS' ? '/ws/' : '/api/'}${app.app}${ax.resource}/${ax.environment}`,
@@ -249,7 +260,7 @@ let notify = new Notifications();
 		} catch (error) {
 			//alert(error.message);
 			console.error(error);
-			notify.push({message: error.message, color: 'danger'});
+			notify.push({ message: error.message, color: 'danger' });
 		}
 	}
 
@@ -316,7 +327,7 @@ let notify = new Notifications();
 			} catch (error) {
 				console.error(error);
 				//alert(error.message);
-				notify.push({message: error.message, color: 'danger'});
+				notify.push({ message: error.message, color: 'danger' });
 				deploying.msg = error.message;
 			}
 		}
@@ -366,7 +377,7 @@ let notify = new Notifications();
 					//alert('Could not get idapp.');
 					deploying.msg = 'Could not save App!';
 					deploying.error = true;
-					notify.push({message: 'Could not save App!', color: 'danger'});
+					notify.push({ message: 'Could not save App!', color: 'danger' });
 				}
 
 				await getListApps();
@@ -379,13 +390,13 @@ let notify = new Notifications();
 				//alert('Error: ' + apps_res.status);
 				deploying.msg = 'Not save app. Error: ' + apps_res.status;
 				deploying.error = true;
-				notify.push({message: 'Not save app. Error: ' + apps_res.status, color: 'danger'});
+				notify.push({ message: 'Not save app. Error: ' + apps_res.status, color: 'danger' });
 			}
 		} catch (error) {
 			//alert(error.message);
 			deploying.msg = 'Not save app. Error: ' + error.message;
 			deploying.error = true;
-			notify.push({message: 'Not save app. Error: ' + error.message, color: 'danger'});
+			notify.push({ message: 'Not save app. Error: ' + error.message, color: 'danger' });
 		}
 	}
 
@@ -394,8 +405,7 @@ let notify = new Notifications();
 	}
 
 	onMount(async () => {
-
-		notify.push({message: 'Welcome ', color: 'success'});
+		notify.push({ message: 'Welcome ', color: 'success' });
 
 		await getListApps();
 		await getEnvList();
@@ -492,7 +502,7 @@ let notify = new Notifications();
 	<AppVars
 		isReadOnly={false}
 		onchange={(data) => {
-			console.log('tab_app_vars', data);
+			//console.log('tab_app_vars', data);
 			app_vars = data;
 		}}
 	></AppVars>
@@ -538,7 +548,7 @@ let notify = new Notifications();
 					showEndpointEdit = true;
 				} else {
 					//alert('No App selected');
-					notify.push({message: 'Not app selected', color: 'warning'});
+					notify.push({ message: 'Not app selected', color: 'warning' });
 				}
 			}}
 			oneditrow={(data) => {
@@ -632,15 +642,13 @@ let notify = new Notifications();
 		classInput="is-small"
 		bind:options
 		bind:selectedValue={selectedIdApp}
-		onselect={(/** @type {{ detail: { value: number; }; }} */ e) => {
-			console.log('PredictiveInput =>> ', $userStore, e);
-
+		onselect={(e) => {
 			if ($userStore) {
 				idapp = e.value;
 				getApp();
 			} else {
 				//alert('You do not have authorization');
-				notify.push({message: 'You do not have authorization', color: 'warning'});
+				notify.push({ message: 'You do not have authorization', color: 'warning' });
 			}
 		}}
 	/>
@@ -669,11 +677,15 @@ let notify = new Notifications();
 	</div>
 {/snippet}
 
+{#snippet interva_task_tab()}
+	<IntervalTasks bind:idapp bind:endpoints></IntervalTasks>
+{/snippet}
+
 <MenuMega brand={menujson.brand} start={menujson.start} end={menujson.end}></MenuMega>
 
 {#if $userStore}
 	<div>
-		{@render tab_endpoints()}
+		<Tab bind:tabs={tabs_main}></Tab>
 	</div>
 {/if}
 
@@ -689,21 +701,16 @@ let notify = new Notifications();
 		ondata={(e) => {
 			let row_edited = { ...e.row };
 
+			console.log('ENDPOINT RECIVE DATA ', row_edited);
+
 			if (row_edited.idendpoint && row_edited.idendpoint.length > 10) {
-				// Es edición de endpoint
-				/*
-				let found = endpoints.findIndex((element) => element.idendpoint == row_edited.idendpoint);
-				console.log('Se ha encontrado: ', found);
-				if (found >= 0) {
-					endpoints[found] = { ...row_edited };
-				}
-				*/
+				console.log('Es un endpoint existente', row_edited.idendpoint);
 
 				endpoints = endpoints.map((org) => {
 					return row_edited.idendpoint == org.idendpoint ? row_edited : org;
 				});
 
-				//console.log(endpoints);
+				//console.log('ENDPOINTS ACTUALIZADAS :::> ', endpoints);
 
 				//found = { ...SelectedRow };
 			} else {
@@ -865,7 +872,7 @@ let notify = new Notifications();
 
 									if (!selectedFile) {
 										//alert('Por favor, selecciona un archivo JSON válido.');
-										notify.push({message: 'Invalid JSON file', color: 'warning'});
+										notify.push({ message: 'Invalid JSON file', color: 'warning' });
 										return;
 									}
 
@@ -881,11 +888,14 @@ let notify = new Notifications();
 											// TODO: Aquí puedes realizar acciones con los datos JSON, por ejemplo, mostrarlos en la página.
 
 											if (uploadFile_checkAppname()) {
-											//	alert('The file does not correspond to the same application.');
-											notify.push({message: 'The file does not correspond to the same application.', color: 'warning'});
+												//	alert('The file does not correspond to the same application.');
+												notify.push({
+													message: 'The file does not correspond to the same application.',
+													color: 'warning'
+												});
 											}
 										} catch (error) {
-											notify.push({message: error.message, color: 'danger'});
+											notify.push({ message: error.message, color: 'danger' });
 											console.error('Error al analizar el archivo JSON:', error);
 										}
 									};
@@ -906,7 +916,10 @@ let notify = new Notifications();
 
 									if (uploadFile_checkAppname()) {
 										//alert('The file does not correspond to the same application.');
-										notify.push({message: 'The file does not correspond to the same application.', color: 'warning'});
+										notify.push({
+											message: 'The file does not correspond to the same application.',
+											color: 'warning'
+										});
 									} else {
 										if (uploaded_file) {
 											if (confirm('Are you sure to merge the file with your data?')) {
@@ -944,7 +957,7 @@ let notify = new Notifications();
 											}
 										} else {
 											//alert('Please new select file!');
-											notify.push({message: 'Please new select file!', color: 'warning'});
+											notify.push({ message: 'Please new select file!', color: 'warning' });
 										}
 									}
 								}}

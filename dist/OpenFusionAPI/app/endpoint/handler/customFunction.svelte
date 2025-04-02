@@ -29,6 +29,23 @@
 		{ label: 'Tester', component: tab_tester }
 	]);
 
+	function defaultValues() {
+		if (!row) {
+			row = { data_test: {}, method: 'GET', url: '' };
+		}
+
+		if (!row?.data_test) {
+			row.data_test = {};
+		}
+
+		if (!row?.method) {
+			row.method = 'GET';
+		}
+		if (!row?.url) {
+			row.url = '';
+		}
+	}
+
 	function getData() {
 		return { code: $state.snapshot(row.code), data_test: $state.snapshot(row.data_test) };
 	}
@@ -53,6 +70,8 @@
 	});
 
 	onMount(() => {
+		defaultValues();
+
 		switch (row.environment) {
 			case 'dev':
 				functions = functionsDev;
@@ -92,17 +111,19 @@
 {/snippet}
 
 {#snippet tab_tester()}
-	<div>
-		<RESTTester
-			bind:data={row.data_test}
-			method={row.method}
-			url={row.endpoint}
-			methodDisabled={true}
-			onchange={(c) => {
-				fnOnChange();
-			}}
-		></RESTTester>
-	</div>
+	{#if row && row?.data_test}
+		<div>
+			<RESTTester
+				bind:data={row.data_test}
+				method={row.method}
+				url={row.endpoint}
+				methodDisabled={true}
+				onchange={(c) => {
+					fnOnChange();
+				}}
+			></RESTTester>
+		</div>
+	{/if}
 {/snippet}
 
-<Tab bind:tabs={tabList}></Tab>
+<svelte:boundary onerror={(e) => console.error(e)}><Tab bind:tabs={tabList}></Tab></svelte:boundary>

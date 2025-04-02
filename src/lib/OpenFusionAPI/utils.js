@@ -19,7 +19,9 @@ export const url_paths = {
 	getUsersList: host + '/api/system/users/list/prd',
 	getResponsesCountStatusCode: host + '/api/system/responses/status_code/count/prd',
 	getLogs: host + '/api/system/system/log/prd',
-	getlistFunctionsVarsJS: host + '/api/system/system/handler/js/funtions/prd'
+	getlistFunctionsVarsJS: host + '/api/system/system/handler/js/funtions/prd',
+	getListIntervalTasksByIdApp: host + '/api/system/interval_tasks/byidapp/prd',
+	upsertIntervalTasksByIdTask: host + '/api/system/interval_tasks/upsert/prd'
 };
 
 export const userStore = writable({});
