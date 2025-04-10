@@ -1,6 +1,6 @@
 {
   ".svelte-kit/generated/client-optimized/app.js": {
-    "file": "_app/immutable/entry/app.BUp8L5R0.js",
+    "file": "_app/immutable/entry/app.lBt8H3M-.js",
     "name": "entry/app",
     "src": ".svelte-kit/generated/client-optimized/app.js",
     "isEntry": true,
@@ -30,7 +30,7 @@
     ]
   },
   ".svelte-kit/generated/client-optimized/nodes/1.js": {
-    "file": "_app/immutable/nodes/1.CEfZlvRq.js",
+    "file": "_app/immutable/nodes/1.De2jDr1V.js",
     "name": "nodes/1",
     "src": ".svelte-kit/generated/client-optimized/nodes/1.js",
     "isEntry": true,
@@ -40,7 +40,7 @@
       "_CqFDkm0W.js",
       "_BeqhlmK-.js",
       "_BECihzLy.js",
-      "_Bsodav45.js"
+      "_NDsG7cgA.js"
     ]
   },
   ".svelte-kit/generated/client-optimized/nodes/2.js": {
@@ -91,14 +91,6 @@
     "file": "_app/immutable/chunks/BeqhlmK-.js",
     "name": "runtime"
   },
-  "_Bsodav45.js": {
-    "file": "_app/immutable/chunks/Bsodav45.js",
-    "name": "entry",
-    "imports": [
-      "_BeqhlmK-.js",
-      "_jXYkakx0.js"
-    ]
-  },
   "_CGSBWN3_.js": {
     "file": "_app/immutable/chunks/CGSBWN3_.js",
     "name": "props",
@@ -119,6 +111,14 @@
     "name": "legacy",
     "imports": [
       "_BeqhlmK-.js"
+    ]
+  },
+  "_NDsG7cgA.js": {
+    "file": "_app/immutable/chunks/NDsG7cgA.js",
+    "name": "entry",
+    "imports": [
+      "_BeqhlmK-.js",
+      "_jXYkakx0.js"
     ]
   },
   "_jXYkakx0.js": {
@@ -161,12 +161,12 @@
     "src": "node_modules/@fortawesome/fontawesome-free/webfonts/fa-v4compatibility.woff2"
   },
   "node_modules/@sveltejs/kit/src/runtime/client/entry.js": {
-    "file": "_app/immutable/entry/start.Cvbmnkk0.js",
+    "file": "_app/immutable/entry/start.D3kV_56S.js",
     "name": "entry/start",
     "src": "node_modules/@sveltejs/kit/src/runtime/client/entry.js",
     "isEntry": true,
     "imports": [
-      "_Bsodav45.js"
+      "_NDsG7cgA.js"
     ]
   },
   "src/lib/OpenFusionAPI/img/android-chrome-512x512.png": {
