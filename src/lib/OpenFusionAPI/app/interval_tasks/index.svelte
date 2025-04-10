@@ -147,7 +147,9 @@
 
 	async function saveInterval() {
 		if (idapp) {
-			let resp = await uF.POST({ url: url_paths.upsertIntervalTasksByIdTask, data: selectedRow });
+			let row = $state.snapshot(selectedRow);
+			console.log('saveInterval >>>>>>>>>>>>>', row);
+			let resp = await uF.POST({ url: url_paths.upsertIntervalTasksByIdTask, data: row });
 			let jresp = await resp.json();
 			//console.log('saveInterval >>>>>>>>>>>>>', selectedRow, jresp);
 			await loadTasks();
@@ -240,7 +242,7 @@
 				bind:options={optionsEndpoints}
 				bind:selectedValue={selectedRow.idendpoint}
 				onselect={(e) => {
-					console.log(e);
+					console.log(e, selectedRow);
 				}}
 			/>
 
