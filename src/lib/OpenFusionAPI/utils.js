@@ -21,7 +21,8 @@ export const url_paths = {
 	getLogs: host + '/api/system/system/log/prd',
 	getlistFunctionsVarsJS: host + '/api/system/system/handler/js/funtions/prd',
 	getListIntervalTasksByIdApp: host + '/api/system/interval_tasks/byidapp/prd',
-	upsertIntervalTasksByIdTask: host + '/api/system/interval_tasks/upsert/prd'
+	upsertIntervalTasksByIdTask: host + '/api/system/interval_tasks/upsert/prd',
+	deleteIntervalTasksByIdTask: host + '/api/system/interval_tasks/delete/prd'
 };
 
 export const userStore = writable({});
@@ -38,8 +39,6 @@ export const storeCountResponseStatusCode = writable({});
 export const formatJsonForHtmlCode = (/** @type {any} */ json) => {
 	return JSON.stringify(json, null, 2).replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;');
 };
-
-
 
 export const getListUsers = async (/** @type {string} */ token) => {
 	// @ts-ignore
@@ -437,7 +436,12 @@ export const listEnv = {
 		icon: ' fa-solid fa-gear fa-spin ',
 		label: 'Production'
 	},
-	qa: { color: ' has-text-warning ', background: 'warning', icon: ' fa-solid fa-eye ', label: 'Quality' },
+	qa: {
+		color: ' has-text-warning ',
+		background: 'warning',
+		icon: ' fa-solid fa-eye ',
+		label: 'Quality'
+	},
 	dev: {
 		color: ' has-text-danger ',
 		background: 'danger',

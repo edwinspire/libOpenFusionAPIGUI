@@ -21,6 +21,7 @@ export namespace url_paths {
     let getlistFunctionsVarsJS: string;
     let getListIntervalTasksByIdApp: string;
     let upsertIntervalTasksByIdTask: string;
+    let deleteIntervalTasksByIdTask: string;
 }
 export const userStore: import("svelte/store").Writable<{}>;
 export const listMethodStore: import("svelte/store").Writable<{}>;

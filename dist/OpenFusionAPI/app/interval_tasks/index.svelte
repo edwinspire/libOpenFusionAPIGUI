@@ -26,8 +26,19 @@
 		idendpoint: { hidden: true },
 		iduser: { hidden: true },
 		idapp: { hidden: true },
-		enabled: {
-			label: 'Enabled',
+		task_enabled: {
+			label: 'Enabled Task',
+			decorator: {
+				component: ColumnTypes.Boolean,
+				props: {
+					ontrue: { label: 'Enabled' },
+					onfalse: { label: 'Unabled' },
+					editInline: false
+				}
+			}
+		},
+		endpoint_enabled: {
+			label: 'Enabled Endpoint',
 			decorator: {
 				component: ColumnTypes.Boolean,
 				props: {
@@ -70,7 +81,11 @@
 		failed_attempts: {},
 		status: {},
 		last_exec_time: {},
-		last_response: {}
+		last_response: {},
+		app: { hidden: true },
+		resource: { hidden: true },
+		environment: { hidden: true },
+		app_enabled: { hidden: true }
 	});
 
 	$effect(() => {
@@ -129,13 +144,9 @@
 ]
  * */
 
-			if (Array.isArray(jresp) && jresp[0] && jresp[0].tasks) {
+			if (Array.isArray(jresp)) {
 				//console.log(jresp);
-				DataTableTasks = jresp[0].tasks.map((t) => {
-					t.method = jresp[0].method;
-					t.url = jresp[0].url;
-					return t;
-				});
+				DataTableTasks = jresp;
 				//	console.log('DataTableTasks', DataTableTasks);
 			} else {
 				DataTableTasks = [];
@@ -154,6 +165,18 @@
 			//console.log('saveInterval >>>>>>>>>>>>>', selectedRow, jresp);
 			await loadTasks();
 		}
+	}
+
+	async function deleteTasks(tasks) {
+		let idtasks = tasks.map((t) => {
+			return t.idtask;
+		});
+
+		console.log('deleteTasks >>>>>>>>>>>>>', idtasks, url_paths.deleteIntervalTasksByIdTask);
+		let resp = await uF.DELETE({ url: url_paths.deleteIntervalTasksByIdTask, data: idtasks });
+		let jresp = await resp.json();
+		//console.log('saveInterval >>>>>>>>>>>>>', selectedRow, jresp);
+		await loadTasks();
 	}
 
 	function fnDefaulValues() {
@@ -185,6 +208,12 @@
 		selectedRow = { idendpoint: '-' };
 		//console.log('TABLE > NEW ', selectedRow);
 		showEditor = true;
+	}}
+	ondeleterow={async (r) => {
+		console.log('TABLE > DELETE ', r);
+		if (r.rows.length > 0 && confirm('Are you sure you want to delete this task?')) {
+			await deleteTasks(r.rows);
+		}
 	}}
 ></Table>
 
