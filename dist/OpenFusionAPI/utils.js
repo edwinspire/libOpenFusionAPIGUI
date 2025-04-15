@@ -203,6 +203,36 @@ export const getCacheSize = async (app_name, token) => {
 	}
 };
 
+export const defaultValuesIntervalTask = (task) => {
+	if (task == null) {
+		task = {
+			idtask: undefined,
+			idendpoint: undefined,
+			name: '',
+			description: '',
+			enabled: false,
+			interval: 3600,
+			datestart: new Date(),
+			exec_time_limit: 30,
+			failed_attempts: 0,
+			status: 0
+		};
+	}
+
+	task = {
+		idtask: task.idtask || null,
+		idendpoint: task.idendpoint || null,
+		enabled: task.enabled || false,
+		interval: task.interval || 3600,
+		datestart: task.datestart || new Date(),
+		exec_time_limit: task.exec_time_limit || 30,
+		failed_attempts: task.failed_attempts || 0,
+		status: task.status || 0
+	};
+
+	return task;
+};
+
 export const defaultValuesApp = (app) => {
 	if (app == null) {
 		app = { app: '', params: { telegram: {} } };

@@ -8,7 +8,7 @@
 		PredictiveInput,
 		Input
 	} from '@edwinspire/svelte-components';
-	import { defaultValuesApp, url_paths } from '../../utils.js';
+	import { defaultValuesApp, defaultValuesIntervalTask, url_paths } from '../../utils.js';
 	import uFetch from '@edwinspire/universal-fetch';
 	import CellMethod from '../cellMethod.svelte';
 	//	import MethodSelect from '../widgets/methods_select.svelte';
@@ -180,14 +180,12 @@
 	}
 
 	function fnDefaulValues() {
-		if (selectedRow) {
-			selectedRow = { idendpoint: '-' };
-		}
+			selectedRow = defaultValuesIntervalTask(selectedRow);
 	}
 
 	onMount(() => {
 		//
-		fnDefaulValues();
+		selectedRow = fnDefaulValues(selectedRow);
 		loadTasks();
 	});
 </script>
@@ -202,10 +200,11 @@
 	oneditrow={(r) => {
 		//console.log('TABLE > ', r);
 		selectedRow = r;
+		selectedRow.enabled = r.task_enabled;
 		showEditor = true;
 	}}
 	onnewrow={() => {
-		selectedRow = { idendpoint: '-' };
+		selectedRow = defaultValuesIntervalTask({});
 		//console.log('TABLE > NEW ', selectedRow);
 		showEditor = true;
 	}}
