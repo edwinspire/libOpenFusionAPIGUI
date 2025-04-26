@@ -42,7 +42,7 @@
 	let intervalGetDataApp;
 	let app_vars;
 	let showEditorApp = $state(false);
-	let showEditorIntervalTasks = $state(false);
+	//let showEditorIntervalTasks = $state(false);
 	let selectedIdApp = $state(0);
 	let menujson = {
 		start: [],
@@ -123,7 +123,8 @@
 		latest_updater: { hidden: true },
 		environment: { hidden: true },
 
-		cache_size: { hidden: true }
+		cache_size: { hidden: true },
+		docs: { hidden: true }
 	});
 
 	let tabs = $state([
