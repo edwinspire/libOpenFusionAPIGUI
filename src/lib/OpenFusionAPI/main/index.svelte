@@ -4,7 +4,7 @@
 
 	onMount(() => {});
 </script>
-ddddd
-<div class="">ppppppp
-	<App  />
+
+<div class="">
+	<App />
 </div>
