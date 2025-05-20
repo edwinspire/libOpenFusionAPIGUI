@@ -19,7 +19,7 @@ import { AXObjects, elementAXObjects } from "axobject-query";
 import "esrap";
 import "@ampproject/remapping";
 import "@jridgewell/sourcemap-codec";
-const PUBLIC_API_SERVER_HOST = "http://localhost:3000";
+const PUBLIC_API_SERVER_HOST = "http://192.168.242.59:3031";
 validateBaseUrl(PUBLIC_API_SERVER_HOST);
 function validateBaseUrl(baseUrl) {
   try {

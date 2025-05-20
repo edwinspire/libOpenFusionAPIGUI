@@ -310,7 +310,7 @@
 
 	async function getApp() {
 		cleanApp(); // Esta linea es importante para que no se vayan a guardar variables de una apliacción a otra
-		console.log('getapp', idapp, app);
+		//console.log('getapp', idapp, app);
 		if (idapp) {
 			try {
 				await getListUsers();
@@ -342,17 +342,26 @@
 		let app_save = { ...app };
 		app_save.endpoints = endpoints;
 
-		console.log('appToStore >>>> ', $state.snapshot(app_save));
+		// console.log('appToStore >>>> ', $state.snapshot(app_save));
 
 		return $state.snapshot(app_save);
 	}
 
 	function cleanApp() {
 		//idapp = 0;
-		app = { app: '', idapp: null };
-		endpoints = [...new Array()];
-		app_vars = undefined;
-		listAppVars.set({});
+		try {
+			app = { app: '', idapp: null };
+			endpoints = [...new Array()];
+			app_vars = undefined;
+
+			if (listAppVars) {
+				listAppVars.set({});
+			} else {
+				console.warn('listAppVars is not defined');
+			}
+		} catch (error) {
+			console.warn(error);
+		}
 	}
 
 	async function saveApp() {

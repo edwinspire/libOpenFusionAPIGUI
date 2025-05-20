@@ -12,12 +12,22 @@
 	let Datavars = $state({});
 
 	listAppVars.subscribe((value) => {
-		//			console.log('listAppVars', value);
+		console.log('listAppVars', value);
 		Datavars = value || {};
 
-		Datavars.dev = Datavars.dev || {};
-		Datavars.qa = Datavars.qa || {};
-		Datavars.prd = Datavars.prd || {};
+		if (Datavars) {
+			if (Datavars.dev == null) {
+				Datavars.dev = {};
+			}
+			if (Datavars.qa == null) {
+				Datavars.qa = {};
+			}
+			if (Datavars.prd == null) {
+				Datavars.prd = {};
+			}
+		}
+
+		console.log('Datavars', Datavars);
 	});
 
 	function internalOnchange() {

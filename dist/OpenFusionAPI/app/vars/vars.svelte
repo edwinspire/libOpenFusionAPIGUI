@@ -150,8 +150,9 @@
 												title="Edit variable name"
 												onclick={() => {
 													change_var_name[varname] = !change_var_name[varname];
-													console.log(varname, change_var_name[varname]);
+													//console.log(varname, change_var_name[varname], appVars[varname]);
 													edit_var_name[varname] = varname;
+
 												}}
 											>
 												<span class="icon is-small">
