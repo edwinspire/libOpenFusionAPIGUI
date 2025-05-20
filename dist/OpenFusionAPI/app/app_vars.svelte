@@ -14,6 +14,10 @@
 	listAppVars.subscribe((value) => {
 		//			console.log('listAppVars', value);
 		Datavars = value || {};
+
+		Datavars.dev = Datavars.dev || {};
+		Datavars.qa = Datavars.qa || {};
+		Datavars.prd = Datavars.prd || {};
 	});
 
 	function internalOnchange() {
@@ -24,7 +28,6 @@
 </script>
 
 <div>
-
 	{#if environment == 'dev' || environment == '*'}
 		{#if Datavars && Datavars.dev}
 			<div class="column">
