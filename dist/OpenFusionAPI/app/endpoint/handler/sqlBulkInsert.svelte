@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { Tab,  RESTTester, JSONView } from '@edwinspire/svelte-components';
+	import { Tab, RESTTester, JSONView, Input } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 	import AppVarsSelector from '../widgets/params_json_selector.svelte';
 
@@ -12,7 +12,7 @@
 
 	let tabList = $state([
 		{
-			label: 'Table Name',
+			label: 'Parameters',
 			isActive: true,
 			classIcon: ' fa-solid fa-database ',
 			component: tab_tablename
@@ -34,6 +34,7 @@
 	});
 
 	let table_name = $state('');
+	let ignoreDuplicates = $state(false);
 
 	$effect(() => {
 		if (row?.code) {
@@ -52,6 +53,10 @@
 				table_name = params.table_name;
 			}
 
+			if (params && params.ignoreDuplicates) {
+				ignoreDuplicates = params.ignoreDuplicates;
+			}
+
 			if (params && params.config) {
 				cnx_param_var = params.config;
 			}
@@ -59,6 +64,7 @@
 			cnx_param_json = {};
 			cnx_param_var = '';
 			table_name = '';
+			ignoreDuplicates = false;
 			console.error('Error', error);
 		}
 	}
@@ -80,10 +86,11 @@
 		try {
 			outcode.config = conf;
 			outcode.table_name = table_name;
+			outcode.ignoreDuplicates = ignoreDuplicates;
 			return JSON.stringify(outcode, null, 2);
 		} catch (error) {
 			console.warn(error);
-			return code;
+			return outcode;
 		}
 	}
 
@@ -93,20 +100,29 @@
 </script>
 
 {#snippet tab_tablename()}
-	<div>
-		<br />
-		<div class="control">
-			<input
-				class="input is-small"
-				type="text"
-				placeholder="Table name"
-				bind:value={table_name}
-				onchange={() => {
-					fnOnChange();
-				}}
-			/>
-		</div>
-		<br />
+	<Input
+		label="Table Name"
+		type="text"
+		bind:value={table_name}
+		placeholder="Table Name"
+		onchange={() => {
+			fnOnChange();
+		}}
+	></Input>
+
+	<Input
+		label="ignoreDuplicates"
+		type="boolean"
+		bind:value={ignoreDuplicates}
+		placeholder="ignoreDuplicates"
+		onchange={() => {
+			fnOnChange();
+		}}
+	></Input>
+
+	<div class="content is-small">
+		<strong>ignoreDuplicates only:</strong>
+		{'MySQL, MariaDB, SQLite >= 3.24.0 & Postgres >= 9.5'}
 	</div>
 
 	<div class="content is-small">

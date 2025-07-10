@@ -434,6 +434,25 @@
 	});
 </script>
 
+{#snippet app_name_field()}
+	<div class="field has-addons">
+		<p class="control">
+			<!-- svelte-ignore a11y_missing_attribute -->
+			<a class="button is-static is-small"> Application </a>
+		</p>
+		<p class="control">
+			{#if app}
+				<input
+					class="input is-small"
+					type="text"
+					placeholder="Application name"
+					bind:value={app.app}
+				/>
+			{/if}
+		</p>
+	</div>
+{/snippet}
+
 {#snippet save_deploy()}
 	{#if $userStore}
 		<button
@@ -807,25 +826,6 @@
 		</Level>
 
 		<Level left={[app_name_field, app_enabled_field]} right={[upload_app, download_app]}>
-			{#snippet app_name_field()}
-				<div class="field has-addons">
-					<p class="control">
-						<!-- svelte-ignore a11y_missing_attribute -->
-						<a class="button is-static is-small"> Application </a>
-					</p>
-					<p class="control">
-						{#if app}
-							<input
-								class="input is-small"
-								type="text"
-								placeholder="Application name"
-								bind:value={app.app}
-							/>
-						{/if}
-					</p>
-				</div>
-			{/snippet}
-
 			{#snippet download_app()}
 				{#if $userStore}
 					<button
