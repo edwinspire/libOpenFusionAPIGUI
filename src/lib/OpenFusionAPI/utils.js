@@ -456,7 +456,8 @@ export const listHandlers = {
 	SOAP: { color: 'info', icon: 'fa-solid fa-soap', label: 'SOAP' },
 	TEXT: { color: 'warning', icon: 'fa-regular fa-file-lines', label: 'Text' },
 	FUNCTION: { color: 'danger', icon: 'fa-solid fa-robot', label: 'Function' },
-	MONGODB: { color: '', icon: 'fa-solid fa-database', label: 'MongoDB' }
+	MONGODB: { color: '', icon: 'fa-solid fa-database', label: 'MongoDB' },
+	MCP: { color: 'danger', icon: 'fa-solid fa-plug fa-bounce', label: 'MCP' }
 };
 
 export const listEnv = {

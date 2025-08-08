@@ -149,35 +149,43 @@ export namespace listHandlers {
         let label_8: string;
         export { label_8 as label };
     }
-}
-export namespace listEnv {
-    namespace prd {
+    namespace MCP {
         let color_14: string;
         export { color_14 as color };
-        export let background: string;
         let icon_14: string;
         export { icon_14 as icon };
         let label_9: string;
         export { label_9 as label };
     }
-    namespace qa {
+}
+export namespace listEnv {
+    namespace prd {
         let color_15: string;
         export { color_15 as color };
-        let background_1: string;
-        export { background_1 as background };
+        export let background: string;
         let icon_15: string;
         export { icon_15 as icon };
         let label_10: string;
         export { label_10 as label };
     }
-    namespace dev {
+    namespace qa {
         let color_16: string;
         export { color_16 as color };
-        let background_2: string;
-        export { background_2 as background };
+        let background_1: string;
+        export { background_1 as background };
         let icon_16: string;
         export { icon_16 as icon };
         let label_11: string;
         export { label_11 as label };
+    }
+    namespace dev {
+        let color_17: string;
+        export { color_17 as color };
+        let background_2: string;
+        export { background_2 as background };
+        let icon_17: string;
+        export { icon_17 as icon };
+        let label_12: string;
+        export { label_12 as label };
     }
 }

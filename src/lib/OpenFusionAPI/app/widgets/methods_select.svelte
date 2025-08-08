@@ -16,5 +16,5 @@
 </script>
 
 {#if methods}
-	<BasicSelect bind:options={methods} bind:option {onselect} />
+	<BasicSelect label="Method" bind:options={methods} bind:option {onselect} />
 {/if}

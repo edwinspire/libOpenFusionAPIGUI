@@ -1,5 +1,5 @@
 import "clsx";
-import { W as attr_class, X as bind_props, P as pop, N as push, Y as ensure_array_like, Z as stringify, V as escape_html, _ as attr } from "../../chunks/index.js";
+import { Y as attr_class, Z as bind_props, T as pop, P as push, _ as ensure_array_like, $ as stringify, X as escape_html, a0 as attr } from "../../chunks/index2.js";
 import uFetch from "@edwinspire/universal-fetch";
 import "events";
 import "d3";
@@ -8,7 +8,7 @@ import "prettier/plugins/babel.mjs";
 import "prettier/plugins/estree.mjs";
 import "prettier/plugins/html.mjs";
 import "prettier-plugin-sql";
-import { w as writable } from "../../chunks/index2.js";
+import { w as writable } from "../../chunks/index.js";
 import "zimmerframe";
 import { getLocator } from "locate-character";
 import * as acorn from "acorn";
@@ -37,16 +37,16 @@ const Logo = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0
 function Modal($$payload, $$props) {
   push();
   let { show = false, children, showCloseButton = false } = $$props;
-  $$payload.out += `<div${attr_class("modal", void 0, { "is-active": show })}><div class="modal-background"></div> <div class="modal-content">`;
+  $$payload.out.push(`<div${attr_class("modal", void 0, { "is-active": show })}><div class="modal-background"></div> <div class="modal-content">`);
   children?.($$payload);
-  $$payload.out += `<!----></div> `;
+  $$payload.out.push(`<!----></div> `);
   if (showCloseButton) {
-    $$payload.out += "<!--[-->";
-    $$payload.out += `<button class="modal-close is-large" aria-label="close"></button>`;
+    $$payload.out.push("<!--[-->");
+    $$payload.out.push(`<button class="modal-close is-large" aria-label="close"></button>`);
   } else {
-    $$payload.out += "<!--[!-->";
+    $$payload.out.push("<!--[!-->");
   }
-  $$payload.out += `<!--]--></div>`;
+  $$payload.out.push(`<!--]--></div>`);
   bind_props($$props, { show, showCloseButton });
   pop();
 }
@@ -74,25 +74,25 @@ function Notifications($$payload, $$props) {
         */
     list_notify
   );
-  $$payload.out += `<div class="bottom-right svelte-10s4c1v"><!--[-->`;
+  $$payload.out.push(`<div class="bottom-right svelte-10s4c1v"><!--[-->`);
   for (let $$index = 0, $$length = each_array.length; $$index < $$length; $$index++) {
     let s = each_array[$$index];
     if (!s.hidden) {
-      $$payload.out += "<!--[-->";
-      $$payload.out += `<article${attr_class(`message is-small is-${stringify(s.color)}`, "svelte-10s4c1v")}>`;
+      $$payload.out.push("<!--[-->");
+      $$payload.out.push(`<article${attr_class(`message is-small is-${stringify(s.color)}`, "svelte-10s4c1v")}>`);
       if (s.title) {
-        $$payload.out += "<!--[-->";
-        $$payload.out += `<div class="message-header"><p>${escape_html(s.title)}</p> <button class="delete is-small" aria-label="delete"></button></div>`;
+        $$payload.out.push("<!--[-->");
+        $$payload.out.push(`<div class="message-header"><p>${escape_html(s.title)}</p> <button class="delete is-small" aria-label="delete"></button></div>`);
       } else {
-        $$payload.out += "<!--[!-->";
+        $$payload.out.push("<!--[!-->");
       }
-      $$payload.out += `<!--]--> <div class="message-body">${escape_html(s.message)}</div></article>`;
+      $$payload.out.push(`<!--]--> <div class="message-body">${escape_html(s.message)}</div></article>`);
     } else {
-      $$payload.out += "<!--[!-->";
+      $$payload.out.push("<!--[!-->");
     }
-    $$payload.out += `<!--]-->`;
+    $$payload.out.push(`<!--]-->`);
   }
-  $$payload.out += `<!--]--></div>`;
+  $$payload.out.push(`<!--]--></div>`);
   pop();
 }
 function Login($$payload, $$props) {
@@ -103,21 +103,22 @@ function Login($$payload, $$props) {
   Modal($$payload, {
     show: true,
     children: ($$payload2) => {
-      $$payload2.out += `<div class="box"><div class="media t1 svelte-fhc20z"><div class="media-left"><figure class="image is-48x48"><img${attr("src", Logo)} alt="OpenFusionAPI"/></figure></div> <div class="media-content"><p class="title is-family-sans-serif">Open Fusion API</p></div></div> <div class="field"><p class="control has-icons-left has-icons-right"><input class="input" type="text" placeholder="Username"${attr("value", username)}/> <span class="icon is-small is-left"><i class="fa-solid fa-user"></i></span></p></div> <div class="field"><p class="control has-icons-left"><input class="input" type="password" placeholder="Password"${attr("value", password)}/> <span class="icon is-small is-left"><i class="fas fa-lock"></i></span></p></div> <div class="field"><p class="control">`;
+      $$payload2.out.push(`<div class="box"><div class="media t1 svelte-fhc20z"><div class="media-left"><figure class="image is-48x48"><img${attr("src", Logo)} alt="OpenFusionAPI"/></figure></div> <div class="media-content"><p class="title is-family-sans-serif">Open Fusion API</p></div></div> <div class="field"><p class="control has-icons-left has-icons-right"><input class="input" type="text" placeholder="Username"${attr("value", username)}/> <span class="icon is-small is-left"><i class="fa-solid fa-user"></i></span></p></div> <div class="field"><p class="control has-icons-left"><input class="input" type="password" placeholder="Password"${attr("value", password)}/> <span class="icon is-small is-left"><i class="fas fa-lock"></i></span></p></div> <div class="field"><p class="control">`);
       {
-        $$payload2.out += "<!--[!-->";
-        $$payload2.out += `<button class="button is-success">Login</button>`;
+        $$payload2.out.push("<!--[!-->");
+        $$payload2.out.push(`<button class="button is-success">Login</button>`);
       }
-      $$payload2.out += `<!--]--></p></div> `;
+      $$payload2.out.push(`<!--]--></p></div> `);
       {
-        $$payload2.out += "<!--[!-->";
+        $$payload2.out.push("<!--[!-->");
       }
-      $$payload2.out += `<!--]--></div>`;
+      $$payload2.out.push(`<!--]--></div>`);
     },
     $$slots: { default: true }
   });
   pop();
 }
+let filename;
 let source;
 let locator = getLocator("", { offsetLine: 1 });
 let warning_filter;
@@ -153,6 +154,9 @@ class CompileDiagnostic {
   constructor(code, message, position) {
     this.code = code;
     this.message = message;
+    {
+      this.filename = filename;
+    }
     if (position) {
       this.position = position;
       this.start = locator(position[0]);
@@ -2559,34 +2563,20 @@ const interactive_roles = non_abstract_roles.filter(
   (name) => !non_interactive_roles.includes(name) && // 'generic' is meant to have no semantic meaning.
   name !== "generic"
 );
-elementRoles.entries().forEach(([schema, roles2]) => {
+for (const [schema, roles2] of elementRoles.entries()) {
   if ([...roles2].every((role) => role !== "generic" && non_interactive_roles.includes(role))) ;
-});
-elementRoles.entries().forEach(([schema, roles2]) => {
   if ([...roles2].every((role) => interactive_roles.includes(role))) ;
-});
+}
 const interactive_ax_objects = [...AXObjects.keys()].filter(
   (name) => AXObjects.get(name).type === "widget"
 );
 const non_interactive_ax_objects = [...AXObjects.keys()].filter(
   (name) => ["windows", "structure"].includes(AXObjects.get(name).type)
 );
-elementAXObjects.entries().forEach(
-  /**
-   * @param {any} _
-   */
-  ([schema, ax_object]) => {
-    if ([...ax_object].every((role) => interactive_ax_objects.includes(role))) ;
-  }
-);
-elementAXObjects.entries().forEach(
-  /**
-   * @param {any} _
-   */
-  ([schema, ax_object]) => {
-    if ([...ax_object].every((role) => non_interactive_ax_objects.includes(role))) ;
-  }
-);
+for (const [schema, ax_object] of elementAXObjects.entries()) {
+  if ([...ax_object].every((role) => interactive_ax_objects.includes(role))) ;
+  if ([...ax_object].every((role) => non_interactive_ax_objects.includes(role))) ;
+}
 const svg_attributes = "accent-height accumulate additive alignment-baseline allowReorder alphabetic amplitude arabic-form ascent attributeName attributeType autoReverse azimuth baseFrequency baseline-shift baseProfile bbox begin bias by calcMode cap-height class clip clipPathUnits clip-path clip-rule color color-interpolation color-interpolation-filters color-profile color-rendering contentScriptType contentStyleType cursor cx cy d decelerate descent diffuseConstant direction display divisor dominant-baseline dur dx dy edgeMode elevation enable-background end exponent externalResourcesRequired fill fill-opacity fill-rule filter filterRes filterUnits flood-color flood-opacity font-family font-size font-size-adjust font-stretch font-style font-variant font-weight format from fr fx fy g1 g2 glyph-name glyph-orientation-horizontal glyph-orientation-vertical glyphRef gradientTransform gradientUnits hanging height href horiz-adv-x horiz-origin-x id ideographic image-rendering in in2 intercept k k1 k2 k3 k4 kernelMatrix kernelUnitLength kerning keyPoints keySplines keyTimes lang lengthAdjust letter-spacing lighting-color limitingConeAngle local marker-end marker-mid marker-start markerHeight markerUnits markerWidth mask maskContentUnits maskUnits mathematical max media method min mode name numOctaves offset onabort onactivate onbegin onclick onend onerror onfocusin onfocusout onload onmousedown onmousemove onmouseout onmouseover onmouseup onrepeat onresize onscroll onunload opacity operator order orient orientation origin overflow overline-position overline-thickness panose-1 paint-order pathLength patternContentUnits patternTransform patternUnits pointer-events points pointsAtX pointsAtY pointsAtZ preserveAlpha preserveAspectRatio primitiveUnits r radius refX refY rendering-intent repeatCount repeatDur requiredExtensions requiredFeatures restart result rotate rx ry scale seed shape-rendering slope spacing specularConstant specularExponent speed spreadMethod startOffset stdDeviation stemh stemv stitchTiles stop-color stop-opacity strikethrough-position strikethrough-thickness string stroke stroke-dasharray stroke-dashoffset stroke-linecap stroke-linejoin stroke-miterlimit stroke-opacity stroke-width style surfaceScale systemLanguage tabindex tableValues target targetX targetY text-anchor text-decoration text-rendering textLength to transform type u1 u2 underline-position underline-thickness unicode unicode-bidi unicode-range units-per-em v-alphabetic v-hanging v-ideographic v-mathematical values version vert-adv-y vert-origin-x vert-origin-y viewBox viewTarget visibility width widths word-spacing writing-mode x x-height x1 x2 xChannelSelector xlink:actuate xlink:arcrole xlink:href xlink:role xlink:show xlink:title xlink:type xml:base xml:lang xml:space y y1 y2 yChannelSelector z zoomAndPan".split(
   " "
 );
@@ -2594,7 +2584,7 @@ const svg_attribute_lookup = /* @__PURE__ */ new Map();
 svg_attributes.forEach((name) => {
   svg_attribute_lookup.set(name.toLowerCase(), name);
 });
-const common = {
+const common_options = {
   filename: string("(unknown)"),
   // default to process.cwd() where it exists to replicate svelte4 behavior (and make Deno work with this as well)
   // see https://github.com/sveltejs/svelte/blob/b62fc8c8fd2640c9b99168f01b9d958cb2f7574f/packages/svelte/src/compiler/compile/Component.js#L211
@@ -2620,10 +2610,12 @@ const common = {
     }
     return input;
   }),
-  warningFilter: fun(() => true)
+  warningFilter: fun(() => true),
+  experimental: object({
+    async: boolean(false)
+  })
 };
-object({
-  ...common,
+const component_options = {
   accessors: deprecate(options_deprecated_accessors, boolean(false)),
   css: validator("external", (input) => {
     if (input === true || input === false) {
@@ -2687,6 +2679,11 @@ object({
   varsReport: removed(
     "The vars option has been removed. If you are using this through svelte-preprocess with TypeScript, use the https://www.typescriptlang.org/tsconfig#verbatimModuleSyntax setting instead"
   )
+};
+object({
+  ...common_options,
+  ...Object.fromEntries(Object.keys(component_options).map((key) => [key, () => {
+  }]))
 });
 function removed(msg) {
   return (input) => {
@@ -2790,12 +2787,12 @@ function throw_error(msg) {
 function OpenFusionAPI($$payload, $$props) {
   push();
   Notifications($$payload);
-  $$payload.out += `<!----> `;
+  $$payload.out.push(`<!----> `);
   {
-    $$payload.out += "<!--[!-->";
+    $$payload.out.push("<!--[!-->");
     Login($$payload);
   }
-  $$payload.out += `<!--]-->`;
+  $$payload.out.push(`<!--]-->`);
   pop();
 }
 function _page($$payload, $$props) {

@@ -14,6 +14,7 @@
 	import Endpoint from './handler/endpoint.svelte';
 	import Authorizations from './widgets/authorizations.svelte';
 	import Logs from './widgets/logs.svelte';
+	import MCP from './widgets/mcp.svelte';
 	import EndpointLabel from './widgets/endpoint_label.svelte';
 
 	let {
@@ -95,6 +96,7 @@
 		{ label: 'Endpoint', isActive: true, component: tab_endpoint },
 		{ label: 'Configuration', component: tab_config },
 		{ label: 'Authorizations', component: tab_auth },
+		{ label: 'MCP', component: tab_mcp, disabled: row.handler == 'MCP' },
 		{ label: 'Logs', component: tab_log }
 	]);
 
@@ -308,6 +310,12 @@
 {#snippet tab_log()}
 	{#if row?.ctrl?.log}
 		<Logs bind:log={row.ctrl.log} bind:row></Logs>
+	{/if}
+{/snippet}
+
+{#snippet tab_mcp()}
+	{#if row?.mcp}
+		<MCP bind:mcp={row.mcp} bind:row></MCP>
 	{/if}
 {/snippet}
 

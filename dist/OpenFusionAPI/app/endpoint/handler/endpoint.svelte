@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { BasicSelect, DialogModal, Level } from '@edwinspire/svelte-components';
+	import { BasicSelect, DialogModal, Level, Input } from '@edwinspire/svelte-components';
 	import SelectEnvironment from '../../../widgets/Select.svelte';
 	import MethodSelect from '../../widgets/methods_select.svelte';
 	import uFetch from '@edwinspire/universal-fetch';
@@ -112,21 +112,7 @@
 <div>
 	<Level left={[enabled_endpoint]} right={[copy_endpoint]}>
 		{#snippet enabled_endpoint()}
-			<div class="field is-horizontal">
-				<div class="field-label is-small">
-					<!-- svelte-ignore a11y_label_has_associated_control -->
-					<label class="label">Enabled</label>
-				</div>
-				<div class="field-body">
-					<div class="field">
-						<div class="control">
-							<label class="checkbox">
-								<input type="checkbox" bind:checked={row.enabled} />
-							</label>
-						</div>
-					</div>
-				</div>
-			</div>
+			<Input label="Enabled" type="checkbox" bind:value={row.enabled} placeholder="Enabled" />
 		{/snippet}
 
 		{#snippet copy_endpoint()}
@@ -143,7 +129,7 @@
 							<span class="icon is-small">
 								<i class="fa-solid fa-copy"></i>
 							</span>
-							<span>Copy to</span>
+							<span>Copy endpoint to</span>
 						</button>
 					</p>
 				</div>
@@ -227,78 +213,50 @@
 	<div class="fixed-grid has-2-cols">
 		<div class="grid">
 			<div class="cell">
-				<div class="field is-horizontal">
-					<div class="field-label is-small">
-						<!-- svelte-ignore a11y_label_has_associated_control -->
-						<label class="label">Method</label>
-					</div>
-					<div class="field-body">
-						<div class="field">
-							<div class="control">
-								{#if row?.method}
-									<MethodSelect bind:option={row.method}></MethodSelect>
-								{/if}
-							</div>
-						</div>
-					</div>
-				</div>
+				{#if row?.method}
+					<MethodSelect bind:option={row.method}></MethodSelect>
+				{/if}
 			</div>
 
 			<div class="cell">
-				<div class="field is-horizontal">
-					<div class="field-label is-small">
-						<!-- svelte-ignore a11y_label_has_associated_control -->
-						<label class="label">Access</label>
-					</div>
-					<div class="field-body">
-						<div class="field">
-							<div class="control">
-								{#if row}
-									<BasicSelect
-										options={listAccessMethod}
-										bind:option={row.access}
-										onselect={(/** @type {{ detail: { value: string; }; }} */ e) => {
-											console.log('Row', row);
-										}}
-									/>
-								{/if}
-							</div>
-						</div>
-					</div>
-				</div>
+				{#if row}
+					<BasicSelect
+						label="Access"
+						options={listAccessMethod}
+						bind:option={row.access}
+						onselect={(/** @type {{ detail: { value: string; }; }} */ e) => {
+							console.log('Row', row);
+						}}
+					/>
+				{/if}
 			</div>
 
 			<div class="cell">
-				<div class="field is-horizontal">
-					<div class="field-label is-small">
-						<!-- svelte-ignore a11y_label_has_associated_control -->
-						<label class="label">Handler</label>
-					</div>
-					<div class="field-body">
-						<div class="field">
-							<div class="control">
-								{#if row?.handler}
-									<BasicSelect
-										bind:options={handlers}
-										bind:option={row.handler}
-										onselect={(/** @type {{ detail: { value: string; }; }} */ e) => {
-											console.log('Row', row);
-										}}
-									/>
-								{/if}
-							</div>
-						</div>
-					</div>
-				</div>
+				{#if row?.handler}
+					<BasicSelect
+						label="Handler"
+						bind:options={handlers}
+						bind:option={row.handler}
+						onselect={(/** @type {{ detail: { value: string; }; }} */ e) => {
+							console.log('Row', e);
+							if (e.value == 'MCP') {
+								row.method = 'POST';
+							}
+						}}
+					/>
+				{/if}
 			</div>
 
 			<div class="cell">
 				<div class="field">
 					<div class="field is-horizontal">
-						<div class="field-label is-small"><strong> Timeout Cache: </strong></div>
 						<div class="field-body">
 							<div class="field is-expanded">
 								<div class="field has-addons">
+									<p class="control">
+										<!-- svelte-ignore a11y_missing_attribute -->
+										<a class="button is-small is-static"> Timeout Cache: </a>
+									</p>
 									<p class="control">
 										<input
 											class="input is-small"
