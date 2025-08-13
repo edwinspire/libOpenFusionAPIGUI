@@ -213,8 +213,18 @@
 	<div class="fixed-grid has-2-cols">
 		<div class="grid">
 			<div class="cell">
-				{#if row?.method}
-					<MethodSelect bind:option={row.method}></MethodSelect>
+				{#if row?.handler}
+					<BasicSelect
+						label="Handler"
+						bind:options={handlers}
+						bind:option={row.handler}
+						onselect={(/** @type {{ detail: { value: string; }; }} */ e) => {
+							console.log('Row', e);
+							if (e.value == 'MCP') {
+								row.method = 'POST';
+							}
+						}}
+					/>
 				{/if}
 			</div>
 
@@ -232,18 +242,8 @@
 			</div>
 
 			<div class="cell">
-				{#if row?.handler}
-					<BasicSelect
-						label="Handler"
-						bind:options={handlers}
-						bind:option={row.handler}
-						onselect={(/** @type {{ detail: { value: string; }; }} */ e) => {
-							console.log('Row', e);
-							if (e.value == 'MCP') {
-								row.method = 'POST';
-							}
-						}}
-					/>
+				{#if row?.method}
+					<MethodSelect bind:option={row.method}></MethodSelect>
 				{/if}
 			</div>
 

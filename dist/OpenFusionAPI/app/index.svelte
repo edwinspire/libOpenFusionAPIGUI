@@ -34,6 +34,7 @@
 	import Logo from '../img/favicon.png';
 	import { Notifications } from '@edwinspire/svelte-components';
 	import IntervalTasks from './interval_tasks/index.svelte';
+	import cellMCPTool from './cellMCPTool.svelte';
 
 	let notify = new Notifications();
 
@@ -96,6 +97,7 @@
 		endpoint: { label: 'Endpoint', decorator: { component: cellPath } },
 		method: { decorator: { component: CellMethod }, label: 'Method' },
 		handler: { decorator: { component: cellHandler }, label: 'Handler' },
+		mcp: { decorator: { component: cellMCPTool }, label: 'MCP Tool' },
 		access: {
 			label: 'Access',
 			decorator: {
@@ -124,7 +126,9 @@
 		environment: { hidden: true },
 
 		cache_size: { hidden: true },
-		docs: { hidden: true }
+		docs: { hidden: true },
+
+		json_schema: { hidden: true }
 	});
 
 	let tabs = $state([
