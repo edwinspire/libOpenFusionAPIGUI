@@ -9,7 +9,14 @@
 	import TextCode from './handler/text.svelte';
 	import MongoDB from './handler/mongodb.svelte';
 	import CustomFn from './handler/customFunction.svelte';
-	import { Level, SlideFullScreen, Tab, EditorContent } from '@edwinspire/svelte-components';
+	import {
+		Level,
+		SlideFullScreen,
+		Tab,
+//		EditorContent,
+		EditorCode,
+		Input
+	} from '@edwinspire/svelte-components';
 
 	import Endpoint from './handler/endpoint.svelte';
 	import Authorizations from './widgets/authorizations.svelte';
@@ -24,6 +31,9 @@
 		ondata = (d) => {},
 		oncopy = () => {}
 	} = $props();
+
+	let json_schema_enabled = $state(false);
+	let json_schema_in = $state({});
 
 	function doc_app_header() {
 		return {
@@ -95,6 +105,7 @@
 		//		{ label: 'Documentation', isActive: true, component: tab_docs },
 		{ label: 'Endpoint', isActive: true, component: tab_endpoint },
 		{ label: 'Configuration', component: tab_config },
+		{ label: 'JSON Schema', component: tab_json_schema },
 		{ label: 'Authorizations', component: tab_auth },
 		{ label: 'MCP', component: tab_mcp, disabled: row.handler == 'MCP' },
 		{ label: 'Logs', component: tab_log }
@@ -113,6 +124,14 @@
 			row: row_out,
 			validateResource,
 			availableURL
+		};
+
+		row_out.json_schema = {
+			in: {
+				enabled: json_schema_enabled,
+				schema: typeof json_schema_in === 'string' ? JSON.parse(json_schema_in) : json_schema_in
+			},
+			out: {}
 		};
 
 		console.log('ENDPOINT data ->', $state.snapshot(data));
@@ -172,6 +191,18 @@
 		if (app && app.endpoints == null) {
 			app.endpoints = [];
 		}
+
+		if (row && row.json_schema == null) {
+			row.json_schema = { in: {}, out: {} };
+		}
+
+		if (row && row.json_schema.in == null) {
+			row.json_schema.in = {};
+		}
+
+		if (row && row.json_schema.out == null) {
+			row.json_schema.out = {};
+		}
 	}
 
 	function setDocReadOnly() {
@@ -194,6 +225,12 @@
 		}
 	}
 
+	$effect(() => {
+		defaultValues();
+		json_schema_enabled = row?.json_schema?.in?.enabled ?? false;
+		json_schema_in = row?.json_schema?.in?.schema ?? {};
+	});
+
 	onMount(() => {
 		//		await getEnvList();
 		defaultValues();
@@ -215,16 +252,10 @@
 	{/if}
 {/snippet}
 
-{#snippet tab_docs()}
-	<EditorContent
-		bind:content={new_data_row.docs}
-		readOnly={true}
-		onchange={(doc) => {
-			console.log('onchange', doc);
-			new_data_row.docs = doc;
-			setDocReadOnly();
-		}}
-	></EditorContent>
+{#snippet tab_json_schema()}
+	<Input label="Enabled" type="checkbox" bind:value={json_schema_enabled} placeholder="Enabled" />
+
+	<EditorCode lang="js" showFormat={true} bind:code={json_schema_in}></EditorCode>
 {/snippet}
 
 {#snippet tab_config()}

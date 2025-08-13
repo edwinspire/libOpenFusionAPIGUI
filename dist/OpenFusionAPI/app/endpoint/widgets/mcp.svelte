@@ -34,5 +34,5 @@
 </script>
 
 <Input label="Enabled" type="checkbox" bind:value={mcp.enabled} placeholder="Enabled" />
-<Input label="Name" bind:value={mcp.name} placeholder="Name" />
+<Input label="Name" pattern="[a-z0-9_-]+" bind:value={mcp.name} placeholder="Name" />
 <Input label="Title" bind:value={mcp.title} placeholder="Title" />
