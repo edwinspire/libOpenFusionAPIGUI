@@ -11,7 +11,7 @@
 </script>
 
 <td>
-	{#if value.enabled && value.name}
+	{#if value?.enabled && value?.name}
 		<span class="icon-text">
 			<span class="icon {value.enabled ? 'has-text-success' : 'has-text-danger'}">
 				<i class="fa-solid fa-hammer"></i>

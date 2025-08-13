@@ -134,7 +134,7 @@
 			out: {}
 		};
 
-		console.log('ENDPOINT data ->', $state.snapshot(data));
+	//	console.log('ENDPOINT data ->', $state.snapshot(data));
 
 		ondata($state.snapshot(data));
 	}
