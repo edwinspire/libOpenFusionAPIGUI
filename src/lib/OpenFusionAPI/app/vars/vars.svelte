@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { EditorCode, Level, copyTextToClipboard } from '@edwinspire/svelte-components';
-	import { equalObjs } from '../utils.js';
+	import { equalObjs } from '$lib/OpenFusionAPI/app/utils.js';
 
 	let {
 		isReadOnly = $bindable(false),

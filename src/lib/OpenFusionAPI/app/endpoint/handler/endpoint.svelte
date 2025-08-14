@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { BasicSelect, DialogModal, Level, Input } from '@edwinspire/svelte-components';
-	import SelectEnvironment from '../../../widgets/Select.svelte';
+	import SelectEnvironment from '$lib/OpenFusionAPI/widgets/Select.svelte';
 	import MethodSelect from '$lib/OpenFusionAPI/app/widgets/methods_select.svelte';
 	import uFetch from '@edwinspire/universal-fetch';
 	import {

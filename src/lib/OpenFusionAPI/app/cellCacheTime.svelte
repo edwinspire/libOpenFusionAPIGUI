@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { storeCacheSize } from '../utils.js';
+	import { storeCacheSize } from '$lib/OpenFusionAPI/utils.js';
 
 	let { value = $bindable(), row = $bindable() } = $props();
 

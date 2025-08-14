@@ -1,5 +1,13 @@
 <script>
 	import { onMount } from 'svelte';
+	import {
+		Level,
+		SlideFullScreen,
+		Tab,
+//		EditorContent,
+		EditorCode,
+		Input
+	} from '@edwinspire/svelte-components';
 	import FetchCode from './handler/fetch.svelte';
 	import JsCode from './handler/js.svelte';
 	import SoapCode from './handler/soap.svelte';
@@ -9,15 +17,6 @@
 	import TextCode from './handler/text.svelte';
 	import MongoDB from './handler/mongodb.svelte';
 	import CustomFn from './handler/customFunction.svelte';
-	import {
-		Level,
-		SlideFullScreen,
-		Tab,
-//		EditorContent,
-		EditorCode,
-		Input
-	} from '@edwinspire/svelte-components';
-
 	import Endpoint from './handler/endpoint.svelte';
 	import Authorizations from './widgets/authorizations.svelte';
 	import Logs from './widgets/logs.svelte';

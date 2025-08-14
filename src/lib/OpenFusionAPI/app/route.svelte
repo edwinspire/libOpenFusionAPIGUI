@@ -1,5 +1,5 @@
 <script>
-  import Method from "./method.svelte";
+  import Method from "$lib/OpenFusionAPI/app/method.svelte";
 
   /**
    * @type {{ route: any; method: any; }}

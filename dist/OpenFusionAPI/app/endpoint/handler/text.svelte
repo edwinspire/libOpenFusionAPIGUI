@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Tab, EditorCode, RESTTester } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
+
 	import SelectMimeType from '../../../widgets/Select.svelte';
 
 	let { row = $bindable({}), onchange = () => {} } = $props();
@@ -186,7 +187,7 @@
 			url={row.endpoint}
 			methodDisabled={true}
 			onchange={(c) => {
-			//	console.log('RESTESTER TEXT', c);
+				//	console.log('RESTESTER TEXT', c);
 				fnOnChange();
 			}}
 		></RESTTester>

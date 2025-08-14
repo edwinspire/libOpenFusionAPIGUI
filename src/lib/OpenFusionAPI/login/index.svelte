@@ -1,8 +1,8 @@
 <script>
 	import uFetch from '@edwinspire/universal-fetch';
 	import { onMount } from 'svelte';
-	import { userStore, getListMethods, getListHandler, url_paths } from '../utils.js';
-	import logo from '../img/favicon.png';
+	import { userStore, getListMethods, getListHandler, url_paths } from '$lib/OpenFusionAPI/utils.js';
+	import logo from '$lib/OpenFusionAPI/img/favicon.png';
 	import { Notifications, Modal} from "@edwinspire/svelte-components";
 
 let noty = new Notifications();

@@ -1,8 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
 	import { Tab, Table } from '@edwinspire/svelte-components';
-	import { url_paths } from '../../../utils.js';
-	import LogLevelSelect from './loglevel_select.svelte';
+	import { url_paths } from '$lib/OpenFusionAPI/utils.js';
+	import LogLevelSelect from '$lib/OpenFusionAPI/app/endpoint/widgets/loglevel_select.svelte';
 	import { DateTime } from 'luxon';
 
 	let {

@@ -1,6 +1,6 @@
 <script>
-	import logo from './img/android-chrome-512x512.png';
-	import flame from './img/flame.png';
+	import logo from '$lib/OpenFusionAPI/img/android-chrome-512x512.png';
+	import flame from '$lib/OpenFusionAPI/img/flame.png';
 </script>
 
 <div class="xcontainer">

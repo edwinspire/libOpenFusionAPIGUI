@@ -1,14 +1,5 @@
 <script>
 	import { onMount } from 'svelte';
-	import FetchCode from './handler/fetch.svelte';
-	import JsCode from './handler/js.svelte';
-	import SoapCode from './handler/soap.svelte';
-	import SqlCode from './handler/sql.svelte';
-	import SqlBulkInsert from './handler/sqlBulkInsert.svelte';
-	import SqlHana from './handler/sqlHana.svelte';
-	import TextCode from './handler/text.svelte';
-	import MongoDB from './handler/mongodb.svelte';
-	import CustomFn from './handler/customFunction.svelte';
 	import {
 		Level,
 		SlideFullScreen,
@@ -17,12 +8,20 @@
 		EditorCode,
 		Input
 	} from '@edwinspire/svelte-components';
-
-	import Endpoint from './handler/endpoint.svelte';
-	import Authorizations from './widgets/authorizations.svelte';
-	import Logs from './widgets/logs.svelte';
-	import MCP from './widgets/mcp.svelte';
-	import EndpointLabel from './widgets/endpoint_label.svelte';
+	import FetchCode from '$lib/OpenFusionAPI/app/endpoint/handler/fetch.svelte';
+	import JsCode from '$lib/OpenFusionAPI/app/endpoint/handler/js.svelte';
+	import SoapCode from '$lib/OpenFusionAPI/app/endpoint/handler/soap.svelte';
+	import SqlCode from '$lib/OpenFusionAPI/app/endpoint/handler/sql.svelte';
+	import SqlBulkInsert from '$lib/OpenFusionAPI/app/endpoint/handler/sqlBulkInsert.svelte';
+	import SqlHana from '$lib/OpenFusionAPI/app/endpoint/handler/sqlHana.svelte';
+	import TextCode from '$lib/OpenFusionAPI/app/endpoint/handler/text.svelte';
+	import MongoDB from '$lib/OpenFusionAPI/app/endpoint/handler/mongodb.svelte';
+	import CustomFn from '$lib/OpenFusionAPI/app/endpoint/handler/customFunction.svelte';
+	import Endpoint from '$lib/OpenFusionAPI/app/endpoint/handler/endpoint.svelte';
+	import Authorizations from '$lib/OpenFusionAPI/app/endpoint/widgets/authorizations.svelte';
+	import Logs from '$lib/OpenFusionAPI/app/endpoint/widgets/logs.svelte';
+	import MCP from '$lib/OpenFusionAPI/app/endpoint/widgets/mcp.svelte';
+	import EndpointLabel from '$lib/OpenFusionAPI/app/endpoint/widgets/endpoint_label.svelte';
 
 	let {
 		showEditor = $bindable(false),

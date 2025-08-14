@@ -1,9 +1,9 @@
 <script>
 	// @ts-nocheck
 	import { onMount } from 'svelte';
-	import { listAppVars } from '../utils';
+	import { listAppVars } from '../utils.js';
 	//import EditorCode from '../widgets/editorCodeDecrepted.svelte';
-	import CodeHTML from '../widgets/codeHTML.svelte';
+	import CodeHTML from './widgets/codeHTML.svelte';
 	import { EditorCode } from '@edwinspire/svelte-components';
 
 	// export let vars = {};
@@ -24,7 +24,7 @@
 		//fnEditorCode.apply();
 		//return fnEditorCode.getCode();
 		let codes = {};
-		
+
 		//console.log('>>> Datavars >>>', Datavars);
 
 		/*

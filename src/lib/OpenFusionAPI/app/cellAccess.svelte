@@ -2,7 +2,7 @@
 	'use strict';
 	import SelectAccess from '../widgets/Select.svelte';
 	import { onMount } from 'svelte';
-	import { listAccessMethod } from '../utils.js';
+	import { listAccessMethod } from '$lib/OpenFusionAPI/utils.js';
 
 	let { value = $bindable(), row = $bindable() } = $props();
 

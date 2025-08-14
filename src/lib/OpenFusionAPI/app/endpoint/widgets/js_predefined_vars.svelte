@@ -1,8 +1,7 @@
 <script>
 	import uFetch from '@edwinspire/universal-fetch';
 	import { onMount } from 'svelte';
-	import { url_paths } from '../../../utils.js';
-	import { render } from 'svelte/server';
+	import { url_paths } from '$lib/OpenFusionAPI/utils.js';
 
 	let uF;
 	let vars_js = {};

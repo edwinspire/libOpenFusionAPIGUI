@@ -1,5 +1,5 @@
 <script>
-	import { listHandlers, listHTTPMethods, listEnv } from '../../../utils.js';
+	import { listHandlers, listHTTPMethods, listEnv } from '$lib/OpenFusionAPI/utils.js';
 
 	let {
 		environment = $bindable('?'),

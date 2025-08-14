@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
-	import Login from './login/index.svelte';
-	import Main from './main/index.svelte';
+	import Login from '$lib/OpenFusionAPI/login/index.svelte';
+	import Main from '$lib/OpenFusionAPI/main/index.svelte';
 	import {Notify} from "@edwinspire/svelte-components";
 
 	let page = 'login';

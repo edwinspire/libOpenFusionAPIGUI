@@ -1,9 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
-	import { listFunctionStoreDev } from '../../../utils';
-	import { listFunctionStoreQA } from '../../../utils';
-	import { listFunctionStorePRD } from '../../../utils';
-	import SelectFns from '../../../widgets/Select.svelte';
+	import { listFunctionStoreDev, listFunctionStoreQA, listFunctionStorePRD } from '$lib/OpenFusionAPI/utils.js';
+	import SelectFns from '$lib/OpenFusionAPI/widgets/Select.svelte';
 	import { Tab, RESTTester } from '@edwinspire/svelte-components';
 
 	let { row = $bindable({}), onchange = () => {} } = $props();

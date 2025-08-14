@@ -1,8 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { listFunctionStoreDev } from '../../../utils';
-	import { listFunctionStoreQA } from '../../../utils';
-	import { listFunctionStorePRD } from '../../../utils';
+	import { listFunctionStoreDev, listFunctionStoreQA, listFunctionStorePRD } from '../../../utils.js';
 	import SelectFns from '../../../widgets/Select.svelte';
 	import { Tab, RESTTester } from '@edwinspire/svelte-components';
 

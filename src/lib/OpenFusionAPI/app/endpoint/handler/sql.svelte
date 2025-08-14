@@ -1,8 +1,8 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
 	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
-	import AppVars from '../../app_vars.svelte';
-	import AppVarsSelector from '../widgets/params_json_selector.svelte';
+	import AppVars from '$lib/OpenFusionAPI/app/app_vars.svelte';
+	import AppVarsSelector from '$lib/OpenFusionAPI/app/endpoint/widgets/params_json_selector.svelte';
 
 	let { row = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =
 		$props();
@@ -71,9 +71,9 @@
 				cnx_param_var = params.config;
 			}
 
-		//	console.log('parseCode query_code', query_code);
+			//	console.log('parseCode query_code', query_code);
 		} catch (error) {
-		//	cnx_param_json = {};
+			//	cnx_param_json = {};
 			cnx_param_var = '';
 			query_code = 'SELECT 2;';
 			console.error('Error', $state.snapshot(error));
@@ -95,8 +95,8 @@
 		let outcode = {};
 
 		conf = cnx_param_var;
-	
-//console.log('cnx_param_var', cnx_param_var);
+
+		//console.log('cnx_param_var', cnx_param_var);
 
 		try {
 			outcode.config = conf;
@@ -233,7 +233,7 @@
 		bind:value={cnx_param_var}
 		bind:environment={row.environment}
 		onselect={(selected) => {
-		//	console.log('AppVarsSelector Editor', selected, cnx_param_var);
+			//	console.log('AppVarsSelector Editor', selected, cnx_param_var);
 			fnOnChange();
 		}}
 	></AppVarsSelector>

@@ -7,9 +7,11 @@
 		JSONView,
 		PredictiveInput
 	} from '@edwinspire/svelte-components';
-	import AppVars from '../../app_vars.svelte';
+	import AppVars from '$lib/OpenFusionAPI/app/app_vars.svelte';
+	import AppVarsSelector from '$lib/OpenFusionAPI/app/endpoint/widgets/params_json_selector.svelte';
+	
 	import PredefinedVars from '../widgets/js_predefined_vars.svelte';
-	import AppVarsSelector from '../widgets/params_json_selector.svelte';
+	
 
 	let { row = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =
 		$props();

@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { PredictiveInput, JSONView } from '@edwinspire/svelte-components';
-	import { listAppVars } from '../../../utils.js';
+	import { listAppVars } from '$lib/OpenFusionAPI/utils.js';
 
 	let {
 		freeTyping = $bindable(false),

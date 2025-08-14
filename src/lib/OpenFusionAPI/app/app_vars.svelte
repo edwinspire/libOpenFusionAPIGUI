@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { listAppVars } from '../utils';
+	import { listAppVars } from '$lib/OpenFusionAPI/utils.js';
 	import VarEnv from './vars/vars.svelte';
 
 	let {

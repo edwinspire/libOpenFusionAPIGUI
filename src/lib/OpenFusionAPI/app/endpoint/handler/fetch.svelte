@@ -1,8 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
 	import { Tab, RESTTester } from '@edwinspire/svelte-components';
-	import AppVars from '../../app_vars.svelte';
-	import AppVarsSelector from '../widgets/app_vars_selector.svelte';
+	import AppVars from '$lib/OpenFusionAPI/app/app_vars.svelte';
+	import AppVarsSelector from '$lib/OpenFusionAPI/app/endpoint/widgets/app_vars_selector.svelte';
 
 	let { row = $bindable({}), onchange = () => {} } = $props();
 

@@ -71,9 +71,9 @@
 				cnx_param_var = params.config;
 			}
 
-		//	console.log('parseCode query_code', query_code);
+			//	console.log('parseCode query_code', query_code);
 		} catch (error) {
-		//	cnx_param_json = {};
+			//	cnx_param_json = {};
 			cnx_param_var = '';
 			query_code = 'SELECT 2;';
 			console.error('Error', $state.snapshot(error));
@@ -95,8 +95,8 @@
 		let outcode = {};
 
 		conf = cnx_param_var;
-	
-//console.log('cnx_param_var', cnx_param_var);
+
+		//console.log('cnx_param_var', cnx_param_var);
 
 		try {
 			outcode.config = conf;
@@ -233,7 +233,7 @@
 		bind:value={cnx_param_var}
 		bind:environment={row.environment}
 		onselect={(selected) => {
-		//	console.log('AppVarsSelector Editor', selected, cnx_param_var);
+			//	console.log('AppVarsSelector Editor', selected, cnx_param_var);
 			fnOnChange();
 		}}
 	></AppVarsSelector>

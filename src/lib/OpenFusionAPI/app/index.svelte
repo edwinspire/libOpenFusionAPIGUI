@@ -22,19 +22,19 @@
 		defaultValuesRow,
 		defaultValuesApp,
 		createEndpoint
-	} from '../utils.js';
-	import CellMethod from './cellMethod.svelte';
-	import CellAccess from './cellAccess.svelte';
-	import cellHandler from './cellHandler.svelte';
-	import cellCountStatusCode from './cellCountStatusCode.svelte';
-	import cellPath from './cellPath.svelte';
-	import cellCacheTime from './cellCacheTime.svelte';
-	import EndPointEditor from './endpoint/editor.svelte';
-	import AppVars from './app_vars.svelte';
-	import Logo from '../img/favicon.png';
+	} from '$lib/OpenFusionAPI/utils.js';
+	import CellMethod from '$lib/OpenFusionAPI/app/cellMethod.svelte';
+	import CellAccess from '$lib/OpenFusionAPI/app/cellAccess.svelte';
+	import cellHandler from '$lib/OpenFusionAPI/app/cellHandler.svelte';
+	import cellCountStatusCode from '$lib/OpenFusionAPI/app/cellCountStatusCode.svelte';
+	import cellPath from '$lib/OpenFusionAPI/app/cellPath.svelte';
+	import cellCacheTime from '$lib/OpenFusionAPI/app/cellCacheTime.svelte';
+	import EndPointEditor from '$lib/OpenFusionAPI/app/endpoint/editor.svelte';
+	import AppVars from '$lib/OpenFusionAPI/app/app_vars.svelte';
+	import Logo from '$lib/OpenFusionAPI/img/favicon.png';
 	import { Notifications } from '@edwinspire/svelte-components';
 	import IntervalTasks from '$lib/OpenFusionAPI/app/interval_tasks/index.svelte';
-	import cellMCPTool from './cellMCPTool.svelte';
+	import cellMCPTool from '$lib/OpenFusionAPI/app/cellMCPTool.svelte';
 
 	let notify = new Notifications();
 

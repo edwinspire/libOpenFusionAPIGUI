@@ -2,8 +2,8 @@
 	import uFetch from '@edwinspire/universal-fetch';
 	import { Table } from '@edwinspire/svelte-components';
 	import { onMount } from 'svelte';
-	import { userStore } from '../utils.js';
-	import CellAttrs from '../app/cellMethodsAttrs.svelte';
+	import { userStore } from '$lib/OpenFusionAPI/utils.js';
+	import CellAttrs from '$lib/OpenFusionAPI/app/cellMethodsAttrs.svelte';
 
 	let uf = new uFetch();
 

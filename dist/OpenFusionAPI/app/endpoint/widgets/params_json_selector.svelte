@@ -1,8 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { EditorCode } from '@edwinspire/svelte-components';
-	import AppVarsSelector from '../widgets/app_vars_selector.svelte';
-	import { parse } from 'svelte/compiler';
+	import AppVarsSelector from './app_vars_selector.svelte';
 
 	let {
 		freeTyping = $bindable(false),
