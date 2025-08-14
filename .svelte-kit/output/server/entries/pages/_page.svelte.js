@@ -18,7 +18,7 @@ import { roles, elementRoles } from "aria-query";
 import { AXObjects, elementAXObjects } from "axobject-query";
 import "esrap";
 import "esrap/languages/ts";
-import "@ampproject/remapping";
+import "@jridgewell/remapping";
 import "@jridgewell/sourcemap-codec";
 const PUBLIC_API_SERVER_HOST = "http://localhost:3000";
 validateBaseUrl(PUBLIC_API_SERVER_HOST);

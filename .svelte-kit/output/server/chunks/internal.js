@@ -1,4 +1,4 @@
-import { H as HYDRATION_ERROR, B as BOUNDARY_EFFECT, E as ERROR_VALUE, a as EFFECT_RAN, d as define_property, r as run_all, U as UNOWNED, M as MAYBE_DIRTY, C as CLEAN, D as DERIVED, I as INERT, b as EFFECT, A as ASYNC, c as BLOCK_EFFECT, e as DIRTY, f as deferred, g as BRANCH_EFFECT, R as ROOT_EFFECT, h as DESTROYED, i as USER_EFFECT, s as safe_equals, j as equals, k as INSPECT_EFFECT, S as STATE_SYMBOL, o as object_prototype, l as array_prototype, m as UNINITIALIZED, n as get_descriptor, p as get_prototype_of, q as is_array, t as is_extensible, u as EFFECT_PRESERVED, v as HEAD_EFFECT, w as STALE_REACTION, x as EFFECT_TRANSPARENT, y as DISCONNECTED, z as REACTION_IS_UPDATING, F as index_of, G as COMMENT_NODE, J as HYDRATION_START, K as HYDRATION_END, L as array_from, N as LEGACY_PROPS, O as render, P as push$1, Q as setContext, T as pop$1 } from "./index2.js";
+import { H as HYDRATION_ERROR, B as BOUNDARY_EFFECT, E as ERROR_VALUE, a as EFFECT_RAN, d as define_property, r as run_all, U as UNOWNED, M as MAYBE_DIRTY, C as CLEAN, D as DERIVED, I as INERT, b as EFFECT, A as ASYNC, c as BLOCK_EFFECT, e as DIRTY, f as deferred, g as BRANCH_EFFECT, R as ROOT_EFFECT, h as DESTROYED, i as USER_EFFECT, s as safe_equals, j as equals, k as INSPECT_EFFECT, S as STATE_SYMBOL, o as object_prototype, l as array_prototype, m as UNINITIALIZED, n as get_descriptor, p as get_prototype_of, q as is_array, t as is_extensible, u as EFFECT_PRESERVED, v as HEAD_EFFECT, w as EFFECT_TRANSPARENT, x as STALE_REACTION, y as DISCONNECTED, z as REACTION_IS_UPDATING, F as index_of, G as COMMENT_NODE, J as HYDRATION_START, K as HYDRATION_END, L as array_from, N as LEGACY_PROPS, O as render, P as push$1, Q as setContext, T as pop$1 } from "./index2.js";
 import { D as DEV } from "./false.js";
 import "clsx";
 import "./environment.js";
@@ -955,6 +955,18 @@ function get_next_sibling(node) {
 function clear_text_content(node) {
   node.textContent = "";
 }
+function without_reactive_context(fn) {
+  var previous_reaction = active_reaction;
+  var previous_effect = active_effect;
+  set_active_reaction(null);
+  set_active_effect(null);
+  try {
+    return fn();
+  } finally {
+    set_active_reaction(previous_reaction);
+    set_active_effect(previous_effect);
+  }
+}
 function push_effect(effect, parent_effect) {
   var parent_last = parent_effect.last;
   if (parent_last === null) {
@@ -1056,7 +1068,12 @@ function destroy_effect_children(signal, remove_dom = false) {
   var effect = signal.first;
   signal.first = signal.last = null;
   while (effect !== null) {
-    effect.ac?.abort(STALE_REACTION);
+    const controller = effect.ac;
+    if (controller !== null) {
+      without_reactive_context(() => {
+        controller.abort(STALE_REACTION);
+      });
+    }
     var next = effect.next;
     if ((effect.f & ROOT_EFFECT) !== 0) {
       effect.parent = null;
@@ -1308,15 +1325,18 @@ function update_reaction(reaction) {
   untracking = false;
   update_version = ++read_version;
   if (reaction.ac !== null) {
-    reaction.ac.abort(STALE_REACTION);
+    without_reactive_context(() => {
+      reaction.ac.abort(STALE_REACTION);
+    });
     reaction.ac = null;
   }
   try {
     reaction.f |= REACTION_IS_UPDATING;
-    var result = (
+    var fn = (
       /** @type {Function} */
-      (0, reaction.fn)()
+      reaction.fn
     );
+    var result = fn();
     var deps = reaction.deps;
     if (new_deps !== null) {
       var i;
@@ -1967,6 +1987,7 @@ const options = {
   preload_strategy: "modulepreload",
   root,
   service_worker: false,
+  service_worker_options: void 0,
   templates: {
     app: ({ head, body, assets, nonce, env }) => '<!DOCTYPE html>\r\n<html lang="en" class="theme-dark" >\r\n	<head>\r\n		<meta charset="utf-8" />\r\n		<link rel="icon" href="' + assets + '/favicon.png" />\r\n		<meta name="viewport" content="width=device-width, initial-scale=1" />\r\n		' + head + '\r\n	</head>\r\n	<body data-sveltekit-preload-data="hover">\r\n		<div>' + body + "</div>\r\n	</body>\r\n</html>\r\n",
     error: ({ status, message }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<title>' + message + `</title>
@@ -2040,7 +2061,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "1meas8k"
+  version_hash: "1wvybvb"
 };
 async function get_hooks() {
   let handle;
