@@ -21,6 +21,7 @@
               <div class="field is-expanded">
                 <div class="field has-addons">
                   <p class="control">
+                    <!-- svelte-ignore a11y_missing_attribute -->
                     <a class="button is-primary is-small"> Route </a>
                   </p>
                   <p class="control is-expanded">
@@ -49,6 +50,9 @@
       <!-- Right side -->
       <div class="level-right">
         <p class="level-item">
+          <!-- svelte-ignore a11y_click_events_have_key_events -->
+          <!-- svelte-ignore a11y_no_static_element_interactions -->
+          <!-- svelte-ignore a11y_missing_attribute -->
           <a
             class="button is-success is-small"
             on:click={() => {

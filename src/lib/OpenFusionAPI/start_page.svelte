@@ -42,6 +42,7 @@
 		width: 100%;
 		
 		background-position: 0 -1000px;
+		background-clip: text;
 		-webkit-background-clip: text;
 		-webkit-text-fill-color: transparent;
 		animation: fire 4s linear infinite;
