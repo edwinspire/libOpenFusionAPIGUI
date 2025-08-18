@@ -4,7 +4,7 @@
 		Level,
 		SlideFullScreen,
 		Tab,
-//		EditorContent,
+		//		EditorContent,
 		EditorCode,
 		Input
 	} from '@edwinspire/svelte-components';
@@ -106,9 +106,38 @@
 		{ label: 'Configuration', component: tab_config },
 		{ label: 'JSON Schema', component: tab_json_schema },
 		{ label: 'Authorizations', component: tab_auth },
-		{ label: 'MCP', component: tab_mcp, disabled: row.handler == 'MCP' },
+		{ label: 'MCP', component: tab_mcp },
 		{ label: 'Logs', component: tab_log }
 	]);
+
+	let derivedtabList = $derived.by(() => {
+		let new_tabs = tabList;
+
+		if (row?.handler == 'MCP') {
+			new_tabs = tabList.filter((tab) => {
+				if (
+					row.handler == 'MCP' &&
+					(tab.label == 'Configuration' || tab.label == 'JSON Schema' || tab.label == 'MCP')
+				) {
+					// retornamos un nuevo objeto, sin mutar el original
+					return false;
+				}
+				return true;
+			});
+		} else if (row?.handler == 'NOAPPLY' || row?.handler == 'No Handler' || row?.handler == 'NA') {
+			new_tabs = tabList.filter((tab) => {
+				if (tab.label == 'Endpoint') {
+					// retornamos un nuevo objeto, sin mutar el original
+					return true;
+				}
+				return false;
+			});
+		} else {
+			new_tabs = tabList;
+		}
+
+		return new_tabs;
+	});
 
 	function accept() {
 		defaultValues();
@@ -133,7 +162,7 @@
 			out: {}
 		};
 
-	//	console.log('ENDPOINT data ->', $state.snapshot(data));
+		//	console.log('ENDPOINT data ->', $state.snapshot(data));
 
 		ondata($state.snapshot(data));
 	}
@@ -228,6 +257,23 @@
 		defaultValues();
 		json_schema_enabled = row?.json_schema?.in?.enabled ?? false;
 		json_schema_in = row?.json_schema?.in?.schema ?? {};
+
+		/*
+		if (row?.handler == 'MCP') {
+			tabList = tabList.map((tab) => {
+				if (
+					row.handler == 'MCP' &&
+					(tab.label == 'Configuration' ||
+						tab.label == 'JSON Schema' ||
+						tab.label == 'Authorizations' ||
+						tab.label == 'MCP')
+				) {
+					tab.disabled = true;
+				}
+				return tab;
+			});
+		}
+		*/
 	});
 
 	onMount(() => {
@@ -254,12 +300,34 @@
 {#snippet tab_json_schema()}
 	<Input label="Enabled" type="checkbox" bind:value={json_schema_enabled} placeholder="Enabled" />
 
-	<EditorCode lang="js" showFormat={true} bind:code={json_schema_in}></EditorCode>
+	<EditorCode lang="json" showFormat={true} bind:code={json_schema_in}></EditorCode>
+
+	<div class="block">
+		<div class="content is-small">
+			<div class="icon-text">
+				<span class="icon has-text-info">
+					<i class="fas fa-info-circle"></i>
+				</span>
+				<span>Info</span>
+			</div>
+
+			While JSON is probably the most popular format for exchanging data, JSON Schema is the
+			vocabulary that enables JSON data consistency, validity, and interoperability at scale.
+
+			<p>
+				More information about <a href="https://json-schema.org/">JSON Schema</a> can be found in the
+				official documentation.
+			</p>
+		</div>
+	</div>
 {/snippet}
 
 {#snippet tab_config()}
 	{#if row}
 		<div>
+
+			{row?.handler}
+
 			{#if row?.handler == 'JS'}
 				<JsCode
 					bind:row
@@ -402,7 +470,7 @@
 	</Level>
 
 	<Tab
-		bind:tabs={tabList}
+		bind:tabs={derivedtabList}
 		onselect={() => {
 			defaultValues();
 		}}

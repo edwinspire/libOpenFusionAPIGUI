@@ -156,6 +156,7 @@
 					class="input is-small"
 					type="text"
 					placeholder="Resourse"
+					disabled={row.handler == 'MCP'}
 					bind:value={row.resource}
 				/>
 			</p>
@@ -222,6 +223,7 @@
 							console.log('Row', e);
 							if (e.value == 'MCP') {
 								row.method = 'POST';
+								row.resource = '/mcp/server';
 							}
 						}}
 					/>

@@ -21,7 +21,7 @@
 			mcp.title = '';
 		}
 		//mcp = { ...mcp };
-		console.log('MCP', mcp);
+		//console.log('MCP', mcp);
 	}
 
 	onMount(() => {
@@ -33,13 +33,16 @@
 <Input label="Name" bind:value={mcp.name} placeholder="Name" required={true} />
 <Input label="Title" bind:value={mcp.title} placeholder="Title" />
 
-<div class="icon-text">
-	<span class="icon has-text-warning">
-		<i class="fas fa-exclamation-triangle"></i>
-	</span>
-	<span>Warning</span>
+<div class="block">
+	<div class="content is-small">
+		<div class="icon-text">
+			<span class="icon has-text-warning">
+				<i class="fas fa-exclamation-triangle"></i>
+			</span>
+			<span>Warning</span>
+		</div>
+
+		For the tool to work correctly, you must configure the JSON Schema to validate and indicate to
+		the AI what the input parameters are.
+	</div>
 </div>
-<p class="block">
-	For the tool to work correctly, you must configure the JSON Schema to validate and indicate to the
-	AI what the input parameters are.
-</p>
