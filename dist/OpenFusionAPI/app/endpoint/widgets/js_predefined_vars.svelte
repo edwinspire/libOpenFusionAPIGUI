@@ -70,7 +70,7 @@
 
 		{#if fn_method.example}
 			<strong>Example:</strong>
-			<code>{fn_method.example}</code>
+			<code>{@html fn_method.example.replace(/\n/g, '<br/>')}</code>
 		{/if}
 	</div>
 {/snippet}

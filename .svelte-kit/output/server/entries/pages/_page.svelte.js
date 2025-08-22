@@ -9,7 +9,7 @@ import "prettier/plugins/estree.mjs";
 import "prettier/plugins/html.mjs";
 import "prettier-plugin-sql";
 import { w as writable } from "../../chunks/index.js";
-const PUBLIC_API_SERVER_HOST = "http://192.168.242.59:3030";
+const PUBLIC_API_SERVER_HOST = "http://localhost:3000";
 validateBaseUrl(PUBLIC_API_SERVER_HOST);
 function validateBaseUrl(baseUrl) {
   try {

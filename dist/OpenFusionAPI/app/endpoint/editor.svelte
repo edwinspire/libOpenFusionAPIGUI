@@ -325,9 +325,7 @@
 {#snippet tab_config()}
 	{#if row}
 		<div>
-
-			{row?.handler}
-
+			
 			{#if row?.handler == 'JS'}
 				<JsCode
 					bind:row
