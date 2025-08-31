@@ -224,6 +224,8 @@
 							if (e.value == 'MCP') {
 								row.method = 'POST';
 								row.resource = '/mcp/server';
+							} else if (e.value == 'AGENT_IA') {
+								row.method = 'POST';
 							}
 						}}
 					/>

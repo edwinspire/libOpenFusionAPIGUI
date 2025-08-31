@@ -1,0 +1,11 @@
+export default IaChatTester;
+type IaChatTester = {
+    $on?(type: string, callback: (e: any) => void): () => void;
+    $set?(props: Partial<$$ComponentProps>): void;
+};
+declare const IaChatTester: import("svelte").Component<{
+    url?: string;
+}, {}, "url">;
+type $$ComponentProps = {
+    url?: string;
+};

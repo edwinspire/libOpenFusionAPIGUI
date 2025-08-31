@@ -12,6 +12,7 @@
 	import JsCode from './handler/js.svelte';
 	import SoapCode from './handler/soap.svelte';
 	import SqlCode from './handler/sql.svelte';
+	import AgentIA from './handler/agentia.svelte';
 	import SqlBulkInsert from './handler/sqlBulkInsert.svelte';
 	import SqlHana from './handler/sqlHana.svelte';
 	import TextCode from './handler/text.svelte';
@@ -131,6 +132,14 @@
 					return true;
 				}
 				return false;
+			});
+		} else if (row?.handler == 'AGENT_IA') {
+			new_tabs = tabList.filter((tab) => {
+				if (row.handler == 'AGENT_IA' && tab.label == 'MCP') {
+					// retornamos un nuevo objeto, sin mutar el original
+					return false;
+				}
+				return true;
 			});
 		} else {
 			new_tabs = tabList;
@@ -325,7 +334,6 @@
 {#snippet tab_config()}
 	{#if row}
 		<div>
-			
 			{#if row?.handler == 'JS'}
 				<JsCode
 					bind:row
@@ -390,6 +398,15 @@
 						onChangeValueHandler(v);
 					}}
 				/>
+			{:else if row?.handler == 'AGENT_IA'}
+				<AgentIA
+					bind:row
+					onchange={(v) => {
+						onChangeValueHandler(v);
+					}}
+				/>
+			{:else if row?.handler == 'NOAPPLY' || row?.handler == 'No Handler' || row?.handler == 'NA'}
+				<div>No Handler</div>
 			{:else}
 				<div>No Handler</div>
 			{/if}
