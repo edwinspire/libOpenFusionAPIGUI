@@ -5,7 +5,9 @@ type IaChatTester = {
 };
 declare const IaChatTester: import("svelte").Component<{
     url?: string;
-}, {}, "url">;
+    init_prompts?: any[];
+}, {}, "url" | "init_prompts">;
 type $$ComponentProps = {
     url?: string;
+    init_prompts?: any[];
 };

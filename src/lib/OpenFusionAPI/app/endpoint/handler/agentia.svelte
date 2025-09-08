@@ -13,12 +13,12 @@
 	import { jsonToHtmlString } from '$lib/OpenFusionAPI/app/utils.js';
 	import CellPromptType from '$lib/OpenFusionAPI/app/cellPromptType.svelte';
 	import CellPrompt from '$lib/OpenFusionAPI/app/cellPrompt.svelte';
-	import ChatTester from '$lib/OpenFusionAPI/app/endpoint/widgets/ia_chat_tester.svelte';
+	import ChatTester from '$lib/OpenFusionAPI/app/endpoint/widgets/ChatTester/ia_chat_tester.svelte';
 
 	let { row = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =
 		$props();
 
-	let columns = $state({
+	let columns = {
 		//enabled: { label: 'Enabled App' },
 		enabled: {
 			label: 'Enabled',
@@ -36,7 +36,7 @@
 
 		type: { label: 'Type', decorator: { component: CellPromptType } },
 		prompt: { decorator: { component: CellPrompt }, label: 'Prompt' }
-	});
+	};
 
 	//let use_var_cnx = $state(false);
 	//let cnx_param_json = $state({});
@@ -163,8 +163,6 @@
 		onchange(getData());
 	}
 
-	
-
 	function getData() {
 		let data = { code: getCode(), data_test: $state.snapshot(row.data_test) };
 
@@ -199,7 +197,8 @@
 			outcode.model = model;
 			outcode.provider = provider;
 			outcode.mcpServers = mcpServers;
-			outcode.init_prompts = add_agent_scratchpad(prompts);
+//			outcode.init_prompts = add_agent_scratchpad(prompts);
+			outcode.init_prompts = prompts;
 			//console.log(outcode);
 			return JSON.stringify(outcode);
 		} catch (error) {
@@ -207,6 +206,10 @@
 			return code;
 		}
 	}
+
+function resetPromts(){
+	prompts = [...prompts];
+}
 
 	onMount(() => {
 		parseCode();
@@ -276,23 +279,24 @@
 		showNewButton="true"
 		showDeleteButton="true"
 		bind:RawDataTable={prompts}
-		bind:columns
+		columns={columns}
 		left_items={[lt01]}
 		ondeleterow={(data) => {
-			//console.log('ondeleterow', data);
+			console.log('ondeleterow', data, prompts);
 			if (confirm('Do you want to delete the prompt selected?')) {
-				/*
 				prompts = prompts.filter((item) => {
-					return !data.rows.some((element) => element.idendpoint == item.idendpoint);
+					console.log(item.internal_hash_row);
+					return !data.rows.some((element) => element.internal_hash_row == item.internal_hash_row);
 				});
-				*/
-				//console.log('ondeleterow', endpoints);
+
+				resetPromts();
 			}
 		}}
 		onnewrow={() => {
 			prompts.push({ enabled: true, type: 'system', prompt: '' });
-			console.log('Se agrega nuevo promot');
-			prompts = [...prompts];
+		//	console.log('Se agrega nuevo promot');
+			//prompts = [...prompts];
+			resetPromts();
 		}}
 	>
 		{#snippet lt01()}
@@ -340,13 +344,7 @@
 
 {#snippet tab_chat_tester()}
 	<div>
-		<ChatTester
-			url={row.endpoint}
-			onmessage={(msg) => {
-				chatMessages.push(msg);
-				fnOnChange();
-			}}
-		></ChatTester>
+		<ChatTester url={row.endpoint} bind:init_prompts={prompts}></ChatTester>
 	</div>
 {/snippet}
 

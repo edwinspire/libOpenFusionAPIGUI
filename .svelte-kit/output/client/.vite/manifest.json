@@ -1,6 +1,6 @@
 {
   ".svelte-kit/generated/client-optimized/app.js": {
-    "file": "_app/immutable/entry/app.BW_dk9l8.js",
+    "file": "_app/immutable/entry/app.C1uxn_op.js",
     "name": "entry/app",
     "src": ".svelte-kit/generated/client-optimized/app.js",
     "isEntry": true,
@@ -28,7 +28,7 @@
     ]
   },
   ".svelte-kit/generated/client-optimized/nodes/1.js": {
-    "file": "_app/immutable/nodes/1.DIbCRw-O.js",
+    "file": "_app/immutable/nodes/1.CnRa3oTr.js",
     "name": "nodes/1",
     "src": ".svelte-kit/generated/client-optimized/nodes/1.js",
     "isEntry": true,
@@ -38,11 +38,11 @@
       "_B2FcMEF7.js",
       "_Bd-ZMRms.js",
       "_C8PF7lLc.js",
-      "_DiZrqWcf.js"
+      "_CEVgw_1B.js"
     ]
   },
   ".svelte-kit/generated/client-optimized/nodes/2.js": {
-    "file": "_app/immutable/nodes/2.DXRqHOQt.js",
+    "file": "_app/immutable/nodes/2.Dwld9mD6.js",
     "name": "nodes/2",
     "src": ".svelte-kit/generated/client-optimized/nodes/2.js",
     "isEntry": true,
@@ -55,7 +55,7 @@
       "_CvPmuMER.js"
     ],
     "css": [
-      "_app/immutable/assets/2.CYLXqJCv.css"
+      "_app/immutable/assets/2.W4oeT1m-.css"
     ],
     "assets": [
       "_app/immutable/assets/fa-brands-400.D_cYUPeE.woff2",
@@ -86,6 +86,14 @@
       "_Bd-ZMRms.js"
     ]
   },
+  "_CEVgw_1B.js": {
+    "file": "_app/immutable/chunks/CEVgw_1B.js",
+    "name": "entry",
+    "imports": [
+      "_C8PF7lLc.js",
+      "_Bd-ZMRms.js"
+    ]
+  },
   "_CWj6FrbW.js": {
     "file": "_app/immutable/chunks/CWj6FrbW.js",
     "name": "disclose-version"
@@ -96,14 +104,6 @@
     "imports": [
       "_Bd-ZMRms.js",
       "_C8PF7lLc.js"
-    ]
-  },
-  "_DiZrqWcf.js": {
-    "file": "_app/immutable/chunks/DiZrqWcf.js",
-    "name": "entry",
-    "imports": [
-      "_C8PF7lLc.js",
-      "_Bd-ZMRms.js"
     ]
   },
   "node_modules/@edwinspire/svelte-components/node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf": {
@@ -139,12 +139,12 @@
     "src": "node_modules/@edwinspire/svelte-components/node_modules/@fortawesome/fontawesome-free/webfonts/fa-v4compatibility.woff2"
   },
   "node_modules/@sveltejs/kit/src/runtime/client/entry.js": {
-    "file": "_app/immutable/entry/start.DyYs7mXo.js",
+    "file": "_app/immutable/entry/start.CeX5UaQV.js",
     "name": "entry/start",
     "src": "node_modules/@sveltejs/kit/src/runtime/client/entry.js",
     "isEntry": true,
     "imports": [
-      "_DiZrqWcf.js"
+      "_CEVgw_1B.js"
     ]
   },
   "src/lib/OpenFusionAPI/img/android-chrome-512x512.png": {
