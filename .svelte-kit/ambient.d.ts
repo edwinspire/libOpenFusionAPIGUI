@@ -112,8 +112,9 @@ declare module '$env/static/private' {
 	export const PSModulePath: string;
 	export const PUBLIC: string;
 	export const PWD: string;
-	export const QIP18420: string;
-	export const QIP22724: string;
+	export const QIP2280: string;
+	export const QIP26772: string;
+	export const SESSIONNAME: string;
 	export const SHELL: string;
 	export const SHLVL: string;
 	export const SSH_ASKPASS: string;
@@ -135,6 +136,7 @@ declare module '$env/static/private' {
 	export const VSCODE_GIT_ASKPASS_MAIN: string;
 	export const VSCODE_GIT_ASKPASS_NODE: string;
 	export const VSCODE_GIT_IPC_HANDLE: string;
+	export const VSCODE_PYTHON_AUTOACTIVATE_GUARD: string;
 	export const WINDIR: string;
 	export const _: string;
 }
@@ -254,8 +256,9 @@ declare module '$env/dynamic/private' {
 		PSModulePath: string;
 		PUBLIC: string;
 		PWD: string;
-		QIP18420: string;
-		QIP22724: string;
+		QIP2280: string;
+		QIP26772: string;
+		SESSIONNAME: string;
 		SHELL: string;
 		SHLVL: string;
 		SSH_ASKPASS: string;
@@ -277,6 +280,7 @@ declare module '$env/dynamic/private' {
 		VSCODE_GIT_ASKPASS_MAIN: string;
 		VSCODE_GIT_ASKPASS_NODE: string;
 		VSCODE_GIT_IPC_HANDLE: string;
+		VSCODE_PYTHON_AUTOACTIVATE_GUARD: string;
 		WINDIR: string;
 		_: string;
 		[key: `PUBLIC_${string}`]: undefined;

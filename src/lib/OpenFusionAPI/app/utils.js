@@ -14,3 +14,10 @@ export const jsonToHtmlString = (obj) => {
 		.map((line) => line.replace(/ /g, '&nbsp;')) // espacios → &nbsp;
 		.join('<br>'); // saltos → <br>
 };
+
+export const TimeOutChangeValue = (idTimeout, fn_handler, timeout = 600) => {
+	clearTimeout(idTimeout);
+	return setTimeout(() => {
+		fn_handler();
+	}, timeout);
+};

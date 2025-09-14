@@ -45,6 +45,8 @@
 		}
 	});
 
+	
+
 	function parseCode() {
 		try {
 			let params = JSON.parse(row.code || '{}');
