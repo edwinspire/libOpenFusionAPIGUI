@@ -31,10 +31,7 @@
 
 	$effect(() => {
 		if (value) {
-			clearTimeout(timeoutChange);
-			timeoutChange = setTimeout(() => {
-				parseCode();
-			}, 750);
+			timeoutChange = TimeOutChangeValue(timeoutChange, parseCode);
 		}
 	});
 

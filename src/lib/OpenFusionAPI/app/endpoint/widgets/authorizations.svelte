@@ -41,10 +41,7 @@
 
 	$effect(() => {
 		if (table_users) {
-			clearTimeout(timeoutChageAuth);
-			timeoutChageAuth = setTimeout(() => {
-				setUsers();
-			}, 750);
+			timeoutChageAuth = TimeOutChangeValue(timeoutChageAuth, parseCode);
 		}
 	});
 

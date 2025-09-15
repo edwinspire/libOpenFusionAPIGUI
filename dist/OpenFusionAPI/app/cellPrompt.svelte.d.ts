@@ -6,8 +6,10 @@ type CellPrompt = {
 declare const CellPrompt: import("svelte").Component<{
     value?: any;
     row?: any;
+    onchangecell?: Function;
 }, {}, "value" | "row">;
 type $$ComponentProps = {
     value?: any;
     row?: any;
+    onchangecell?: Function;
 };

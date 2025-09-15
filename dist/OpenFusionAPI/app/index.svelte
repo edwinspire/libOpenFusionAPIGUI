@@ -778,7 +778,7 @@
 
 				endpoints = [...endpoints]; // Esto se hace para que se actualice la tabla
 				//endpoints = endpoints; // Esto se hace para que se actualice la tabla
-				console.log('Con nuevo endpoint:::::> ', endpoints);
+				//console.log('Con nuevo endpoint:::::> ', endpoints);
 			}
 		}}
 	></EndPointEditor>

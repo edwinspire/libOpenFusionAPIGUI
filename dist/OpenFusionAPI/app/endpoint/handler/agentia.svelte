@@ -10,7 +10,7 @@
 	} from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
 	import AppVarsSelector from '../widgets/params_json_selector.svelte';
-	import { jsonToHtmlString } from '../../utils.js';
+	import { jsonToHtmlString, TimeOutChangeValue } from '../../utils.js';
 	import CellPromptType from '../../cellPromptType.svelte';
 	import CellPrompt from '../../cellPrompt.svelte';
 	import ChatTester from '../widgets/ChatTester/ia_chat_tester.svelte';
@@ -113,10 +113,7 @@
 
 	$effect(() => {
 		if (row?.code) {
-			clearTimeout(timeoutChange);
-			timeoutChange = setTimeout(() => {
-				parseCode();
-			}, 750);
+			timeoutChange = TimeOutChangeValue(timeoutChange, parseCode);
 		}
 	});
 
@@ -197,9 +194,10 @@
 			outcode.model = model;
 			outcode.provider = provider;
 			outcode.mcpServers = mcpServers;
-//			outcode.init_prompts = add_agent_scratchpad(prompts);
+			//			outcode.init_prompts = add_agent_scratchpad(prompts);
 			outcode.init_prompts = prompts;
 			//console.log(outcode);
+
 			return JSON.stringify(outcode);
 		} catch (error) {
 			console.warn(error);
@@ -207,9 +205,9 @@
 		}
 	}
 
-function resetPromts(){
-	prompts = [...prompts];
-}
+	function resetPromts() {
+		prompts = [...prompts];
+	}
 
 	onMount(() => {
 		parseCode();
@@ -279,13 +277,13 @@ function resetPromts(){
 		showNewButton="true"
 		showDeleteButton="true"
 		bind:RawDataTable={prompts}
-		columns={columns}
+		{columns}
 		left_items={[lt01]}
 		ondeleterow={(data) => {
-			console.log('ondeleterow', data, prompts);
+			// console.log('ondeleterow', data, prompts);
 			if (confirm('Do you want to delete the prompt selected?')) {
 				prompts = prompts.filter((item) => {
-					console.log(item.internal_hash_row);
+					//	console.log(item.internal_hash_row);
 					return !data.rows.some((element) => element.internal_hash_row == item.internal_hash_row);
 				});
 
@@ -294,7 +292,7 @@ function resetPromts(){
 		}}
 		onnewrow={() => {
 			prompts.push({ enabled: true, type: 'system', prompt: '' });
-		//	console.log('Se agrega nuevo promot');
+			//	console.log('Se agrega nuevo promot');
 			//prompts = [...prompts];
 			resetPromts();
 		}}

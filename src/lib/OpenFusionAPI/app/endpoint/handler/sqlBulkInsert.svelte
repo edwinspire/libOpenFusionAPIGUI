@@ -38,10 +38,7 @@
 
 	$effect(() => {
 		if (row?.code) {
-			clearTimeout(timeoutChange);
-			timeoutChange = setTimeout(() => {
-				parseCode();
-			}, 750);
+			timeoutChange = TimeOutChangeValue(timeoutChange, parseCode);
 		}
 	});
 
