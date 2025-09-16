@@ -3,6 +3,7 @@
 	import { Tab, EditorCode, RESTTester, JSONView } from '@edwinspire/svelte-components';
 	import AppVars from '$lib/OpenFusionAPI/app/app_vars.svelte';
 	import AppVarsSelector from '$lib/OpenFusionAPI/app/endpoint/widgets/params_json_selector.svelte';
+	import { TimeOutChangeValue } from '$lib/OpenFusionAPI/app/utils.js';
 
 	let { row = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =
 		$props();

@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Tab, RESTTester, JSONView, Input } from '@edwinspire/svelte-components';
 	import AppVars from '../../app_vars.svelte';
+	import { TimeOutChangeValue } from '../../utils.js';
 	import AppVarsSelector from '../widgets/params_json_selector.svelte';
 
 	let { row = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =

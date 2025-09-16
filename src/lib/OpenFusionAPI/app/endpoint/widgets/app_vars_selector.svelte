@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { PredictiveInput, JSONView } from '@edwinspire/svelte-components';
 	import { listAppVars } from '$lib/OpenFusionAPI/utils.js';
+	import { TimeOutChangeValue } from '$lib/OpenFusionAPI/app/utils.js';
 
 	let {
 		freeTyping = $bindable(false),

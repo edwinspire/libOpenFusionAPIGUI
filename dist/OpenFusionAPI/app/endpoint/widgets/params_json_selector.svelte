@@ -20,7 +20,6 @@
 	let new_value;
 	let is_init = false;
 
-	let timeoutChange;
 
 	$effect(() => {
 		parseCode();
