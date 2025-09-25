@@ -22,7 +22,8 @@ export const url_paths = {
 	getlistFunctionsVarsJS: host + '/api/system/system/handler/js/funtions/prd',
 	getListIntervalTasksByIdApp: host + '/api/system/interval_tasks/byidapp/prd',
 	upsertIntervalTasksByIdTask: host + '/api/system/interval_tasks/upsert/prd',
-	deleteIntervalTasksByIdTask: host + '/api/system/interval_tasks/delete/prd'
+	deleteIntervalTasksByIdTask: host + '/api/system/interval_tasks/delete/prd',
+	serverAPIVersion: host + '/server/version'
 };
 
 export const userStore = writable({});

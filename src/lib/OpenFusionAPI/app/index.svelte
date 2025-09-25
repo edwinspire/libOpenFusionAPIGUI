@@ -35,6 +35,7 @@
 	import { Notifications } from '@edwinspire/svelte-components';
 	import IntervalTasks from '$lib/OpenFusionAPI/app/interval_tasks/index.svelte';
 	import cellMCPTool from '$lib/OpenFusionAPI/app/cellMCPTool.svelte';
+	import { version } from '$lib/OpenFusionAPI/version.js';
 
 	let notify = new Notifications();
 
@@ -77,6 +78,8 @@
 	//	let showAuthorizations = true;
 	let deploying = $state({ show: false, msg: 'Deploying...', error: false });
 	//let deployingMsg = 'Deploying...';
+
+	let serverAPIVersion = $state('Loading...');
 
 	let columns = $state({
 		//enabled: { label: 'Enabled App' },
@@ -185,6 +188,25 @@
 				app.vars = app_vars;
 			}
 			saveApp();
+		}
+	}
+
+	async function getServerAPIVersion() {
+		// Lógica de autenticación aquí
+
+		try {
+			let version_req = await uf.GET({ url: url_paths.serverAPIVersion });
+			let version_res = await version_req.json();
+
+			if (version_res && version_res.version) {
+				serverAPIVersion = version_res.version;
+			} else {
+				serverAPIVersion = 'Unknown';
+			}
+		} catch (error) {
+			//notify.push({ message: error.message, color: 'danger' });
+			//alert(error.message);
+			console.error(error);
 		}
 	}
 
@@ -423,6 +445,7 @@
 
 		await getListApps();
 		await getEnvList();
+		await getServerAPIVersion();
 		app = defaultValuesApp();
 
 		intervalGetDataApp = setInterval(async () => {
@@ -503,6 +526,33 @@
 							<i class="fa-brands fa-github"></i>
 						</span>
 						<span>Github</span>
+					</div>
+				</a>
+				<hr class="dropdown-divider" />
+				<a
+					href="https://github.com/edwinspire/libOpenFusionAPIGUI"
+					target="_blank"
+					title="GUI Version"
+					class="dropdown-item"
+				>
+					<div class="icon-text">
+						<span class="icon has-text-success">
+							<i class="fa-regular fa-window-maximize"></i>
+						</span>
+						<span>{version}</span>
+					</div>
+				</a>
+				<a
+					href="https://github.com/edwinspire/libOpenFusionAPI"
+					target="_blank"
+					title="Server API Version"
+					class="dropdown-item"
+				>
+					<div class="icon-text">
+						<span class="icon has-text-success">
+							<i class="fa-solid fa-network-wired"></i>
+						</span>
+						<span>{serverAPIVersion}</span>
 					</div>
 				</a>
 				<hr class="dropdown-divider" />
