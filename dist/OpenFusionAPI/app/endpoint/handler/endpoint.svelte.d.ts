@@ -10,7 +10,7 @@ declare const Endpoint: import("svelte").Component<{
     validateResource?: boolean;
     availableURL?: boolean;
     oncopy?: Function;
-}, {}, "row" | "app" | "environment_list" | "validateResource" | "availableURL">;
+}, {}, "row" | "environment_list" | "app" | "validateResource" | "availableURL">;
 type $$ComponentProps = {
     environment_list?: any[];
     row?: Record<string, any>;

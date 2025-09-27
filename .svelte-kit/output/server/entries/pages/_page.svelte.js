@@ -84,7 +84,7 @@ function Notifications($$payload, $$props) {
   $$payload.out.push(`<!--]--></div>`);
   pop();
 }
-const version = "1.1.3";
+const version = "1.1.4";
 function Login($$payload, $$props) {
   push();
   let username = "";

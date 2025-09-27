@@ -1,14 +1,23 @@
 <script>
 	import { onMount } from 'svelte';
-	import { EditorCode, Level, copyTextToClipboard } from '@edwinspire/svelte-components';
+	import {
+		EditorCode,
+		Level,
+		copyTextToClipboard,
+		DialogModal
+	} from '@edwinspire/svelte-components';
 	import { equalObjs } from '$lib/OpenFusionAPI/app/utils.js';
+	import SelectEnvironment from '$lib/OpenFusionAPI/widgets/Select.svelte';
 
 	let {
 		isReadOnly = $bindable(false),
 		showCode = $bindable(false),
 		appVars = $bindable({}),
 		title = $bindable(''),
-		onchange = () => {}
+		environment_list = $bindable([]),
+		environment = $bindable(''),
+		onchange = () => {},
+		oncopy = () => {}
 	} = $props();
 
 	let new_var_name = $state('');
@@ -16,6 +25,17 @@
 	let change_var_name = $state({});
 	let classAnimationCopyName = $state('');
 	let appVarsInternal = $state({});
+	let ShowDialogCopyEndpoint = $state(false);
+	//let env_copy = $state('');
+	let var_replace_copy = $state(false);
+	let var_to_copy = $state({});
+
+	let available_environments_list = $derived.by(() => {
+		return environment_list.filter((el) => {
+			//console.log('>>>>>>>>>>>>><', el, environment);
+			return el.id != environment;
+		});
+	});
 
 	function internalOnchange(varname, vars) {
 		if (!equalObjs(appVarsInternal[varname], vars)) {
@@ -118,7 +138,7 @@
 												class="button is-small is-outlined is-success"
 												title="Apply"
 												onclick={() => {
-													appVars[edit_var_name[varname]] = appVars[varname] ;
+													appVars[edit_var_name[varname]] = appVars[varname];
 													removeVar(varname);
 												}}
 											>
@@ -198,6 +218,31 @@
 									<p class="control">
 										<!-- svelte-ignore a11y_consider_explicit_label -->
 										<button
+											class="button is-small is-outlined is-warning"
+											title="Copy to another environment"
+											onclick={() => {
+												if (
+													confirm(
+														`Do you want to copy and/or replace the variable ${varname} in another environment?`
+													)
+												) {
+													ShowDialogCopyEndpoint = true;
+													var_to_copy.varname = varname;
+													var_to_copy.value = appVars[varname];
+												} else {
+													ShowDialogCopyEndpoint = false;
+													var_to_copy = {};
+												}
+											}}
+										>
+											<span class="icon is-small">
+												<i class="fa-solid fa-copy"></i>
+											</span>
+										</button>
+									</p>
+									<p class="control">
+										<!-- svelte-ignore a11y_consider_explicit_label -->
+										<button
 											class="button is-small is-outlined is-danger"
 											title="Delete variable"
 											onclick={() => {
@@ -223,6 +268,74 @@
 		{/each}
 	</div>
 {/if}
+
+<DialogModal
+	bind:show={ShowDialogCopyEndpoint}
+	title={titleModal}
+	body={bodyDialogModal}
+	onaccept={() => {
+		if (var_to_copy && var_replace_copy && var_to_copy.env_destination) {
+			oncopy(var_to_copy);
+			ShowDialogCopyEndpoint = false;
+			var_to_copy = {};
+		}
+	}}
+>
+	{#snippet titleModal()}
+		<span>{`Copy ${var_to_copy.varname}`}</span>
+	{/snippet}
+
+	{#snippet bodyDialogModal()}
+		<div>Copy or replace the variable to another environment.</div>
+		<br />
+
+		<div class="field has-addons">
+			<p class="control">
+				<!-- svelte-ignore a11y_missing_attribute -->
+				<a class="button is-small is-static"> Copy to: </a>
+			</p>
+
+			<p class="control">
+				<SelectEnvironment
+					options={available_environments_list}
+					onchange={(e) => {
+						//console.log('SELECCIONADO TO COPY >>>> ', e);
+						var_to_copy.env_destination = e;
+						// var_to_copy = {};
+					}}
+				/>
+			</p>
+		</div>
+
+		{#if !var_to_copy.env_destination || var_to_copy.env_destination == ''}
+			<div class="icon-text">
+				<span class="icon has-text-warning">
+					<i class="fas fa-exclamation-triangle"></i>
+				</span>
+				<span> Select an environment to copy. </span>
+			</div>
+		{/if}
+
+		<!-- svelte-ignore block_empty -->
+		{#if var_to_copy.varname && var_to_copy.env_destination}
+			<label class="checkbox">
+				<input type="checkbox" bind:checked={var_replace_copy} />
+				I agree to copy and/or replace the application variable to the
+				<strong>{var_to_copy.env_destination}</strong> environment.
+			</label>
+
+			{#if !var_replace_copy}
+				<br />
+				<div class="icon-text">
+					<span class="icon has-text-warning">
+						<i class="fas fa-exclamation-triangle"></i>
+					</span>
+					<span> You must agree to continue. </span>
+				</div>
+			{/if}
+		{/if}
+	{/snippet}
+</DialogModal>
 
 <style>
 	.reset_margin {

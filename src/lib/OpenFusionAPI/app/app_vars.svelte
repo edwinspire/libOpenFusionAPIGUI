@@ -6,13 +6,14 @@
 	let {
 		environment = $bindable('*'),
 		isReadOnly = $bindable(false),
+		environment_list = $bindable([]),
 		onchange = () => {}
 	} = $props();
 
 	let Datavars = $state({});
 
 	listAppVars.subscribe((value) => {
-		console.log('listAppVars', value);
+		//console.log('listAppVars', value);
 		Datavars = value || {};
 
 		if (Datavars) {
@@ -34,6 +35,20 @@
 		onchange($state.snapshot(Datavars));
 	}
 
+	function internalOncopy(var_to_copy) {
+		console.log('COPY VAR REQUESTED >>>> ', Datavars, var_to_copy);
+
+		if(Datavars && !Datavars[var_to_copy.env_destination]){
+			Datavars[var_to_copy.env_destination] = {};
+		}
+
+		if(Datavars && Datavars[var_to_copy.env_destination] && var_to_copy.varname){
+			Datavars[var_to_copy.env_destination][var_to_copy.varname] = var_to_copy.value;
+			internalOnchange();
+		}
+		//internalOnchange();
+	}
+
 	onMount(() => {});
 </script>
 
@@ -43,10 +58,15 @@
 			<div class="column">
 				<VarEnv
 					bind:appVars={Datavars.dev}
+					environment="dev"
+					bind:environment_list
 					{isReadOnly}
 					title={'DEVELOPMENT'}
 					onchange={(x) => {
 						internalOnchange();
+					}}
+					oncopy={(x) => {
+						internalOncopy(x);
 					}}
 				></VarEnv>
 			</div>
@@ -58,10 +78,15 @@
 			<div class="column">
 				<VarEnv
 					appVars={Datavars.qa}
+					environment="qa"
+					bind:environment_list
 					{isReadOnly}
 					title={'QUALITY'}
 					onchange={() => {
 						internalOnchange();
+					}}
+					oncopy={(x) => {
+						internalOncopy(x);
 					}}
 				></VarEnv>
 			</div>
@@ -73,10 +98,15 @@
 			<div class="column">
 				<VarEnv
 					appVars={Datavars.prd}
+					environment="prd"
+					bind:environment_list
 					{isReadOnly}
 					title={'PRODUCTION'}
 					onchange={() => {
 						internalOnchange();
+					}}
+					oncopy={(x) => {
+						internalOncopy(x);
 					}}
 				></VarEnv>
 			</div>

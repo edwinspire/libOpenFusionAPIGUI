@@ -6,10 +6,12 @@ type AppVars = {
 declare const AppVars: import("svelte").Component<{
     environment?: string;
     isReadOnly?: boolean;
+    environment_list?: any[];
     onchange?: Function;
-}, {}, "isReadOnly" | "environment">;
+}, {}, "isReadOnly" | "environment_list" | "environment">;
 type $$ComponentProps = {
     environment?: string;
     isReadOnly?: boolean;
+    environment_list?: any[];
     onchange?: Function;
 };

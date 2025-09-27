@@ -67,7 +67,7 @@
 	/**
 	 * @type {{ id: any; value: any; }[]}
 	 */
-	let environment_list = [];
+	let environment_list = $state([]);
 	let showEndpointEdit = $state(false);
 	let SelectedRow = $state(defaultValuesRow());
 	let TableSelectionType = $state(0);
@@ -223,6 +223,8 @@
 			} else {
 				environment_list = [];
 			}
+
+			console.log('environment_list >>>>>> ', environment_list);
 		} catch (error) {
 			notify.push({ message: error.message, color: 'danger' });
 			//alert(error.message);
@@ -557,6 +559,7 @@
 {#snippet tab_app_vars()}
 	<AppVars
 		isReadOnly={false}
+		bind:environment_list={environment_list}
 		onchange={(data) => {
 			//console.log('tab_app_vars', data);
 			app_vars = data;
