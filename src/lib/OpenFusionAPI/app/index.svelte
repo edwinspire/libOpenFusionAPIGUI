@@ -35,7 +35,6 @@
 	import { Notifications } from '@edwinspire/svelte-components';
 	import IntervalTasks from '$lib/OpenFusionAPI/app/interval_tasks/index.svelte';
 	import cellMCPTool from '$lib/OpenFusionAPI/app/cellMCPTool.svelte';
-	import { version } from '$lib/OpenFusionAPI/version.js';
 
 	let notify = new Notifications();
 
@@ -529,33 +528,7 @@
 					</div>
 				</a>
 				<hr class="dropdown-divider" />
-				<a
-					href="https://github.com/edwinspire/libOpenFusionAPIGUI"
-					target="_blank"
-					title="GUI Version"
-					class="dropdown-item"
-				>
-					<div class="icon-text">
-						<span class="icon has-text-success">
-							<i class="fa-regular fa-window-maximize"></i>
-						</span>
-						<span>{version}</span>
-					</div>
-				</a>
-				<a
-					href="https://github.com/edwinspire/libOpenFusionAPI"
-					target="_blank"
-					title="Server API Version"
-					class="dropdown-item"
-				>
-					<div class="icon-text">
-						<span class="icon has-text-success">
-							<i class="fa-solid fa-network-wired"></i>
-						</span>
-						<span>{serverAPIVersion}</span>
-					</div>
-				</a>
-				<hr class="dropdown-divider" />
+				
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_static_element_interactions -->
 				<div
@@ -640,7 +613,13 @@
 			}}
 		>
 			{#snippet lt01()}
-				Endpoints
+				
+				<div class="control">
+					<div class="tags has-addons">
+						<span class="tag is-dark">Server</span>
+						<span class="tag is-success">{serverAPIVersion}</span>
+					</div>
+				</div>
 			{/snippet}
 			<!-- <span slot="r09">
 		<button

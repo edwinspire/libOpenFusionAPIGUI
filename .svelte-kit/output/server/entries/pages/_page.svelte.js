@@ -84,6 +84,7 @@ function Notifications($$payload, $$props) {
   $$payload.out.push(`<!--]--></div>`);
   pop();
 }
+const version = "1.1.3";
 function Login($$payload, $$props) {
   push();
   let username = "";
@@ -97,7 +98,7 @@ function Login($$payload, $$props) {
         $$payload2.out.push("<!--[!-->");
         $$payload2.out.push(`<button class="button is-success">Login</button>`);
       }
-      $$payload2.out.push(`<!--]--></p></div> `);
+      $$payload2.out.push(`<!--]--></p> <div class="content is-small is-flex is-justify-content-flex-end">GUI Version: ${escape_html(version)}</div></div> `);
       {
         $$payload2.out.push("<!--[!-->");
       }

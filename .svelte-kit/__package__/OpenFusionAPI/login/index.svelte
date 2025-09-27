@@ -4,6 +4,8 @@
 	import { userStore, getListMethods, getListHandler, url_paths } from '../utils.js';
 	import logo from '../img/favicon.png';
 	import { Notifications, Modal} from "@edwinspire/svelte-components";
+	import { version } from '../version.js';
+
 
 let noty = new Notifications();
 	let { onlogin = () => {} } = $props();
@@ -100,6 +102,7 @@ let noty = new Notifications();
 					</button>
 				{/if}
 			</p>
+			<div class="content is-small is-flex is-justify-content-flex-end">GUI Version: {version}</div>
 		</div>
 		{#if !processing.waiting && processing.error}
 			<div class="icon-text">

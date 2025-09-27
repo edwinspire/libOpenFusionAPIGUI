@@ -118,7 +118,7 @@
 												class="button is-small is-outlined is-success"
 												title="Apply"
 												onclick={() => {
-													appVarsInternal[edit_var_name[varname]] = { ...edit_var_name[varname] };
+													appVars[edit_var_name[varname]] = appVars[varname] ;
 													removeVar(varname);
 												}}
 											>
@@ -152,7 +152,6 @@
 													change_var_name[varname] = !change_var_name[varname];
 													//console.log(varname, change_var_name[varname], appVars[varname]);
 													edit_var_name[varname] = varname;
-
 												}}
 											>
 												<span class="icon is-small">

@@ -38,6 +38,7 @@
 
 	let jsonParams = $state({
 		wsdl: 'https://www.dataaccess.com/webservicesserver/numberconversion.wso?WSDL',
+		endpoint: 'https://www.dataaccess.com/webservicesserver/numberconversion.wso',
 		functionName: 'NumberToDollars',
 		BasicAuthSecurity: {
 			User: 'any',
@@ -110,9 +111,12 @@
 			The variables with the following:
 			<ul class="list_params">
 				<li>
-					<strong>wsdl:</strong> url where the wsdl is located. (Required)
+					<strong>wsdl:</strong> URL where the wsdl is located. (Required)
 				</li>
-
+				<li>
+					<strong>endpoint:</strong> URL of the actual endpoint. This is not usually required except
+					in specific cases. (Optional)
+				</li>
 				<li>
 					<strong>functionName:</strong> Function or method to call. Required when the method used
 					is <strong>GET</strong>, in the <strong>POST</strong> method it can be passed as a parameter.
