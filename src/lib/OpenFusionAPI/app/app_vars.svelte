@@ -36,7 +36,7 @@
 	}
 
 	function internalOncopy(var_to_copy) {
-		console.log('COPY VAR REQUESTED >>>> ', Datavars, var_to_copy);
+		//console.log('COPY VAR REQUESTED >>>> ', Datavars, var_to_copy);
 
 		if(Datavars && !Datavars[var_to_copy.env_destination]){
 			Datavars[var_to_copy.env_destination] = {};
