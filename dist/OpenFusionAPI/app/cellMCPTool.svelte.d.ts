@@ -1,9 +1,9 @@
-export default CellMcpTool;
-type CellMcpTool = {
+export default CellMCPTool;
+type CellMCPTool = {
     $on?(type: string, callback: (e: any) => void): () => void;
     $set?(props: Partial<$$ComponentProps>): void;
 };
-declare const CellMcpTool: import("svelte").Component<{
+declare const CellMCPTool: import("svelte").Component<{
     value?: any;
     row?: any;
 }, {}, "value" | "row">;

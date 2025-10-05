@@ -23,6 +23,7 @@ export namespace url_paths {
     let upsertIntervalTasksByIdTask: string;
     let deleteIntervalTasksByIdTask: string;
     let serverAPIVersion: string;
+    let apiDoc: string;
 }
 export const userStore: import("svelte/store").Writable<{}>;
 export const listMethodStore: import("svelte/store").Writable<{}>;

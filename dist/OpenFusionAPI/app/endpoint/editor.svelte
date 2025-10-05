@@ -4,9 +4,9 @@
 		Level,
 		SlideFullScreen,
 		Tab,
-		//		EditorContent,
 		EditorCode,
-		Input
+		Input,
+		MarkdownViewer
 	} from '@edwinspire/svelte-components';
 	import FetchCode from './handler/fetch.svelte';
 	import JsCode from './handler/js.svelte';
@@ -23,6 +23,10 @@
 	import Logs from './widgets/logs.svelte';
 	import MCP from './widgets/mcp.svelte';
 	import EndpointLabel from './widgets/endpoint_label.svelte';
+	import uFetch from '@edwinspire/universal-fetch';
+	import { url_paths } from '../../utils.js';
+
+	const uF = new uFetch(url_paths.apiDoc);
 
 	let {
 		showEditor = $bindable(false),
@@ -34,6 +38,8 @@
 
 	let json_schema_enabled = $state(false);
 	let json_schema_in = $state({});
+
+	let markdown_docs = $state('');
 
 	function doc_app_header() {
 		return {
@@ -102,8 +108,8 @@
 	let availableURL = $state(false);
 
 	let tabList = $state([
-		//		{ label: 'Documentation', isActive: true, component: tab_docs },
 		{ label: 'Endpoint', isActive: true, component: tab_endpoint },
+		{ label: 'Documentation', isActive: false, component: tab_docs },
 		{ label: 'Configuration', component: tab_config },
 		{ label: 'JSON Schema', component: tab_json_schema },
 		{ label: 'Authorizations', component: tab_auth },
@@ -266,24 +272,21 @@
 		defaultValues();
 		json_schema_enabled = row?.json_schema?.in?.enabled ?? false;
 		json_schema_in = row?.json_schema?.in?.schema ?? {};
-
-		/*
-		if (row?.handler == 'MCP') {
-			tabList = tabList.map((tab) => {
-				if (
-					row.handler == 'MCP' &&
-					(tab.label == 'Configuration' ||
-						tab.label == 'JSON Schema' ||
-						tab.label == 'Authorizations' ||
-						tab.label == 'MCP')
-				) {
-					tab.disabled = true;
-				}
-				return tab;
-			});
-		}
-		*/
+		console.log('HANDLER -> ', $state.snapshot(row.handler));
+		getHandlerDocs();
 	});
+
+	async function getHandlerDocs() {
+		if (row && row.handler) {
+			let req = await uF.GET({ data: { handler: row.handler } });
+			let res = await req.json();
+			console.log(res);
+
+			if (res && res.markdown) {
+				markdown_docs = res.markdown;
+			}
+		}
+	}
 
 	onMount(() => {
 		//		await getEnvList();
@@ -291,6 +294,10 @@
 		//	console.log('Editor row > ', $state.snapshot(row));
 	});
 </script>
+
+{#snippet tab_docs()}
+	<MarkdownViewer content_class=' is-small ' bind:markdown={markdown_docs}></MarkdownViewer>
+{/snippet}
 
 {#snippet tab_endpoint()}
 	{#if row && app}

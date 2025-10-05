@@ -1,5 +1,6 @@
-import { V as noop, W as getContext, X as escape_html, T as pop, P as push } from "../../chunks/index2.js";
+import { n as noop, l as getContext, m as escape_html } from "../../chunks/context.js";
 import "clsx";
+import "@sveltejs/kit/internal/server";
 import "@sveltejs/kit/internal";
 import "../../chunks/exports.js";
 import "../../chunks/utils.js";
@@ -45,10 +46,10 @@ const page$1 = {
   }
 };
 const page = page$1;
-function Error$1($$payload, $$props) {
-  push();
-  $$payload.out.push(`<h1>${escape_html(page.status)}</h1> <p>${escape_html(page.error?.message)}</p>`);
-  pop();
+function Error$1($$renderer, $$props) {
+  $$renderer.component(($$renderer2) => {
+    $$renderer2.push(`<h1>${escape_html(page.status)}</h1> <p>${escape_html(page.error?.message)}</p>`);
+  });
 }
 export {
   Error$1 as default
