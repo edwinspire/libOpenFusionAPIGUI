@@ -94,7 +94,6 @@
     "isEntry": true,
     "imports": [
       "_shared.js",
-      "_utils.js",
       "_environment.js"
     ]
   },

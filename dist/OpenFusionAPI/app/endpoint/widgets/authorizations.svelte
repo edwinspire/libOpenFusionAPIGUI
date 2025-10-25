@@ -2,7 +2,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { storeUsersList } from '../../../utils.js';
 	import { Table, ColumnTypes } from '@edwinspire/svelte-components';
-	import { TimeOutChangeValue } from '../../utils.js';
+	//import { TimeOutChangeValue } from '../../utils.js';
 
 	let { users = $bindable({}) } = $props();
 
@@ -39,13 +39,13 @@
 	});
 
 	let timeoutChageAuth;
-
+/*
 	$effect(() => {
 		if (table_users) {
 			timeoutChageAuth = TimeOutChangeValue(timeoutChageAuth, parseCode);
 		}
 	});
-
+*/
 
 	storeUsersList.subscribe((value) => {
 		data_users = value;

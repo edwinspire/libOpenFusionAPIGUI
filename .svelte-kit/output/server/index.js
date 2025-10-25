@@ -1,10 +1,10 @@
 import { D as DEV, a as assets, b as base, c as app_dir, r as relative, o as override, d as reset } from "./chunks/environment.js";
 import { json, text, error } from "@sveltejs/kit";
 import { HttpError, SvelteKitError, Redirect, ActionFailure } from "@sveltejs/kit/internal";
-import { with_request_store, merge_tracing } from "@sveltejs/kit/internal/server";
+import { with_request_store, merge_tracing, try_get_request_store } from "@sveltejs/kit/internal/server";
 import * as devalue from "devalue";
 import { m as make_trackable, d as disable_search, a as decode_params, S as SCHEME, v as validate_layout_server_exports, b as validate_layout_exports, c as validate_page_server_exports, e as validate_page_exports, n as normalize_path, r as resolve, f as decode_pathname, g as validate_server_exports } from "./chunks/exports.js";
-import { b as base64_encode, t as text_decoder, a as text_encoder, g as get_relative_path, f as file_transport } from "./chunks/utils.js";
+import { b as base64_encode, t as text_decoder, a as text_encoder, g as get_relative_path } from "./chunks/utils.js";
 import { r as readable, w as writable } from "./chunks/index.js";
 import { p as public_env, r as read_implementation, o as options, s as set_private_env, a as set_public_env, g as get_hooks, b as set_read_implementation } from "./chunks/internal.js";
 import { c as create_remote_cache_key, p as parse_remote_arg, s as stringify, T as TRAILING_SLASH_PARAM, I as INVALIDATED_PARAM } from "./chunks/shared.js";
@@ -628,46 +628,29 @@ function try_serialize(data, fn, route_id) {
     throw error2;
   }
 }
-function defer() {
-  let fulfil;
-  let reject;
-  const promise = new Promise((f, r) => {
-    fulfil = f;
-    reject = r;
-  });
-  return { promise, fulfil, reject };
-}
 function create_async_iterator() {
-  let count = 0;
-  const deferred = [defer()];
+  let resolved = -1;
+  let returned = -1;
+  const deferred = [];
   return {
     iterate: (transform = (x) => x) => {
       return {
         [Symbol.asyncIterator]() {
           return {
             next: async () => {
-              const next = await deferred[0].promise;
-              if (!next.done) {
-                deferred.shift();
-                return { value: transform(next.value), done: false };
-              }
-              return next;
+              const next = deferred[++returned];
+              if (!next) return { value: null, done: true };
+              const value = await next.promise;
+              return { value: transform(value), done: false };
             }
           };
         }
       };
     },
     add: (promise) => {
-      count += 1;
+      deferred.push(with_resolvers());
       void promise.then((value) => {
-        deferred[deferred.length - 1].fulfil({
-          value,
-          done: false
-        });
-        deferred.push(defer());
-        if (--count === 0) {
-          deferred[deferred.length - 1].fulfil({ done: true });
-        }
+        deferred[++resolved].resolve(value);
       });
     }
   };
@@ -2077,7 +2060,7 @@ ${indent}}`);
       async start(controller) {
         controller.enqueue(text_encoder.encode(transformed + "\n"));
         for await (const chunk of chunks) {
-          controller.enqueue(text_encoder.encode(chunk));
+          if (chunk.length) controller.enqueue(text_encoder.encode(chunk));
         }
         controller.close();
       },
@@ -2283,7 +2266,7 @@ async function handle_remote_call(event, state, options2, manifest, id) {
   });
 }
 async function handle_remote_call_internal(event, state, options2, manifest, id) {
-  const [hash2, name, prerender_args] = id.split("/");
+  const [hash2, name, additional_args] = id.split("/");
   const remotes = manifest._.remotes;
   if (!remotes[hash2]) error(404);
   const module = await remotes[hash2]();
@@ -2353,13 +2336,16 @@ async function handle_remote_call_internal(event, state, options2, manifest, id)
         form_data.get("sveltekit:remote_refreshes") ?? "[]"
       );
       form_data.delete("sveltekit:remote_refreshes");
+      if (additional_args) {
+        form_data.set("sveltekit:id", decodeURIComponent(additional_args));
+      }
       const fn2 = info.fn;
       const data2 = await with_request_store({ event, state }, () => fn2(form_data));
       return json(
         /** @type {RemoteFunctionResponse} */
         {
           type: "result",
-          result: stringify(data2, { ...transport, File: file_transport }),
+          result: stringify(data2, transport),
           refreshes: data2.issues ? {} : await serialize_refreshes(form_client_refreshes)
         }
       );
@@ -2377,7 +2363,7 @@ async function handle_remote_call_internal(event, state, options2, manifest, id)
         }
       );
     }
-    const payload = info.type === "prerender" ? prerender_args : (
+    const payload = info.type === "prerender" ? additional_args : (
       /** @type {string} */
       // new URL(...) necessary because we're hiding the URL from the user in the event object
       new URL(event.request.url).searchParams.get("payload")
@@ -2494,6 +2480,9 @@ async function handle_remote_form_post_internal(event, state, manifest, id) {
       /** @type {any} */
       form.__.fn
     );
+    if (action_id && !form_data.has("id")) {
+      form_data.set("sveltekit:id", decodeURIComponent(action_id));
+    }
     await with_request_store({ event, state }, () => fn(form_data));
     return {
       type: "success",
@@ -3272,8 +3261,8 @@ async function internal_respond(request, options2, manifest, state) {
     invalidated_data_nodes = url.searchParams.get(INVALIDATED_PARAM)?.split("").map((node) => node === "1");
     url.searchParams.delete(INVALIDATED_PARAM);
   } else if (remote_id) {
-    url.pathname = base;
-    url.search = "";
+    url.pathname = request.headers.get("x-sveltekit-pathname") ?? base;
+    url.search = request.headers.get("x-sveltekit-search") ?? "";
   }
   const headers2 = {};
   const { cookies, new_cookies, get_cookie_header, set_internal, set_trailing_slash } = get_cookies(
@@ -3286,7 +3275,8 @@ async function internal_respond(request, options2, manifest, state) {
     handleValidationError: options2.hooks.handleValidationError,
     tracing: {
       record_span
-    }
+    },
+    is_in_remote_function: false
   };
   const event = {
     cookies,
@@ -3392,7 +3382,7 @@ async function internal_respond(request, options2, manifest, state) {
     headers22.set("cache-control", "public, max-age=0, must-revalidate");
     return text("Not found", { status: 404, headers: headers22 });
   }
-  if (!state.prerendering?.fallback && !remote_id) {
+  if (!state.prerendering?.fallback) {
     const matchers = await manifest._.matchers();
     for (const candidate of manifest._.routes) {
       const match = candidate.pattern.exec(resolved_path);
@@ -3414,7 +3404,7 @@ async function internal_respond(request, options2, manifest, state) {
   let trailing_slash = "never";
   try {
     const page_nodes = route?.page ? new PageNodes(await load_page_nodes(route.page, manifest)) : void 0;
-    if (route) {
+    if (route && !remote_id) {
       if (url.pathname === base || url.pathname === base + "/") {
         trailing_slash = "always";
       } else if (page_nodes) {

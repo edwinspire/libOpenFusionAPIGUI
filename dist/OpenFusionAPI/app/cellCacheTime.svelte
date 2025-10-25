@@ -1,23 +1,17 @@
 <script>
 	import { onMount } from 'svelte';
 	import { storeCacheSize } from '../utils.js';
-
 	let { value = $bindable(), row = $bindable() } = $props();
 
 	let value_cache = $state({});
 
 	storeCacheSize.subscribe((cache_data) => {
-		if (cache_data && Array.isArray(cache_data)) {
-			if (cache_data.length > 0 && row) {
-				let data = cache_data.find((item) => {
-					return item.url.toLowerCase() == `${row.endpoint}|${row.method}`.toLowerCase();
-				});
-
-				if (data) {
-					value_cache = data;
-				} else {
-					value_cache.bytes = 0;
-				}
+		if (row && cache_data) {
+		//	console.log('>>> cache_data en cellCacheTime', cache_data, row.idendpoint);
+			//alert('>>> cache_data en cellCacheTime: ' + JSON.stringify(cache_data));
+			if (cache_data[row.idendpoint] > 0) {
+			//	alert('>>> cache_data en cellCacheTime: ' + JSON.stringify(cache_data));
+				value_cache.bytes = cache_data[row.idendpoint];
 			} else {
 				value_cache.bytes = 0;
 			}

@@ -8,7 +8,8 @@
 		Tab,
 		MenuMega,
 		SlideFullScreen,
-		Modal
+		Modal,
+		OpenFusionWebsocketClient
 	} from '@edwinspire/svelte-components';
 	import { onDestroy, onMount } from 'svelte';
 	import {
@@ -16,12 +17,14 @@
 		getListFunction,
 		listAppVars,
 		url_paths,
-		getCacheSize,
-		getCountStatusCode,
+		storeCountResponseStatusCode,
 		getListUsers,
 		defaultValuesRow,
 		defaultValuesApp,
-		createEndpoint
+		createEndpoint,
+		storeCacheSize,
+		getInternalAppMetrics,
+		storeEndpointOnRequest
 	} from '$lib/OpenFusionAPI/utils.js';
 	import CellMethod from '$lib/OpenFusionAPI/app/cellMethod.svelte';
 	import CellAccess from '$lib/OpenFusionAPI/app/cellAccess.svelte';
@@ -39,6 +42,8 @@
 	let notify = new Notifications();
 
 	let idapp = $state(0);
+
+	const wsClient = new OpenFusionWebsocketClient(url_paths.wsEndpointEvents);
 
 	let intervalGetDataApp;
 	let app_vars;
@@ -301,6 +306,10 @@
 
 			app = defaultValuesApp(app_resp[0]);
 
+			setTimeout(async () => {
+				await getInternalAppMetrics(app.app, $userStore.token);
+			}, 5000);
+
 			//console.log('>>>>>>>>>>>>>>>>>>', app.vars);
 
 			if (app && app.vars && typeof app.vars === 'object') {
@@ -320,16 +329,6 @@
 			//console.log($userStore);
 
 			if (app.endpoints) {
-				//	console.log('Procesar endpoints... ');
-				/*
-				endpoints = app.endpoints.map(( ax) => {
-					return {
-						endpoint: `${ax.method == 'WS' ? '/ws/' : '/api/'}${app.app}${ax.resource}/${ax.environment}`,
-						...ax
-					};
-				});
-				*/
-				//	console.log('Procesardos endpoints... ', endpoints);
 				endpoints = setpathEdpoint(app.endpoints);
 			}
 		}
@@ -444,17 +443,67 @@
 	onMount(async () => {
 		notify.push({ message: 'Welcome ', color: 'success' });
 
+		wsClient.connect();
+		wsClient.on('open', () => {
+			console.log('WebSocket connected');
+			wsClient.subscribe('/endpoint/events');
+		});
+
+		wsClient.on('message', (m) => {
+			//console.log('WebSocket message', m, app?.idapp);
+			//alert('XXX WebSocket message: ' + JSON.stringify(m) + ' APP ID: ' + app?.idapp);
+			if (m && app && m.data?.idapp == app.idapp) {
+				//	alert('>>> Actualizando datos de la app por evento websocket: ' + JSON.stringify(m) + ' APP ID: ' + app?.idapp);
+
+				if (m && (m.event_name == 'cache_set' || m.event_name == 'cache_released')) {
+					storeCacheSize.update((value) => {
+						//alert('++++++++++++ '+JSON.stringify(m.data));
+						value[m.data.idendpoint] = m.data.cache_size;
+						//	console.log("++++++ Actualizando datos de la app por evento websocket", value);
+						return value;
+					});
+					//cacheSizeState[m.data.idendpoint] = m.data.cache_size;
+					//console.log('++++++ Actualizando datos de la app por evento websocket', m, cacheSizeState);
+				} else if (m && m.event_name == 'request_completed') {
+					console.log('> MESSAGE ', m);
+					storeCountResponseStatusCode.update((value) => {
+						//alert('++++++++++++ '+JSON.stringify(m.data));
+						//let new_value = value[m.data.idendpoint][m.data.statusCode] + 1;
+						let new_value = {};
+						new_value[m.data.statusCode] = 1;
+						if (value[m.data.idendpoint]) {
+							new_value[m.data.statusCode] = value[m.data.idendpoint][m.data.statusCode] + 1;
+							value[m.data.idendpoint] = new_value;
+						}
+
+						// console.log("++++++ Actualizando datos de la app por evento websocket", value);
+						// console.log(':::: storeCountResponseStatusCode ', value);
+						return value;
+					});
+				} else if (m && m.event_name == 'request_start') {
+					//
+					//console.log('zzzzzzzzz ', m.data);
+					storeEndpointOnRequest.set(m.data?.idendpoint);
+				}
+				//storeCacheSize.get()
+				//storeCacheSize.set(cache_list);
+			}
+			//respuestas = [...respuestas, m.detail];
+		});
+
 		await getListApps();
 		await getEnvList();
 		await getServerAPIVersion();
 		app = defaultValuesApp();
 
+		/*
 		intervalGetDataApp = setInterval(async () => {
 			if (app?.app) {
 				await getCacheSize(app.app, $userStore.token);
 				await getCountStatusCode(app.app, $userStore.token);
 			}
 		}, 5000);
+		*/
 	});
 
 	onDestroy(() => {
@@ -530,7 +579,7 @@
 					</div>
 				</a>
 				<hr class="dropdown-divider" />
-				
+
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_static_element_interactions -->
 				<div
@@ -559,7 +608,7 @@
 {#snippet tab_app_vars()}
 	<AppVars
 		isReadOnly={false}
-		bind:environment_list={environment_list}
+		bind:environment_list
 		onchange={(data) => {
 			//console.log('tab_app_vars', data);
 			app_vars = data;
@@ -616,7 +665,6 @@
 			}}
 		>
 			{#snippet lt01()}
-				
 				<div class="control">
 					<div class="tags has-addons">
 						<span class="tag is-dark">Server</span>

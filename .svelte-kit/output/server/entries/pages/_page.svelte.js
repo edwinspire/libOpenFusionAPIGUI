@@ -1,9 +1,8 @@
 import "clsx";
-import { x as attr_class, y as bind_props, z as ensure_array_like, F as stringify, G as attr } from "../../chunks/index2.js";
+import { w as attr_class, x as bind_props, y as ensure_array_like, z as stringify, F as attr } from "../../chunks/index2.js";
 import { m as escape_html } from "../../chunks/context.js";
 import uFetch from "@edwinspire/universal-fetch";
 import "events";
-import "d3";
 import "prettier/standalone.js";
 import "prettier/plugins/babel.mjs";
 import "prettier/plugins/estree.mjs";
@@ -86,7 +85,7 @@ function Notifications($$renderer, $$props) {
     $$renderer2.push(`<!--]--></div>`);
   });
 }
-const version = "1.1.6";
+const version = "1.1.8";
 function Login($$renderer, $$props) {
   $$renderer.component(($$renderer2) => {
     let username = "";

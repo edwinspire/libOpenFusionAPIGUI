@@ -1,34 +1,18 @@
 <script>
 	'use strict';
 	import { onMount } from 'svelte';
-	import { storeCountResponseStatusCode } from '$lib/OpenFusionAPI/utils.js';
+	import { listAccessMethod, storeCountResponseStatusCode } from '$lib/OpenFusionAPI/utils.js';
 
 	let { value = $bindable(), row = $bindable() } = $props();
 	let value_count_status_code = $state({});
 
-	storeCountResponseStatusCode.subscribe((ListCountStatusCode) => {
-		if (row && row.endpoint) {
-			let ep_key = `${row.endpoint.toLowerCase()}|${row.method}`;
-
-			if (ListCountStatusCode && Array.isArray(ListCountStatusCode)) {
-				if (ListCountStatusCode.length > 0) {
-					let this_list = ListCountStatusCode.find((item) => {
-						return item[ep_key];
-					});
-
-					if (this_list && this_list[ep_key]) {
-						value_count_status_code = this_list[ep_key];
-					} else {
-						value_count_status_code = [];
-					}
-				} else {
-					value_count_status_code = [];
-				}
+	onMount(() => {
+		storeCountResponseStatusCode.subscribe((ListCountStatusCode) => {
+			if (row && row.idendpoint) {
+				value_count_status_code = ListCountStatusCode[row.idendpoint];
 			}
-		}
+		});
 	});
-
-	onMount(() => {});
 </script>
 
 <td>

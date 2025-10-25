@@ -1,24 +1,38 @@
 <script>
 	import { onMount } from 'svelte';
 	import { listEnv } from '../utils.js';
-
+	import { storeEndpointOnRequest } from '$lib/OpenFusionAPI/utils.js';
 
 	let { value = $bindable(), row = $bindable() } = $props();
+	let isRunning = $state(false);
+	let timeoutIsRunning;
 
-	onMount(() => {});
+	onMount(() => {
+		onMount(() => {
+			storeEndpointOnRequest.subscribe((data) => {
+				//console.log(":::::> ", data);
+				if (row && row.idendpoint == data) {
+					isRunning = true;
+					clearTimeout(timeoutIsRunning);
+					timeoutIsRunning = setTimeout(() => {
+						isRunning = false;
+					}, 1500);
+				}
+			});
+		});
+	});
 </script>
 
 <td>
-	<div class="icon-text">
-		{#if listEnv && row?.environment && listEnv[row.environment]}
+	{#if listEnv && row?.environment && listEnv[row.environment]}
+		<span class="icon-text">
+			<span class="icon {isRunning ? ' has-text-success ' : ' has-text-grey-dark '}">
+				<i class="fa-solid fa-gear {isRunning ? ' fa-spin ' : ''}"></i>
+			</span>
 			<span class="icon {listEnv[row.environment].color}">
 				<i class={listEnv[row.environment].icon}></i>
 			</span>
-		{:else}
-			<span class="icon">
-				<i class="fa-solid fa-question"></i>
-			</span>
-		{/if}
-		<span>{value}</span>
-	</div>
+			<span>{value}</span>
+		</span>
+	{/if}
 </td>

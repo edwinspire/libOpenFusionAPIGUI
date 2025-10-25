@@ -24,9 +24,11 @@ export const url_paths = {
 	upsertIntervalTasksByIdTask: host + '/api/system/interval_tasks/upsert/prd',
 	deleteIntervalTasksByIdTask: host + '/api/system/interval_tasks/delete/prd',
 	serverAPIVersion: host + '/server/version',
-	apiDoc: host + '/api/system/api/handler/documentation/prd'
+	apiDoc: host + '/api/system/api/handler/documentation/prd',
+	wsEndpointEvents: host + '/ws/system/websocket/endpoint/prd',
+	getInternalAppMetrics: host + '/api/system/app/internal/metrics/prd'
 };
-
+//
 export const userStore = writable({});
 export const listMethodStore = writable({});
 export const listHandlerStore = writable({});
@@ -37,6 +39,7 @@ export const listAppVars = writable({});
 export const storeCacheSize = writable({});
 export const storeUsersList = writable({});
 export const storeCountResponseStatusCode = writable({});
+export const storeEndpointOnRequest = writable({});
 
 export const formatJsonForHtmlCode = (/** @type {any} */ json) => {
 	return JSON.stringify(json, null, 2).replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;');
@@ -198,7 +201,54 @@ export const getCacheSize = async (app_name, token) => {
 			});
 
 			let cache_list = await get_list_cache.json();
-			storeCacheSize.set(cache_list);
+			//	storeCacheSize.set(cache_list);
+			console.log('>>>>>> Cache size', cache_list);
+		}
+	} catch (error) {
+		console.trace(error);
+	}
+};
+
+export const getInternalAppMetrics = async (app_name, token) => {
+	let uf = new uFetch();
+
+	try {
+		if (app_name) {
+			let get_list_metrics = await uf.GET({
+				url: url_paths.getInternalAppMetrics,
+				data: { appName: app_name }
+			});
+
+			let metrics_list = await get_list_metrics.json();
+
+			if (Array.isArray(metrics_list)) {
+				let data_size = {};
+				let data_statusCode = {};
+				for (let i = 0; i < metrics_list.length; i++) {
+					//console.log('Iteration number: ' + i);
+					data_size[metrics_list[i].idendpoint] = metrics_list[i].cache_size;
+					data_statusCode[metrics_list[i].idendpoint] = metrics_list[i].statusCode;
+				} /*
+				let data_size = metrics_list.map((m) => {
+					return { idendpoint: m.idendpoint, cache_size: m.cache_size };
+				});
+				*/
+				//console.log(data_size);
+				storeCacheSize.set(data_size);
+				storeCountResponseStatusCode.set(data_statusCode);
+			}
+
+			//storeCacheSize.set(cache_list);
+		//	console.log('>>>>>> Metrics ', metrics_list);
+
+			/*
+			storeCacheSize.update((value) => {
+				//alert('++++++++++++ '+JSON.stringify(m.data));
+				value[m.data.idendpoint] = m.data.cache_size;
+				//	console.log("++++++ Actualizando datos de la app por evento websocket", value);
+				return value;
+			});
+			*/
 		}
 	} catch (error) {
 		console.trace(error);
@@ -466,7 +516,7 @@ export const listEnv = {
 	prd: {
 		color: ' has-text-success ',
 		background: 'success',
-		icon: ' fa-solid fa-gear fa-spin ',
+		icon: ' fa-solid fa-check ',
 		label: 'Production'
 	},
 	qa: {
