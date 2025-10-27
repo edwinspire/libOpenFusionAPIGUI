@@ -26,9 +26,11 @@ export const url_paths = {
 	serverAPIVersion: host + '/server/version',
 	apiDoc: host + '/api/system/api/handler/documentation/prd',
 	wsEndpointEvents: host + '/ws/system/websocket/endpoint/prd',
-	getInternalAppMetrics: host + '/api/system/app/internal/metrics/prd'
+	getInternalAppMetrics: host + '/api/system/app/internal/metrics/prd',
+	getLogsRecordsPerMinute: host + '/api/system/system/log/recordsperminute/prd'
 };
 //
+
 export const userStore = writable({});
 export const listMethodStore = writable({});
 export const listHandlerStore = writable({});
@@ -39,7 +41,8 @@ export const listAppVars = writable({});
 export const storeCacheSize = writable({});
 export const storeUsersList = writable({});
 export const storeCountResponseStatusCode = writable({});
-export const storeEndpointOnRequest = writable({});
+export const storeEndpointOnStart = writable({});
+export const storeEndpointOnComplete = writable({});
 
 export const formatJsonForHtmlCode = (/** @type {any} */ json) => {
 	return JSON.stringify(json, null, 2).replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;');
@@ -61,6 +64,24 @@ export const getListUsers = async (/** @type {string} */ token) => {
 	} catch (error) {
 		console.error(error);
 		storeUsersList.set([]);
+	}
+};
+
+export const getLogsRecordsPerMinute = async (options, token) => {
+	let uf = new uFetch();
+
+	try {
+		if (options) {
+			let get_list_metrics = await uf.GET({
+				url: url_paths.getLogsRecordsPerMinute,
+				data: options
+			});
+
+			let metrics_list = await get_list_metrics.json();
+			return metrics_list;
+		}
+	} catch (error) {
+		console.trace(error);
 	}
 };
 
@@ -239,7 +260,7 @@ export const getInternalAppMetrics = async (app_name, token) => {
 			}
 
 			//storeCacheSize.set(cache_list);
-		//	console.log('>>>>>> Metrics ', metrics_list);
+			//	console.log('>>>>>> Metrics ', metrics_list);
 
 			/*
 			storeCacheSize.update((value) => {
@@ -459,6 +480,23 @@ export const getCountStatusCode = async (app_name, token) => {
 		}
 	} catch (error) {
 		console.error(error);
+	}
+};
+
+export const getLogs = async (options, token) => {
+	let uf = new uFetch();
+	//uf.setBearerAuthorization(token);
+	try {
+		let get_list = await uf.GET({
+			url: url_paths.getLogs,
+			data: options
+		});
+
+		let list = await get_list.json();
+		return list;
+	} catch (error) {
+		console.error(error);
+		return [];
 	}
 };
 

@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { listEnv } from '../utils.js';
-	import { storeEndpointOnRequest } from '../utils.js';
+	import { storeEndpointOnStart } from '../utils.js';
 
 	let { value = $bindable(), row = $bindable() } = $props();
 	let isRunning = $state(false);
@@ -9,14 +9,14 @@
 
 	onMount(() => {
 		onMount(() => {
-			storeEndpointOnRequest.subscribe((data) => {
+			storeEndpointOnStart.subscribe((data) => {
 				//console.log(":::::> ", data);
 				if (row && row.idendpoint == data) {
 					isRunning = true;
 					clearTimeout(timeoutIsRunning);
 					timeoutIsRunning = setTimeout(() => {
 						isRunning = false;
-					}, 1500);
+					}, 2000);
 				}
 			});
 		});
@@ -26,7 +26,7 @@
 <td>
 	{#if listEnv && row?.environment && listEnv[row.environment]}
 		<span class="icon-text">
-			<span class="icon {isRunning ? ' has-text-success ' : ' has-text-grey-dark '}">
+			<span class="icon {isRunning ? ' has-text-success ' : ' has-text-black-ter '}">
 				<i class="fa-solid fa-gear {isRunning ? ' fa-spin ' : ''}"></i>
 			</span>
 			<span class="icon {listEnv[row.environment].color}">

@@ -9,14 +9,35 @@
 	onMount(() => {
 		//	setCSS(value);
 	});
-</script>
 
-<td>
-	<SelectAccess
+	/*
+<SelectAccess
 		options={listAccessMethod}
 		bind:option={value}
 		onselect={(e) => {
 			console.log('Cambia', e, value);
 		}}
 	/>
+*/
+</script>
+
+<td>
+	
+	<div class="tags has-addons">
+		{#if value == 0}
+			<span class="tag is-success"
+				><span class="icon">
+					<i class="fa-solid fa-lock-open"></i>
+				</span></span
+			>
+			<span class="tag ">Public</span>
+		{:else}
+			<span class="tag is-danger"
+				><span class="icon">
+					<i class="fa-solid fa-lock"></i>
+				</span></span
+			>
+			<span class="tag">Private</span>
+		{/if}
+	</div>
 </td>

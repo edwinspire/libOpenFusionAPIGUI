@@ -9,6 +9,7 @@ import "prettier/plugins/estree.mjs";
 import "prettier/plugins/html.mjs";
 import "prettier-plugin-sql";
 import "marked";
+import "echarts";
 import { w as writable } from "../../chunks/index.js";
 const PUBLIC_API_SERVER_HOST = "http://localhost:3000";
 validateBaseUrl(PUBLIC_API_SERVER_HOST);
@@ -85,7 +86,7 @@ function Notifications($$renderer, $$props) {
     $$renderer2.push(`<!--]--></div>`);
   });
 }
-const version = "1.1.8";
+const version = "1.1.9";
 function Login($$renderer, $$props) {
   $$renderer.component(($$renderer2) => {
     let username = "";

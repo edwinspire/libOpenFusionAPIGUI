@@ -26,10 +26,10 @@
 	// Obtener la fecha restándole 24 horas
 	const nowMinus24 = now.minus({ hours: 24 });
 	const start = nowMinus24.toFormat("yyyy-MM-dd'T'HH:mm");
-
+// TODO: Está desactivado hasta ver como realizar correctamente la consulta al log
 	let active_tab = $state(0);
 	let requestData = $state({
-		url: url_paths.getLogs,
+		//url: url_paths.getLogs,
 		params: {
 			startDate: start,
 			endDate: formattedNow,

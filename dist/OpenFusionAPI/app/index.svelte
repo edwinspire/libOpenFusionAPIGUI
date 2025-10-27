@@ -24,7 +24,9 @@
 		createEndpoint,
 		storeCacheSize,
 		getInternalAppMetrics,
-		storeEndpointOnRequest
+		storeEndpointOnStart,
+		storeEndpointOnComplete,
+		getLogs
 	} from '../utils.js';
 	import CellMethod from './cellMethod.svelte';
 	import CellAccess from './cellAccess.svelte';
@@ -38,6 +40,7 @@
 	import { Notifications } from '@edwinspire/svelte-components';
 	import IntervalTasks from './interval_tasks/index.svelte';
 	import cellMCPTool from './cellMCPTool.svelte';
+	import Dashboard from './widgets/dashboard.svelte';
 
 	let notify = new Notifications();
 
@@ -157,6 +160,13 @@
 
 	let tabs_main = $state([
 		{
+			label: 'Dashboard',
+			classIcon: ' fa-solid fa-chart-line ',
+			alias: 'dashboard',
+			isActive: true,
+			component: tab_dashboard
+		},
+		{
 			label: 'Endpoints',
 			classIcon: 'fa-solid fa-globe',
 			alias: 'endpoints',
@@ -229,7 +239,7 @@
 				environment_list = [];
 			}
 
-			console.log('environment_list >>>>>> ', environment_list);
+			//console.log('environment_list >>>>>> ', environment_list);
 		} catch (error) {
 			notify.push({ message: error.message, color: 'danger' });
 			//alert(error.message);
@@ -308,7 +318,20 @@
 
 			setTimeout(async () => {
 				await getInternalAppMetrics(app.app, $userStore.token);
-			}, 5000);
+			}, 1000);
+
+			setTimeout(async () => {
+				let datalog = await getLogs({ idapp: app.idapp, last_hours: 12, limit: 999999 });
+				let new_log_data = datalog.map((log) => {
+					return {
+						idapp: log['idapp'],
+						dateTime: log.timestamp,
+						responseTime: log.response_time
+					};
+				});
+
+				storeEndpointOnComplete.set(new_log_data);
+			}, 500);
 
 			//console.log('>>>>>>>>>>>>>>>>>>', app.vars);
 
@@ -465,7 +488,11 @@
 					//cacheSizeState[m.data.idendpoint] = m.data.cache_size;
 					//console.log('++++++ Actualizando datos de la app por evento websocket', m, cacheSizeState);
 				} else if (m && m.event_name == 'request_completed') {
-					console.log('> MESSAGE ', m);
+					//console.log('> MESSAGE ', m);
+					let data1 = m.data;
+					data1.dateTime = m.timestamp;
+
+					storeEndpointOnComplete.set(data1);
 					storeCountResponseStatusCode.update((value) => {
 						//alert('++++++++++++ '+JSON.stringify(m.data));
 						//let new_value = value[m.data.idendpoint][m.data.statusCode] + 1;
@@ -483,7 +510,7 @@
 				} else if (m && m.event_name == 'request_start') {
 					//
 					//console.log('zzzzzzzzz ', m.data);
-					storeEndpointOnRequest.set(m.data?.idendpoint);
+					storeEndpointOnStart.set(m.data?.idendpoint);
 				}
 				//storeCacheSize.get()
 				//storeCacheSize.set(cache_list);
@@ -598,6 +625,12 @@
 			</div>
 		</div>
 	</div>
+{/snippet}
+
+{#snippet tab_dashboard()}
+	{#if app && app.idapp}
+		<Dashboard bind:idapp={app.idapp}></Dashboard>
+	{/if}
 {/snippet}
 
 {#snippet tab_descrip()}

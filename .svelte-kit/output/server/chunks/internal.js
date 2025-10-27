@@ -1,6 +1,6 @@
-import { H as HYDRATION_ERROR, C as COMMENT_NODE, a as HYDRATION_END, b as HYDRATION_START, c as HYDRATION_START_ELSE, B as BOUNDARY_EFFECT, E as ERROR_VALUE, d as EFFECT_RAN, e as CLEAN, I as INERT, f as EFFECT, g as BLOCK_EFFECT, D as DIRTY, h as BRANCH_EFFECT, R as ROOT_EFFECT, M as MAYBE_DIRTY, i as DESTROYED, j as DERIVED, A as ASYNC, k as EFFECT_TRANSPARENT, l as EFFECT_PRESERVED, U as UNOWNED, m as INSPECT_EFFECT, S as STATE_SYMBOL, n as UNINITIALIZED, o as HEAD_EFFECT, p as STALE_REACTION, q as RENDER_EFFECT, r as USER_EFFECT, s as DISCONNECTED, t as REACTION_IS_UPDATING, u as is_passive_event, L as LEGACY_PROPS, v as render } from "./index2.js";
+import { H as HYDRATION_ERROR, C as COMMENT_NODE, a as HYDRATION_END, b as HYDRATION_START, c as HYDRATION_START_ELSE, B as BOUNDARY_EFFECT, E as ERROR_VALUE, d as EFFECT_RAN, e as CLEAN, I as INERT, f as EFFECT, g as BLOCK_EFFECT, D as DIRTY, h as BRANCH_EFFECT, R as ROOT_EFFECT, M as MAYBE_DIRTY, i as DESTROYED, j as DERIVED, A as ASYNC, k as EFFECT_TRANSPARENT, l as EFFECT_PRESERVED, U as UNOWNED, W as WAS_MARKED, m as EAGER_EFFECT, S as STATE_SYMBOL, n as UNINITIALIZED, o as HEAD_EFFECT, p as STALE_REACTION, q as RENDER_EFFECT, r as USER_EFFECT, s as DISCONNECTED, t as REACTION_IS_UPDATING, u as is_passive_event, L as LEGACY_PROPS, v as render } from "./index2.js";
 import { D as DEV } from "./environment.js";
-import { r as run_all, d as define_property, a as deferred, s as safe_equals, e as equals, o as object_prototype, b as array_prototype, g as get_descriptor, c as get_prototype_of, i as is_array, f as is_extensible, h as index_of, j as array_from, k as setContext } from "./context.js";
+import { r as run_all, d as deferred, s as safe_equals, e as equals, o as object_prototype, a as array_prototype, g as get_descriptor, b as get_prototype_of, i as is_array, c as is_extensible, f as index_of, h as define_property, j as array_from, k as setContext } from "./context.js";
 import "clsx";
 let public_env = {};
 function set_private_env(environment) {
@@ -109,6 +109,7 @@ function set_component_context(context) {
 function push(props, runes = false, fn) {
   component_context = {
     p: component_context,
+    i: false,
     c: null,
     e: null,
     s: props,
@@ -128,6 +129,7 @@ function pop(component) {
       create_user_effect(fn);
     }
   }
+  context.i = true;
   component_context = context.p;
   return (
     /** @type {T} */
@@ -157,7 +159,6 @@ function flush_tasks() {
     run_micro_tasks();
   }
 }
-const adjustments = /* @__PURE__ */ new WeakMap();
 function handle_error(error) {
   var effect = active_effect;
   if (effect === null) {
@@ -166,9 +167,6 @@ function handle_error(error) {
   }
   if ((effect.f & EFFECT_RAN) === 0) {
     if ((effect.f & BOUNDARY_EFFECT) === 0) {
-      if (!effect.parent && error instanceof Error) {
-        apply_adjustments(error);
-      }
       throw error;
     }
     effect.b.error(error);
@@ -188,21 +186,7 @@ function invoke_error_boundary(error, effect) {
     }
     effect = effect.parent;
   }
-  if (error instanceof Error) {
-    apply_adjustments(error);
-  }
   throw error;
-}
-function apply_adjustments(error) {
-  const adjusted = adjustments.get(error);
-  if (adjusted) {
-    define_property(error, "message", {
-      value: adjusted.message
-    });
-    define_property(error, "stack", {
-      value: adjusted.stack
-    });
-  }
 }
 const batches = /* @__PURE__ */ new Set();
 let current_batch = null;
@@ -225,13 +209,18 @@ class Batch {
    * They keys of this map are identical to `this.#current`
    * @type {Map<Source, any>}
    */
-  #previous = /* @__PURE__ */ new Map();
+  previous = /* @__PURE__ */ new Map();
   /**
    * When the batch is committed (and the DOM is updated), we need to remove old branches
    * and append new ones by calling the functions added inside (if/each/key/etc) blocks
    * @type {Set<() => void>}
    */
-  #callbacks = /* @__PURE__ */ new Set();
+  #commit_callbacks = /* @__PURE__ */ new Set();
+  /**
+   * If a fork is discarded, we need to destroy any effects that are no longer needed
+   * @type {Set<(batch: Batch) => void>}
+   */
+  #discard_callbacks = /* @__PURE__ */ new Set();
   /**
    * The number of async effects that are currently in flight
    */
@@ -262,6 +251,7 @@ class Batch {
    * @type {Set<Effect>}
    */
   skipped_effects = /* @__PURE__ */ new Set();
+  is_fork = false;
   /**
    *
    * @param {Effect[]} root_effects
@@ -279,8 +269,10 @@ class Batch {
     for (const root2 of root_effects) {
       this.#traverse_effect_tree(root2, target);
     }
-    this.#resolve();
-    if (this.#blocking_pending > 0) {
+    if (!this.is_fork) {
+      this.#resolve();
+    }
+    if (this.#blocking_pending > 0 || this.is_fork) {
       this.#defer_effects(target.effects);
       this.#defer_effects(target.render_effects);
       this.#defer_effects(target.block_effects);
@@ -361,8 +353,8 @@ class Batch {
    * @param {any} value
    */
   capture(source2, value) {
-    if (!this.#previous.has(source2)) {
-      this.#previous.set(source2, value);
+    if (!this.previous.has(source2)) {
+      this.previous.set(source2, value);
     }
     this.current.set(source2, source2.v);
     batch_values?.set(source2, source2.v);
@@ -375,14 +367,14 @@ class Batch {
     batch_values = null;
   }
   flush() {
+    this.activate();
     if (queued_root_effects.length > 0) {
-      this.activate();
       flush_effects();
       if (current_batch !== null && current_batch !== this) {
         return;
       }
-    } else {
-      this.#resolve();
+    } else if (this.#pending === 0) {
+      this.process([]);
     }
     this.deactivate();
     for (const update of effect_pending_updates) {
@@ -393,10 +385,14 @@ class Batch {
       }
     }
   }
+  discard() {
+    for (const fn of this.#discard_callbacks) fn(this);
+    this.#discard_callbacks.clear();
+  }
   #resolve() {
     if (this.#blocking_pending === 0) {
-      for (const fn of this.#callbacks) fn();
-      this.#callbacks.clear();
+      for (const fn of this.#commit_callbacks) fn();
+      this.#commit_callbacks.clear();
     }
     if (this.#pending === 0) {
       this.#commit();
@@ -404,7 +400,7 @@ class Batch {
   }
   #commit() {
     if (batches.size > 1) {
-      this.#previous.clear();
+      this.previous.clear();
       var previous_batch_values = batch_values;
       var is_earlier = true;
       var dummy_target = {
@@ -435,8 +431,10 @@ class Batch {
         }
         const others = [...batch.current.keys()].filter((s) => !this.current.has(s));
         if (others.length > 0) {
+          const marked = /* @__PURE__ */ new Set();
+          const checked = /* @__PURE__ */ new Map();
           for (const source2 of sources) {
-            mark_effects(source2, others);
+            mark_effects(source2, others, marked, checked);
           }
           if (queued_root_effects.length > 0) {
             current_batch = batch;
@@ -471,6 +469,9 @@ class Batch {
   decrement(blocking) {
     this.#pending -= 1;
     if (blocking) this.#blocking_pending -= 1;
+    this.revive();
+  }
+  revive() {
     for (const e of this.#dirty_effects) {
       set_signal_status(e, DIRTY);
       schedule_effect(e);
@@ -484,8 +485,12 @@ class Batch {
     this.flush();
   }
   /** @param {() => void} fn */
-  add_callback(fn) {
-    this.#callbacks.add(fn);
+  oncommit(fn) {
+    this.#commit_callbacks.add(fn);
+  }
+  /** @param {(batch: Batch) => void} fn */
+  ondiscard(fn) {
+    this.#discard_callbacks.add(fn);
   }
   settled() {
     return (this.#deferred ??= deferred()).promise;
@@ -608,7 +613,9 @@ function flush_queued_effects(effects) {
   }
   eager_block_effects = null;
 }
-function mark_effects(value, sources) {
+function mark_effects(value, sources, marked, checked) {
+  if (marked.has(value)) return;
+  marked.add(value);
   if (value.reactions !== null) {
     for (const reaction of value.reactions) {
       const flags2 = reaction.f;
@@ -616,9 +623,12 @@ function mark_effects(value, sources) {
         mark_effects(
           /** @type {Derived} */
           reaction,
-          sources
+          sources,
+          marked,
+          checked
         );
-      } else if ((flags2 & (ASYNC | BLOCK_EFFECT)) !== 0 && depends_on(reaction, sources)) {
+      } else if ((flags2 & (ASYNC | BLOCK_EFFECT)) !== 0 && (flags2 & DIRTY) === 0 && // we may have scheduled this one already
+      depends_on(reaction, sources, checked)) {
         set_signal_status(reaction, DIRTY);
         schedule_effect(
           /** @type {Effect} */
@@ -628,7 +638,9 @@ function mark_effects(value, sources) {
     }
   }
 }
-function depends_on(reaction, sources) {
+function depends_on(reaction, sources, checked) {
+  const depends = checked.get(reaction);
+  if (depends !== void 0) return depends;
   if (reaction.deps !== null) {
     for (const dep of reaction.deps) {
       if (sources.includes(dep)) {
@@ -637,12 +649,19 @@ function depends_on(reaction, sources) {
       if ((dep.f & DERIVED) !== 0 && depends_on(
         /** @type {Derived} */
         dep,
-        sources
+        sources,
+        checked
       )) {
+        checked.set(
+          /** @type {Derived} */
+          dep,
+          true
+        );
         return true;
       }
     }
   }
+  checked.set(reaction, false);
   return false;
 }
 function schedule_effect(signal) {
@@ -712,6 +731,8 @@ class Boundary {
   #failed_effect = null;
   /** @type {DocumentFragment | null} */
   #offscreen_fragment = null;
+  /** @type {TemplateNode | null} */
+  #pending_anchor = null;
   #local_pending_count = 0;
   #pending_count = 0;
   #is_creating_fallback = false;
@@ -762,8 +783,9 @@ class Boundary {
           this.#hydrate_resolved_content();
         }
       } else {
+        var anchor = this.#get_anchor();
         try {
-          this.#main_effect = branch(() => children(this.#anchor));
+          this.#main_effect = branch(() => children(anchor));
         } catch (error) {
           this.error(error);
         }
@@ -773,6 +795,9 @@ class Boundary {
           this.#pending = false;
         }
       }
+      return () => {
+        this.#pending_anchor?.remove();
+      };
     }, flags);
     if (hydrating) {
       this.#anchor = hydrate_node;
@@ -793,9 +818,10 @@ class Boundary {
     }
     this.#pending_effect = branch(() => pending(this.#anchor));
     Batch.enqueue(() => {
+      var anchor = this.#get_anchor();
       this.#main_effect = this.#run(() => {
         Batch.ensure();
-        return branch(() => this.#children(this.#anchor));
+        return branch(() => this.#children(anchor));
       });
       if (this.#pending_count > 0) {
         this.#show_pending_snippet();
@@ -810,6 +836,15 @@ class Boundary {
         this.#pending = false;
       }
     });
+  }
+  #get_anchor() {
+    var anchor = this.#anchor;
+    if (this.#pending) {
+      this.#pending_anchor = create_text();
+      this.#anchor.before(this.#pending_anchor);
+      anchor = this.#pending_anchor;
+    }
+    return anchor;
   }
   /**
    * Returns `true` if the effect exists inside a boundary whose pending snippet is shown
@@ -849,6 +884,10 @@ class Boundary {
     );
     if (this.#main_effect !== null) {
       this.#offscreen_fragment = document.createDocumentFragment();
+      this.#offscreen_fragment.append(
+        /** @type {TemplateNode} */
+        this.#pending_anchor
+      );
       move_effect(this.#main_effect, this.#offscreen_fragment);
     }
     if (this.#pending_effect === null) {
@@ -969,6 +1008,7 @@ class Boundary {
     if (failed) {
       queue_micro_task(() => {
         this.#failed_effect = this.#run(() => {
+          Batch.ensure();
           this.#is_creating_fallback = true;
           try {
             return branch(() => {
@@ -1024,6 +1064,7 @@ function execute_derived(derived) {
   set_active_effect(get_derived_parent_effect(derived));
   {
     try {
+      derived.f &= ~WAS_MARKED;
       destroy_derived_effects(derived);
       value = update_reaction(derived);
     } finally {
@@ -1048,7 +1089,9 @@ function update_derived(derived) {
     set_signal_status(derived, status);
   }
 }
+let eager_effects = /* @__PURE__ */ new Set();
 const old_values = /* @__PURE__ */ new Map();
+let eager_effects_deferred = false;
 function source(v, stack) {
   var signal = {
     f: 0,
@@ -1078,7 +1121,7 @@ function mutable_source(initial_value, immutable = false, trackable = true) {
 function set(source2, value, should_proxy = false) {
   if (active_reaction !== null && // since we are untracking the function inside `$inspect.with` we need to add this check
   // to ensure we error if state is set inside an inspect effect
-  (!untracking || (active_reaction.f & INSPECT_EFFECT) !== 0) && is_runes() && (active_reaction.f & (DERIVED | BLOCK_EFFECT | ASYNC | INSPECT_EFFECT)) !== 0 && !current_sources?.includes(source2)) {
+  (!untracking || (active_reaction.f & EAGER_EFFECT) !== 0) && is_runes() && (active_reaction.f & (DERIVED | BLOCK_EFFECT | ASYNC | EAGER_EFFECT)) !== 0 && !current_sources?.includes(source2)) {
     state_unsafe_mutation();
   }
   let new_value = should_proxy ? proxy(value) : value;
@@ -1113,8 +1156,24 @@ function internal_set(source2, value) {
         untracked_writes.push(source2);
       }
     }
+    if (!batch.is_fork && eager_effects.size > 0 && !eager_effects_deferred) {
+      flush_eager_effects();
+    }
   }
   return value;
+}
+function flush_eager_effects() {
+  eager_effects_deferred = false;
+  const inspects = Array.from(eager_effects);
+  for (const effect of inspects) {
+    if ((effect.f & CLEAN) !== 0) {
+      set_signal_status(effect, MAYBE_DIRTY);
+    }
+    if (is_dirty(effect)) {
+      update_effect(effect);
+    }
+  }
+  eager_effects.clear();
 }
 function increment(source2) {
   set(source2, source2.v + 1);
@@ -1131,11 +1190,14 @@ function mark_reactions(signal, status) {
       set_signal_status(reaction, status);
     }
     if ((flags2 & DERIVED) !== 0) {
-      mark_reactions(
-        /** @type {Derived} */
-        reaction,
-        MAYBE_DIRTY
-      );
+      if ((flags2 & WAS_MARKED) === 0) {
+        reaction.f |= WAS_MARKED;
+        mark_reactions(
+          /** @type {Derived} */
+          reaction,
+          MAYBE_DIRTY
+        );
+      }
     } else if (not_dirty) {
       if ((flags2 & BLOCK_EFFECT) !== 0) {
         if (eager_block_effects !== null) {
@@ -1441,6 +1503,9 @@ function create_effect(type, fn, sync, push2 = true) {
     if (sync && e.deps === null && e.teardown === null && e.nodes_start === null && e.first === e.last && // either `null`, or a singular child
     (e.f & EFFECT_PRESERVED) === 0) {
       e = e.first;
+      if ((type & BLOCK_EFFECT) !== 0 && (type & EFFECT_TRANSPARENT) !== 0 && e !== null) {
+        e.f |= EFFECT_TRANSPARENT;
+      }
     }
     if (e !== null) {
       e.parent = parent;
@@ -1614,7 +1679,10 @@ function pause_children(effect, transitions, local) {
   var child = effect.first;
   while (child !== null) {
     var sibling = child.next;
-    var transparent = (child.f & EFFECT_TRANSPARENT) !== 0 || (child.f & BRANCH_EFFECT) !== 0;
+    var transparent = (child.f & EFFECT_TRANSPARENT) !== 0 || // If this is a branch effect without a block effect parent,
+    // it means the parent block effect was pruned. In that case,
+    // transparency information was transferred to the branch effect.
+    (child.f & BRANCH_EFFECT) !== 0 && (effect.f & BLOCK_EFFECT) !== 0;
     pause_children(child, transitions, transparent ? local : false);
     child = sibling;
   }
@@ -1682,6 +1750,9 @@ function is_dirty(reaction) {
   if ((flags2 & MAYBE_DIRTY) !== 0) {
     var dependencies = reaction.deps;
     var is_unowned = (flags2 & UNOWNED) !== 0;
+    if (flags2 & DERIVED) {
+      reaction.f &= ~WAS_MARKED;
+    }
     if (dependencies !== null) {
       var i;
       var dependency;
@@ -2080,12 +2151,7 @@ function handle_event_propagation(event) {
         current_target.disabled || // DOM could've been updated already by the time this is reached, so we check this as well
         // -> the target could not have been disabled because it emits the event in the first place
         event.target === current_target)) {
-          if (is_array(delegated)) {
-            var [fn, ...data] = delegated;
-            fn.apply(current_target, [event, ...data]);
-          } else {
-            delegated.call(current_target, event);
-          }
+          delegated.call(current_target, event);
         }
       } catch (error) {
         if (throw_error) {
@@ -2563,7 +2629,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "tcxrwy"
+  version_hash: "hv27lo"
 };
 async function get_hooks() {
   let handle;
