@@ -117,6 +117,7 @@ declare module '$env/static/private' {
 	export const PYTHONSTARTUP: string;
 	export const PYTHON_BASIC_REPL: string;
 	export const QIP18168: string;
+	export const QIP19440: string;
 	export const SHELL: string;
 	export const SHLVL: string;
 	export const SSH_ASKPASS: string;
@@ -262,6 +263,7 @@ declare module '$env/dynamic/private' {
 		PYTHONSTARTUP: string;
 		PYTHON_BASIC_REPL: string;
 		QIP18168: string;
+		QIP19440: string;
 		SHELL: string;
 		SHLVL: string;
 		SSH_ASKPASS: string;

@@ -28,7 +28,7 @@
 			}
 		}
 
-		console.log('Datavars', Datavars);
+	//	console.log('Datavars', Datavars);
 	});
 
 	function internalOnchange() {
