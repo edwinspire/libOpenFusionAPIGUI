@@ -1,19 +1,43 @@
 <script>
 	import { onMount } from 'svelte';
 	import { Chart } from '@edwinspire/svelte-components';
-	import { storeEndpointOnComplete, getLogsRecordsPerMinute } from '../../utils.js';
+	import {
+		storeEndpointOnComplete,
+		getLogsRecordsPerMinute,
+		storeServerDynamicInformation
+	} from '../../utils.js';
 	let { idapp = $bindable() } = $props();
-	let data_request = $state([]);
+	let data_request = $state();
 	let title = $derived.by(() => {
-		return 'Last Request: ' + data_request.length;
+		return 'Last Requests: ' + (data_request ? data_request.length : '0');
 	});
 
 	let data_logs_per_minute = $state([]);
+	let data_cpu = $state([]);
+	let data_memory = $state([]);
 
 	$effect(() => {
 		idapp;
 		onChangeIdApp();
 	});
+
+	function formatDataCPUUsage(data) {
+		let now = new Date();
+		return {
+			name: now.toISOString(),
+			value: [now, data.cpuUsage],
+			other: 'Nada'
+		};
+	}
+
+	function formatDataMemoryUsage(data) {
+		let now = new Date();
+		return {
+			name: now.toISOString(),
+			value: [now, data.memoryUsage],
+			other: 'Nada'
+		};
+	}
 
 	function formatData(data_endpoint) {
 		if (idapp && data_endpoint?.idapp == idapp) {
@@ -27,7 +51,7 @@
 	}
 
 	async function onChangeIdApp() {
-		console.log('Busca por el idapp ' + idapp);
+		//console.log('Busca por el idapp ' + idapp);
 		if (idapp) {
 			let data_log_pm = await getLogsRecordsPerMinute({ idapp: idapp, last_hours: 12 });
 			data_logs_per_minute = data_log_pm.map((dl) => {
@@ -44,15 +68,24 @@
 	}
 
 	onMount(() => {
+		storeServerDynamicInformation.subscribe((event) => {
+			//	console.log(event);
+			data_cpu.push(formatDataCPUUsage(event));
+			data_cpu = [...data_cpu];
+			data_memory.push(formatDataMemoryUsage(event));
+			data_memory = [...data_memory];
+		});
+
 		storeEndpointOnComplete.subscribe((event) => {
-			//console.log(':::::> ', event);
+			//	console.log(':::::> ', idapp, event);
 			if (idapp) {
 				if (Array.isArray(event)) {
 					data_request = event.map((log) => {
 						return formatData(log);
 					});
-				} else {
+				} else if (data_request) {
 					if (event?.idapp == idapp) {
+						//	console.log('Llega -------->');
 						data_request.push(formatData(event));
 						data_request = [...data_request];
 					}
@@ -62,11 +95,20 @@
 	});
 </script>
 
-<div class="columns">
-	<div class="column">
-		<Chart.TimeSeries bind:title bind:data={data_request}></Chart.TimeSeries>
+<div class="columns is-multiline is-mobile">
+	<div class="column is-half-desktop is-full-tablet">
+		{#if data_request}
+			<Chart.TimeSeries bind:title bind:data={data_request}></Chart.TimeSeries>
+		{/if}
 	</div>
-	<div class="column">
+
+	<div class="column is-half-desktop is-full-tablet">
+		<Chart.TimeSeries title="% CPU Usage" bind:data={data_cpu}></Chart.TimeSeries>
+	</div>
+	<div class="column is-half-desktop is-full-tablet">
+		<Chart.TimeSeries title="% Memory Usage" bind:data={data_memory}></Chart.TimeSeries>
+	</div>
+	<div class="column is-half-desktop is-full-tablet">
 		<Chart.TimeSeries title="Request per minute" bind:data={data_logs_per_minute}
 		></Chart.TimeSeries>
 	</div>

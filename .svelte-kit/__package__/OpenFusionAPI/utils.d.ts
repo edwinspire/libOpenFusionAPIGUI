@@ -24,7 +24,7 @@ export namespace url_paths {
     let deleteIntervalTasksByIdTask: string;
     let serverAPIVersion: string;
     let apiDoc: string;
-    let wsEndpointEvents: string;
+    let wsServerEvents: string;
     let getInternalAppMetrics: string;
     let getLogsRecordsPerMinute: string;
 }
@@ -40,6 +40,7 @@ export const storeUsersList: import("svelte/store").Writable<{}>;
 export const storeCountResponseStatusCode: import("svelte/store").Writable<{}>;
 export const storeEndpointOnStart: import("svelte/store").Writable<{}>;
 export const storeEndpointOnComplete: import("svelte/store").Writable<{}>;
+export const storeServerDynamicInformation: import("svelte/store").Writable<{}>;
 export function formatJsonForHtmlCode(json: any): string;
 export function getListUsers(token: string): Promise<void>;
 export function getLogsRecordsPerMinute(options: any, token: any): Promise<any>;

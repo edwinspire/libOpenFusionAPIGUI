@@ -25,7 +25,7 @@ export const url_paths = {
 	deleteIntervalTasksByIdTask: host + '/api/system/interval_tasks/delete/prd',
 	serverAPIVersion: host + '/server/version',
 	apiDoc: host + '/api/system/api/handler/documentation/prd',
-	wsEndpointEvents: host + '/ws/system/websocket/endpoint/prd',
+	wsServerEvents: host + '/ws/system/websocket/server/prd',
 	getInternalAppMetrics: host + '/api/system/app/internal/metrics/prd',
 	getLogsRecordsPerMinute: host + '/api/system/system/log/recordsperminute/prd'
 };
@@ -43,6 +43,7 @@ export const storeUsersList = writable({});
 export const storeCountResponseStatusCode = writable({});
 export const storeEndpointOnStart = writable({});
 export const storeEndpointOnComplete = writable({});
+export const storeServerDynamicInformation = writable({});
 
 export const formatJsonForHtmlCode = (/** @type {any} */ json) => {
 	return JSON.stringify(json, null, 2).replace(/\n/g, '<br/>').replace(/ /g, '&nbsp;');

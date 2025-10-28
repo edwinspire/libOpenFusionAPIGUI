@@ -26,7 +26,8 @@
 		getInternalAppMetrics,
 		storeEndpointOnStart,
 		storeEndpointOnComplete,
-		getLogs
+		getLogs,
+		storeServerDynamicInformation
 	} from '$lib/OpenFusionAPI/utils.js';
 	import CellMethod from '$lib/OpenFusionAPI/app/cellMethod.svelte';
 	import CellAccess from '$lib/OpenFusionAPI/app/cellAccess.svelte';
@@ -46,7 +47,7 @@
 
 	let idapp = $state(0);
 
-	const wsClient = new OpenFusionWebsocketClient(url_paths.wsEndpointEvents);
+	const wsClient = new OpenFusionWebsocketClient(url_paths.wsServerEvents);
 
 	let intervalGetDataApp;
 	let app_vars;
@@ -469,11 +470,11 @@
 		wsClient.connect();
 		wsClient.on('open', () => {
 			console.log('WebSocket connected');
-			wsClient.subscribe('/endpoint/events');
+			wsClient.subscribe('/server/events');
 		});
 
 		wsClient.on('message', (m) => {
-			//console.log('WebSocket message', m, app?.idapp);
+			//console.log('WebSocket message', m);
 			//alert('XXX WebSocket message: ' + JSON.stringify(m) + ' APP ID: ' + app?.idapp);
 			if (m && app && m.data?.idapp == app.idapp) {
 				//	alert('>>> Actualizando datos de la app por evento websocket: ' + JSON.stringify(m) + ' APP ID: ' + app?.idapp);
@@ -514,6 +515,11 @@
 				}
 				//storeCacheSize.get()
 				//storeCacheSize.set(cache_list);
+			} else if (m && m.event_name == 'system_information') {
+				//
+			//	console.log('zzzzzzzzz ', m.data);
+				storeServerDynamicInformation.set(m.data);
+				//storeEndpointOnStart.set(m.data?.idendpoint);
 			}
 			//respuestas = [...respuestas, m.detail];
 		});
