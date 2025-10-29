@@ -106,15 +106,15 @@
 		},
 
 		endpoint: { label: 'Endpoint', decorator: { component: cellPath } },
-		method: { decorator: { component: CellMethod }, label: 'Method' },
-		handler: { decorator: { component: cellHandler }, label: 'Handler' },
-		mcp: { decorator: { component: cellMCPTool }, label: 'MCP Tool' },
 		access: {
 			label: 'Access',
 			decorator: {
 				component: CellAccess
 			}
 		},
+		method: { decorator: { component: CellMethod }, label: 'Method' },
+		handler: { decorator: { component: cellHandler }, label: 'Handler' },
+		mcp: { decorator: { component: cellMCPTool }, label: 'MCP Tool' },
 
 		cache_time: { label: 'Cache Time', decorator: { component: cellCacheTime } },
 		ctrl: { hidden: true, label: 'Users' },
@@ -320,7 +320,7 @@
 			setTimeout(async () => {
 				await getInternalAppMetrics(app.app, $userStore.token);
 			}, 1000);
-
+			/*
 			setTimeout(async () => {
 				let datalog = await getLogs({ idapp: app.idapp, last_hours: 12, limit: 999999 });
 				let new_log_data = datalog.map((log) => {
@@ -333,6 +333,7 @@
 
 				storeEndpointOnComplete.set(new_log_data);
 			}, 500);
+			*/
 
 			//console.log('>>>>>>>>>>>>>>>>>>', app.vars);
 
@@ -510,14 +511,14 @@
 					});
 				} else if (m && m.event_name == 'request_start') {
 					//
-					//console.log('zzzzzzzzz ', m.data);
-					storeEndpointOnStart.set(m.data?.idendpoint);
+				//	console.log('request_start :::>  ', m.data);
+					storeEndpointOnStart.set({idendpoint: m.data?.idendpoint, ts: new Date()});
 				}
 				//storeCacheSize.get()
 				//storeCacheSize.set(cache_list);
 			} else if (m && m.event_name == 'system_information') {
 				//
-			//	console.log('zzzzzzzzz ', m.data);
+				//	console.log('zzzzzzzzz ', m.data);
 				storeServerDynamicInformation.set(m.data);
 				//storeEndpointOnStart.set(m.data?.idendpoint);
 			}

@@ -8,17 +8,16 @@
 	let timeoutIsRunning;
 
 	onMount(() => {
-		onMount(() => {
-			storeEndpointOnStart.subscribe((data) => {
-				//console.log(":::::> ", data);
-				if (row && row.idendpoint == data) {
-					isRunning = true;
-					clearTimeout(timeoutIsRunning);
-					timeoutIsRunning = setTimeout(() => {
-						isRunning = false;
-					}, 2000);
-				}
-			});
+		storeEndpointOnStart.subscribe((data) => {
+			//
+		//	console.log('CELL PATH :::::> ', data);
+			if (row && row.idendpoint == data.idendpoint) {
+				isRunning = true;
+				clearTimeout(timeoutIsRunning);
+				timeoutIsRunning = setTimeout(() => {
+					isRunning = false;
+				}, 5000);
+			}
 		});
 	});
 </script>
