@@ -7,14 +7,17 @@
 		storeServerDynamicInformation
 	} from '$lib/OpenFusionAPI/utils.js';
 	let { idapp = $bindable() } = $props();
-	let data_request = $state();
+	let data_request = $state([]);
+	/*
 	let title = $derived.by(() => {
 		return 'Last Requests: ' + (data_request ? data_request.length : '0');
 	});
-
+*/
 	let data_logs_per_minute = $state([]);
 	let data_cpu = $state([]);
 	let data_memory = $state([]);
+	let cpuUsage = $state();
+	let memoryUsage = $state();
 
 	$effect(() => {
 		idapp;
@@ -23,18 +26,20 @@
 
 	function formatDataCPUUsage(data) {
 		let now = new Date();
+		cpuUsage = data.cpuUsage;
 		return {
 			name: now.toISOString(),
-			value: [now, data.cpuUsage],
+			value: [now, cpuUsage],
 			other: 'Nada'
 		};
 	}
 
 	function formatDataMemoryUsage(data) {
 		let now = new Date();
+		memoryUsage = data.memoryUsage;
 		return {
 			name: now.toISOString(),
-			value: [now, data.memoryUsage],
+			value: [now, memoryUsage],
 			other: 'Nada'
 		};
 	}
@@ -97,16 +102,15 @@
 
 <div class="columns is-multiline is-mobile">
 	<div class="column is-half-desktop is-full-tablet">
+		<Chart.TimeSeries title="CPU Usage {cpuUsage}%" bind:data={data_cpu}></Chart.TimeSeries>
+	</div>
+	<div class="column is-half-desktop is-full-tablet">
+		<Chart.TimeSeries title="Memory Usage {memoryUsage}%" bind:data={data_memory}></Chart.TimeSeries>
+	</div>
+	<div class="column is-half-desktop is-full-tablet">
 		{#if data_request}
-			<Chart.TimeSeries bind:title bind:data={data_request}></Chart.TimeSeries>
+			<Chart.TimeSeries title="Requests" bind:data={data_request}></Chart.TimeSeries>
 		{/if}
-	</div>
-
-	<div class="column is-half-desktop is-full-tablet">
-		<Chart.TimeSeries title="% CPU Usage" bind:data={data_cpu}></Chart.TimeSeries>
-	</div>
-	<div class="column is-half-desktop is-full-tablet">
-		<Chart.TimeSeries title="% Memory Usage" bind:data={data_memory}></Chart.TimeSeries>
 	</div>
 	<div class="column is-half-desktop is-full-tablet">
 		<Chart.TimeSeries title="Request per minute" bind:data={data_logs_per_minute}
