@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import Login from './login/index.svelte';
 	import Main from './main/index.svelte';
+	import Application from './Application/index.svelte';
 	import {Notify} from "@edwinspire/svelte-components";
 
 	let page = 'login';
@@ -16,7 +17,7 @@
 <Notify></Notify>
 
 {#if page == 'main'}
-	<Main
+	<Application
 		onexit={() => {
 			page = 'login';
 		}}

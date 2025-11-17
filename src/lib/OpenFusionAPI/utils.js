@@ -571,3 +571,13 @@ export const listEnv = {
 		label: 'Development'
 	}
 };
+
+export const isNewApp = (idapp) => {
+	if (typeof idapp === Number || idapp === null) {
+		console.log('Basic Es nuevo', idapp);
+		return true;
+	} else {
+		console.log('Basic Cargar el ', idapp);
+		return false;
+	}
+};

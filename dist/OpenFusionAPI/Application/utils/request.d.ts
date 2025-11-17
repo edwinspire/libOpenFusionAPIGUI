@@ -1,0 +1,12 @@
+export function getEnvironmentList(token: any): Promise<any>;
+export function GetApp(idapp: any, token: any): Promise<any>;
+export function GetEndpointsByIdapp(idapp: any, token: any): Promise<any>;
+export function getListHandler(token: string): Promise<void>;
+export function getListMethods(token: string): Promise<void>;
+export function getHandlerDocs(handler: any, token: any): Promise<any>;
+export function getListFunction(token: string, appName: string): Promise<void>;
+export function clearCache(token: string, urls_clear: any): Promise<any>;
+export function getAppDocumentation(token: any, idapp: any, idendpoints: any): Promise<any>;
+export function getServerAPIVersion(token: any): Promise<any>;
+export function EndpointSave(endpoint: any, token: any): Promise<any>;
+export function getLogsRecordsPerMinute(options: any, token: any): Promise<any>;

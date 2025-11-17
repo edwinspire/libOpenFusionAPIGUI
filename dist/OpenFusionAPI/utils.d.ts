@@ -200,3 +200,4 @@ export namespace listEnv {
         export { label_12 as label };
     }
 }
+export function isNewApp(idapp: any): boolean;

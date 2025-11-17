@@ -1,4 +1,4 @@
-import { H as HYDRATION_ERROR, C as COMMENT_NODE, a as HYDRATION_END, b as HYDRATION_START, c as HYDRATION_START_ELSE, B as BOUNDARY_EFFECT, E as ERROR_VALUE, d as EFFECT_RAN, e as CLEAN, I as INERT, f as EFFECT, g as BLOCK_EFFECT, D as DIRTY, h as BRANCH_EFFECT, R as ROOT_EFFECT, M as MAYBE_DIRTY, i as DESTROYED, j as DERIVED, A as ASYNC, k as EFFECT_TRANSPARENT, l as EFFECT_PRESERVED, U as UNOWNED, W as WAS_MARKED, m as EAGER_EFFECT, S as STATE_SYMBOL, n as UNINITIALIZED, o as HEAD_EFFECT, p as STALE_REACTION, q as RENDER_EFFECT, r as USER_EFFECT, s as DISCONNECTED, t as REACTION_IS_UPDATING, u as is_passive_event, L as LEGACY_PROPS, v as render } from "./index2.js";
+import { H as HYDRATION_ERROR, C as COMMENT_NODE, a as HYDRATION_END, b as HYDRATION_START, c as HYDRATION_START_ELSE, B as BOUNDARY_EFFECT, E as ERROR_VALUE, d as EFFECT_RAN, e as CLEAN, I as INERT, f as EFFECT, g as BLOCK_EFFECT, D as DIRTY, h as DERIVED, W as WAS_MARKED, i as BRANCH_EFFECT, R as ROOT_EFFECT, M as MAYBE_DIRTY, j as DESTROYED, A as ASYNC, k as HEAD_EFFECT, l as EFFECT_TRANSPARENT, m as EFFECT_PRESERVED, n as CONNECTED, o as EAGER_EFFECT, S as STATE_SYMBOL, U as UNINITIALIZED, p as STALE_REACTION, q as RENDER_EFFECT, r as USER_EFFECT, s as REACTION_IS_UPDATING, t as is_passive_event, L as LEGACY_PROPS, u as render } from "./index2.js";
 import { D as DEV } from "./environment.js";
 import { r as run_all, d as deferred, s as safe_equals, e as equals, o as object_prototype, a as array_prototype, g as get_descriptor, b as get_prototype_of, i as is_array, c as is_extensible, f as index_of, h as define_property, j as array_from, k as setContext } from "./context.js";
 import "clsx";
@@ -191,7 +191,6 @@ function invoke_error_boundary(error, effect) {
 const batches = /* @__PURE__ */ new Set();
 let current_batch = null;
 let batch_values = null;
-let effect_pending_updates = /* @__PURE__ */ new Set();
 let queued_root_effects = [];
 let last_scheduled_effect = null;
 let is_flushing = false;
@@ -252,6 +251,9 @@ class Batch {
    */
   skipped_effects = /* @__PURE__ */ new Set();
   is_fork = false;
+  is_deferred() {
+    return this.is_fork || this.#blocking_pending > 0;
+  }
   /**
    *
    * @param {Effect[]} root_effects
@@ -272,7 +274,7 @@ class Batch {
     if (!this.is_fork) {
       this.#resolve();
     }
-    if (this.#blocking_pending > 0 || this.is_fork) {
+    if (this.is_deferred()) {
       this.#defer_effects(target.effects);
       this.#defer_effects(target.render_effects);
       this.#defer_effects(target.block_effects);
@@ -280,6 +282,7 @@ class Batch {
       current_batch = null;
       flush_queued_effects(target.render_effects);
       flush_queued_effects(target.effects);
+      this.#deferred?.resolve();
     }
     batch_values = null;
   }
@@ -343,7 +346,24 @@ class Batch {
     for (const e of effects) {
       const target = (e.f & DIRTY) !== 0 ? this.#dirty_effects : this.#maybe_dirty_effects;
       target.push(e);
+      this.#clear_marked(e.deps);
       set_signal_status(e, CLEAN);
+    }
+  }
+  /**
+   * @param {Value[] | null} deps
+   */
+  #clear_marked(deps) {
+    if (deps === null) return;
+    for (const dep of deps) {
+      if ((dep.f & DERIVED) === 0 || (dep.f & WAS_MARKED) === 0) {
+        continue;
+      }
+      dep.f ^= WAS_MARKED;
+      this.#clear_marked(
+        /** @type {Derived} */
+        dep.deps
+      );
     }
   }
   /**
@@ -356,13 +376,17 @@ class Batch {
     if (!this.previous.has(source2)) {
       this.previous.set(source2, value);
     }
-    this.current.set(source2, source2.v);
-    batch_values?.set(source2, source2.v);
+    if ((source2.f & ERROR_VALUE) === 0) {
+      this.current.set(source2, source2.v);
+      batch_values?.set(source2, source2.v);
+    }
   }
   activate() {
     current_batch = this;
+    this.apply();
   }
   deactivate() {
+    if (current_batch !== this) return;
     current_batch = null;
     batch_values = null;
   }
@@ -377,13 +401,6 @@ class Batch {
       this.process([]);
     }
     this.deactivate();
-    for (const update of effect_pending_updates) {
-      effect_pending_updates.delete(update);
-      update();
-      if (current_batch !== null) {
-        break;
-      }
-    }
   }
   discard() {
     for (const fn of this.#discard_callbacks) fn(this);
@@ -452,7 +469,6 @@ class Batch {
     }
     this.committed = true;
     batches.delete(this);
-    this.#deferred?.resolve();
   }
   /**
    *
@@ -669,7 +685,7 @@ function schedule_effect(signal) {
   while (effect.parent !== null) {
     effect = effect.parent;
     var flags2 = effect.f;
-    if (is_flushing && effect === active_effect && (flags2 & BLOCK_EFFECT) !== 0) {
+    if (is_flushing && effect === active_effect && (flags2 & BLOCK_EFFECT) !== 0 && (flags2 & HEAD_EFFECT) === 0) {
       return;
     }
     if ((flags2 & (ROOT_EFFECT | BRANCH_EFFECT)) !== 0) {
@@ -744,11 +760,6 @@ class Boundary {
    * @type {Source<number> | null}
    */
   #effect_pending = null;
-  #effect_pending_update = () => {
-    if (this.#effect_pending) {
-      internal_set(this.#effect_pending, this.#local_pending_count);
-    }
-  };
   #effect_pending_subscriber = createSubscriber(() => {
     this.#effect_pending = source(this.#local_pending_count);
     return () => {
@@ -929,7 +940,9 @@ class Boundary {
   update_pending_count(d) {
     this.#update_pending_count(d);
     this.#local_pending_count += d;
-    effect_pending_updates.add(this.#effect_pending_update);
+    if (this.#effect_pending) {
+      internal_set(this.#effect_pending, this.#local_pending_count);
+    }
   }
   get_effect_pending() {
     this.#effect_pending_subscriber();
@@ -1083,9 +1096,11 @@ function update_derived(derived) {
     return;
   }
   if (batch_values !== null) {
-    batch_values.set(derived, derived.v);
+    if (effect_tracking()) {
+      batch_values.set(derived, derived.v);
+    }
   } else {
-    var status = (skip_reaction || (derived.f & UNOWNED) !== 0) && derived.deps !== null ? MAYBE_DIRTY : CLEAN;
+    var status = (derived.f & CONNECTED) === 0 ? MAYBE_DIRTY : CLEAN;
     set_signal_status(derived, status);
   }
 }
@@ -1145,7 +1160,7 @@ function internal_set(source2, value) {
           source2
         );
       }
-      set_signal_status(source2, (source2.f & UNOWNED) === 0 ? CLEAN : MAYBE_DIRTY);
+      set_signal_status(source2, (source2.f & CONNECTED) !== 0 ? CLEAN : MAYBE_DIRTY);
     }
     source2.wv = increment_write_version();
     mark_reactions(source2, DIRTY);
@@ -1190,13 +1205,16 @@ function mark_reactions(signal, status) {
       set_signal_status(reaction, status);
     }
     if ((flags2 & DERIVED) !== 0) {
+      var derived = (
+        /** @type {Derived} */
+        reaction
+      );
+      batch_values?.delete(derived);
       if ((flags2 & WAS_MARKED) === 0) {
-        reaction.f |= WAS_MARKED;
-        mark_reactions(
-          /** @type {Derived} */
-          reaction,
-          MAYBE_DIRTY
-        );
+        if (flags2 & CONNECTED) {
+          reaction.f |= WAS_MARKED;
+        }
+        mark_reactions(derived, MAYBE_DIRTY);
       }
     } else if (not_dirty) {
       if ((flags2 & BLOCK_EFFECT) !== 0) {
@@ -1474,7 +1492,7 @@ function create_effect(type, fn, sync, push2 = true) {
     deps: null,
     nodes_start: null,
     nodes_end: null,
-    f: type | DIRTY,
+    f: type | DIRTY | CONNECTED,
     first: null,
     fn,
     last: null,
@@ -1738,7 +1756,6 @@ let update_version = read_version;
 function set_update_version(value) {
   update_version = value;
 }
-let skip_reaction = false;
 function increment_write_version() {
   return ++write_version;
 }
@@ -1747,39 +1764,15 @@ function is_dirty(reaction) {
   if ((flags2 & DIRTY) !== 0) {
     return true;
   }
+  if (flags2 & DERIVED) {
+    reaction.f &= ~WAS_MARKED;
+  }
   if ((flags2 & MAYBE_DIRTY) !== 0) {
     var dependencies = reaction.deps;
-    var is_unowned = (flags2 & UNOWNED) !== 0;
-    if (flags2 & DERIVED) {
-      reaction.f &= ~WAS_MARKED;
-    }
     if (dependencies !== null) {
-      var i;
-      var dependency;
-      var is_disconnected = (flags2 & DISCONNECTED) !== 0;
-      var is_unowned_connected = is_unowned && active_effect !== null && !skip_reaction;
       var length = dependencies.length;
-      if ((is_disconnected || is_unowned_connected) && (active_effect === null || (active_effect.f & DESTROYED) === 0)) {
-        var derived = (
-          /** @type {Derived} */
-          reaction
-        );
-        var parent = derived.parent;
-        for (i = 0; i < length; i++) {
-          dependency = dependencies[i];
-          if (is_disconnected || !dependency?.reactions?.includes(derived)) {
-            (dependency.reactions ??= []).push(derived);
-          }
-        }
-        if (is_disconnected) {
-          derived.f ^= DISCONNECTED;
-        }
-        if (is_unowned_connected && parent !== null && (parent.f & UNOWNED) === 0) {
-          derived.f ^= UNOWNED;
-        }
-      }
-      for (i = 0; i < length; i++) {
-        dependency = dependencies[i];
+      for (var i = 0; i < length; i++) {
+        var dependency = dependencies[i];
         if (is_dirty(
           /** @type {Derived} */
           dependency
@@ -1794,7 +1787,9 @@ function is_dirty(reaction) {
         }
       }
     }
-    if (!is_unowned || active_effect !== null && !skip_reaction) {
+    if ((flags2 & CONNECTED) !== 0 && // During time traveling we don't want to reset the status so that
+    // traversal of the graph in the other batches still happens
+    batch_values === null) {
       set_signal_status(reaction, CLEAN);
     }
   }
@@ -1833,7 +1828,6 @@ function update_reaction(reaction) {
   var previous_skipped_deps = skipped_deps;
   var previous_untracked_writes = untracked_writes;
   var previous_reaction = active_reaction;
-  var previous_skip_reaction = skip_reaction;
   var previous_sources = current_sources;
   var previous_component_context = component_context;
   var previous_untracking = untracking;
@@ -1843,7 +1837,6 @@ function update_reaction(reaction) {
   null;
   skipped_deps = 0;
   untracked_writes = null;
-  skip_reaction = (flags2 & UNOWNED) !== 0 && (untracking || !is_updating_effect || active_reaction === null);
   active_reaction = (flags2 & (BRANCH_EFFECT | ROOT_EFFECT)) === 0 ? reaction : null;
   current_sources = null;
   set_component_context(reaction.ctx);
@@ -1874,9 +1867,7 @@ function update_reaction(reaction) {
       } else {
         reaction.deps = deps = new_deps;
       }
-      if (!skip_reaction || // Deriveds that already have reactions can cleanup, so we still add them as reactions
-      (flags2 & DERIVED) !== 0 && /** @type {import('#client').Derived} */
-      reaction.reactions !== null) {
+      if (is_updating_effect && effect_tracking() && (reaction.f & CONNECTED) !== 0) {
         for (i = skipped_deps; i < deps.length; i++) {
           (deps[i].reactions ??= []).push(reaction);
         }
@@ -1918,7 +1909,6 @@ function update_reaction(reaction) {
     skipped_deps = previous_skipped_deps;
     untracked_writes = previous_untracked_writes;
     active_reaction = previous_reaction;
-    skip_reaction = previous_skip_reaction;
     current_sources = previous_sources;
     set_component_context(previous_component_context);
     untracking = previous_untracking;
@@ -1944,8 +1934,9 @@ function remove_reaction(signal, dependency) {
   // allows us to skip the expensive work of disconnecting and immediately reconnecting it
   (new_deps === null || !new_deps.includes(dependency))) {
     set_signal_status(dependency, MAYBE_DIRTY);
-    if ((dependency.f & (UNOWNED | DISCONNECTED)) === 0) {
-      dependency.f ^= DISCONNECTED;
+    if ((dependency.f & CONNECTED) !== 0) {
+      dependency.f ^= CONNECTED;
+      dependency.f &= ~WAS_MARKED;
     }
     destroy_derived_effects(
       /** @type {Derived} **/
@@ -2006,7 +1997,7 @@ function get(signal) {
             skipped_deps++;
           } else if (new_deps === null) {
             new_deps = [signal];
-          } else if (!skip_reaction || !new_deps.includes(signal)) {
+          } else if (!new_deps.includes(signal)) {
             new_deps.push(signal);
           }
         }
@@ -2020,25 +2011,16 @@ function get(signal) {
         }
       }
     }
-  } else if (is_derived && /** @type {Derived} */
-  signal.deps === null && /** @type {Derived} */
-  signal.effects === null) {
-    var derived = (
-      /** @type {Derived} */
-      signal
-    );
-    var parent = derived.parent;
-    if (parent !== null && (parent.f & UNOWNED) === 0) {
-      derived.f ^= UNOWNED;
-    }
   }
   if (is_destroying_effect) {
     if (old_values.has(signal)) {
       return old_values.get(signal);
     }
     if (is_derived) {
-      derived = /** @type {Derived} */
-      signal;
+      var derived = (
+        /** @type {Derived} */
+        signal
+      );
       var value = derived.v;
       if ((derived.f & CLEAN) === 0 && derived.reactions !== null || depends_on_old_values(derived)) {
         value = execute_derived(derived);
@@ -2055,14 +2037,29 @@ function get(signal) {
     if (is_dirty(derived)) {
       update_derived(derived);
     }
-  }
-  if (batch_values?.has(signal)) {
+    if (is_updating_effect && effect_tracking() && (derived.f & CONNECTED) === 0) {
+      reconnect(derived);
+    }
+  } else if (batch_values?.has(signal)) {
     return batch_values.get(signal);
   }
   if ((signal.f & ERROR_VALUE) !== 0) {
     throw signal.v;
   }
   return signal.v;
+}
+function reconnect(derived) {
+  if (derived.deps === null) return;
+  derived.f ^= CONNECTED;
+  for (const dep of derived.deps) {
+    (dep.reactions ??= []).push(derived);
+    if ((dep.f & DERIVED) !== 0 && (dep.f & CONNECTED) === 0) {
+      reconnect(
+        /** @type {Derived} */
+        dep
+      );
+    }
+  }
 }
 function depends_on_old_values(derived) {
   if (derived.v === UNINITIALIZED) return true;
@@ -2629,7 +2626,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "yiw1y0"
+  version_hash: "ohucly"
 };
 async function get_hooks() {
   let handle;

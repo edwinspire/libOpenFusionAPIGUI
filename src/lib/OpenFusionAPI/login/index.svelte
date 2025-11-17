@@ -1,13 +1,14 @@
 <script>
 	import uFetch from '@edwinspire/universal-fetch';
 	import { onMount } from 'svelte';
-	import { userStore, getListMethods, getListHandler, url_paths } from '$lib/OpenFusionAPI/utils.js';
+	import { getListMethods, getListHandler } from '$lib/OpenFusionAPI/Application/utils/request.js';
+	import {  url_paths } from '$lib/OpenFusionAPI/Application/utils/paths.js';
+	import { userStore } from '$lib/OpenFusionAPI/Application/utils/stores.js';
 	import logo from '$lib/OpenFusionAPI/img/favicon.png';
-	import { Notifications, Modal} from "@edwinspire/svelte-components";
+	import { Notifications, Modal } from '@edwinspire/svelte-components';
 	import { version } from '$lib/OpenFusionAPI/version.js';
 
-
-let noty = new Notifications();
+	let noty = new Notifications();
 	let { onlogin = () => {} } = $props();
 	let username = $state('');
 	let password = $state('');
@@ -28,6 +29,7 @@ let noty = new Notifications();
 				await getListMethods(data.token);
 				await getListHandler(data.token);
 
+
 				onlogin({
 					login: data.login
 				});
@@ -35,11 +37,11 @@ let noty = new Notifications();
 				//	alert('Invalid credentials');
 				processing.error = 'Invalid credentials';
 				processing.waiting = false;
-				noty.push({message: processing.error, color: 'danger'});
+				noty.push({ message: processing.error, color: 'danger' });
 			}
 		} catch (error) {
 			console.trace(error);
-			noty.push({message: error.message, color: 'danger'});
+			noty.push({ message: error.message, color: 'danger' });
 			processing.waiting = false;
 			processing.error = error.message;
 		}
@@ -47,7 +49,6 @@ let noty = new Notifications();
 
 	onMount(() => {});
 </script>
-
 
 <Modal show={true}>
 	<div class="box">
@@ -114,7 +115,6 @@ let noty = new Notifications();
 		{/if}
 	</div>
 </Modal>
-
 
 <style>
 	.t1 {
