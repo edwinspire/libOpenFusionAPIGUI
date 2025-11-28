@@ -3,6 +3,7 @@
 	import { EditorCode } from '@edwinspire/svelte-components';
 	import AppVarsSelector from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/app_vars_selector.svelte';
 
+	// Props (Svelte 5 Runes)
 	let {
 		freeTyping = $bindable(false),
 		placeholder = $bindable('$_VAR_NAME'),
@@ -14,67 +15,81 @@
 		onselect = () => {}
 	} = $props();
 
+	// Estado interno que representa el valor real del componente
+	let stateValue = $state(value);
+
+	// Estados derivados
 	let param_json = $state({});
 	let param_varname = $state('');
 	let use_var_app = $state(false);
-	let new_value;
-	let is_init = false;
 
-
+	// Se ejecuta cuando stateValue cambia
 	$effect(() => {
-		parseCode();
+		if (value) {
+			normalizeValue(value);
+		}
 	});
 
-	function parseCode() {
-		//	console.log('parseCode PARAMS SELECTOR', value, typeof value);
-		if (value == null) {
-			value = {};
-		}
+	// ------------------------------------------------------------
+	// Normaliza el valor recibido (JSON o variable)
+	// ------------------------------------------------------------
+	function normalizeValue(val) {
+		stateValue = val;
 
-		if (typeof value !== 'object') {
-			try {
-				param_json = JSON.parse(value);
-				use_var_app = false;
-			} catch (error) {
-				param_varname = value;
-				use_var_app = true;
-				console.warn(error, value);
-			}
-		} else {
-			param_json = value;
+		if (val == null) {
 			use_var_app = false;
+			param_json = {};
+			return;
+		}
+
+		// Si es objeto, forzamos a JSON editor
+		if (typeof val === 'object') {
+			use_var_app = false;
+			param_json = structuredClone(val);
+			return;
+		}
+
+		// Si NO es objeto: intentamos parsear JSON
+		try {
+			param_json = JSON.parse(val);
+			use_var_app = false;
+		} catch {
+			param_varname = val;
+			use_var_app = true;
 		}
 	}
 
-	function checkUpdateValue() {
-		let updated = false;
-		let new_value_str = typeof new_value == 'object' ? JSON.stringify(new_value) : new_value;
-		let currect_value_str = typeof value == 'object' ? JSON.stringify(value) : value;
+	// ------------------------------------------------------------
+	// Comparación y actualización
+	// ------------------------------------------------------------
+	function updateValue(newValue) {
+		const prev = stringifyValue(stateValue);
+		const next = stringifyValue(newValue);
 
-		if (new_value_str != currect_value_str) {
-			updated = true;
-			value = new_value;
+		if (prev !== next) {
+			stateValue = newValue;
+			onselect(newValue);
+			value = newValue; // sincroniza con padre vía bind:value
 		}
-		if (updated) {
-			parseCode();
-		}
-		return updated;
 	}
 
-	function onselectInternal(val) {
-		if (is_init) {
-		//	console.log('>>>>>>>>>>>>> onselectInternal', val, value);
-			new_value = val;
+	function stringifyValue(v) {
+		return typeof v === 'object' ? JSON.stringify(v) : String(v ?? '');
+	}
 
-			if (checkUpdateValue()) {
-				onselect(value);
-			}
-		}
+	// ------------------------------------------------------------
+	// Callbacks internos
+	// ------------------------------------------------------------
+	function handleCodeChange(event) {
+		updateValue(event.code);
+	}
+
+	function handleVarSelect(selected) {
+		updateValue(selected);
 	}
 
 	onMount(() => {
-		is_init = true;
-		parseCode();
+		normalizeValue(value);
 	});
 </script>
 
@@ -82,16 +97,17 @@
 	<div class="buttons has-addons">
 		<button
 			class="button is-small {use_var_app ? '' : 'is-active is-primary'}"
-			onclick={() => {
-				use_var_app = false;
-			}}>Use Custom Parameters</button
+			onclick={() => (use_var_app = false)}
 		>
+			Use Custom Parameters
+		</button>
+
 		<button
 			class="button is-small {use_var_app ? 'is-active is-primary' : ''}"
-			onclick={() => {
-				use_var_app = true;
-			}}>Use App Variable</button
+			onclick={() => (use_var_app = true)}
 		>
+			Use App Variable
+		</button>
 	</div>
 
 	{#if !use_var_app}
@@ -100,10 +116,8 @@
 			lang={langEditor}
 			showFormat={true}
 			code={param_json}
-			onchange={(code) => {
-				onselectInternal(code.code);
-			}}
-		></EditorCode>
+			onchange={handleCodeChange}
+		/>
 	{:else}
 		<AppVarsSelector
 			{freeTyping}
@@ -112,10 +126,7 @@
 			{label}
 			{environment}
 			bind:value={param_varname}
-			onselect={(selected) => {
-				//console.log('onselect params_json_selector', selected, param_varname);
-				onselectInternal(selected);
-			}}
-		></AppVarsSelector>
+			onselect={handleVarSelect}
+		/>
 	{/if}
 </div>

@@ -4,11 +4,11 @@
 		EditorCode,
 		Level,
 		copyTextToClipboard,
-		DialogModal
+		Notifications
 	} from '@edwinspire/svelte-components';
 	import { equalObjs } from '$lib/OpenFusionAPI/app/utils.js';
-	import SelectEnvironment from '$lib/OpenFusionAPI/widgets/Select.svelte';
-import {Environment as environment_list} from "$lib/OpenFusionAPI/Application/utils/static_values.js";
+	import { Environment as environment_list } from '$lib/OpenFusionAPI/Application/utils/static_values.js';
+	import { UpsertAppVar, DeleteAppVar } from '$lib/OpenFusionAPI/Application/utils/request.js';
 
 	let {
 		isReadOnly = $bindable(false),
@@ -21,36 +21,253 @@ import {Environment as environment_list} from "$lib/OpenFusionAPI/Application/ut
 	} = $props();
 
 	let new_var_name = $state('');
-	let edit_var_name = $state({});
-	let change_var_name = $state({});
 	let classAnimationCopyName = $state('');
 	let appVarsInternal = $state({});
-	let ShowDialogCopyEndpoint = $state(false);
-	//let env_copy = $state('');
-	let var_replace_copy = $state(false);
-	let var_to_copy = $state({});
 
-	let available_environments_list = $derived.by(() => {
-		return environment_list.filter((el) => {
-			//console.log('>>>>>>>>>>>>><', el, environment);
-			return el.id != environment;
-		});
+	let idapp = $derived.by(() => {
+		let r;
+		if (appVars && Array.isArray(appVars)) {
+			let fapp = appVars.find((item) => {
+				return item.idvar;
+			});
+			r = fapp.idapp;
+		}
+		return r;
 	});
 
-	function internalOnchange(varname, vars) {
-		if (!equalObjs(appVarsInternal[varname], vars)) {
-			appVarsInternal[varname] = vars;
+	let noty = new Notifications();
+
+	function internalOnchange(name, vars) {
+		if (!equalObjs(appVarsInternal[name], vars)) {
+			appVarsInternal[name] = vars;
 			onchange($state.snapshot(appVars));
 		}
 	}
 
-	function removeVar(varName) {
-		delete appVars[varName];
-		internalOnchange(varName, null);
+	function appNameExists(name_app) {
+		return appVars.some((item) => {
+			return item.name == name_app;
+		});
+	}
+
+	function showMessageDuplicateNames() {
+		alert('There are duplicate variables');
+
+		noty.push({
+			message: 'There are variables with the same name; you must correct this before continuing.',
+			color: 'danger'
+		});
+	}
+
+	/**
+	 * Valida si en la matriz existe más de un registro
+	 * con el mismo valor en la propiedad "name".
+	 *
+	 * @param {Array<Object>} items - Arreglo de objetos como el que enviaste.
+	 * @returns {boolean} - true si hay nombres duplicados, false si todos son únicos.
+	 */
+	function thereAreDuplicateNames() {
+		const vistos = new Set();
+
+		for (const item of appVars) {
+			if (!item || typeof item.name !== 'string') continue; // Ignora si no tiene "name"
+
+			if (vistos.has(item.name)) {
+				// Ya se vio este nombre antes → hay duplicado
+				return true;
+			}
+
+			vistos.add(item.name);
+		}
+
+		return false; // No se encontraron nombres repetidos
 	}
 
 	onMount(() => {});
 </script>
+
+{#snippet left_header(appvar)}
+	<span>
+		<div class="field has-addons">
+			{#if !isReadOnly && !appvar.edit_name}
+				<!-- svelte-ignore a11y_missing_attribute -->
+				<p class="control"><a class="button is-static is-small"> {appvar.name} </a></p>
+			{/if}
+
+			{#if !isReadOnly}
+				{#if appvar.edit_name}
+					<p class="control">
+						<input
+							class="input is-success is-small"
+							type="text"
+							placeholder="Edit variable name"
+							bind:value={appvar.name}
+						/>
+					</p>
+
+					<p class="control">
+						<!-- svelte-ignore a11y_consider_explicit_label -->
+						<button
+							class="button is-small is-outlined is-success"
+							title="Apply"
+							onclick={() => {
+								// Verificar que no haya ya una variable con ese nombre
+								if (thereAreDuplicateNames()) {
+									showMessageDuplicateNames();
+								} else {
+									// Buscar la fila y reemplazarla
+									appVars = appVars.map((item) => {
+										if (item.idvar == appvar.idvar) {
+											item.name = appvar.name;
+											item.edit_name = false;
+										}
+										return item;
+									});
+								}
+							}}
+						>
+							<span class="icon is-small">
+								<i class="fa-solid fa-check"></i>
+							</span>
+						</button>
+					</p>
+
+					<p class="control">
+						<!-- svelte-ignore a11y_consider_explicit_label -->
+						<button
+							class="button is-small is-outlined is-danger"
+							title="Cancel"
+							onclick={() => {
+								appVars = appVars.map((item) => {
+									if (item.idvar == appvar.idvar) {
+										item.edit_name = false;
+										item.name = item.org_name;
+									}
+									return item;
+								});
+							}}
+						>
+							<span class="icon is-small">
+								<i class="fa-solid fa-xmark"></i>
+							</span>
+						</button>
+					</p>
+				{:else}
+					<p class="control">
+						<!-- svelte-ignore a11y_consider_explicit_label -->
+						<button
+							class="button is-small"
+							title="Edit variable name"
+							onclick={() => {
+								appVars = appVars.map((item) => {
+									if (item.idvar == appvar.idvar) {
+										item.edit_name = true;
+										item.org_name = item.name;
+									}
+									return item;
+								});
+							}}
+						>
+							<span class="icon is-small">
+								<i class="fa-solid fa-pen"></i>
+							</span>
+						</button>
+					</p>
+				{/if}
+			{/if}
+
+			<p class="control">
+				<!-- svelte-ignore a11y_consider_explicit_label -->
+				<button
+					class="button is-small"
+					title="Copy Name"
+					onclick={async () => {
+						let rc = await copyTextToClipboard(appvar.name);
+
+						if (rc.result) {
+							classAnimationCopyName = appvar.name;
+							setTimeout(() => {
+								classAnimationCopyName = '';
+							}, 1500);
+						}
+					}}
+				>
+					<span class="icon is-small has-text-info">
+						<i class="fa-solid fa-copy {classAnimationCopyName == appvar.name ? ' fa-shake ' : ''}"
+						></i>
+					</span>
+				</button>
+			</p>
+		</div>
+	</span>
+{/snippet}
+
+{#snippet right_header(appvar)}
+	<span>
+		{#if !isReadOnly}
+			<div class="field has-addons">
+				<p class="control">
+					<!-- svelte-ignore a11y_consider_explicit_label -->
+					<button
+						class="button is-small is-outlined is-link"
+						title="Copy to another environment"
+						onclick={() => {
+							oncopy(appvar);
+						}}
+					>
+						<span class="icon is-small">
+							<i class="fa-regular fa-clone"></i>
+						</span>
+					</button>
+				</p>
+				<p class="control">
+					<!-- svelte-ignore a11y_consider_explicit_label -->
+					<button
+						class="button is-small is-outlined is-warning"
+						title="Save & Deploy"
+						onclick={async () => {
+							if (thereAreDuplicateNames()) {
+								showMessageDuplicateNames();
+							} else if (
+								confirm('Are you sure you want Save & Deloy the variable ' + appvar.name + '?')
+							) {
+								// Guardar la variable y emitir evento indicando cambios realizados
+								let avr = await UpsertAppVar(appvar);
+								appvar.idvar = avr.idvar;
+							}
+						}}
+					>
+						<span class="icon is-small">
+							<i class="fa-solid fa-rocket"></i>
+						</span>
+					</button>
+				</p>
+				<p class="control">
+					<!-- svelte-ignore a11y_consider_explicit_label -->
+					<button
+						class="button is-small is-outlined is-danger"
+						title="Delete variable"
+						onclick={async () => {
+							if (confirm('Are you sure you want to remove the variable ' + appvar.name + '?')) {
+								// Eliminar de base de datos y emitir evento indicando cambios realizados
+								let req = await DeleteAppVar(appvar.idvar);
+								if (req) {
+									appVars = appVars.filter((item) => {
+										return item.idvar != appvar.idvar;
+									});
+								}
+							}
+						}}
+					>
+						<span class="icon is-small">
+							<i class="fa-solid fa-trash"></i>
+						</span>
+					</button>
+				</p>
+			</div>
+		{/if}
+	</span>
+{/snippet}
 
 {#if appVars}
 	<div class="box">
@@ -81,12 +298,12 @@ import {Environment as environment_list} from "$lib/OpenFusionAPI/Application/ut
 									onclick={() => {
 										// Verificar que la variable no exista
 										let var_full_name = '$_VAR_' + new_var_name.toUpperCase();
-										if (appVars[var_full_name]) {
+
+										if (appNameExists(var_full_name)) {
 											alert('Var ' + var_full_name + ' already exists.');
 										} else {
-											appVars[var_full_name] = {};
-											//console.log('111111111111111111111');
-											internalOnchange(var_full_name, {});
+											appVars.push({ idapp: idapp, name: var_full_name, environment: environment });
+											appVars = [...appVars];
 										}
 									}}
 								>
@@ -99,243 +316,32 @@ import {Environment as environment_list} from "$lib/OpenFusionAPI/Application/ut
 			{/snippet}
 		</Level>
 
-		{#each Object.keys(appVars) as varname}
-			{#if appVars[varname]}
-				<EditorCode
-					left={left_Editor}
-					right={right_Editor}
-					{showCode}
-					showFormat={true}
-					{isReadOnly}
-					bind:code={appVars[varname]}
-					lang="json"
-					onchange={(e) => {
-						internalOnchange(varname, e.code);
-					}}
-				>
-					{#snippet left_Editor()}
-						<span>
-							<div class="field has-addons">
-								{#if !change_var_name[varname]}
-									<!-- svelte-ignore a11y_missing_attribute -->
-									<p class="control"><a class="button is-static is-small"> {varname} </a></p>
-								{/if}
+		{#each appVars as av, i}
+			<EditorCode
+				showSelectLang={true}
+				left={left_Editor}
+				right={right_Editor}
+				{showCode}
+				showFormat={true}
+				{isReadOnly}
+				bind:code={av.value}
+				bind:lang={av.type}
+				onchange={(e) => {
+					internalOnchange(av.name, e.code);
+				}}
+			>
+				{#snippet left_Editor()}
+					{@render left_header(av)}
+				{/snippet}
 
-								{#if !isReadOnly}
-									{#if change_var_name[varname]}
-										<p class="control">
-											<input
-												class="input is-success is-small"
-												type="text"
-												placeholder="Edit variable name"
-												bind:value={edit_var_name[varname]}
-											/>
-										</p>
-
-										<p class="control">
-											<!-- svelte-ignore a11y_consider_explicit_label -->
-											<button
-												class="button is-small is-outlined is-success"
-												title="Apply"
-												onclick={() => {
-													appVars[edit_var_name[varname]] = appVars[varname];
-													removeVar(varname);
-												}}
-											>
-												<span class="icon is-small">
-													<i class="fa-solid fa-check"></i>
-												</span>
-											</button>
-										</p>
-
-										<p class="control">
-											<!-- svelte-ignore a11y_consider_explicit_label -->
-											<button
-												class="button is-small is-outlined is-danger"
-												title="Cancel"
-												onclick={() => {
-													change_var_name[varname] = false;
-												}}
-											>
-												<span class="icon is-small">
-													<i class="fa-solid fa-xmark"></i>
-												</span>
-											</button>
-										</p>
-									{:else}
-										<p class="control">
-											<!-- svelte-ignore a11y_consider_explicit_label -->
-											<button
-												class="button is-small"
-												title="Edit variable name"
-												onclick={() => {
-													change_var_name[varname] = !change_var_name[varname];
-													//console.log(varname, change_var_name[varname], appVars[varname]);
-													edit_var_name[varname] = varname;
-												}}
-											>
-												<span class="icon is-small">
-													<i class="fa-solid fa-pen"></i>
-												</span>
-											</button>
-										</p>
-									{/if}
-								{/if}
-
-								<p class="control">
-									<!-- svelte-ignore a11y_consider_explicit_label -->
-									<button
-										class="button is-small"
-										title="Copy Name"
-										onclick={async () => {
-											let rc = await copyTextToClipboard(varname);
-
-											if (rc.result) {
-												classAnimationCopyName = varname;
-												setTimeout(() => {
-													classAnimationCopyName = '';
-												}, 1500);
-											}
-										}}
-									>
-										<span class="icon is-small has-text-info">
-											<i
-												class="fa-solid fa-copy {classAnimationCopyName == varname
-													? ' fa-shake '
-													: ''}"
-											></i>
-										</span>
-									</button>
-								</p>
-							</div>
-						</span>
-					{/snippet}
-
-					{#snippet right_Editor()}
-						<span>
-							{#if !isReadOnly}
-								<div class="field has-addons">
-									<p class="control">
-										<!-- svelte-ignore a11y_consider_explicit_label -->
-										<button
-											class="button is-small is-outlined is-warning"
-											title="Copy to another environment"
-											onclick={() => {
-												if (
-													confirm(
-														`Do you want to copy and/or replace the variable ${varname} in another environment?`
-													)
-												) {
-													ShowDialogCopyEndpoint = true;
-													var_to_copy.varname = varname;
-													var_to_copy.value = appVars[varname];
-												} else {
-													ShowDialogCopyEndpoint = false;
-													var_to_copy = {};
-												}
-											}}
-										>
-											<span class="icon is-small">
-												<i class="fa-solid fa-copy"></i>
-											</span>
-										</button>
-									</p>
-									<p class="control">
-										<!-- svelte-ignore a11y_consider_explicit_label -->
-										<button
-											class="button is-small is-outlined is-danger"
-											title="Delete variable"
-											onclick={() => {
-												if (
-													confirm('Are you sure you want to remove the variable ' + varname + '?')
-												) {
-													removeVar(varname);
-												}
-											}}
-										>
-											<span class="icon is-small">
-												<i class="fa-solid fa-trash"></i>
-											</span>
-										</button>
-									</p>
-								</div>
-							{/if}
-						</span>
-					{/snippet}
-				</EditorCode>
-				<hr class="reset_margin" />
-			{/if}
+				{#snippet right_Editor()}
+					{@render right_header(av)}
+				{/snippet}
+			</EditorCode>
+			<hr class="reset_margin" />
 		{/each}
 	</div>
 {/if}
-
-<DialogModal
-	bind:show={ShowDialogCopyEndpoint}
-	title={titleModal}
-	body={bodyDialogModal}
-	onaccept={() => {
-		if (var_to_copy && var_replace_copy && var_to_copy.env_destination) {
-			oncopy(var_to_copy);
-			ShowDialogCopyEndpoint = false;
-			var_to_copy = {};
-		}
-	}}
->
-	{#snippet titleModal()}
-		<span>{`Copy ${var_to_copy.varname}`}</span>
-	{/snippet}
-
-	{#snippet bodyDialogModal()}
-		<div>Copy or replace the variable to another environment.</div>
-		<br />
-
-		<div class="field has-addons">
-			<p class="control">
-				<!-- svelte-ignore a11y_missing_attribute -->
-				<a class="button is-small is-static"> Copy to: </a>
-			</p>
-
-			<p class="control">
-				<SelectEnvironment
-					options={available_environments_list}
-					onchange={(e) => {
-						//console.log('SELECCIONADO TO COPY >>>> ', e);
-						var_to_copy.env_destination = e;
-						// var_to_copy = {};
-					}}
-				/>
-			</p>
-		</div>
-
-		{#if !var_to_copy.env_destination || var_to_copy.env_destination == ''}
-			<div class="icon-text">
-				<span class="icon has-text-warning">
-					<i class="fas fa-exclamation-triangle"></i>
-				</span>
-				<span> Select an environment to copy. </span>
-			</div>
-		{/if}
-
-		<!-- svelte-ignore block_empty -->
-		{#if var_to_copy.varname && var_to_copy.env_destination}
-			<label class="checkbox">
-				<input type="checkbox" bind:checked={var_replace_copy} />
-				I agree to copy and/or replace the application variable to the
-				<strong>{var_to_copy.env_destination}</strong> environment.
-			</label>
-
-			{#if !var_replace_copy}
-				<br />
-				<div class="icon-text">
-					<span class="icon has-text-warning">
-						<i class="fas fa-exclamation-triangle"></i>
-					</span>
-					<span> You must agree to continue. </span>
-				</div>
-			{/if}
-		{/if}
-	{/snippet}
-</DialogModal>
 
 <style>
 	.reset_margin {

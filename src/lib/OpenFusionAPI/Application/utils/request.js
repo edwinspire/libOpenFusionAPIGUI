@@ -6,8 +6,9 @@ import {
 	listMethodStore,
 	listFunctionStoreDev,
 	listFunctionStorePRD,
-	listFunctionStoreQA
-} from '$lib/OpenFusionAPI/Application/utils/stores.js';
+	listFunctionStoreQA,
+	listAppVars
+} from '$lib/OpenFusionAPI/Application/utils/stores.js'; 
 
 export const getEnvironmentList = async (token) => {
 	let uf = new uFetch();
@@ -53,10 +54,94 @@ export const GetApp = async (idapp, token) => {
 	}
 };
 
+export const LoginRequest = async (username, password) => {
+	let uf = new uFetch();
+
+	let user = await uf.POST({
+		url: url_paths.login,
+		data: { username, password },
+		options: { credentials: 'same-origin' }
+	});
+	let data = await user.json();
+	return data;
+};
+
+export const GetServerAPIVersion = async () => {
+	// Lógica de autenticación aquí
+	let uf = new uFetch();
+	if (token) {
+		uf.setBearerAuthorization(token);
+	}
+
+	let version_req = await uf.GET({ url: url_paths.serverAPIVersion });
+	let version_res = await version_req.json();
+
+	return version_res;
+};
+export const GetAppVars = async (idapp, token) => {
+	if (idapp) {
+		let uf = new uFetch();
+		if (token) {
+			uf.setBearerAuthorization(token);
+		}
+		console.log('Token > ', token);
+		let request = await uf.GET({
+			url: url_paths.appvarsbyidapp,
+			data: { idapp: idapp }
+		});
+
+		let response = await request.json();
+
+		return response;
+	} else {
+		return [];
+	}
+};
+
+export const GetAppBackup = async (idapp, token) => {
+	if (idapp) {
+		let uf = new uFetch();
+		if (token) {
+			uf.setBearerAuthorization(token);
+		}
+
+		let request = await uf.GET({
+			url: url_paths.appBackup,
+			data: { idapp: idapp }
+		});
+
+		let response = await request.json();
+
+		return response;
+	} else {
+		return [];
+	}
+};
+
+export const RestoreAppBackup = async (app, token) => {
+	if (app) {
+		let uf = new uFetch();
+		if (token) {
+			uf.setBearerAuthorization(token);
+		}
+
+		let request = await uf.POST({
+			url: url_paths.appBackup,
+			data: app
+		});
+
+		let response = await request.json();
+
+		return response;
+	} else {
+		return [];
+	}
+};
+
 export const GetEndpointsByIdapp = async (idapp, token) => {
 	if (idapp) {
 		let app = await GetApp(idapp, token);
-		//	console.warn(app);
+		
 
 		if (app.idapp == idapp) {
 			app.endpoints = [];
@@ -285,5 +370,67 @@ export const getLogsRecordsPerMinute = async (options, token) => {
 
 		let metrics_list = await get_list_metrics.json();
 		return metrics_list;
+	}
+};
+
+export const getAppVars = async (idapp, token, setStoreListAppVars = false) => {
+	let uf = new uFetch();
+
+	if (token) {
+		uf.setBearerAuthorization(token);
+	}
+
+	let req = await uf.GET({
+		url: url_paths.appvarsbyidapp,
+		data: { idapp: idapp }
+	});
+
+	let resp = await req.json();
+
+	if (setStoreListAppVars && resp && Array.isArray(resp)) {
+		//console.log('setStoreListAppVars', resp);
+		listAppVars.set(resp);
+	}
+
+	return resp;
+};
+
+export const UpsertAppVar = async (data, token) => {
+	if (data) {
+		let uf = new uFetch();
+		if (token) {
+			uf.setBearerAuthorization(token);
+		}
+
+		let request = await uf.POST({
+			url: url_paths.appvar,
+			data: data
+		});
+
+		let response = await request.json();
+
+		return response;
+	} else {
+		return {};
+	}
+};
+
+export const DeleteAppVar = async (idvar, token) => {
+	if (idvar) {
+		let uf = new uFetch();
+		if (token) {
+			uf.setBearerAuthorization(token);
+		}
+
+		let request = await uf.DELETE({
+			url: url_paths.appvar,
+			data: { idvar: idvar }
+		});
+
+		let response = await request.json();
+
+		return response;
+	} else {
+		return [];
 	}
 };

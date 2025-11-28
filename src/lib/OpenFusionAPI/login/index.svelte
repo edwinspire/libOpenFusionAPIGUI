@@ -1,8 +1,10 @@
 <script>
-	import uFetch from '@edwinspire/universal-fetch';
 	import { onMount } from 'svelte';
-	import { getListMethods, getListHandler } from '$lib/OpenFusionAPI/Application/utils/request.js';
-	import {  url_paths } from '$lib/OpenFusionAPI/Application/utils/paths.js';
+	import {
+		getListMethods,
+		getListHandler,
+		LoginRequest
+	} from '$lib/OpenFusionAPI/Application/utils/request.js';
 	import { userStore } from '$lib/OpenFusionAPI/Application/utils/stores.js';
 	import logo from '$lib/OpenFusionAPI/img/favicon.png';
 	import { Notifications, Modal } from '@edwinspire/svelte-components';
@@ -12,7 +14,6 @@
 	let { onlogin = () => {} } = $props();
 	let username = $state('');
 	let password = $state('');
-	let uf = new uFetch();
 	let processing = $state({ waiting: false, error: null });
 
 	async function handleSubmit() {
@@ -20,15 +21,13 @@
 			processing.waiting = true;
 			processing.error = '';
 
-			let user = await uf.POST({ url: url_paths.login, data: { username, password } });
-			let data = await user.json();
+			let data = await LoginRequest(username, password);
 
 			if (data.login) {
 				userStore.set(data);
 
 				await getListMethods(data.token);
 				await getListHandler(data.token);
-
 
 				onlogin({
 					login: data.login

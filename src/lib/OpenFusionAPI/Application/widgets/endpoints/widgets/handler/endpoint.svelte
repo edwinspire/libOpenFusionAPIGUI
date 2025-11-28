@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import {
 		BasicSelect,
 		DialogModal,
@@ -54,7 +54,7 @@
 	let endpoint_env_copy = $state('');
 	let endpoint_replace_copy = $state(false);
 
-	listHandlerStore.subscribe((/** @type {any[]} */ value) => {
+	const unsubscribe =listHandlerStore.subscribe((/** @type {any[]} */ value) => {
 		handlers = value;
 	});
 
@@ -70,6 +70,9 @@
 			endpoint.environment
 		);
 	});
+
+	
+	onDestroy(unsubscribe);
 
 	function checkEndpointConstraint() {
 		let check = false;

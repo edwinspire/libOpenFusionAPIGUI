@@ -6,7 +6,11 @@
 	import TextAreaWidget from '../common/textArea.svelte';
 	import { url_paths } from '../../utils/paths.js';
 	import { userStore } from '../../utils/stores.js';
-	import { GetApp as GetAppRequest } from '../../utils/request.js';
+	import {
+		GetApp as GetAppRequest,
+		GetAppBackup,
+		resRestoreAppBackupto
+	} from '../../utils/request.js';
 
 	let uf = new uFetch();
 
@@ -31,7 +35,6 @@
 		// Cualquier lectura de `app` haría que el efecto se active cuando `app` cambie
 	});
 
-	
 	userStore.subscribe((value) => {
 		uf.setBearerAuthorization(value.token);
 	});
@@ -105,10 +108,167 @@
 	<span class="has-text-weight-bold">{app.app}</span>
 {/snippet}
 
+{#snippet download_app()}
+	{#if $userStore}
+		<button
+			class="button is-small"
+			onclick={() => {
+				const now = new Date();
+				const year = now.getFullYear();
+				const month = String(now.getMonth() + 1).padStart(2, '0'); // Sumamos 1 al mes ya que en JavaScript los meses van de 0 a 11
+				const day = String(now.getDate()).padStart(2, '0');
+				const hours = String(now.getHours()).padStart(2, '0');
+				const minutes = String(now.getMinutes()).padStart(2, '0');
+
+				//const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}`;
+
+				// Convertir el objeto JSON a una cadena
+				const jsonString = JSON.stringify(appToStore(), null, 2);
+
+				// Crear un Blob con el contenido JSON
+				const blob = new Blob([jsonString], { type: 'application/json' });
+
+				// Crear una URL para el Blob
+				const url = window.URL.createObjectURL(blob);
+
+				// Crear un enlace para descargar el JSON
+				const a = document.createElement('a');
+				a.href = url;
+				a.download = `app_${app.app}_${year}${month}${day}_${hours}${minutes}.json`;
+
+				// Simular un clic en el enlace para iniciar la descarga
+				a.click();
+
+				// Liberar recursos
+				window.URL.revokeObjectURL(url);
+			}}
+		>
+			<span class="icon is-small">
+				<i class="fa-solid fa-download"></i>
+			</span>
+			<span>Download</span>
+		</button>
+	{/if}
+{/snippet}
+
+{#snippet upload_app()}
+	{#if $userStore}
+		<div class="field has-addons">
+			<p class="control file">
+				<input
+					class="input is-small"
+					type="file"
+					accept=".json"
+					onchange={(event) => {
+						const selectedFile = event.target.files[0]; // Obten el primer archivo seleccionado
+
+						if (!selectedFile) {
+							//alert('Por favor, selecciona un archivo JSON válido.');
+							notify.push({ message: 'Invalid JSON file', color: 'warning' });
+							return;
+						}
+
+						const reader = new FileReader();
+
+						// Escucha el evento 'load' que se dispara cuando se ha leído el archivo
+						reader.onload = function (e) {
+							const fileContent = e.target.result; // Aquí tienes el contenido del archivo
+
+							try {
+								uploaded_file = JSON.parse(fileContent);
+
+								// TODO: Aquí puedes realizar acciones con los datos JSON, por ejemplo, mostrarlos en la página.
+
+								if (uploadFile_checkAppname()) {
+									//	alert('The file does not correspond to the same application.');
+									notify.push({
+										message: 'The file does not correspond to the same application.',
+										color: 'warning'
+									});
+								}
+							} catch (error) {
+								notify.push({ message: error.message, color: 'danger' });
+								console.error('Error al analizar el archivo JSON:', error);
+							}
+						};
+
+						// Lee el contenido del archivo como texto
+						reader.readAsText(selectedFile);
+					}}
+				/>
+			</p>
+
+			<p class="control">
+				<button
+					class="button is-small"
+					onclick={() => {
+						//alert('Ha hecho click');
+
+						//showAppData([uploaded_file]);
+
+						if (uploadFile_checkAppname()) {
+							//alert('The file does not correspond to the same application.');
+							notify.push({
+								message: 'The file does not correspond to the same application.',
+								color: 'warning'
+							});
+						} else {
+							if (uploaded_file) {
+								if (confirm('Are you sure to merge the file with your data?')) {
+									if (uploaded_file.endpoints && Array.isArray(uploaded_file.endpoints)) {
+										// Chequear los endpoints donde le colocamos el idenpoint
+										uploaded_file.endpoints = uploaded_file.endpoints.map((ep) => {
+											// buscar si existe el endpoint
+											let current_endpoint = app.endpoints.find((element) => {
+												return (
+													element.environment == ep.environment &&
+													element.method == ep.method &&
+													element.resource == ep.resource
+												);
+											});
+
+											if (current_endpoint) {
+												ep.idendpoint = current_endpoint.idendpoint;
+											}
+											return ep;
+										});
+
+										// Utilizar filter() para encontrar los elementos que existen en arrayA pero no en arrayB
+										const ep_diff = app.endpoints.filter((app_ep) => {
+											return !uploaded_file.endpoints.some(
+												(uep) => app_ep.idendpoint === uep.idendpoint
+											);
+										});
+
+										uploaded_file.endpoints = uploaded_file.endpoints.concat(ep_diff);
+
+										//app = { ...uploaded_file };
+										showAppData([uploaded_file]);
+										uploaded_file = null;
+									}
+								}
+							} else {
+								//alert('Please new select file!');
+								notify.push({ message: 'Please new select file!', color: 'warning' });
+							}
+						}
+					}}
+				>
+					<span class="icon is-small">
+						<i class="fa-solid fa-upload"></i>
+					</span>
+
+					<span> Upload </span>
+				</button>
+			</p>
+		</div>
+	{/if}
+{/snippet}
+
 <div class="">
 	<SaveDeploy
 		bind:deploying
-		left={[label_appname]}
+		left={[label_appname, download_app, upload_app]}
 		onsavedeploy={async () => {
 			await SaveApp();
 			onsavedeploy(app);

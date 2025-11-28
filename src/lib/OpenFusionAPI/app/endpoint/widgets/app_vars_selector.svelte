@@ -1,8 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
 	import { PredictiveInput, JSONView } from '@edwinspire/svelte-components';
-	import { listAppVars } from '$lib/OpenFusionAPI/utils.js';
-	import { TimeOutChangeValue } from '$lib/OpenFusionAPI/app/utils.js';
+	import { listAppVars } from '$lib/OpenFusionAPI/Application/utils/stores.js';
+	import { TimeOutChangeValue } from '$lib/OpenFusionAPI/Application/utils/utils.js';
 
 	let {
 		freeTyping = $bindable(false),
@@ -23,11 +23,15 @@
 	let timeoutChange;
 
 	listAppVars.subscribe((list) => {
-		env_vars = list[environment] ?? {};
-
-		options_app_vars = Object.keys(env_vars).map((item) => {
-			return { name: item, value: item };
-		});
+		console.log(typeof list, list);
+		if (list && Array.isArray(list)) {
+			let list_var_env = list.filter((item) => {
+				return item.environment == environment;
+			});
+			options_app_vars = list_var_env.map((item) => {
+				return { name: item.name, value: item.name };
+			});
+		}
 	});
 
 	$effect(() => {

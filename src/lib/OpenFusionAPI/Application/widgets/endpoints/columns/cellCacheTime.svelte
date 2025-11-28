@@ -1,11 +1,11 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { storeCacheSize } from '$lib/OpenFusionAPI/Application/utils/stores.js';
 	let { value = $bindable(), row = $bindable() } = $props();
 
 	let value_cache = $state({});
 
-	storeCacheSize.subscribe((cache_data) => {
+	const unsubscribe = storeCacheSize.subscribe((cache_data) => {
 		if (row && cache_data) {
 			if (cache_data[row.idendpoint] > 0) {
 				value_cache.bytes = cache_data[row.idendpoint];
@@ -16,6 +16,7 @@
 	});
 
 	onMount(() => {});
+	onDestroy(unsubscribe);
 </script>
 
 <td>
@@ -31,9 +32,7 @@
 					min="0"
 				/>
 			</div> -->
-			<div class="control ">
-
-				
+			<div class="control">
 				{#if row && value_cache && value_cache.bytes && value_cache.bytes > 0}
 					<!-- svelte-ignore a11y_missing_attribute -->
 					<a class="button is-small has-text-success is-static">
@@ -59,7 +58,6 @@
 				<!-- svelte-ignore a11y_missing_attribute -->
 				<a class="button is-small is-static"> {value} seg. </a>
 			</div>
-			
 		</div>
 	{/if}
 </td>

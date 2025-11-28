@@ -1,8 +1,7 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { PredictiveInput, JSONView } from '@edwinspire/svelte-components';
 	import { listAppVars } from '$lib/OpenFusionAPI/Application/utils/stores.js';
-	import { TimeOutChangeValue } from '$lib/OpenFusionAPI/Application/utils/utils.js';
 
 	let {
 		freeTyping = $bindable(false),
@@ -16,30 +15,28 @@
 
 	let options_app_vars = $state([]);
 
-	//let param_json = $state({});
-	let param_data = $state('');
-	//let use_var_app = $state(false);
-	let env_vars = $state({});
-	let timeoutChange;
+	// --------------------------------------------
+	// Valor seleccionado (derivado)
+	// --------------------------------------------
+	let value_selected = $derived.by(() => options_app_vars.find((item) => item.name === value));
 
-	listAppVars.subscribe((list) => {
-		env_vars = list[environment] ?? {};
-
-		options_app_vars = Object.keys(env_vars).map((item) => {
-			return { name: item, value: item };
-		});
-	});
-
-	$effect(() => {
-		if (value) {
-			timeoutChange = TimeOutChangeValue(timeoutChange, parseCode);
+	// --------------------------------------------
+	// Suscripción al store
+	// --------------------------------------------
+	const unsubscribe = listAppVars.subscribe((list) => {
+		if (!Array.isArray(list)) {
+			options_app_vars = [];
+			return;
 		}
-	});
 
-	function parseCode() {
-		//console.log('parseCode PARAMS SELECTOR', value, typeof value);
-		param_data = value;
-	}
+		const filtered = list.filter((item) => item.environment === environment);
+
+		options_app_vars = filtered.map((item) => ({
+			name: item.name,
+			value: item.name,
+			code: item.value
+		}));
+	});
 
 	function onselectInternal(val) {
 		//		console.log('onselectInternal app_vars_selector', val);
@@ -47,9 +44,7 @@
 		onselect(val);
 	}
 
-	onMount(() => {
-		parseCode();
-	});
+	onDestroy(unsubscribe);
 </script>
 
 <PredictiveInput
@@ -60,15 +55,13 @@
 	options={options_app_vars}
 	bind:selectedValue={value}
 	onselect={(selected) => {
-		//console.log('APP VAR SELECTOR', selected, value);
 		onselectInternal(selected.value);
-		//value = selected.value;
 	}}
 ></PredictiveInput>
-{#if env_vars[param_data]}
+{#if value_selected}
 	<details class=" ">
 		<summary>View value</summary>
 		<br />
-		<JSONView jsonObject={env_vars[param_data]} />
+		<JSONView jsonObject={value_selected.code} />
 	</details>
 {/if}

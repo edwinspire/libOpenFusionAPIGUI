@@ -1,8 +1,7 @@
 <script>
 	import { onMount, onDestroy } from 'svelte';
 	import { Tab, JSONView } from '@edwinspire/svelte-components';
-
-	import AppVarsSelector from '$lib/OpenFusionAPI/app/endpoint/widgets/params_json_selector.svelte';
+	import AppVarsSelector from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/params_json_selector.svelte';
 
 	let { endpoint = {}, onchange = () => {} } = $props();
 
@@ -54,7 +53,8 @@
 	}
 
 	function getData() {
-		let data = { code: getCode(), data_test: $state.snapshot(endpoint.data_test) };
+		//let data = { code: getCode(), data_test: $state.snapshot(endpoint.data_test) };
+		let data = { code: getCode() };
 
 		return data;
 	}

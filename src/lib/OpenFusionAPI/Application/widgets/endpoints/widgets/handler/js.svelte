@@ -2,7 +2,8 @@
 	import { onMount } from 'svelte';
 	import { Tab, EditorCode } from '@edwinspire/svelte-components';
 
-	import PredefinedVars from '$lib/OpenFusionAPI/app/endpoint/widgets/js_predefined_vars.svelte';
+	//	import PredefinedVars from '$lib/OpenFusionAPI/app/endpoint/widgets/js_predefined_vars.svelte';
+	import PredefinedVars from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/js_predefined_vars.svelte';
 
 	let { endpoint = $bindable({}), onchange = () => {} } = $props();
 	let internal_code = $state('');

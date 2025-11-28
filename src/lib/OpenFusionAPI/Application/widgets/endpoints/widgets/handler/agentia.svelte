@@ -2,10 +2,16 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { Tab, EditorCode, Table, ColumnTypes } from '@edwinspire/svelte-components';
 	import AppVarsSelector from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/app_vars_selector.svelte';
-	import { jsonToHtmlString, TimeOutChangeValue } from '$lib/OpenFusionAPI/app/utils.js';
-	import CellPromptType from '$lib/OpenFusionAPI/app/cellPromptType.svelte';
-	import CellPrompt from '$lib/OpenFusionAPI/app/cellPrompt.svelte';
-	import ChatTester from '$lib/OpenFusionAPI/app/endpoint/widgets/ChatTester/ia_chat_tester.svelte';
+	import {
+		jsonToHtmlString,
+		TimeOutChangeValue
+	} from '$lib/OpenFusionAPI/Application/utils/utils.js';
+	//import CellPromptType from '$lib/OpenFusionAPI/app/cellPromptType.svelte';
+	import CellPromptType from '$lib/OpenFusionAPI/Application/widgets/endpoints/columns/cellPromptType.svelte';
+	//import CellPrompt from '$lib/OpenFusionAPI/app/cellPrompt.svelte';
+	import CellPrompt from '$lib/OpenFusionAPI/Application/widgets/endpoints/columns/cellPrompt.svelte';
+	//	import ChatTester from '$lib/OpenFusionAPI/app/endpoint/widgets/ChatTester/ia_chat_tester.svelte';
+	import ChatTester from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/ChatTester/ia_chat_tester.svelte';
 
 	let {
 		idapp = $bindable(),
@@ -179,7 +185,7 @@
 
 			return JSON.stringify(outcode);
 		} catch (error) {
-			console.warn(error);
+			
 			return code;
 		}
 	}

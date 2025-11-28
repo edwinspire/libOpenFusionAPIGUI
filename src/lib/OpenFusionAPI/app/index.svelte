@@ -1,5 +1,4 @@
 <script>
-	import uFetch from '@edwinspire/universal-fetch';
 	import {
 		PredictiveInput,
 		Table,
@@ -29,6 +28,7 @@
 		getLogs,
 		storeServerDynamicInformation
 	} from '$lib/OpenFusionAPI/utils.js';
+	import { GetServerAPIVersion } from '$lib/OpenFusionAPI/Application/utils/request.js';
 	import CellMethod from '$lib/OpenFusionAPI/app/cellMethod.svelte';
 	import CellAccess from '$lib/OpenFusionAPI/app/cellAccess.svelte';
 	import cellHandler from '$lib/OpenFusionAPI/app/cellHandler.svelte';
@@ -189,7 +189,6 @@
 	let options = $state([]);
 
 	let app = $state(defaultValuesApp());
-	let uf = new uFetch();
 
 	function reloadPage() {
 		window.location.reload();
@@ -210,8 +209,7 @@
 		// Lógica de autenticación aquí
 
 		try {
-			let version_req = await uf.GET({ url: url_paths.serverAPIVersion });
-			let version_res = await version_req.json();
+			let version_res = await GetServerAPIVersion();
 
 			if (version_res && version_res.version) {
 				serverAPIVersion = version_res.version;
@@ -511,8 +509,8 @@
 					});
 				} else if (m && m.event_name == 'request_start') {
 					//
-				//	console.log('request_start :::>  ', m.data);
-					storeEndpointOnStart.set({idendpoint: m.data?.idendpoint, ts: new Date()});
+					//	console.log('request_start :::>  ', m.data);
+					storeEndpointOnStart.set({ idendpoint: m.data?.idendpoint, ts: new Date() });
 				}
 				//storeCacheSize.get()
 				//storeCacheSize.set(cache_list);

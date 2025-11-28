@@ -9,7 +9,8 @@
 		getListFunction,
 		clearCache,
 		getServerAPIVersion,
-		getAppDocumentation
+		getAppDocumentation,
+		getAppVars
 	} from '$lib/OpenFusionAPI/Application/utils/request.js';
 	import EndPointEditor from './widgets/editor.svelte';
 
@@ -145,6 +146,7 @@
 		try {
 			app = await GetEndpointsByIdapp(idapp, $userStore.token);
 			await getListFunction($userStore.token, app.app);
+			await getAppVars(idapp, $userStore.token, true);
 		} catch (error) {
 			console.error(error);
 		}
