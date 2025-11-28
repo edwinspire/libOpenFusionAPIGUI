@@ -2,8 +2,9 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { Tab, EditorCode, JSONView } from '@edwinspire/svelte-components';
 
-	import AppVarsSelector from '../../../../../app/endpoint/widgets/params_json_selector.svelte';
-	import { TimeOutChangeValue } from '../../../../../app/utils.js';
+	//import AppVarsSelector from '../../../../../app/endpoint/widgets/params_json_selector.svelte';
+	import AppVarsSelector from '../params_json_selector.svelte';
+	import { TimeOutChangeValue } from '../../../../utils/utils.js';
 
 	let { endpoint = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =
 		$props();
@@ -92,15 +93,13 @@
 
 		conf = cnx_param_var;
 
-		//console.log('cnx_param_var', cnx_param_var);
-
 		try {
 			outcode.config = conf;
 			outcode.query = query_code;
 			//console.log(outcode);
 			return JSON.stringify(outcode);
 		} catch (error) {
-			console.warn(error);
+			 
 			return code;
 		}
 	}

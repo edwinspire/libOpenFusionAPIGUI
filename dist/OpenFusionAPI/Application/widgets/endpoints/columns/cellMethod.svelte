@@ -1,6 +1,6 @@
 <script>
-	import BLabel from '../../../../widgets/icon_label.svelte';
-	import { listHTTPMethods } from '../../../../utils.js';
+	import BLabel from '../../common/icon_label.svelte';
+	import { listHTTPMethods } from '../../../utils/static_values.js';
 	import { onMount } from 'svelte';
 
 	let { value = $bindable(''), row = $bindable() } = $props();

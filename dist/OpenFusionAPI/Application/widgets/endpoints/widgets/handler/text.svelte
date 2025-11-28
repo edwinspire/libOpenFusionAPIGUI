@@ -1,7 +1,8 @@
 <script>
 	import { onMount } from 'svelte';
 	import { Tab, EditorCode } from '@edwinspire/svelte-components';
-	import SelectMimeType from '../../../../../widgets/Select.svelte';
+	//	import SelectMimeType from '../../../../../widgets/Select.svelte';
+	import SelectMimeType from '../../../common/Select.svelte';
 
 	let { endpoint = $bindable({}), onchange = () => {} } = $props();
 

@@ -122,3 +122,7 @@ export const defaultEndpoint = {
 		}
 	}
 };
+
+
+export const defaultValuesIntervalTask = (task) => {
+};

@@ -8,11 +8,10 @@
 		PredictiveInput,
 		Input
 	} from '@edwinspire/svelte-components';
-	import { defaultValuesIntervalTask } from '$lib/OpenFusionAPI/utils.js';
+	import { defaultValuesIntervalTask, defaultApp } from '$lib/OpenFusionAPI/Application/utils/static_values.js';
 	import { url_paths } from '$lib/OpenFusionAPI/Application/utils/paths.js';
 	import uFetch from '@edwinspire/universal-fetch';
-	import CellMethod from '$lib/OpenFusionAPI/app/cellMethod.svelte';
-	import { defaultApp } from '$lib/OpenFusionAPI/Application/utils/static_values.js';
+	import CellMethod from '$lib/OpenFusionAPI/Application/widgets/endpoints/columns/cellMethod.svelte';
 	import { userStore } from '$lib/OpenFusionAPI/Application/utils/stores.js';
 	import { GetEndpointsByIdapp } from '$lib/OpenFusionAPI/Application/utils/request.js';
 

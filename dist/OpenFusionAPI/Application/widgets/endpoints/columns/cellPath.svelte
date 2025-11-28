@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	//	import { env_params } from '../utils.js';
 	import { storeEndpointOnStart } from '../../../utils/stores.js';
 	import { Environment } from '../../../utils/static_values.js';
@@ -13,8 +13,14 @@
 		});
 	});
 
+	let unsubscribe;
+
+	onDestroy(()=>{
+		clearTimeout(timeoutIsRunning);
+		unsubscribe();
+	});
 	onMount(() => {
-		storeEndpointOnStart.subscribe((data) => {
+	unsubscribe = storeEndpointOnStart.subscribe((data) => {
 			//
 			//	console.log('CELL PATH :::::> ', data);
 			if (row && row.idendpoint == data.idendpoint) {

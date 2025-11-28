@@ -9,7 +9,7 @@
 
 	const unsubscribe = listMethodStore.subscribe((value) => {
 		methods = value;
-		console.log('methods', methods);
+		//console.log('methods', methods);
 	});
 	// TODO: Hay que agregar la lógica para manejar el estado disabled
 	onMount(async () => {});

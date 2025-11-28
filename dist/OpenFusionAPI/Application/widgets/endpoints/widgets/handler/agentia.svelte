@@ -2,10 +2,16 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { Tab, EditorCode, Table, ColumnTypes } from '@edwinspire/svelte-components';
 	import AppVarsSelector from '../app_vars_selector.svelte';
-	import { jsonToHtmlString, TimeOutChangeValue } from '../../../../../app/utils.js';
-	import CellPromptType from '../../../../../app/cellPromptType.svelte';
-	import CellPrompt from '../../../../../app/cellPrompt.svelte';
-	import ChatTester from '../../../../../app/endpoint/widgets/ChatTester/ia_chat_tester.svelte';
+	import {
+		jsonToHtmlString,
+		TimeOutChangeValue
+	} from '../../../../utils/utils.js';
+	//import CellPromptType from '../../../../../app/cellPromptType.svelte';
+	import CellPromptType from '../../columns/cellPromptType.svelte';
+	//import CellPrompt from '../../../../../app/cellPrompt.svelte';
+	import CellPrompt from '../../columns/cellPrompt.svelte';
+	//	import ChatTester from '../../../../../app/endpoint/widgets/ChatTester/ia_chat_tester.svelte';
+	import ChatTester from '../ChatTester/ia_chat_tester.svelte';
 
 	let {
 		idapp = $bindable(),
@@ -179,7 +185,7 @@
 
 			return JSON.stringify(outcode);
 		} catch (error) {
-			console.warn(error);
+			
 			return code;
 		}
 	}

@@ -1,6 +1,6 @@
 <script>
-	import BLabel from '$lib/OpenFusionAPI/widgets/icon_label.svelte';
-	import { listHandlers } from '$lib/OpenFusionAPI/utils.js';
+	import BLabel from '$lib/OpenFusionAPI/Application/widgets/common/icon_label.svelte';
+	import { listHandlers } from '$lib/OpenFusionAPI/Application/utils/static_values.js';
 	import { onMount } from 'svelte';
 
 	let { value = $bindable(), row = $bindable() } = $props();

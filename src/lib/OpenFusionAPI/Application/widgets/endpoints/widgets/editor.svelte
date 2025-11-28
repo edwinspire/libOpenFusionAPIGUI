@@ -46,7 +46,6 @@
 	export function setData(data) {
 		app = data.app || {};
 		idendpoint = data.idendpoint || '';
-		console.log('=>>', $state.snapshot(data));
 		setValuesEndpoint();
 	}
 
@@ -163,14 +162,27 @@
 	let availableURL = $state(false);
 
 	let tabList = $state([
-		{ label: 'Endpoint', isActive: true, component: tab_endpoint },
-		{ label: 'Documentation', isActive: false, component: tab_docs },
-		{ label: 'Configuration', component: tab_config },
-		{ label: 'Application Variables', component: tab_app_vars },
+		{
+			label: 'Endpoint',
+			isActive: true,
+			component: tab_endpoint,
+			classIcon: ' fa-solid fa-network-wired '
+		},
+		{ label: 'Documentation', component: tab_docs, classIcon: ' fa-solid fa-book ' },
+		{
+			label: 'Configuration',
+			component: tab_config,
+			classIcon: ' fa-solid fa-screwdriver-wrench '
+		},
+		{
+			label: 'Application Variables',
+			component: tab_app_vars,
+			classIcon: ' fa-solid fa-square-root-variable '
+		},
 		{ label: 'JSON Schema', component: tab_json_schema },
-		{ label: 'Authorizations', component: tab_auth },
-		{ label: 'MCP', component: tab_mcp },
-		{ label: 'Tester', component: tab_tester },
+		{ label: 'Authorizations', component: tab_auth, classIcon: ' fa-solid fa-key ' },
+		{ label: 'MCP', component: tab_mcp, classIcon: ' fa-solid fa-robot ' },
+		{ label: 'Tester', component: tab_tester, classIcon: ' fa-solid fa-microscope ' },
 		{ label: 'Logs', component: tab_log }
 	]);
 

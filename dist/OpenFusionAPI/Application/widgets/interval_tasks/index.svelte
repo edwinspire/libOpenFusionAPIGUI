@@ -8,11 +8,10 @@
 		PredictiveInput,
 		Input
 	} from '@edwinspire/svelte-components';
-	import { defaultValuesIntervalTask } from '../../../utils.js';
+	import { defaultValuesIntervalTask, defaultApp } from '../../utils/static_values.js';
 	import { url_paths } from '../../utils/paths.js';
 	import uFetch from '@edwinspire/universal-fetch';
-	import CellMethod from '../../../app/cellMethod.svelte';
-	import { defaultApp } from '../../utils/static_values.js';
+	import CellMethod from '../endpoints/columns/cellMethod.svelte';
 	import { userStore } from '../../utils/stores.js';
 	import { GetEndpointsByIdapp } from '../../utils/request.js';
 

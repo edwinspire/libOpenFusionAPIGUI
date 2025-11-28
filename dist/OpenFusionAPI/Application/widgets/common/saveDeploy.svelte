@@ -36,7 +36,7 @@
 					class="button is-small"
 					onclick={() => {
 						//console.log('app Actual', app, app_vars);
-
+/*
 						if (
 							oncancel &&
 							confirm(
@@ -45,6 +45,8 @@
 						) {
 							oncancel();
 						}
+						*/
+						oncancel();
 					}}
 				>
 					<span class="icon is-small">

@@ -1,7 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
 	import Login from './login/index.svelte';
-	import Main from './main/index.svelte';
 	import Application from './Application/index.svelte';
 	import {Notify} from "@edwinspire/svelte-components";
 

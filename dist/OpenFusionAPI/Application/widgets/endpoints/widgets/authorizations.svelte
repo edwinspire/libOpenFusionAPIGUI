@@ -47,7 +47,7 @@
 	});
 */
 
-	storeUsersList.subscribe((value) => {
+const unsubscribe =	storeUsersList.subscribe((value) => {
 		data_users = value;
 		buildTableUsers();
 	});
@@ -88,6 +88,7 @@
 
 	onDestroy(() => {
 		clearTimeout(timeoutChageAuth);
+		unsubscribe();
 	});
 </script>
 

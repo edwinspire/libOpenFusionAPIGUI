@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import {
 		listFunctionStoreDev,
 		listFunctionStoreQA,
@@ -53,20 +53,24 @@
 		onchange(getData());
 	}
 
-	listFunctionStoreDev.subscribe((value) => {
+	const unsubscribe_dev = listFunctionStoreDev.subscribe((value) => {
 		// @ts-ignore
 		functionsDev = value;
 	});
 
-	listFunctionStoreQA.subscribe((value) => {
+	const unsubscribe_qa = listFunctionStoreQA.subscribe((value) => {
 		// @ts-ignore
 		functionsQa = value;
 	});
 
-	listFunctionStorePRD.subscribe((value) => {
+	const unsubscribe_prd = listFunctionStorePRD.subscribe((value) => {
 		// @ts-ignore
 		functionsPrd = value;
 	});
+
+	onDestroy(unsubscribe_dev);
+	onDestroy(unsubscribe_qa);
+	onDestroy(unsubscribe_prd);
 
 	onMount(() => {
 		defaultValues();
@@ -82,8 +86,6 @@
 				functions = functionsPrd;
 				break;
 		}
-
-		//		console.warn('CUSTOM FN: ', endpoint.environment, functions);
 	});
 </script>
 

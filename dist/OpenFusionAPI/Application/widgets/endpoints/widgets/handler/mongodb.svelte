@@ -81,7 +81,7 @@
 			outcode.code = js_code;
 			return JSON.stringify(outcode);
 		} catch (error) {
-			console.warn(error);
+			 
 			return code;
 		}
 	}

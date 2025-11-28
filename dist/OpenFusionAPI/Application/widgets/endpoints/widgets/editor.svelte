@@ -69,6 +69,8 @@
 	async function saveEndpoint() {
 		let endpoint_out = $state.snapshot(endpoint);
 
+		//console.log(endpoint_out, $state.snapshot(new_data_endpoint));
+
 		endpoint_out.data_test = new_data_endpoint.data_test;
 		endpoint_out.code = new_data_endpoint.code;
 		endpoint_out.docs = new_data_endpoint.docs;
@@ -77,8 +79,6 @@
 		deploying = { show: true, message: 'Saving Endpoint...', error: false };
 		try {
 			let response = await EndpointSave(endpoint_out, $userStore.token);
-
-			//		console.log(response);
 
 			if (response && response.idapp == app.idapp) {
 				deploying.show = false;
@@ -106,14 +106,14 @@
 		};
 	}
 
-	let doc_endpoint_resource = {
+	let doc_endpoint_resource = $state({
 		id: 'NsMuckns3e',
 		type: 'header',
 		data: {
 			text: `Resource: ${endpoint.endpoint}`,
 			level: 3
 		}
-	};
+	});
 
 	let doc_endpoint_params = {
 		id: 'coNrlHnl5r',
@@ -162,14 +162,27 @@
 	let availableURL = $state(false);
 
 	let tabList = $state([
-		{ label: 'Endpoint', isActive: true, component: tab_endpoint },
-		{ label: 'Documentation', isActive: false, component: tab_docs },
-		{ label: 'Configuration', component: tab_config },
-		{ label: 'Application Variables', component: tab_app_vars },
+		{
+			label: 'Endpoint',
+			isActive: true,
+			component: tab_endpoint,
+			classIcon: ' fa-solid fa-network-wired '
+		},
+		{ label: 'Documentation', component: tab_docs, classIcon: ' fa-solid fa-book ' },
+		{
+			label: 'Configuration',
+			component: tab_config,
+			classIcon: ' fa-solid fa-screwdriver-wrench '
+		},
+		{
+			label: 'Application Variables',
+			component: tab_app_vars,
+			classIcon: ' fa-solid fa-square-root-variable '
+		},
 		{ label: 'JSON Schema', component: tab_json_schema },
-		{ label: 'Authorizations', component: tab_auth },
-		{ label: 'MCP', component: tab_mcp },
-		{ label: 'Tester', component: tab_tester },
+		{ label: 'Authorizations', component: tab_auth, classIcon: ' fa-solid fa-key ' },
+		{ label: 'MCP', component: tab_mcp, classIcon: ' fa-solid fa-robot ' },
+		{ label: 'Tester', component: tab_tester, classIcon: ' fa-solid fa-microscope ' },
 		{ label: 'Logs', component: tab_log }
 	]);
 
@@ -223,7 +236,7 @@
 		if (v) {
 			new_data_endpoint.data_test = v.data_test;
 			new_data_endpoint.code = v.code;
-			//		new_data_endpoint.docs = endpoint.docs;
+			new_data_endpoint.docs = endpoint.docs;
 			//console.log('onChangeValueHandler > ', $state.snapshot(new_data_endpoint));
 		}
 	}
@@ -364,7 +377,7 @@
 				/>
 			{:else if endpoint?.handler == 'SOAP'}
 				<SoapCode
-					{endpoint}
+					bind:endpoint
 					onchange={(v) => {
 						onChangeValueHandler(v);
 						//console.log('SOAP onchange', v);

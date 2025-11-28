@@ -6,8 +6,7 @@
 		copyTextToClipboard,
 		Notifications
 	} from '@edwinspire/svelte-components';
-	import { equalObjs } from '$lib/OpenFusionAPI/app/utils.js';
-	import { Environment as environment_list } from '$lib/OpenFusionAPI/Application/utils/static_values.js';
+	import { equalObjs } from '$lib/OpenFusionAPI/Application/utils/utils.js';
 	import { UpsertAppVar, DeleteAppVar } from '$lib/OpenFusionAPI/Application/utils/request.js';
 
 	let {
@@ -89,7 +88,7 @@
 {#snippet left_header(appvar)}
 	<span>
 		<div class="field has-addons">
-			{#if !isReadOnly && !appvar.edit_name}
+			{#if  !appvar.edit_name}
 				<!-- svelte-ignore a11y_missing_attribute -->
 				<p class="control"><a class="button is-static is-small"> {appvar.name} </a></p>
 			{/if}
@@ -161,6 +160,7 @@
 							onclick={() => {
 								appVars = appVars.map((item) => {
 									if (item.idvar == appvar.idvar) {
+										// Aqui se marca en modo de edición la variable
 										item.edit_name = true;
 										item.org_name = item.name;
 									}

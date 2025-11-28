@@ -17,5 +17,9 @@ export namespace url_paths {
     let upsertIntervalTasksByIdTask: string;
     let deleteIntervalTasksByIdTask: string;
     let getfunctions: string;
+    let appBackup: string;
     let appDocumentation: string;
+    let appvarsbyidapp: string;
+    let appvar: string;
+    let getLogsRecordsPerMinute: string;
 }

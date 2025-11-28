@@ -1,7 +1,7 @@
 <script>
 	import uFetch from '@edwinspire/universal-fetch';
 	import { Table } from '@edwinspire/svelte-components';
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { userStore } from '../utils.js';
 	import CellAttrs from '../app/cellMethodsAttrs.svelte';
 
@@ -23,9 +23,11 @@
 		methods: { decorator: { component: CellAttrs } }
 	};
 
-	userStore.subscribe((value) => {
+	const unsubscribe = userStore.subscribe((value) => {
 		//uf.setBearerAuthorization(value.token);
 	});
+
+	onDestroy(unsubscribe);
 
 	async function getApps() {
 		// Lógica de autenticación aquí

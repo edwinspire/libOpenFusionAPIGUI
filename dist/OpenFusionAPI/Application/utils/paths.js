@@ -33,11 +33,14 @@ export const url_paths = {
 	apiDoc: host + '/api/system/api/handler/documentation/prd',
 	getlistFunctionsVarsJS: host + '/api/system/system/handler/js/funtions/prd',
 	getLogs: host + '/api/system/system/log/prd',
-	getlistFunctionsVarsJS: host + '/api/system/system/handler/js/funtions/prd',
 	getListIntervalTasksByIdApp: host + '/api/system/interval_tasks/byidapp/prd',
 	upsertIntervalTasksByIdTask: host + '/api/system/interval_tasks/upsert/prd',
 	deleteIntervalTasksByIdTask: host + '/api/system/interval_tasks/delete/prd',
 	getfunctions: host + '/api/system/api/function_names/prd',
 	serverAPIVersion: host + '/server/version',
-	appDocumentation: host + '/api/system/app/documentation/prd'
+	appBackup: host + '/api/system/app/backup/prd',
+	appDocumentation: host + '/api/system/app/documentation/prd',
+	appvarsbyidapp: host + '/api/system/app/variables/idapp/prd',
+	appvar: host + '/api/system/app/var/prd',
+	getLogsRecordsPerMinute: host + '/api/system/system/log/recordsperminute/prd'
 };

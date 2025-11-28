@@ -2,8 +2,9 @@
 	import { onMount } from 'svelte';
 	import { Tab, JSONView, Input } from '@edwinspire/svelte-components';
 
-	import { TimeOutChangeValue } from '../../../../../app/utils.js';
-	import AppVarsSelector from '../../../../../app/endpoint/widgets/params_json_selector.svelte';
+	import { TimeOutChangeValue } from '../../../../utils/utils.js';
+	//import AppVarsSelector from '../../../../../app/endpoint/widgets/params_json_selector.svelte';
+	import AppVarsSelector from '../params_json_selector.svelte';
 
 	let { endpoint = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =
 		$props();
@@ -85,7 +86,7 @@
 			outcode.ignoreDuplicates = ignoreDuplicates;
 			return JSON.stringify(outcode, null, 2);
 		} catch (error) {
-			console.warn(error);
+			
 			return outcode;
 		}
 	}

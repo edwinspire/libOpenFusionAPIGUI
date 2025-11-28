@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { Chart } from '@edwinspire/svelte-components';
 	import {
 		storeEndpointOnComplete,
@@ -76,8 +76,11 @@
 		}
 	}
 
+	let unsubscribe_dy;
+	let unsubscribe_com;
+
 	onMount(() => {
-		storeServerDynamicInformation.subscribe((event) => {
+		unsubscribe_dy = storeServerDynamicInformation.subscribe((event) => {
 			//	console.log(event);
 			data_cpu.push(formatDataCPUUsage(event));
 			data_cpu = [...data_cpu];
@@ -85,7 +88,7 @@
 			data_memory = [...data_memory];
 		});
 
-		storeEndpointOnComplete.subscribe((event) => {
+		unsubscribe_com = storeEndpointOnComplete.subscribe((event) => {
 			//	console.log(':::::> ', idapp, event);
 			if (idapp) {
 				if (Array.isArray(event)) {
@@ -101,6 +104,11 @@
 				}
 			}
 		});
+	});
+
+	onDestroy(() => {
+		unsubscribe_dy();
+		unsubscribe_com();
 	});
 </script>
 

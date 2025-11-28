@@ -8,7 +8,7 @@ declare const Select: import("svelte").Component<{
     option?: string;
     css_class?: string;
     options?: any[];
-}, {}, "option" | "css_class" | "options">;
+}, {}, "options" | "option" | "css_class">;
 type $$ComponentProps = {
     onchange?: Function;
     option?: string;

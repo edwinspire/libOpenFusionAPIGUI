@@ -26,7 +26,7 @@
 	// Se ejecuta cuando stateValue cambia
 	$effect(() => {
 		if (value) {
-			normalizeValue(value);
+			normalizeValue($state.snapshot(value));
 		}
 	});
 
@@ -89,7 +89,7 @@
 	}
 
 	onMount(() => {
-		normalizeValue(value);
+		normalizeValue($state.snapshot(value));
 	});
 </script>
 

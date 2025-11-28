@@ -1,4 +1,4 @@
-import { H as HYDRATION_ERROR, C as COMMENT_NODE, a as HYDRATION_END, b as HYDRATION_START, c as HYDRATION_START_ELSE, B as BOUNDARY_EFFECT, E as ERROR_VALUE, d as EFFECT_RAN, e as CLEAN, I as INERT, f as EFFECT, g as BLOCK_EFFECT, D as DIRTY, h as DERIVED, W as WAS_MARKED, i as BRANCH_EFFECT, R as ROOT_EFFECT, M as MAYBE_DIRTY, j as DESTROYED, A as ASYNC, k as HEAD_EFFECT, l as EFFECT_TRANSPARENT, m as EFFECT_PRESERVED, n as CONNECTED, o as EAGER_EFFECT, S as STATE_SYMBOL, U as UNINITIALIZED, p as STALE_REACTION, q as RENDER_EFFECT, r as USER_EFFECT, s as REACTION_IS_UPDATING, t as is_passive_event, L as LEGACY_PROPS, u as render } from "./index2.js";
+import { H as HYDRATION_ERROR, C as COMMENT_NODE, a as HYDRATION_END, b as HYDRATION_START, c as HYDRATION_START_ELSE, B as BOUNDARY_EFFECT, E as ERROR_VALUE, d as EFFECT_RAN, e as CLEAN, I as INERT, f as EFFECT, g as BLOCK_EFFECT, D as DIRTY, h as DERIVED, W as WAS_MARKED, i as BRANCH_EFFECT, R as ROOT_EFFECT, M as MAYBE_DIRTY, j as DESTROYED, A as ASYNC, k as HEAD_EFFECT, l as EFFECT_TRANSPARENT, m as EFFECT_PRESERVED, n as CONNECTED, o as EAGER_EFFECT, S as STATE_SYMBOL, U as UNINITIALIZED, p as STALE_REACTION, q as RENDER_EFFECT, r as USER_EFFECT, s as MANAGED_EFFECT, t as REACTION_IS_UPDATING, u as is_passive_event, L as LEGACY_PROPS, v as render } from "./index2.js";
 import { D as DEV } from "./environment.js";
 import { r as run_all, d as deferred, s as safe_equals, e as equals, o as object_prototype, a as array_prototype, g as get_descriptor, b as get_prototype_of, i as is_array, c as is_extensible, f as index_of, h as define_property, j as array_from, k as setContext } from "./context.js";
 import "clsx";
@@ -448,6 +448,8 @@ class Batch {
         }
         const others = [...batch.current.keys()].filter((s) => !this.current.has(s));
         if (others.length > 0) {
+          var prev_queued_root_effects = queued_root_effects;
+          queued_root_effects = [];
           const marked = /* @__PURE__ */ new Set();
           const checked = /* @__PURE__ */ new Map();
           for (const source2 of sources) {
@@ -459,9 +461,9 @@ class Batch {
             for (const root2 of queued_root_effects) {
               batch.#traverse_effect_tree(root2, dummy_target);
             }
-            queued_root_effects = [];
             batch.deactivate();
           }
+          queued_root_effects = prev_queued_root_effects;
         }
       }
       current_batch = null;
@@ -561,6 +563,7 @@ function flushSync(fn) {
 function flush_effects() {
   var was_updating_effect = is_updating_effect;
   is_flushing = true;
+  var source_stacks = null;
   try {
     var flush_count = 0;
     set_is_updating_effect(true);
@@ -573,6 +576,7 @@ function flush_effects() {
       }
       batch.process(queued_root_effects);
       old_values.clear();
+      if (DEV) ;
     }
   } finally {
     is_flushing = false;
@@ -643,8 +647,7 @@ function mark_effects(value, sources, marked, checked) {
           marked,
           checked
         );
-      } else if ((flags2 & (ASYNC | BLOCK_EFFECT)) !== 0 && (flags2 & DIRTY) === 0 && // we may have scheduled this one already
-      depends_on(reaction, sources, checked)) {
+      } else if ((flags2 & (ASYNC | BLOCK_EFFECT)) !== 0 && (flags2 & DIRTY) === 0 && depends_on(reaction, sources, checked)) {
         set_signal_status(reaction, DIRTY);
         schedule_effect(
           /** @type {Effect} */
@@ -1062,10 +1065,10 @@ function get_derived_parent_effect(derived) {
   var parent = derived.parent;
   while (parent !== null) {
     if ((parent.f & DERIVED) === 0) {
-      return (
+      return (parent.f & DESTROYED) === 0 ? (
         /** @type {Effect} */
         parent
-      );
+      ) : null;
     }
     parent = parent.parent;
   }
@@ -1089,15 +1092,17 @@ function execute_derived(derived) {
 function update_derived(derived) {
   var value = execute_derived(derived);
   if (!derived.equals(value)) {
-    derived.v = value;
+    if (!current_batch?.is_fork) {
+      derived.v = value;
+    }
     derived.wv = increment_write_version();
   }
   if (is_destroying_effect) {
     return;
   }
   if (batch_values !== null) {
-    if (effect_tracking()) {
-      batch_values.set(derived, derived.v);
+    if (effect_tracking() || current_batch?.is_fork) {
+      batch_values.set(derived, value);
     }
   } else {
     var status = (derived.f & CONNECTED) === 0 ? MAYBE_DIRTY : CLEAN;
@@ -1179,14 +1184,20 @@ function internal_set(source2, value) {
 }
 function flush_eager_effects() {
   eager_effects_deferred = false;
+  var prev_is_updating_effect = is_updating_effect;
+  set_is_updating_effect(true);
   const inspects = Array.from(eager_effects);
-  for (const effect of inspects) {
-    if ((effect.f & CLEAN) !== 0) {
-      set_signal_status(effect, MAYBE_DIRTY);
+  try {
+    for (const effect of inspects) {
+      if ((effect.f & CLEAN) !== 0) {
+        set_signal_status(effect, MAYBE_DIRTY);
+      }
+      if (is_dirty(effect)) {
+        update_effect(effect);
+      }
     }
-    if (is_dirty(effect)) {
-      update_effect(effect);
-    }
+  } finally {
+    set_is_updating_effect(prev_is_updating_effect);
   }
   eager_effects.clear();
 }
@@ -1217,13 +1228,11 @@ function mark_reactions(signal, status) {
         mark_reactions(derived, MAYBE_DIRTY);
       }
     } else if (not_dirty) {
-      if ((flags2 & BLOCK_EFFECT) !== 0) {
-        if (eager_block_effects !== null) {
-          eager_block_effects.add(
-            /** @type {Effect} */
-            reaction
-          );
-        }
+      if ((flags2 & BLOCK_EFFECT) !== 0 && eager_block_effects !== null) {
+        eager_block_effects.add(
+          /** @type {Effect} */
+          reaction
+        );
       }
       schedule_effect(
         /** @type {Effect} */
@@ -1482,7 +1491,7 @@ function push_effect(effect, parent_effect) {
     parent_effect.last = effect;
   }
 }
-function create_effect(type, fn, sync, push2 = true) {
+function create_effect(type, fn, sync) {
   var parent = active_effect;
   if (parent !== null && (parent.f & INERT) !== 0) {
     type |= INERT;
@@ -1516,27 +1525,25 @@ function create_effect(type, fn, sync, push2 = true) {
   } else if (fn !== null) {
     schedule_effect(effect);
   }
-  if (push2) {
-    var e = effect;
-    if (sync && e.deps === null && e.teardown === null && e.nodes_start === null && e.first === e.last && // either `null`, or a singular child
-    (e.f & EFFECT_PRESERVED) === 0) {
-      e = e.first;
-      if ((type & BLOCK_EFFECT) !== 0 && (type & EFFECT_TRANSPARENT) !== 0 && e !== null) {
-        e.f |= EFFECT_TRANSPARENT;
-      }
+  var e = effect;
+  if (sync && e.deps === null && e.teardown === null && e.nodes_start === null && e.first === e.last && // either `null`, or a singular child
+  (e.f & EFFECT_PRESERVED) === 0) {
+    e = e.first;
+    if ((type & BLOCK_EFFECT) !== 0 && (type & EFFECT_TRANSPARENT) !== 0 && e !== null) {
+      e.f |= EFFECT_TRANSPARENT;
     }
-    if (e !== null) {
-      e.parent = parent;
-      if (parent !== null) {
-        push_effect(e, parent);
-      }
-      if (active_reaction !== null && (active_reaction.f & DERIVED) !== 0 && (type & ROOT_EFFECT) === 0) {
-        var derived = (
-          /** @type {Derived} */
-          active_reaction
-        );
-        (derived.effects ??= []).push(e);
-      }
+  }
+  if (e !== null) {
+    e.parent = parent;
+    if (parent !== null) {
+      push_effect(e, parent);
+    }
+    if (active_reaction !== null && (active_reaction.f & DERIVED) !== 0 && (type & ROOT_EFFECT) === 0) {
+      var derived = (
+        /** @type {Derived} */
+        active_reaction
+      );
+      (derived.effects ??= []).push(e);
     }
   }
   return effect;
@@ -1571,8 +1578,8 @@ function block(fn, flags2 = 0) {
   var effect = create_effect(BLOCK_EFFECT | flags2, fn, true);
   return effect;
 }
-function branch(fn, push2 = true) {
-  return create_effect(BRANCH_EFFECT | EFFECT_PRESERVED, fn, true, push2);
+function branch(fn) {
+  return create_effect(BRANCH_EFFECT | EFFECT_PRESERVED, fn, true);
 }
 function execute_effect_teardown(effect) {
   var teardown = effect.teardown;
@@ -1967,7 +1974,7 @@ function update_effect(effect) {
   active_effect = effect;
   is_updating_effect = true;
   try {
-    if ((flags2 & BLOCK_EFFECT) !== 0) {
+    if ((flags2 & (BLOCK_EFFECT | MANAGED_EFFECT)) !== 0) {
       destroy_block_effect_children(effect);
     } else {
       destroy_effect_children(effect);
@@ -2028,19 +2035,17 @@ function get(signal) {
       old_values.set(derived, value);
       return value;
     }
-  } else if (is_derived) {
+  } else if (is_derived && (!batch_values?.has(signal) || current_batch?.is_fork && !effect_tracking())) {
     derived = /** @type {Derived} */
     signal;
-    if (batch_values?.has(derived)) {
-      return batch_values.get(derived);
-    }
     if (is_dirty(derived)) {
       update_derived(derived);
     }
     if (is_updating_effect && effect_tracking() && (derived.f & CONNECTED) === 0) {
       reconnect(derived);
     }
-  } else if (batch_values?.has(signal)) {
+  }
+  if (batch_values?.has(signal)) {
     return batch_values.get(signal);
   }
   if ((signal.f & ERROR_VALUE) !== 0) {
@@ -2626,7 +2631,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "ohucly"
+  version_hash: "17pclth"
 };
 async function get_hooks() {
   let handle;

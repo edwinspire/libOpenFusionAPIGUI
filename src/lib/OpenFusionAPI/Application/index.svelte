@@ -62,7 +62,7 @@
 				},
 				{
 					label: 'Endpoints',
-					icon: ' fa-solid fa-share-nodes ',
+					icon: ' fa-solid fa-network-wired ',
 					onclick: () => {
 						menu_item_selected = '/endpoints';
 					}

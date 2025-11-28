@@ -84,7 +84,6 @@ export const GetAppVars = async (idapp, token) => {
 		if (token) {
 			uf.setBearerAuthorization(token);
 		}
-		console.log('Token > ', token);
 		let request = await uf.GET({
 			url: url_paths.appvarsbyidapp,
 			data: { idapp: idapp }

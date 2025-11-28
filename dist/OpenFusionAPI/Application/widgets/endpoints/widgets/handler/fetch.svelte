@@ -2,7 +2,8 @@
 	import { onMount } from 'svelte';
 	import { Tab } from '@edwinspire/svelte-components';
 
-	import AppVarsSelector from '../../../../../app/endpoint/widgets/app_vars_selector.svelte';
+	//import AppVarsSelector from '../../../../../app/endpoint/widgets/app_vars_selector.svelte';
+	import AppVarsSelector from '../app_vars_selector.svelte';
 
 	let { endpoint = $bindable({}), onchange = () => {} } = $props();
 

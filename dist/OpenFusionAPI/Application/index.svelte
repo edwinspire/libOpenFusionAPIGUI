@@ -62,7 +62,7 @@
 				},
 				{
 					label: 'Endpoints',
-					icon: ' fa-solid fa-share-nodes ',
+					icon: ' fa-solid fa-network-wired ',
 					onclick: () => {
 						menu_item_selected = '/endpoints';
 					}
@@ -85,7 +85,7 @@
 		}
 	]);
 
-	userStore.subscribe((value) => {
+	const unsubscribe = userStore.subscribe((value) => {
 		uf.setBearerAuthorization(value.token);
 	});
 
@@ -126,7 +126,7 @@
 
 			if (m && m.data?.idapp == idapp) {
 				if (m && (m.event_name == 'cache_set' || m.event_name == 'cache_released')) {
-				//	console.log('> cache_set ', m);
+					//	console.log('> cache_set ', m);
 					storeCacheSize.update((value) => {
 						value[m.data.idendpoint] = m.data.cache_size;
 
@@ -161,6 +161,7 @@
 
 	onDestroy(() => {
 		wsClient.disconnect();
+		unsubscribe();
 	});
 </script>
 

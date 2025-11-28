@@ -2,7 +2,8 @@
 	import { onMount } from 'svelte';
 	import { Tab, EditorCode } from '@edwinspire/svelte-components';
 
-	import PredefinedVars from '../../../../../app/endpoint/widgets/js_predefined_vars.svelte';
+	//	import PredefinedVars from '../../../../../app/endpoint/widgets/js_predefined_vars.svelte';
+	import PredefinedVars from '../js_predefined_vars.svelte';
 
 	let { endpoint = $bindable({}), onchange = () => {} } = $props();
 	let internal_code = $state('');
