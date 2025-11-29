@@ -171,6 +171,7 @@ export function validateURL(string_url) {
 }
 
 export const mergeSourceOverwrite = (target, source) => {
+	// OJO sibreescribe el valor de tarjet
 	const isObject = (val) => val && typeof val === 'object' && !Array.isArray(val);
 
 	for (const key in source) {

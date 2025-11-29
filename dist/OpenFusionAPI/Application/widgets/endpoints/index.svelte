@@ -185,7 +185,7 @@
 					//SelectedRow = { app: app, endpoint: defaultValuesEndpointRow() };
 					idendpoint_selected = 0;
 					showEndpointEdit = true;
-					EndpointEditorWidget.setData({ app: app, idendpoint: 0 });
+					EndpointEditorWidget.setData({ app: app});
 				} else {
 					//alert('No App selected');
 					notify.push({ message: 'Not app selected', color: 'warning' });

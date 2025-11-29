@@ -32,8 +32,8 @@
 
 	let { showEditor = $bindable(false), onsave = (d) => {}, oncopy = () => {} } = $props();
 
-	let json_schema_enabled = $state(false);
-	let json_schema_in = $state({});
+	let json_schema_in_enabled = $state(false);
+	let json_schema_in_schema = $state({});
 	let endpoint = $state(defaultEndpoint);
 	let app = $state({});
 	let idendpoint = $state();
@@ -50,11 +50,16 @@
 	}
 
 	async function setValuesEndpoint() {
+		//console.warn($state.snapshot(endpoint), defaultEndpoint);
 		if (app && app.endpoints && idendpoint) {
 			let ep_found = app.endpoints.find((ep) => ep.idendpoint == idendpoint);
 
 			if (ep_found) {
-				endpoint = mergeSourceOverwrite(defaultEndpoint, ep_found);
+				// Se hace una copia del default porque se estaba sobreescribiendo
+				endpoint = mergeSourceOverwrite({ ...defaultEndpoint }, ep_found);
+
+				json_schema_in_enabled = endpoint.json_schema?.in.enabled;
+				json_schema_in_schema = endpoint.json_schema?.in?.schema;
 
 				// Get Handler Docs
 				await getHandlerDocsRequest();
@@ -74,8 +79,11 @@
 		endpoint_out.data_test = new_data_endpoint.data_test;
 		endpoint_out.code = new_data_endpoint.code;
 		endpoint_out.docs = new_data_endpoint.docs;
+		endpoint_out.json_schema = {
+			in: { enabled: json_schema_in_enabled, schema: json_schema_in_schema }
+		};
 
-		//	console.log('Save Endpoint', endpoint_out);
+			console.log('Save Endpoint', endpoint_out);
 		deploying = { show: true, message: 'Saving Endpoint...', error: false };
 		try {
 			let response = await EndpointSave(endpoint_out, $userStore.token);
@@ -237,6 +245,7 @@
 			new_data_endpoint.data_test = v.data_test;
 			new_data_endpoint.code = v.code;
 			new_data_endpoint.docs = endpoint.docs;
+
 			//console.log('onChangeValueHandler > ', $state.snapshot(new_data_endpoint));
 		}
 	}
@@ -341,9 +350,21 @@
 {/snippet}
 
 {#snippet tab_json_schema()}
-	<Input label="Enabled" type="checkbox" bind:value={json_schema_enabled} placeholder="Enabled" />
+	<Input
+		label="Enabled"
+		type="checkbox"
+		bind:value={json_schema_in_enabled}
+		placeholder="Enabled"
+	/>
 
-	<EditorCode lang="json" showFormat={true} bind:code={json_schema_in}></EditorCode>
+	<EditorCode
+		lang="json"
+		showFormat={true}
+		bind:code={json_schema_in_schema}
+		onchange={(datajs) => {
+			//	json_schema_in = datajs.code;
+		}}
+	></EditorCode>
 
 	<div class="block">
 		<div class="content is-small">
