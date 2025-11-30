@@ -22,4 +22,5 @@ export namespace url_paths {
     let appvarsbyidapp: string;
     let appvar: string;
     let getLogsRecordsPerMinute: string;
+    let changeUserPassword: string;
 }

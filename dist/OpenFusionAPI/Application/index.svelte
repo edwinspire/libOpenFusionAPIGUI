@@ -1,5 +1,5 @@
 <script>
-	import { AppBase } from '@edwinspire/svelte-components';
+	import { AppBase, DialogModal, Input } from '@edwinspire/svelte-components';
 	import { onDestroy, onMount } from 'svelte';
 	import Logo from '../img/favicon.png';
 	import { url_paths } from './utils/paths.js';
@@ -11,7 +11,6 @@
 		storeEndpointOnStart,
 		storeServerDynamicInformation
 	} from './utils/stores.js';
-	import uFetch from '@edwinspire/universal-fetch';
 	import {
 		PredictiveInput,
 		OpenFusionWebsocketClient,
@@ -23,14 +22,22 @@
 	import AppVars from './widgets/application_variables/index.svelte';
 	import Endpoints from './widgets/endpoints/index.svelte';
 	import IntervalTasks from './widgets/interval_tasks/index.svelte';
+	import { getListApps, changeUserPassword } from './utils/request.js';
 
 	let notify = new Notifications();
 	let idapp = $state(0);
 	let options = $state([]);
 	let menu_item_selected = $state('');
-	let uf = new uFetch();
-	//let AppScreenWidget = $state();
+	let show_dialog_change_pwd = $state(false);
 	const wsClient = new OpenFusionWebsocketClient(url_paths.wsServerEvents);
+	const defaultPasswordChange = {
+		username: '',
+		oldPassword: '',
+		newPassword: '',
+		repeatNewPassword: ''
+	};
+
+	let password_change = $state(defaultPasswordChange);
 
 	let menu = $state([
 		{
@@ -85,17 +92,9 @@
 		}
 	]);
 
-	const unsubscribe = userStore.subscribe((value) => {
-		uf.setBearerAuthorization(value.token);
-	});
-
-	async function getListApps() {
-		// Lógica de autenticación aquí
-
+	async function getListAppsInternal() {
 		try {
-			let apps_res = await uf.GET({ url: url_paths.apps_get_list });
-			let apps = await apps_res.json();
-
+			let apps = await getListApps();
 			if (apps && Array.isArray(apps) && apps.length > 0) {
 				options = apps.map((item) => {
 					return { name: item.app, value: item.idapp };
@@ -111,7 +110,7 @@
 	}
 
 	onMount(async () => {
-		await getListApps();
+		await getListAppsInternal();
 
 		notify.push({ message: 'Welcome ', color: 'success' });
 
@@ -188,6 +187,26 @@
 		</div>
 		<div class="dropdown-menu" role="menu">
 			<div class="dropdown-content">
+				<!-- svelte-ignore a11y_invalid_attribute -->
+				<a
+					href="#"
+					class="dropdown-item"
+					onclick={() => {
+						show_dialog_change_pwd = true;
+						password_change = defaultPasswordChange;
+						password_change.username = $userStore?.user?.username || '';
+					}}
+				>
+					<div class="icon-text">
+						<span class="icon">
+							<i class="fa-solid fa-key"></i>
+						</span>
+						<span>Password</span>
+					</div>
+				</a>
+
+				<hr class="dropdown-divider" />
+
 				<a href="https://github.com/edwinspire/OpenFusionAPI" target="_blank" class="dropdown-item">
 					<div class="icon-text">
 						<span class="icon">
@@ -261,3 +280,42 @@
 		<DashBoardScreen {idapp}></DashBoardScreen>
 	{/if}</AppBase
 >
+
+<DialogModal
+	title={titleModal}
+	body={bodyDialogModal}
+	onaccept={async () => {
+		if (password_change.newPassword == password_change.repeatNewPassword) {
+			let result = await changeUserPassword(password_change, $userStore.token);
+			console.log(result);
+			if (result.success) {
+				password_change = defaultPasswordChange;
+				show_dialog_change_pwd = false;
+				notify.push({ message: 'Successful update', color: 'success' });
+			} else {
+				notify.push({ message: result.error, color: 'danger' });
+			}
+		} else {
+			alert('You must enter the new key twice.');
+		}
+	}}
+	oncancel={() => {
+		password_change = defaultPasswordChange;
+	}}
+	bind:show={show_dialog_change_pwd}
+>
+	{#snippet titleModal()}
+		<span>{`Change Password: ${password_change.username}`}</span>
+	{/snippet}
+
+	{#snippet bodyDialogModal()}
+		<Input label="Current password" type="password" bind:value={password_change.oldPassword}
+		></Input>
+		<Input label="New Password" type="password" bind:value={password_change.newPassword}></Input>
+		<Input
+			label="Repeat new Password"
+			type="password"
+			bind:value={password_change.repeatNewPassword}
+		></Input>
+	{/snippet}
+</DialogModal>

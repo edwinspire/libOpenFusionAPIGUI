@@ -433,3 +433,28 @@ export const DeleteAppVar = async (idvar, token) => {
 		return [];
 	}
 };
+
+
+export const getListApps = async(token)=> {
+
+		let uf = new uFetch();
+		if (token) {
+			uf.setBearerAuthorization(token);
+		}
+	
+			let apps_res = await uf.GET({ url: url_paths.apps_get_list });
+			let apps = await apps_res.json();
+return apps;		
+	}
+
+	export const changeUserPassword = async(data, token)=> {
+
+		let uf = new uFetch();
+		if (token) {
+			uf.setBearerAuthorization(token);
+		}
+	
+			let apps_res = await uf.POST({ url: url_paths.changeUserPassword, data:data });
+			let apps = await apps_res.json();
+return apps;		
+	}
