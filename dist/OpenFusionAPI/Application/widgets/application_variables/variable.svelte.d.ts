@@ -6,7 +6,7 @@ type Variable = {
 declare const Variable: import("svelte").Component<{
     isReadOnly?: boolean;
     showCode?: boolean;
-    appVars?: Record<string, any>;
+    appVars?: any[];
     title?: string;
     environment?: string;
     onchange?: Function;
@@ -15,7 +15,7 @@ declare const Variable: import("svelte").Component<{
 type $$ComponentProps = {
     isReadOnly?: boolean;
     showCode?: boolean;
-    appVars?: Record<string, any>;
+    appVars?: any[];
     title?: string;
     environment?: string;
     onchange?: Function;

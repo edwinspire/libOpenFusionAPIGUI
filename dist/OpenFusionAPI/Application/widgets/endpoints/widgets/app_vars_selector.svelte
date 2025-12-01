@@ -18,7 +18,11 @@
 	// --------------------------------------------
 	// Valor seleccionado (derivado)
 	// --------------------------------------------
-	let value_selected = $derived.by(() => options_app_vars.find((item) => item.name === value));
+	let value_selected = $derived.by(() =>
+		options_app_vars && Array.isArray(options_app_vars)
+			? options_app_vars.find((item) => item.name === value)
+			: []
+	);
 
 	// --------------------------------------------
 	// Suscripción al store

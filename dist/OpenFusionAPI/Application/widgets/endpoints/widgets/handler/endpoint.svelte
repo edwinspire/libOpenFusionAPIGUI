@@ -44,17 +44,19 @@
 	}
 
 	let available_environments_list = $derived.by(() => {
-		return environment_list.filter((el) => {
-			//console.log(el, endpoint.environment);
-			return el.id != endpoint.environment;
-		});
+		return environment_list && Array.isArray(environment_list)
+			? environment_list.filter((el) => {
+					//console.log(el, endpoint.environment);
+					return el.id != endpoint.environment;
+				})
+			: [];
 	});
 
 	let endpoint_copied = $state();
 	let endpoint_env_copy = $state('');
 	let endpoint_replace_copy = $state(false);
 
-	const unsubscribe =listHandlerStore.subscribe((/** @type {any[]} */ value) => {
+	const unsubscribe = listHandlerStore.subscribe((/** @type {any[]} */ value) => {
 		handlers = value;
 	});
 
@@ -71,7 +73,6 @@
 		);
 	});
 
-	
 	onDestroy(unsubscribe);
 
 	function checkEndpointConstraint() {

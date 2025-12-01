@@ -9,22 +9,17 @@
 		//	setCSS(value);
 	});
 	let labelx = $derived.by(() => {
-		let l = listAccessMethod.find((item) => {
-			return item.id == value;
-		});
-	//	console.log('Label', l);
+		let l;
+		if (listAccessMethod && Array.isArray(listAccessMethod)) {
+			l = listAccessMethod.find((item) => {
+				return item.id == value;
+			});
+		}
+		//	console.log('Label', l);
 		return l ? l.value : 'Unknown';
 	});
 
-	/*
-<SelectAccess
-		options={listAccessMethod}
-		bind:option={value}
-		onselect={(e) => {
-			console.log('Cambia', e, value);
-		}}
-	/>
-*/
+
 </script>
 
 <td>

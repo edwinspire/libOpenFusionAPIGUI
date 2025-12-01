@@ -8,11 +8,7 @@
 	import { getLogsRecordsPerMinute } from '../../utils/request.js';
 	let { idapp = $bindable() } = $props();
 	let data_request = $state([]);
-	/*
-	let title = $derived.by(() => {
-		return 'Last Requests: ' + (data_request ? data_request.length : '0');
-	});
-*/
+	
 	let data_logs_per_minute = $state([]);
 	let data_cpu = $state([]);
 	let data_memory = $state([]);

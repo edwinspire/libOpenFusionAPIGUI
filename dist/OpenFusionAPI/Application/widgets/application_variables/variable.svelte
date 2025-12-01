@@ -12,7 +12,7 @@
 	let {
 		isReadOnly = $bindable(false),
 		showCode = $bindable(false),
-		appVars = $bindable({}),
+		appVars = $bindable([]),
 		title = $bindable(''),
 		environment = $bindable(''),
 		onchange = () => {},

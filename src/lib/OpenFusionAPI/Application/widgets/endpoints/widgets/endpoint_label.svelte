@@ -13,9 +13,12 @@
 	} = $props();
 
 	let env_selected = $derived.by(() => {
-		let data = Environment.find((item) => {
-			return item.id == environment;
-		});
+		let data =
+			Environment && Array.isArray(Environment)
+				? Environment.find((item) => {
+						return item.id == environment;
+					})
+				: [];
 		return data;
 	});
 </script>

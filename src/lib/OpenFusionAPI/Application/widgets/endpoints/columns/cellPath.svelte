@@ -8,19 +8,21 @@
 	let isRunning = $state(false);
 	let timeoutIsRunning;
 	let env_params = $derived.by(() => {
-		return Environment.find((item) => {
-			return row.environment == item.id;
-		});
+		return Environment && Array.isArray(Environment)
+			? Environment.find((item) => {
+					return row.environment == item.id;
+				})
+			: [];
 	});
 
 	let unsubscribe;
 
-	onDestroy(()=>{
+	onDestroy(() => {
 		clearTimeout(timeoutIsRunning);
 		unsubscribe();
 	});
 	onMount(() => {
-	unsubscribe = storeEndpointOnStart.subscribe((data) => {
+		unsubscribe = storeEndpointOnStart.subscribe((data) => {
 			//
 			//	console.log('CELL PATH :::::> ', data);
 			if (row && row.idendpoint == data.idendpoint) {

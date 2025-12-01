@@ -30,28 +30,36 @@
 	});
 
 	let env_dev = $derived.by(() => {
-		return DataAppVars.filter((item) => {
-			return item.environment == 'dev';
-		});
+		return DataAppVars && Array.isArray(DataAppVars)
+			? DataAppVars.filter((item) => {
+					return item.environment == 'dev';
+				})
+			: [];
 	});
 
 	let env_qa = $derived.by(() => {
-		return DataAppVars.filter((item) => {
-			return item.environment == 'qa';
-		});
+		return DataAppVars && Array.isArray(DataAppVars)
+			? DataAppVars.filter((item) => {
+					return item.environment == 'qa';
+				})
+			: [];
 	});
 
 	let env_prd = $derived.by(() => {
-		return DataAppVars.filter((item) => {
-			return item.environment == 'prd';
-		});
+		return DataAppVars && Array.isArray(DataAppVars)
+			? DataAppVars.filter((item) => {
+					return item.environment == 'prd';
+				})
+			: [];
 	});
 
 	let available_environments_list = $derived.by(() => {
-		return environment_list.filter((el) => {
-			//console.log('>>>>>>>>>>>>><', el, environment);
-			return el.id != var_to_copy.environment;
-		});
+		return environment_list && Array.isArray(environment_list)
+			? environment_list.filter((el) => {
+					//console.log('>>>>>>>>>>>>><', el, environment);
+					return el.id != var_to_copy.environment;
+				})
+			: [];
 	});
 
 	$effect(async () => {

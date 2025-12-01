@@ -39,7 +39,7 @@
 	});
 
 	let timeoutChageAuth;
-/*
+	/*
 	$effect(() => {
 		if (table_users) {
 			timeoutChageAuth = TimeOutChangeValue(timeoutChageAuth, parseCode);
@@ -47,7 +47,7 @@
 	});
 */
 
-const unsubscribe =	storeUsersList.subscribe((value) => {
+	const unsubscribe = storeUsersList.subscribe((value) => {
 		data_users = value;
 		buildTableUsers();
 	});
@@ -62,13 +62,16 @@ const unsubscribe =	storeUsersList.subscribe((value) => {
 		defaultValue();
 
 		if (users) {
-			users = table_users
-				.filter((u) => {
-					return u.auth;
-				})
-				.map((u) => {
-					return u.iduser;
-				});
+			users =
+				table_users && Array.isArray(table_users)
+					? table_users
+							.filter((u) => {
+								return u.auth;
+							})
+							.map((u) => {
+								return u.iduser;
+							})
+					: [];
 		}
 	}
 
