@@ -74,8 +74,6 @@
 	async function saveEndpoint() {
 		let endpoint_out = $state.snapshot(endpoint);
 
-		//console.log(endpoint_out, $state.snapshot(new_data_endpoint));
-
 		endpoint_out.data_test = new_data_endpoint.data_test;
 		endpoint_out.code = new_data_endpoint.code;
 		endpoint_out.docs = new_data_endpoint.docs;
@@ -83,7 +81,7 @@
 			in: { enabled: json_schema_in_enabled, schema: json_schema_in_schema }
 		};
 
-			console.log('Save Endpoint', endpoint_out);
+		console.log('Save Endpoint', endpoint_out);
 		deploying = { show: true, message: 'Saving Endpoint...', error: false };
 		try {
 			let response = await EndpointSave(endpoint_out, $userStore.token);
@@ -529,6 +527,9 @@
 				alert('URL is invalid.');
 			} else if (!availableURL) {
 				alert('URL already exists.');
+			} else if (endpoint.handler == 'FUNCTION' && (!endpoint.code || endpoint.code.length < 1)) {
+				deploying = { show: false };
+				alert('You have not selected a function');
 			} else {
 				saveEndpoint();
 				showEditor = false;

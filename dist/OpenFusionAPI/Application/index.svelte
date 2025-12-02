@@ -292,7 +292,7 @@
 				password_change = defaultPasswordChange;
 				show_dialog_change_pwd = false;
 				notify.push({ message: 'Successful update', color: 'success' });
-			} else {
+			} else {npm
 				notify.push({ message: result.error, color: 'danger' });
 			}
 		} else {

@@ -78,24 +78,7 @@ export const GetServerAPIVersion = async () => {
 
 	return version_res;
 };
-export const GetAppVars = async (idapp, token) => {
-	if (idapp) {
-		let uf = new uFetch();
-		if (token) {
-			uf.setBearerAuthorization(token);
-		}
-		let request = await uf.GET({
-			url: url_paths.appvarsbyidapp,
-			data: { idapp: idapp }
-		});
 
-		let response = await request.json();
-
-		return response;
-	} else {
-		return [];
-	}
-};
 
 export const GetAppBackup = async (idapp, token) => {
 	if (idapp) {
@@ -372,7 +355,9 @@ export const getLogsRecordsPerMinute = async (options, token) => {
 	}
 };
 
-export const getAppVars = async (idapp, token, setStoreListAppVars = false) => {
+
+
+export const GetAppVars = async (idapp, token, setStoreListAppVars = false) => {
 	let uf = new uFetch();
 
 	if (token) {

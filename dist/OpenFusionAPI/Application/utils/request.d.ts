@@ -2,7 +2,6 @@ export function getEnvironmentList(token: any): Promise<any>;
 export function GetApp(idapp: any, token: any): Promise<any>;
 export function LoginRequest(username: any, password: any): Promise<any>;
 export function GetServerAPIVersion(): Promise<any>;
-export function GetAppVars(idapp: any, token: any): Promise<any>;
 export function GetAppBackup(idapp: any, token: any): Promise<any>;
 export function RestoreAppBackup(app: any, token: any): Promise<any>;
 export function GetEndpointsByIdapp(idapp: any, token: any): Promise<any>;
@@ -15,7 +14,7 @@ export function getAppDocumentation(token: any, idapp: any, idendpoints: any): P
 export function getServerAPIVersion(token: any): Promise<any>;
 export function EndpointSave(endpoint: any, token: any): Promise<any>;
 export function getLogsRecordsPerMinute(options: any, token: any): Promise<any>;
-export function getAppVars(idapp: any, token: any, setStoreListAppVars?: boolean): Promise<any>;
+export function GetAppVars(idapp: any, token: any, setStoreListAppVars?: boolean): Promise<any>;
 export function UpsertAppVar(data: any, token: any): Promise<any>;
 export function DeleteAppVar(idvar: any, token: any): Promise<any>;
 export function getListApps(token: any): Promise<any>;
