@@ -135,6 +135,7 @@
 	{#if environment == 'dev' || environment == '*'}
 		<div class="column">
 			<VarEnv
+				bind:idapp
 				bind:appVars={env_dev}
 				environment="dev"
 				{isReadOnly}
@@ -152,6 +153,7 @@
 	{#if environment == 'qa' || environment == '*'}
 		<div class="column">
 			<VarEnv
+				bind:idapp
 				bind:appVars={env_qa}
 				environment="qa"
 				{isReadOnly}
@@ -169,6 +171,7 @@
 	{#if environment == 'prd' || environment == '*'}
 		<div class="column">
 			<VarEnv
+				bind:idapp
 				bind:appVars={env_prd}
 				environment="prd"
 				{isReadOnly}

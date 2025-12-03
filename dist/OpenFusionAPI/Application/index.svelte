@@ -23,6 +23,7 @@
 	import Endpoints from './widgets/endpoints/index.svelte';
 	import IntervalTasks from './widgets/interval_tasks/index.svelte';
 	import { getListApps, changeUserPassword } from './utils/request.js';
+	
 
 	let notify = new Notifications();
 	let idapp = $state(0);
@@ -94,7 +95,7 @@
 
 	async function getListAppsInternal() {
 		try {
-			let apps = await getListApps();
+			let apps = await getListApps($userStore.token);
 			if (apps && Array.isArray(apps) && apps.length > 0) {
 				options = apps.map((item) => {
 					return { name: item.app, value: item.idapp };
@@ -267,7 +268,7 @@
 		<AppScreen
 			{idapp}
 			onsavedeploy={async () => {
-				await getListApps();
+				await getListApps($userStore.token);
 			}}
 		></AppScreen>
 	{:else if menu_item_selected == '/appvars'}

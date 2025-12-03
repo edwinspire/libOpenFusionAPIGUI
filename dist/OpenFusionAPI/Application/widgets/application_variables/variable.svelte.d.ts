@@ -4,6 +4,7 @@ type Variable = {
     $set?(props: Partial<$$ComponentProps>): void;
 };
 declare const Variable: import("svelte").Component<{
+    idapp?: string;
     isReadOnly?: boolean;
     showCode?: boolean;
     appVars?: any[];
@@ -11,8 +12,9 @@ declare const Variable: import("svelte").Component<{
     environment?: string;
     onchange?: Function;
     oncopy?: Function;
-}, {}, "title" | "isReadOnly" | "showCode" | "appVars" | "environment">;
+}, {}, "idapp" | "title" | "isReadOnly" | "showCode" | "appVars" | "environment">;
 type $$ComponentProps = {
+    idapp?: string;
     isReadOnly?: boolean;
     showCode?: boolean;
     appVars?: any[];

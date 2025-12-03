@@ -3,7 +3,7 @@
 	import { Chart } from '@edwinspire/svelte-components';
 	import {
 		storeEndpointOnComplete,
-		storeServerDynamicInformation
+		storeServerDynamicInformation, userStore
 	} from '$lib/OpenFusionAPI/Application/utils/stores.js';
 	import { getLogsRecordsPerMinute } from '$lib/OpenFusionAPI/Application/utils/request.js';
 	let { idapp = $bindable() } = $props();
@@ -55,7 +55,7 @@
 		//console.log('Busca por el idapp ' + idapp);
 		if (idapp) {
 			try {
-				let data_log_pm = await getLogsRecordsPerMinute({ idapp: idapp, last_hours: 12 });
+				let data_log_pm = await getLogsRecordsPerMinute({ idapp: idapp, last_hours: 12 }, $userStore.token);
 				data_logs_per_minute = data_log_pm.map((dl) => {
 					let now = new Date(dl.minute || Date.now());
 					return {

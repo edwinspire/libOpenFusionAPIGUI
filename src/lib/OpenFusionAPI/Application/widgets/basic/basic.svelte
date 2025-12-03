@@ -87,7 +87,7 @@
 			if (response) {
 				app = { ...response };
 
-				//	console.log(response);
+					console.log(response);
 			} else {
 				// No se obtuvieron datos
 				clearDataVars();

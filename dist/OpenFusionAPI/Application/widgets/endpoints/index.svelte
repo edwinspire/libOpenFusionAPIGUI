@@ -25,6 +25,7 @@
 	//let SelectedRow = $state(defaultValuesEndpointRow());
 	let TableSelectionType = $state(0);
 	let serverAPIVersion = $state('Loading...');
+	let serverDDBB = $state('?');
 	let TableObject = $state();
 	let idendpoint_selected = $state();
 
@@ -132,6 +133,7 @@
 
 			if (version_res && version_res.version) {
 				serverAPIVersion = version_res.version;
+				serverDDBB = version_res.ddbb;
 			} else {
 				serverAPIVersion = 'Unknown';
 			}
@@ -185,7 +187,7 @@
 					//SelectedRow = { app: app, endpoint: defaultValuesEndpointRow() };
 					idendpoint_selected = 0;
 					showEndpointEdit = true;
-					EndpointEditorWidget.setData({ app: app});
+					EndpointEditorWidget.setData({ app: app });
 				} else {
 					//alert('No App selected');
 					notify.push({ message: 'Not app selected', color: 'warning' });
@@ -202,8 +204,14 @@
 			{#snippet lt01()}
 				<div class="control">
 					<div class="tags has-addons">
-						<span class="tag is-dark">Server</span>
+						<span class="tag is-dark">Server API</span>
 						<span class="tag is-success">{serverAPIVersion}</span>
+					</div>
+				</div>
+				<div class="control">
+					<div class="tags has-addons">
+						<span class="tag is-dark">DataBase</span>
+						<span class="tag is-link">{serverDDBB}</span>
 					</div>
 				</div>
 			{/snippet}

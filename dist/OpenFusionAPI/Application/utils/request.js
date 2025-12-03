@@ -8,7 +8,7 @@ import {
 	listFunctionStorePRD,
 	listFunctionStoreQA,
 	listAppVars
-} from './stores.js'; 
+} from './stores.js';
 
 export const getEnvironmentList = async (token) => {
 	let uf = new uFetch();
@@ -79,7 +79,6 @@ export const GetServerAPIVersion = async () => {
 	return version_res;
 };
 
-
 export const GetAppBackup = async (idapp, token) => {
 	if (idapp) {
 		let uf = new uFetch();
@@ -123,7 +122,6 @@ export const RestoreAppBackup = async (app, token) => {
 export const GetEndpointsByIdapp = async (idapp, token) => {
 	if (idapp) {
 		let app = await GetApp(idapp, token);
-		
 
 		if (app.idapp == idapp) {
 			app.endpoints = [];
@@ -355,8 +353,6 @@ export const getLogsRecordsPerMinute = async (options, token) => {
 	}
 };
 
-
-
 export const GetAppVars = async (idapp, token, setStoreListAppVars = false) => {
 	let uf = new uFetch();
 
@@ -419,27 +415,24 @@ export const DeleteAppVar = async (idvar, token) => {
 	}
 };
 
-
-export const getListApps = async(token)=> {
-
-		let uf = new uFetch();
-		if (token) {
-			uf.setBearerAuthorization(token);
-		}
-	
-			let apps_res = await uf.GET({ url: url_paths.apps_get_list });
-			let apps = await apps_res.json();
-return apps;		
+export const getListApps = async (token) => {
+	let uf = new uFetch();
+	if (token) {
+		uf.setBearerAuthorization(token);
 	}
 
-	export const changeUserPassword = async(data, token)=> {
+	let apps_res = await uf.GET({ url: url_paths.apps_get_list });
+	let apps = await apps_res.json();
+	return apps;
+};
 
-		let uf = new uFetch();
-		if (token) {
-			uf.setBearerAuthorization(token);
-		}
-	
-			let apps_res = await uf.POST({ url: url_paths.changeUserPassword, data:data });
-			let apps = await apps_res.json();
-return apps;		
+export const changeUserPassword = async (data, token) => {
+	let uf = new uFetch();
+	if (token) {
+		uf.setBearerAuthorization(token);
 	}
+
+	let apps_res = await uf.POST({ url: url_paths.changeUserPassword, data: data });
+	let apps = await apps_res.json();
+	return apps;
+};

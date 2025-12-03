@@ -8,8 +8,10 @@
 	} from '@edwinspire/svelte-components';
 	import { equalObjs } from '$lib/OpenFusionAPI/Application/utils/utils.js';
 	import { UpsertAppVar, DeleteAppVar } from '$lib/OpenFusionAPI/Application/utils/request.js';
+	import { userStore } from '$lib/OpenFusionAPI/Application/utils/stores.js';
 
 	let {
+		idapp = $bindable('-'),
 		isReadOnly = $bindable(false),
 		showCode = $bindable(false),
 		appVars = $bindable([]),
@@ -23,16 +25,18 @@
 	let classAnimationCopyName = $state('');
 	let appVarsInternal = $state({});
 
+	/*
 	let idapp = $derived.by(() => {
 		let r;
 		if (appVars && Array.isArray(appVars)) {
 			let fapp = appVars.find((item) => {
 				return item.idvar;
 			});
-			r = fapp.idapp;
+			r = fapp && fapp.idapp ? fapp.idapp : undefined;
 		}
 		return r;
 	});
+	*/
 
 	let noty = new Notifications();
 
@@ -88,7 +92,7 @@
 {#snippet left_header(appvar)}
 	<span>
 		<div class="field has-addons">
-			{#if  !appvar.edit_name}
+			{#if !appvar.edit_name}
 				<!-- svelte-ignore a11y_missing_attribute -->
 				<p class="control"><a class="button is-static is-small"> {appvar.name} </a></p>
 			{/if}
@@ -232,7 +236,7 @@
 								confirm('Are you sure you want Save & Deloy the variable ' + appvar.name + '?')
 							) {
 								// Guardar la variable y emitir evento indicando cambios realizados
-								let avr = await UpsertAppVar(appvar);
+								let avr = await UpsertAppVar(appvar, $userStore.token);
 								appvar.idvar = avr.idvar;
 							}
 						}}
@@ -296,14 +300,22 @@
 								<button
 									class="button is-success is-small"
 									onclick={() => {
-										// Verificar que la variable no exista
-										let var_full_name = '$_VAR_' + new_var_name.toUpperCase();
+										if (new_var_name && new_var_name.length > 4) {
+											// Verificar que la variable no exista
+											let var_full_name = '$_VAR_' + new_var_name.toUpperCase();
 
-										if (appNameExists(var_full_name)) {
-											alert('Var ' + var_full_name + ' already exists.');
+											if (appNameExists(var_full_name)) {
+												alert('Var ' + var_full_name + ' already exists.');
+											} else {
+												appVars.push({
+													idapp: idapp,
+													name: var_full_name,
+													environment: environment
+												});
+												appVars = [...appVars];
+											}
 										} else {
-											appVars.push({ idapp: idapp, name: var_full_name, environment: environment });
-											appVars = [...appVars];
+											alert('You must enter at least 5 characters');
 										}
 									}}
 								>
