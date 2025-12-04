@@ -2,6 +2,7 @@
 	import uFetch from '@edwinspire/universal-fetch';
 	import { onMount } from 'svelte';
 	import { url_paths } from '$lib/OpenFusionAPI/Application/utils/paths.js';
+	import { userStore } from '$lib/OpenFusionAPI/Application/utils/stores.js';
 
 	let uF;
 	let vars_js = {};
@@ -14,7 +15,9 @@
 
 	onMount(async () => {
 		uF = new uFetch();
-
+		if ($userStore.token) {
+			uF.setBearerAuthorization($userStore.token);
+		}
 		let req_uf = await uF.GET({ url: url_paths.getlistFunctionsVarsJS });
 		vars_js = await req_uf.json();
 
