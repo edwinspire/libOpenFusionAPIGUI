@@ -36,7 +36,7 @@
 
 	function searchFunction(name_function, store_data) {
 		let r = false;
-		if (store_data) {
+		if (store_data && Array.isArray(store_data)) {
 			r = store_data.some((item) => {
 				return item.id == name_function;
 			});
@@ -71,7 +71,6 @@
 </script>
 
 <td>
-
 	{#if row.method !== 'WS'}
 		{#if !error_function.valid}
 			<div class="icon-text">
