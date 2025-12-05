@@ -56,10 +56,9 @@ export const GetApp = async (idapp, token) => {
 
 export const LoginRequest = async (username, password) => {
 	let uf = new uFetch();
-
-	let user = await uf.POST({
+	uf.SetBasicAuthorization(username, password);
+	let user = await uf.GET({
 		url: url_paths.login,
-		data: { username, password },
 		options: { credentials: 'same-origin' }
 	});
 	let data = await user.json();
@@ -332,7 +331,7 @@ export const EndpointSave = async (endpoint, token) => {
 
 	let req = await uf.POST({ url: url_paths.endpoint, data: endpoint });
 	let es = await req.json();
-	return es?.result;
+	return es;
 };
 
 export const getLogsRecordsPerMinute = async (options, token) => {

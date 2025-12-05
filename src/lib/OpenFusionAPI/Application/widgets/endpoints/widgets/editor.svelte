@@ -74,9 +74,9 @@
 	async function saveEndpoint() {
 		let endpoint_out = $state.snapshot(endpoint);
 
-		endpoint_out.data_test = new_data_endpoint.data_test;
-		endpoint_out.code = new_data_endpoint.code;
-		endpoint_out.docs = new_data_endpoint.docs;
+		endpoint_out.data_test = endpoint.data_test;
+		endpoint_out.code = endpoint.code;
+		endpoint_out.docs = endpoint.docs;
 		endpoint_out.json_schema = {
 			in: { enabled: json_schema_in_enabled, schema: json_schema_in_schema }
 		};
@@ -84,7 +84,8 @@
 		console.log('Save Endpoint', endpoint_out);
 		deploying = { show: true, message: 'Saving Endpoint...', error: false };
 		try {
-			let response = await EndpointSave(endpoint_out, $userStore.token);
+			let resp = await EndpointSave(endpoint_out, $userStore.token);
+			let response = resp.result;
 
 			if (response && response.idapp == app.idapp) {
 				deploying.show = false;
@@ -92,7 +93,7 @@
 				onsave();
 			} else {
 				deploying.error = true;
-				deploying.message = `Error: Not saved correctly`;
+				deploying.message = `Error: ${resp.message}`;
 			}
 		} catch (error) {
 			console.error(error);
@@ -162,8 +163,7 @@
 		doc_endpoint_description
 	];
 
-	let new_data_endpoint = { data_test: {}, code: '', docs: default_docs };
-
+	
 	let validateResource = $state(false);
 	let availableURL = $state(false);
 
@@ -240,11 +240,9 @@
 
 	function onChangeValueHandler(v) {
 		if (v) {
-			new_data_endpoint.data_test = v.data_test;
-			new_data_endpoint.code = v.code;
-			new_data_endpoint.docs = endpoint.docs;
-
-			//console.log('onChangeValueHandler > ', $state.snapshot(new_data_endpoint));
+			endpoint.data_test = v.data_test;
+			endpoint.code = v.code;
+			endpoint.docs = endpoint.docs;
 		}
 	}
 

@@ -182,6 +182,7 @@
 	<div class="dropdown is-hoverable">
 		<div class="dropdown-trigger">
 			<button
+				title={$statusSystemEndpointsStore.message}
 				class="button is-small {$statusSystemEndpointsStore.valid ? '' : 'is-danger'} "
 				aria-haspopup="true"
 				aria-controls="dropdown-menu3"

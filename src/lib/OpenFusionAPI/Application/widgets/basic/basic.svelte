@@ -247,7 +247,7 @@
 			onsavedeploy(app);
 		}}
 		oncancel={() => {
-			alert('No');
+		//	alert('No');
 		}}
 	></SaveDeploy>
 

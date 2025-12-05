@@ -27,7 +27,7 @@ export const url_paths = {
 	environment: host + '/api/system/system/environment/prd',
 	serverAPIVersion: host + '/server/version',
 	clearCache: host + '/api/system/cache/clear/prd',
-	login: host + '/api/system/system/login/0.01/prd',
+	login: host + '/api/system/system/login/prd',
 	getHandler: host + '/api/system/system/handler/0.01/prd',
 	Methods: host + '/api/system/system/method/0.01/prd',
 	apiDoc: host + '/api/system/api/handler/documentation/prd',

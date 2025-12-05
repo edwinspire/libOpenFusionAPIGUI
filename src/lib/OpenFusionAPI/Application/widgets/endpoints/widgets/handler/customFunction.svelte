@@ -9,22 +9,22 @@
 	import { Tab } from '@edwinspire/svelte-components';
 
 	let { endpoint = $bindable({}), onchange = () => {} } = $props();
-	let functions = $state([]);
+	let functions = $derived.by(() => {
+		let r = [];
 
-	/**
-	 * @type {any[]}
-	 */
-	let functionsDev = [];
-
-	/**
-	 * @type {any[]}
-	 */
-	let functionsQa = [];
-
-	/**
-	 * @type {any[]}
-	 */
-	let functionsPrd = [];
+		switch (endpoint.environment) {
+			case 'dev':
+				r = $listFunctionStoreDev;
+				break;
+			case 'qa':
+				r = $listFunctionStoreQA;
+				break;
+			case 'prd':
+				r = $listFunctionStorePRD;
+				break;
+		}
+		return r;
+	});
 
 	let tabList = $state([{ label: 'Function', isActive: true, component: tab_fn }]);
 
@@ -53,39 +53,9 @@
 		onchange(getData());
 	}
 
-	const unsubscribe_dev = listFunctionStoreDev.subscribe((value) => {
-		// @ts-ignore
-		functionsDev = value;
-	});
-
-	const unsubscribe_qa = listFunctionStoreQA.subscribe((value) => {
-		// @ts-ignore
-		functionsQa = value;
-	});
-
-	const unsubscribe_prd = listFunctionStorePRD.subscribe((value) => {
-		// @ts-ignore
-		functionsPrd = value;
-	});
-
-	onDestroy(unsubscribe_dev);
-	onDestroy(unsubscribe_qa);
-	onDestroy(unsubscribe_prd);
-
 	onMount(() => {
 		defaultValues();
 
-		switch (endpoint.environment) {
-			case 'dev':
-				functions = functionsDev;
-				break;
-			case 'qa':
-				functions = functionsQa;
-				break;
-			case 'prd':
-				functions = functionsPrd;
-				break;
-		}
 	});
 </script>
 
