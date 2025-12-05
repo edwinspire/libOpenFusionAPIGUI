@@ -436,3 +436,17 @@ export const changeUserPassword = async (data, token) => {
 	let apps = await apps_res.json();
 	return apps;
 };
+
+export const restoreSystemEndpoints = async (restore, token) => {
+	let uf = new uFetch();
+	if (token) {
+		uf.setBearerAuthorization(token);
+	}
+
+	let sys_res = await uf.PUT({
+		url: url_paths.restoreSystemEndpoints,
+		data: { restore: restore }
+	});
+	let r = await sys_res.json();
+	return r;
+};

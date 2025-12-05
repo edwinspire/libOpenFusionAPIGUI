@@ -1,15 +1,21 @@
 <script>
-	import SaveDeploy from '$lib/OpenFusionAPI/Application/widgets/common/saveDeploy.svelte';
 	import AppVars from '$lib/OpenFusionAPI/Application/widgets/application_variables/variables.svelte';
+	import {
+		userStore,
+		statusSystemEndpointsStore
+	} from '$lib/OpenFusionAPI/Application/utils/stores.js';
+	import { restoreSystemEndpoints } from '$lib/OpenFusionAPI/Application/utils/request.js';
+
+	import { onMount } from 'svelte';
 
 	let vars_widget;
 	let { idapp = $bindable(0), onsavedeploy = () => {} } = $props();
-	let deploying = $state({ show: false, message: '', error: false });
-</script>
 
-{#snippet label_appname()}
-	<span class="has-text-weight-bold">Variables</span>
-{/snippet}
+	onMount(async () => {
+		let status_sys_endp = await restoreSystemEndpoints(false, $userStore.token);
+		statusSystemEndpointsStore.set(status_sys_endp);
+	});
+</script>
 
 <div class="">
 	APP VARIABLES

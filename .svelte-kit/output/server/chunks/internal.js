@@ -61,10 +61,7 @@ function set_hydrate_node(node) {
   return hydrate_node = node;
 }
 function hydrate_next() {
-  return set_hydrate_node(
-    /** @type {TemplateNode} */
-    /* @__PURE__ */ get_next_sibling(hydrate_node)
-  );
+  return set_hydrate_node(/* @__PURE__ */ get_next_sibling(hydrate_node));
 }
 function next(count = 1) {
   if (hydrating) {
@@ -601,7 +598,7 @@ function flush_queued_effects(effects) {
     if ((effect.f & (DESTROYED | INERT)) === 0 && is_dirty(effect)) {
       eager_block_effects = /* @__PURE__ */ new Set();
       update_effect(effect);
-      if (effect.deps === null && effect.first === null && effect.nodes_start === null) {
+      if (effect.deps === null && effect.first === null && effect.nodes === null) {
         if (effect.teardown === null && effect.ac === null) {
           unlink_effect(effect);
         } else {
@@ -1460,11 +1457,17 @@ function create_text(value = "") {
 }
 // @__NO_SIDE_EFFECTS__
 function get_first_child(node) {
-  return first_child_getter.call(node);
+  return (
+    /** @type {TemplateNode | null} */
+    first_child_getter.call(node)
+  );
 }
 // @__NO_SIDE_EFFECTS__
 function get_next_sibling(node) {
-  return next_sibling_getter.call(node);
+  return (
+    /** @type {TemplateNode | null} */
+    next_sibling_getter.call(node)
+  );
 }
 function clear_text_content(node) {
   node.textContent = "";
@@ -1499,8 +1502,7 @@ function create_effect(type, fn, sync) {
   var effect = {
     ctx: component_context,
     deps: null,
-    nodes_start: null,
-    nodes_end: null,
+    nodes: null,
     f: type | DIRTY | CONNECTED,
     first: null,
     fn,
@@ -1510,7 +1512,6 @@ function create_effect(type, fn, sync) {
     b: parent && parent.b,
     prev: null,
     teardown: null,
-    transitions: null,
     wv: 0,
     ac: null
   };
@@ -1526,7 +1527,7 @@ function create_effect(type, fn, sync) {
     schedule_effect(effect);
   }
   var e = effect;
-  if (sync && e.deps === null && e.teardown === null && e.nodes_start === null && e.first === e.last && // either `null`, or a singular child
+  if (sync && e.deps === null && e.teardown === null && e.nodes === null && e.first === e.last && // either `null`, or a singular child
   (e.f & EFFECT_PRESERVED) === 0) {
     e = e.first;
     if ((type & BLOCK_EFFECT) !== 0 && (type & EFFECT_TRANSPARENT) !== 0 && e !== null) {
@@ -1627,18 +1628,18 @@ function destroy_block_effect_children(signal) {
 }
 function destroy_effect(effect, remove_dom = true) {
   var removed = false;
-  if ((remove_dom || (effect.f & HEAD_EFFECT) !== 0) && effect.nodes_start !== null && effect.nodes_end !== null) {
+  if ((remove_dom || (effect.f & HEAD_EFFECT) !== 0) && effect.nodes !== null && effect.nodes.end !== null) {
     remove_effect_dom(
-      effect.nodes_start,
+      effect.nodes.start,
       /** @type {TemplateNode} */
-      effect.nodes_end
+      effect.nodes.end
     );
     removed = true;
   }
   destroy_effect_children(effect, remove_dom && !removed);
   remove_reactions(effect, 0);
   set_signal_status(effect, DESTROYED);
-  var transitions = effect.transitions;
+  var transitions = effect.nodes && effect.nodes.t;
   if (transitions !== null) {
     for (const transition of transitions) {
       transition.stop();
@@ -1649,14 +1650,11 @@ function destroy_effect(effect, remove_dom = true) {
   if (parent !== null && parent.first !== null) {
     unlink_effect(effect);
   }
-  effect.next = effect.prev = effect.teardown = effect.ctx = effect.deps = effect.fn = effect.nodes_start = effect.nodes_end = effect.ac = null;
+  effect.next = effect.prev = effect.teardown = effect.ctx = effect.deps = effect.fn = effect.nodes = effect.ac = null;
 }
 function remove_effect_dom(node, end) {
   while (node !== null) {
-    var next2 = node === end ? null : (
-      /** @type {TemplateNode} */
-      /* @__PURE__ */ get_next_sibling(node)
-    );
+    var next2 = node === end ? null : /* @__PURE__ */ get_next_sibling(node);
     node.remove();
     node = next2;
   }
@@ -1675,12 +1673,10 @@ function unlink_effect(effect) {
 function pause_effect(effect, callback, destroy = true) {
   var transitions = [];
   pause_children(effect, transitions, true);
-  run_out_transitions(transitions, () => {
+  var fn = () => {
     if (destroy) destroy_effect(effect);
     if (callback) callback();
-  });
-}
-function run_out_transitions(transitions, fn) {
+  };
   var remaining = transitions.length;
   if (remaining > 0) {
     var check = () => --remaining || fn();
@@ -1694,8 +1690,9 @@ function run_out_transitions(transitions, fn) {
 function pause_children(effect, transitions, local) {
   if ((effect.f & INERT) !== 0) return;
   effect.f ^= INERT;
-  if (effect.transitions !== null) {
-    for (const transition of effect.transitions) {
+  var t = effect.nodes && effect.nodes.t;
+  if (t !== null) {
+    for (const transition of t) {
       if (transition.is_global || local) {
         transitions.push(transition);
       }
@@ -1713,13 +1710,11 @@ function pause_children(effect, transitions, local) {
   }
 }
 function move_effect(effect, fragment) {
-  var node = effect.nodes_start;
-  var end = effect.nodes_end;
+  if (!effect.nodes) return;
+  var node = effect.nodes.start;
+  var end = effect.nodes.end;
   while (node !== null) {
-    var next2 = node === end ? null : (
-      /** @type {TemplateNode} */
-      /* @__PURE__ */ get_next_sibling(node)
-    );
+    var next2 = node === end ? null : /* @__PURE__ */ get_next_sibling(node);
     fragment.append(node);
     node = next2;
   }
@@ -1874,7 +1869,7 @@ function update_reaction(reaction) {
       } else {
         reaction.deps = deps = new_deps;
       }
-      if (is_updating_effect && effect_tracking() && (reaction.f & CONNECTED) !== 0) {
+      if (effect_tracking() && (reaction.f & CONNECTED) !== 0) {
         for (i = skipped_deps; i < deps.length; i++) {
           (deps[i].reactions ??= []).push(reaction);
         }
@@ -2187,9 +2182,8 @@ function assign_nodes(start, end) {
     /** @type {Effect} */
     active_effect
   );
-  if (effect.nodes_start === null) {
-    effect.nodes_start = start;
-    effect.nodes_end = end;
+  if (effect.nodes === null) {
+    effect.nodes = { start, end, a: null, t: null };
   }
 }
 function mount(component, options2) {
@@ -2202,14 +2196,10 @@ function hydrate(component, options2) {
   const was_hydrating = hydrating;
   const previous_hydrate_node = hydrate_node;
   try {
-    var anchor = (
-      /** @type {TemplateNode} */
-      /* @__PURE__ */ get_first_child(target)
-    );
+    var anchor = /* @__PURE__ */ get_first_child(target);
     while (anchor && (anchor.nodeType !== COMMENT_NODE || /** @type {Comment} */
     anchor.data !== HYDRATION_START)) {
-      anchor = /** @type {TemplateNode} */
-      /* @__PURE__ */ get_next_sibling(anchor);
+      anchor = /* @__PURE__ */ get_next_sibling(anchor);
     }
     if (!anchor) {
       throw HYDRATION_ERROR;
@@ -2297,7 +2287,7 @@ function _mount(Component, { target, anchor, props = {}, events, context, intro 
         }
         component = Component(anchor_node2, props) || {};
         if (hydrating) {
-          active_effect.nodes_end = hydrate_node;
+          active_effect.nodes.end = hydrate_node;
           if (hydrate_node === null || hydrate_node.nodeType !== COMMENT_NODE || /** @type {Comment} */
           hydrate_node.data !== HYDRATION_END) {
             hydration_mismatch();
@@ -2631,7 +2621,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "pbgtfc"
+  version_hash: "1lybcoh"
 };
 async function get_hooks() {
   let handle;

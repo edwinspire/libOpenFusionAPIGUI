@@ -3,12 +3,14 @@
 	import { Chart } from '@edwinspire/svelte-components';
 	import {
 		storeEndpointOnComplete,
-		storeServerDynamicInformation, userStore
+		storeServerDynamicInformation,
+		userStore,
+		statusSystemEndpointsStore
 	} from '$lib/OpenFusionAPI/Application/utils/stores.js';
-	import { getLogsRecordsPerMinute } from '$lib/OpenFusionAPI/Application/utils/request.js';
+	import { getLogsRecordsPerMinute, restoreSystemEndpoints } from '$lib/OpenFusionAPI/Application/utils/request.js';
 	let { idapp = $bindable() } = $props();
 	let data_request = $state([]);
-	
+
 	let data_logs_per_minute = $state([]);
 	let data_cpu = $state([]);
 	let data_memory = $state([]);
@@ -55,7 +57,10 @@
 		//console.log('Busca por el idapp ' + idapp);
 		if (idapp) {
 			try {
-				let data_log_pm = await getLogsRecordsPerMinute({ idapp: idapp, last_hours: 12 }, $userStore.token);
+				let data_log_pm = await getLogsRecordsPerMinute(
+					{ idapp: idapp, last_hours: 12 },
+					$userStore.token
+				);
 				data_logs_per_minute = data_log_pm.map((dl) => {
 					let now = new Date(dl.minute || Date.now());
 					return {
@@ -64,6 +69,9 @@
 						other: 'Nada'
 					};
 				});
+
+				let status_sys_endp = await restoreSystemEndpoints(false, $userStore.token);
+				statusSystemEndpointsStore.set(status_sys_endp);
 			} catch (error) {
 				console.error(error);
 			}

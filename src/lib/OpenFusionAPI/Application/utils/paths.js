@@ -43,5 +43,6 @@ export const url_paths = {
 	appvarsbyidapp: host + '/api/system/app/variables/idapp/prd',
 	appvar: host + '/api/system/app/var/prd',
 	getLogsRecordsPerMinute: host + '/api/system/system/log/recordsperminute/prd',
-	changeUserPassword: host + '/api/system/user/chagepassword/prd'
+	changeUserPassword: host + '/api/system/user/chagepassword/prd',
+	restoreSystemEndpoints: host + '/api/system/restore/prd'
 };

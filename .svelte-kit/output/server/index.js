@@ -1019,7 +1019,7 @@ function create_universal_fetch(event, state, fetched, csr, resolve_opts) {
     }
     let teed_body;
     const proxy = new Proxy(response, {
-      get(response2, key2, _receiver) {
+      get(response2, key2, receiver) {
         async function push_fetched(body2, is_b64) {
           const status_number = Number(response2.status);
           if (isNaN(status_number)) {
@@ -1099,7 +1099,22 @@ function create_universal_fetch(event, state, fetched, csr, resolve_opts) {
             return body2 ? JSON.parse(body2) : void 0;
           };
         }
-        return Reflect.get(response2, key2, response2);
+        const value = Reflect.get(response2, key2, response2);
+        if (value instanceof Function) {
+          return Object.defineProperties(
+            /**
+             * @this {any}
+             */
+            function() {
+              return Reflect.apply(value, this === receiver ? response2 : this, arguments);
+            },
+            {
+              name: { value: value.name },
+              length: { value: value.length }
+            }
+          );
+        }
+        return value;
       }
     });
     if (csr) {

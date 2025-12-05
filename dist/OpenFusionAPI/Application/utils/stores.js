@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 
 export const userStore = writable({});
+export const statusSystemEndpointsStore = writable({});
 export const listMethodStore = writable({});
 export const listHandlerStore = writable({});
 export const listFunctionStoreDev = writable({});

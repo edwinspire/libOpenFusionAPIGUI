@@ -5,8 +5,8 @@
 	import SaveDeploy from '../common/saveDeploy.svelte';
 	import TextAreaWidget from '../common/textArea.svelte';
 	import { url_paths } from '../../utils/paths.js';
-	import { userStore } from '../../utils/stores.js';
-	import { GetApp as GetAppRequest, GetAppBackup, RestoreAppBackup } from '../../utils/request.js';
+	import { userStore, statusSystemEndpointsStore } from '../../utils/stores.js';
+	import { GetApp as GetAppRequest, GetAppBackup, RestoreAppBackup, restoreSystemEndpoints } from '../../utils/request.js';
 	import { Notifications } from '@edwinspire/svelte-components';
 	import { onDestroy } from 'svelte';
 
@@ -87,11 +87,14 @@
 			if (response) {
 				app = { ...response };
 
-					console.log(response);
+				console.log(response);
 			} else {
 				// No se obtuvieron datos
 				clearDataVars();
 			}
+
+			let status_sys_endp = await restoreSystemEndpoints(false, $userStore.token);
+			statusSystemEndpointsStore.set(status_sys_endp);
 		} catch (error) {
 			console.error(error);
 		}

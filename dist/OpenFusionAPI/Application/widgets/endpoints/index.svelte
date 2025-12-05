@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { Table, Notifications } from '@edwinspire/svelte-components';
 	import { isNewApp } from '../../utils/utils.js';
-	import { userStore } from '../../utils/stores.js';
+	import { userStore, statusSystemEndpointsStore } from '../../utils/stores.js';
 	import { endpointColumns } from './columns/index.svelte';
 	import {
 		GetEndpointsByIdapp,
@@ -10,7 +10,7 @@
 		clearCache,
 		getServerAPIVersion,
 		getAppDocumentation,
-		GetAppVars
+		GetAppVars, restoreSystemEndpoints
 	} from '../../utils/request.js';
 	import EndPointEditor from './widgets/editor.svelte';
 
@@ -149,6 +149,8 @@
 			app = await GetEndpointsByIdapp(idapp, $userStore.token);
 			await getListFunction($userStore.token, app.app);
 			await GetAppVars(idapp, $userStore.token, true);
+			let status_sys_endp = await restoreSystemEndpoints(false, $userStore.token);
+			statusSystemEndpointsStore.set(status_sys_endp);
 		} catch (error) {
 			console.error(error);
 		}

@@ -19,3 +19,4 @@ export function UpsertAppVar(data: any, token: any): Promise<any>;
 export function DeleteAppVar(idvar: any, token: any): Promise<any>;
 export function getListApps(token: any): Promise<any>;
 export function changeUserPassword(data: any, token: any): Promise<any>;
+export function restoreSystemEndpoints(restore: any, token: any): Promise<any>;

@@ -15,8 +15,14 @@
 	import { url_paths } from '../../utils/paths.js';
 	import uFetch from '@edwinspire/universal-fetch';
 	import CellMethod from '../endpoints/columns/cellMethod.svelte';
-	import { userStore } from '../../utils/stores.js';
-	import { GetEndpointsByIdapp } from '../../utils/request.js';
+	import {
+		userStore,
+		statusSystemEndpointsStore
+	} from '../../utils/stores.js';
+	import {
+		GetEndpointsByIdapp,
+		restoreSystemEndpoints
+	} from '../../utils/request.js';
 
 	let { idapp = $bindable(), onchange = () => {} } = $props();
 
@@ -112,13 +118,14 @@
 	async function loadTasks() {
 		if (idapp) {
 			if ($userStore.token) {
-				uf.setBearerAuthorization($userStore.token);
+				uF.setBearerAuthorization($userStore.token);
 			}
 
 			let resp = await uF.GET({ url: url_paths.getListIntervalTasksByIdApp, data: { idapp } });
 			let jresp = await resp.json();
 			//	console.log('++++>>>>>>>>>>>>>', jresp);
-
+			let status_sys_endp = await restoreSystemEndpoints(false, $userStore.token);
+			statusSystemEndpointsStore.set(status_sys_endp);
 			/**
  * 
  [

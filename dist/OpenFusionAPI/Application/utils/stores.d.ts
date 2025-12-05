@@ -1,4 +1,5 @@
 export const userStore: import("svelte/store").Writable<{}>;
+export const statusSystemEndpointsStore: import("svelte/store").Writable<{}>;
 export const listMethodStore: import("svelte/store").Writable<{}>;
 export const listHandlerStore: import("svelte/store").Writable<{}>;
 export const listFunctionStoreDev: import("svelte/store").Writable<{}>;

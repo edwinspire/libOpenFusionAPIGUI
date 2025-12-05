@@ -3,14 +3,17 @@
 	import { onDestroy, onMount } from 'svelte';
 	import Logo from '../img/favicon.png';
 	import { url_paths } from './utils/paths.js';
+
 	import {
 		userStore,
 		storeCacheSize,
 		storeEndpointOnComplete,
 		storeCountResponseStatusCode,
 		storeEndpointOnStart,
-		storeServerDynamicInformation
+		storeServerDynamicInformation,
+		statusSystemEndpointsStore
 	} from './utils/stores.js';
+
 	import {
 		PredictiveInput,
 		OpenFusionWebsocketClient,
@@ -22,8 +25,11 @@
 	import AppVars from './widgets/application_variables/index.svelte';
 	import Endpoints from './widgets/endpoints/index.svelte';
 	import IntervalTasks from './widgets/interval_tasks/index.svelte';
-	import { getListApps, changeUserPassword } from './utils/request.js';
-	
+	import {
+		getListApps,
+		changeUserPassword,
+		restoreSystemEndpoints
+	} from './utils/request.js';
 
 	let notify = new Notifications();
 	let idapp = $state(0);
@@ -103,6 +109,9 @@
 			} else {
 				options = [];
 			}
+
+			let status_sys_endp = await restoreSystemEndpoints(false, $userStore.token);
+			statusSystemEndpointsStore.set(status_sys_endp);
 		} catch (error) {
 			//alert(error.message);
 			console.error(error);
@@ -170,6 +179,47 @@
 {/snippet}
 
 {#snippet user()}
+	<div class="dropdown is-hoverable">
+		<div class="dropdown-trigger">
+			<button
+				class="button is-small {$statusSystemEndpointsStore.valid ? '' : 'is-danger'} "
+				aria-haspopup="true"
+				aria-controls="dropdown-menu3"
+			>
+				<span class="icon is-small">
+					{#if $statusSystemEndpointsStore.valid}
+						<i class="fa-solid fa-check"></i>
+					{:else}
+						<i class="fa-solid fa-triangle-exclamation fa-fade"></i>
+					{/if}
+				</span>
+				<span> System Endpoints {$statusSystemEndpointsStore.valid ? 'Ready' : 'Error'} </span>
+				<span class="icon is-small">
+					<i class="fas fa-angle-down" aria-hidden="true"></i>
+				</span>
+			</button>
+		</div>
+		<div class="dropdown-menu" role="menu">
+			<div class="dropdown-content">
+				<!-- svelte-ignore a11y_invalid_attribute -->
+				<a
+					href="#"
+					class="dropdown-item"
+					onclick={async () => {
+						let status_sys_endp = await restoreSystemEndpoints(true, $userStore.token);
+						statusSystemEndpointsStore.set(status_sys_endp);
+					}}
+				>
+					<div class="icon-text">
+						<span class="icon">
+							<i class="fa-solid fa-rotate-left"></i>
+						</span>
+						<span> Restore </span>
+					</div>
+				</a>
+			</div>
+		</div>
+	</div>
 	<div class="dropdown is-hoverable">
 		<div class="dropdown-trigger">
 			<button
@@ -293,7 +343,8 @@
 				password_change = defaultPasswordChange;
 				show_dialog_change_pwd = false;
 				notify.push({ message: 'Successful update', color: 'success' });
-			} else {npm
+			} else {
+				npm;
 				notify.push({ message: result.error, color: 'danger' });
 			}
 		} else {
