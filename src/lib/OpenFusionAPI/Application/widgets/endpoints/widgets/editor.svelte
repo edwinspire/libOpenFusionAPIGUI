@@ -18,7 +18,7 @@
 	import TextCode from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/handler/text.svelte';
 	import MongoDB from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/handler/mongodb.svelte';
 	import CustomFn from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/handler/customFunction.svelte';
-	import Endpoint from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/handler/endpoint.svelte';
+	import Endpoint from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/endpoint.svelte';
 	import Authorizations from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/authorizations.svelte';
 	import Logs from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/logs.svelte';
 	import MCP from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/mcp.svelte';
@@ -163,7 +163,6 @@
 		doc_endpoint_description
 	];
 
-	
 	let validateResource = $state(false);
 	let availableURL = $state(false);
 
@@ -188,6 +187,7 @@
 		{ label: 'JSON Schema', component: tab_json_schema },
 		{ label: 'Authorizations', component: tab_auth, classIcon: ' fa-solid fa-key ' },
 		{ label: 'MCP', component: tab_mcp, classIcon: ' fa-solid fa-robot ' },
+		{ label: 'Custom Data', component: tab_custom_data, classIcon: ' fa-regular fa-hand ' },
 		{ label: 'Tester', component: tab_tester, classIcon: ' fa-solid fa-microscope ' },
 		{ label: 'Logs', component: tab_log }
 	]);
@@ -380,6 +380,19 @@
 			</p>
 		</div>
 	</div>
+{/snippet}
+
+{#snippet tab_custom_data()}
+	{#if endpoint?.custom_data}
+		<EditorCode
+			lang="json"
+			showFormat={true}
+			bind:code={endpoint.custom_data}
+			onchange={(datajs) => {
+				//	json_schema_in = datajs.code;
+			}}
+		></EditorCode>
+	{/if}
 {/snippet}
 
 {#snippet tab_config()}

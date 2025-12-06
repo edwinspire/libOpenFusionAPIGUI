@@ -7,16 +7,16 @@
 		Input,
 		Notifications
 	} from '@edwinspire/svelte-components';
-	import SelectEnvironment from '$lib/OpenFusionAPI/Application/widgets/common/Select.svelte';
-	import MethodSelect from '$lib/OpenFusionAPI/Application/widgets/common/methods_select.svelte';
-	import { listHandlerStore, userStore } from '$lib/OpenFusionAPI/Application/utils/stores.js';
-	import { validateURL, createEndpoint } from '$lib/OpenFusionAPI/Application/utils/utils.js';
-	//import SaveDeploy from '$lib/OpenFusionAPI/Application/widgets/common/saveDeploy.svelte';
+	import SelectEnvironment from '../../common/Select.svelte';
+	import MethodSelect from '../../common/methods_select.svelte';
+	import { listHandlerStore, userStore } from '../../../utils/stores.js';
+	import { validateURL, createEndpoint } from '../../../utils/utils.js';
+	//import SaveDeploy from '../../common/saveDeploy.svelte';
 	import {
 		listAccessMethod,
 		Environment
-	} from '$lib/OpenFusionAPI/Application/utils/static_values.js';
-	import { EndpointSave } from '$lib/OpenFusionAPI/Application/utils/request.js';
+	} from '../../../utils/static_values.js';
+	import { EndpointSave } from '../../../utils/request.js';
 
 	let {
 		endpoint = $bindable({ method: 'X', access: 0, handler: '?', environment: '?' }),
@@ -102,7 +102,6 @@
 	<Level left={[enabled_endpoint]} right={[copy_endpoint]}>
 		{#snippet enabled_endpoint()}
 			<Input label="Enabled" type="checkbox" bind:value={endpoint.enabled} placeholder="Enabled" />
-			
 		{/snippet}
 
 		{#snippet copy_endpoint()}
@@ -269,6 +268,12 @@
 						</div>
 					</div>
 				</div>
+			</div>
+
+			<div class="cell">
+				{#if endpoint?.cost}
+					<Input bind:value={endpoint.cost} type="number" label="Cost"></Input>
+				{/if}
 			</div>
 		</div>
 	</div>

@@ -54,7 +54,9 @@
 		data_test: { hidden: true },
 		latest_updater: { hidden: true },
 		environment: { hidden: true },
-
+		cost: { hidden: true },
+		custom_data: { hidden: true },
+		keywords: { hidden: true },
 		cache_size: { hidden: true },
 		docs: { hidden: true },
 

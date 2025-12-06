@@ -148,25 +148,37 @@ export namespace endpointColumns {
         let hidden_15: boolean;
         export { hidden_15 as hidden };
     }
-    namespace cache_size {
+    namespace cost {
         let hidden_16: boolean;
         export { hidden_16 as hidden };
     }
-    namespace docs {
+    namespace custom_data {
         let hidden_17: boolean;
         export { hidden_17 as hidden };
     }
-    namespace json_schema {
+    namespace keywords {
         let hidden_18: boolean;
         export { hidden_18 as hidden };
     }
-    namespace createdAt {
+    namespace cache_size {
         let hidden_19: boolean;
         export { hidden_19 as hidden };
     }
-    namespace updatedAt {
+    namespace docs {
         let hidden_20: boolean;
         export { hidden_20 as hidden };
+    }
+    namespace json_schema {
+        let hidden_21: boolean;
+        export { hidden_21 as hidden };
+    }
+    namespace createdAt {
+        let hidden_22: boolean;
+        export { hidden_22 as hidden };
+    }
+    namespace updatedAt {
+        let hidden_23: boolean;
+        export { hidden_23 as hidden };
     }
 }
 export default Index;
