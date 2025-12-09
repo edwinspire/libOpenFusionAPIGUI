@@ -12,7 +12,6 @@ import {
 
 export const getEnvironmentList = async (token) => {
 	let uf = new uFetch();
-	uf.setBearerAuthorization(token);
 	let environment_list = [];
 
 	try {
@@ -37,10 +36,7 @@ export const getEnvironmentList = async (token) => {
 export const GetApp = async (idapp, token) => {
 	if (idapp) {
 		let uf = new uFetch();
-		if (token) {
-			uf.setBearerAuthorization(token);
-		}
-
+		
 		let request = await uf.GET({
 			url: url_paths.app,
 			data: { idapp: idapp }
@@ -59,7 +55,6 @@ export const LoginRequest = async (username, password) => {
 	uf.SetBasicAuthorization(username, password);
 	let user = await uf.GET({
 		url: url_paths.login,
-		options: { credentials: 'same-origin' }
 	});
 	let data = await user.json();
 	return data;
@@ -68,10 +63,7 @@ export const LoginRequest = async (username, password) => {
 export const GetServerAPIVersion = async () => {
 	// Lógica de autenticación aquí
 	let uf = new uFetch();
-	if (token) {
-		uf.setBearerAuthorization(token);
-	}
-
+	
 	let version_req = await uf.GET({ url: url_paths.serverAPIVersion });
 	let version_res = await version_req.json();
 
@@ -81,10 +73,7 @@ export const GetServerAPIVersion = async () => {
 export const GetAppBackup = async (idapp, token) => {
 	if (idapp) {
 		let uf = new uFetch();
-		if (token) {
-			uf.setBearerAuthorization(token);
-		}
-
+	
 		let request = await uf.GET({
 			url: url_paths.appBackup,
 			data: { idapp: idapp }
@@ -101,10 +90,7 @@ export const GetAppBackup = async (idapp, token) => {
 export const RestoreAppBackup = async (app, token) => {
 	if (app) {
 		let uf = new uFetch();
-		if (token) {
-			uf.setBearerAuthorization(token);
-		}
-
+		
 		let request = await uf.POST({
 			url: url_paths.appBackup,
 			data: app
@@ -125,9 +111,7 @@ export const GetEndpointsByIdapp = async (idapp, token) => {
 		if (app.idapp == idapp) {
 			app.endpoints = [];
 			let uf = new uFetch();
-			if (token) {
-				uf.setBearerAuthorization(token);
-			}
+		
 			let request = await uf.GET({
 				url: url_paths.endpoints_get_by_idapp,
 				data: { idapp: idapp }
@@ -155,7 +139,6 @@ export const GetEndpointsByIdapp = async (idapp, token) => {
 
 export const getListHandler = async (/** @type {string} */ token) => {
 	let f = new uFetch();
-	f.setBearerAuthorization(token);
 
 	let fr = await f.GET({ url: url_paths.getHandler });
 	let list = await fr.json();
@@ -175,7 +158,6 @@ export const getListHandler = async (/** @type {string} */ token) => {
 
 export const getListMethods = async (/** @type {string} */ token) => {
 	let f = new uFetch();
-	f.setBearerAuthorization(token);
 
 	let fr = await f.GET({ url: url_paths.Methods });
 	let list = await fr.json();
@@ -197,9 +179,7 @@ export const getHandlerDocs = async (handler, token) => {
 	if (handler) {
 		//	console.log(url_paths.apiDoc);
 		let uF = new uFetch();
-		if (token) {
-			uF.setBearerAuthorization(token);
-		}
+		
 		let req = await uF.GET({ url: url_paths.apiDoc, data: { handler: handler } });
 		let res = await req.json();
 		//		console.log(res);
@@ -213,11 +193,10 @@ export const getListFunction = async (
 	/** @type {string} */ token,
 	/** @type {string} */ appName
 ) => {
-	//	console.log('Fetching function list for app:', appName);
-
+	
 	// @ts-ignore
 	let f = new uFetch();
-	f.setBearerAuthorization(token);
+
 	try {
 		let fr = await f.GET({
 			url: url_paths.getfunctions,
@@ -276,10 +255,6 @@ export const getListFunction = async (
 export const clearCache = async (/** @type {string} */ token, urls_clear) => {
 	let uf = new uFetch();
 
-	if (token) {
-		uf.setBearerAuthorization(token);
-	}
-
 	let get_list_clear = await uf.POST({
 		url: url_paths.clearCache,
 		data: urls_clear
@@ -292,10 +267,6 @@ export const clearCache = async (/** @type {string} */ token, urls_clear) => {
 export const getAppDocumentation = async (token, idapp, idendpoints) => {
 	let uf = new uFetch();
 
-	if (token) {
-		uf.setBearerAuthorization(token);
-	}
-
 	let get_doc = await uf.POST({
 		url: url_paths.appDocumentation,
 		data: { idapp: idapp, endpoints: idendpoints }
@@ -306,13 +277,7 @@ export const getAppDocumentation = async (token, idapp, idendpoints) => {
 };
 
 export const getServerAPIVersion = async (token) => {
-	// Lógica de autenticación aquí
-
 	let uf = new uFetch();
-
-	if (token) {
-		uf.setBearerAuthorization(token);
-	}
 
 	let version_req = await uf.GET({ url: url_paths.serverAPIVersion });
 	let version_res = await version_req.json();
@@ -321,14 +286,7 @@ export const getServerAPIVersion = async (token) => {
 };
 
 export const EndpointSave = async (endpoint, token) => {
-	// Lógica de autenticación aquí
-
 	let uf = new uFetch();
-
-	if (token) {
-		uf.setBearerAuthorization(token);
-	}
-
 	let req = await uf.POST({ url: url_paths.endpoint, data: endpoint });
 	let es = await req.json();
 	return es;
@@ -336,10 +294,6 @@ export const EndpointSave = async (endpoint, token) => {
 
 export const getLogsRecordsPerMinute = async (options, token) => {
 	let uf = new uFetch();
-
-	if (token) {
-		uf.setBearerAuthorization(token);
-	}
 
 	if (options) {
 		let get_list_metrics = await uf.GET({
@@ -354,10 +308,6 @@ export const getLogsRecordsPerMinute = async (options, token) => {
 
 export const GetAppVars = async (idapp, token, setStoreListAppVars = false) => {
 	let uf = new uFetch();
-
-	if (token) {
-		uf.setBearerAuthorization(token);
-	}
 
 	let req = await uf.GET({
 		url: url_paths.appvarsbyidapp,
@@ -377,10 +327,7 @@ export const GetAppVars = async (idapp, token, setStoreListAppVars = false) => {
 export const UpsertAppVar = async (data, token) => {
 	if (data) {
 		let uf = new uFetch();
-		if (token) {
-			uf.setBearerAuthorization(token);
-		}
-
+	
 		let request = await uf.POST({
 			url: url_paths.appvar,
 			data: data
@@ -397,10 +344,7 @@ export const UpsertAppVar = async (data, token) => {
 export const DeleteAppVar = async (idvar, token) => {
 	if (idvar) {
 		let uf = new uFetch();
-		if (token) {
-			uf.setBearerAuthorization(token);
-		}
-
+		
 		let request = await uf.DELETE({
 			url: url_paths.appvar,
 			data: { idvar: idvar }
@@ -416,10 +360,7 @@ export const DeleteAppVar = async (idvar, token) => {
 
 export const getListApps = async (token) => {
 	let uf = new uFetch();
-	if (token) {
-		uf.setBearerAuthorization(token);
-	}
-
+	
 	let apps_res = await uf.GET({ url: url_paths.apps_get_list });
 	let apps = await apps_res.json();
 	return apps;
@@ -427,10 +368,7 @@ export const getListApps = async (token) => {
 
 export const changeUserPassword = async (data, token) => {
 	let uf = new uFetch();
-	if (token) {
-		uf.setBearerAuthorization(token);
-	}
-
+	
 	let apps_res = await uf.POST({ url: url_paths.changeUserPassword, data: data });
 	let apps = await apps_res.json();
 	return apps;
@@ -438,10 +376,7 @@ export const changeUserPassword = async (data, token) => {
 
 export const restoreSystemEndpoints = async (restore, token) => {
 	let uf = new uFetch();
-	if (token) {
-		uf.setBearerAuthorization(token);
-	}
-
+	
 	let sys_res = await uf.PUT({
 		url: url_paths.restoreSystemEndpoints,
 		data: { restore: restore }

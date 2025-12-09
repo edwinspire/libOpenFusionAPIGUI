@@ -35,9 +35,11 @@
 		// Cualquier lectura de `app` haría que el efecto se active cuando `app` cambie
 	});
 
+	/*
 	const unsubscribe = userStore.subscribe((value) => {
 		uf.setBearerAuthorization(value.token);
 	});
+	*/
 
 	// Función que valida el input para permitir solo letras y números
 	function validateInput(event) {

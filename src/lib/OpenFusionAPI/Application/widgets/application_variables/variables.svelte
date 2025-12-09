@@ -25,10 +25,6 @@
 	let Datavars = $state({});
 	let DataAppVars = $state([]);
 
-	const unsubscribe = userStore.subscribe((value) => {
-		uf.setBearerAuthorization(value.token);
-	});
-
 	let env_dev = $derived.by(() => {
 		return DataAppVars && Array.isArray(DataAppVars)
 			? DataAppVars.filter((item) => {
@@ -128,7 +124,7 @@
 	onMount(async () => {
 		//await GetListEnvironment();
 	});
-	onDestroy(unsubscribe);
+	
 </script>
 
 <div>

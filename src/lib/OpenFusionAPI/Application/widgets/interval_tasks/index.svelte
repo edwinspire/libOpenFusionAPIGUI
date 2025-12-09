@@ -117,10 +117,7 @@
 
 	async function loadTasks() {
 		if (idapp) {
-			if ($userStore.token) {
-				uF.setBearerAuthorization($userStore.token);
-			}
-
+			
 			let resp = await uF.GET({ url: url_paths.getListIntervalTasksByIdApp, data: { idapp } });
 			let jresp = await resp.json();
 			//	console.log('++++>>>>>>>>>>>>>', jresp);
@@ -175,10 +172,7 @@
 
 	async function saveInterval() {
 		if (idapp) {
-			if ($userStore.token) {
-				uf.setBearerAuthorization($userStore.token);
-			}
-
+			
 			let row = $state.snapshot(selectedRow);
 			console.log('saveInterval >>>>>>>>>>>>>', row);
 			let resp = await uF.POST({ url: url_paths.upsertIntervalTasksByIdTask, data: row });
@@ -193,9 +187,7 @@
 			return t.idtask;
 		});
 
-		if ($userStore.token) {
-			uf.setBearerAuthorization($userStore.token);
-		}
+		
 
 		console.log('deleteTasks >>>>>>>>>>>>>', idtasks, url_paths.deleteIntervalTasksByIdTask);
 		let resp = await uF.DELETE({ url: url_paths.deleteIntervalTasksByIdTask, data: idtasks });

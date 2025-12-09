@@ -15,9 +15,11 @@
 
 	onMount(async () => {
 		uF = new uFetch();
+		/*
 		if ($userStore.token) {
 			uF.setBearerAuthorization($userStore.token);
 		}
+		*/
 		let req_uf = await uF.GET({ url: url_paths.getlistFunctionsVarsJS });
 		vars_js = await req_uf.json();
 
