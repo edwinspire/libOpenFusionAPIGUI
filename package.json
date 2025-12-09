@@ -1,6 +1,6 @@
 {
   "name": "@edwinspire/libopenfusionapigui",
-  "version": "1.1.32",
+  "version": "1.1.33",
   "main": "./dist/index.js",
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
   "description": "GUI for OpenFusionAPI",
   "scripts": {
     "dev": "vite dev",
+    "dev_proxy": "vite dev --host --port 5317 --proxy",
     "build": "node ./set_version.js && vite build && npm run package",
     "preview": "vite preview",
     "package": "svelte-kit sync && svelte-package && publint",

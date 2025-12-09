@@ -271,8 +271,25 @@
 			</div>
 
 			<div class="cell">
-				{#if endpoint?.cost}
-					<Input bind:value={endpoint.cost} type="number" label="Cost"></Input>
+				{#if endpoint?.cost_by_request != null}
+					<Input
+						bind:value={endpoint.cost_by_request}
+						type="number"
+						step="0.00001"
+						min="0"
+						label="Cost / Request"
+					></Input>
+				{/if}
+			</div>
+			<div class="cell">
+				{#if endpoint?.cost_by_kb != null}
+					<Input
+						bind:value={endpoint.cost_by_kb}
+						type="number"
+						min="0"
+						step="0.0001"
+						label="Cost / Kb"
+					></Input>
 				{/if}
 			</div>
 		</div>
