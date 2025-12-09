@@ -46,6 +46,10 @@
 
 	let password_change = $state(defaultPasswordChange);
 
+	let changepwd_compare_verify = $derived.by(() => {
+		return password_change.newPassword == password_change.repeatNewPassword;
+	});
+
 	let menu = $state([
 		{
 			title: 'Application',
@@ -339,17 +343,15 @@
 	onaccept={async () => {
 		if (password_change.newPassword == password_change.repeatNewPassword) {
 			let result = await changeUserPassword(password_change, $userStore.token);
-			console.log(result);
 			if (result.success) {
 				password_change = defaultPasswordChange;
 				show_dialog_change_pwd = false;
 				notify.push({ message: 'Successful update', color: 'success' });
 			} else {
-				npm;
 				notify.push({ message: result.error, color: 'danger' });
 			}
 		} else {
-			alert('You must enter the new key twice.');
+			notify.push({ message: 'You must repeat the new password twice.', color: 'danger' });
 		}
 	}}
 	oncancel={() => {
@@ -370,5 +372,15 @@
 			type="password"
 			bind:value={password_change.repeatNewPassword}
 		></Input>
+		<div>
+			{#if !changepwd_compare_verify}
+				<span class="icon-text has-text-warning is-small">
+					<span class="icon">
+						<i class="fas fa-exclamation-triangle"></i>
+					</span>
+					<span>You must repeat the new password twice.</span>
+				</span>
+			{/if}
+		</div>
 	{/snippet}
 </DialogModal>

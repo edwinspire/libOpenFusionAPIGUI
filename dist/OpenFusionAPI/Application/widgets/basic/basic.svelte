@@ -35,12 +35,7 @@
 		// Cualquier lectura de `app` haría que el efecto se active cuando `app` cambie
 	});
 
-	/*
-	const unsubscribe = userStore.subscribe((value) => {
-		uf.setBearerAuthorization(value.token);
-	});
-	*/
-
+	
 	// Función que valida el input para permitir solo letras y números
 	function validateInput(event) {
 		const tecla = event.key; // obtiene la tecla presionada
@@ -108,7 +103,7 @@
 		input.value = input.value.replace(/[^a-zA-Z0-9]/g, '');
 	}
 
-	onDestroy(unsubscribe);
+	
 </script>
 
 {#snippet backup_restore_app()}

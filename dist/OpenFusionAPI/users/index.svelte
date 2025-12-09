@@ -23,13 +23,6 @@
 		methods: { decorator: { component: CellAttrs } }
 	};
 
-	/*
-	const unsubscribe = userStore.subscribe((value) => {
-		//uf.setBearerAuthorization(value.token);
-	});
-	*/
-
-	//onDestroy(unsubscribe);
 
 	async function getApps() {
 		// Lógica de autenticación aquí

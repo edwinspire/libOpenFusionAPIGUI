@@ -37,12 +37,12 @@ export const url_paths = {
 	upsertIntervalTasksByIdTask: host + '/api/system/interval_tasks/upsert/prd',
 	deleteIntervalTasksByIdTask: host + '/api/system/interval_tasks/delete/prd',
 	getfunctions: host + '/api/system/api/function_names/prd',
-	serverAPIVersion: host + '/server/version',
+	serverAPIVersion: host + '/api/system/server/version/prd',
 	appBackup: host + '/api/system/app/backup/prd',
 	appDocumentation: host + '/api/system/app/documentation/prd',
 	appvarsbyidapp: host + '/api/system/app/variables/idapp/prd',
 	appvar: host + '/api/system/app/var/prd',
 	getLogsRecordsPerMinute: host + '/api/system/system/log/recordsperminute/prd',
-	changeUserPassword: host + '/api/system/user/chagepassword/prd',
+	changeUserPassword: host + '/api/system/user/changepassword/prd',
 	restoreSystemEndpoints: host + '/api/system/restore/prd'
 };
