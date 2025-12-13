@@ -6,6 +6,7 @@
 	let value_cache = $state({});
 
 	const unsubscribe = storeCacheSize.subscribe((cache_data) => {
+		//console.log('storeCacheSize >>>> ', cache_data);
 		if (row && cache_data) {
 			if (cache_data[row.idendpoint] > 0) {
 				value_cache.bytes = cache_data[row.idendpoint];

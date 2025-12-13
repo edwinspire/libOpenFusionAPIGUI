@@ -24,4 +24,5 @@ export namespace url_paths {
     let getLogsRecordsPerMinute: string;
     let changeUserPassword: string;
     let restoreSystemEndpoints: string;
+    let getLogSummaryByAppStatusCode: string;
 }

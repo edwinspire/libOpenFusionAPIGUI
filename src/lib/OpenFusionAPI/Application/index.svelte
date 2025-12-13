@@ -141,24 +141,34 @@
 				if (m && (m.event_name == 'cache_set' || m.event_name == 'cache_released')) {
 					//	console.log('> cache_set ', m);
 					storeCacheSize.update((value) => {
-						value[m.data.idendpoint] = m.data.cache_size;
+						value[m.data.idendpoint] = m.data.size.endpoint;
 
 						return value;
 					});
 				} else if (m && m.event_name == 'request_completed') {
-					//	console.log('> request_completed ', m);
+					//console.log('> request_completed ', m);
 					let data1 = m.data;
 					data1.dateTime = m.timestamp;
 
 					storeEndpointOnComplete.set(data1);
+
 					storeCountResponseStatusCode.update((value) => {
-						let new_value = {};
-						new_value[m.data.statusCode] = 1;
-						if (value[m.data.idendpoint]) {
-							new_value[m.data.statusCode] = value[m.data.idendpoint][m.data.statusCode] + 1;
+						if (value[m.data.idendpoint] === undefined) {
+							value[m.data.idendpoint] = {};
 						}
 
-						value[m.data.idendpoint] = new_value;
+						let current = value?.[m.data.idendpoint]?.[m.data.statusCode];
+						let new_value = current !== undefined && current !== null ? Number(current) + 1 : 1;
+
+						//console.log('>>>> storeCountResponseStatusCode ', new_value, value[m.data.idendpoint][m.data.statusCode]);
+
+						if (value[m.data.idendpoint][m.data.statusCode]) {
+							value[m.data.idendpoint][m.data.statusCode] = new_value;
+						} else {
+							value[m.data.idendpoint][m.data.statusCode] = 1;
+						}
+
+						//value[m.data.idendpoint] = new_value;
 
 						//console.log(':::: storeCountResponseStatusCode ', value, m.data);
 						return value;

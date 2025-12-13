@@ -8,7 +8,7 @@
 	import { userStore, statusSystemEndpointsStore } from '../../utils/stores.js';
 	import { GetApp as GetAppRequest, GetAppBackup, RestoreAppBackup, restoreSystemEndpoints } from '../../utils/request.js';
 	import { Notifications } from '@edwinspire/svelte-components';
-	import { onDestroy } from 'svelte';
+	
 
 	let notify = new Notifications();
 	let uf = new uFetch();

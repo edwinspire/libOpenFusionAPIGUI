@@ -44,5 +44,6 @@ export const url_paths = {
 	appvar: host + '/api/system/app/var/prd',
 	getLogsRecordsPerMinute: host + '/api/system/system/log/recordsperminute/prd',
 	changeUserPassword: host + '/api/system/user/changepassword/prd',
-	restoreSystemEndpoints: host + '/api/system/restore/prd'
+	restoreSystemEndpoints: host + '/api/system/restore/prd',
+	getLogSummaryByAppStatusCode: host + '/api/system/log/app/summary/prd',
 };

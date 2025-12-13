@@ -2,7 +2,11 @@
 	import { onMount } from 'svelte';
 	import { Table, Notifications } from '@edwinspire/svelte-components';
 	import { isNewApp } from '$lib/OpenFusionAPI/Application/utils/utils.js';
-	import { userStore, statusSystemEndpointsStore } from '$lib/OpenFusionAPI/Application/utils/stores.js';
+	import {
+		userStore,
+		statusSystemEndpointsStore,
+		storeCountResponseStatusCode
+	} from '$lib/OpenFusionAPI/Application/utils/stores.js';
 	import { endpointColumns } from '$lib/OpenFusionAPI/Application/widgets/endpoints/columns/index.svelte';
 	import {
 		GetEndpointsByIdapp,
@@ -10,7 +14,9 @@
 		clearCache,
 		getServerAPIVersion,
 		getAppDocumentation,
-		GetAppVars, restoreSystemEndpoints
+		GetAppVars,
+		restoreSystemEndpoints,
+		getLogSummaryByAppStatusCode
 	} from '$lib/OpenFusionAPI/Application/utils/request.js';
 	import EndPointEditor from './widgets/editor.svelte';
 
@@ -146,11 +152,28 @@
 
 	async function GetEndpoints() {
 		try {
-			app = await GetEndpointsByIdapp(idapp, $userStore.token);
-			await getListFunction($userStore.token, app.app);
-			await GetAppVars(idapp, $userStore.token, true);
-			let status_sys_endp = await restoreSystemEndpoints(false, $userStore.token);
+			app = await GetEndpointsByIdapp(idapp);
+			await getListFunction(app.app);
+			await GetAppVars(idapp, true);
+			let status_sys_endp = await restoreSystemEndpoints(false);
 			statusSystemEndpointsStore.set(status_sys_endp);
+			let statusCodeEndpoints = await getLogSummaryByAppStatusCode(idapp);
+
+			if (statusCodeEndpoints && Array.isArray(statusCodeEndpoints)) {
+				// Asigna los datos al store con la cantidad de statuscode por cada endpoint
+				let dataStatus = {};
+				for (let index = 0; index < statusCodeEndpoints.length; index++) {
+					const element = statusCodeEndpoints[index];
+
+					if (dataStatus[element.idendpoint] === undefined) {
+						dataStatus[element.idendpoint] = {};
+					}
+
+					dataStatus[element.idendpoint][element.status_code] = element.recordCount;
+				}
+				//console.log('statusCodeEndpoints >> ', statusCodeEndpoints	);
+				storeCountResponseStatusCode.set(dataStatus);
+			}
 		} catch (error) {
 			console.error(error);
 		}

@@ -36,7 +36,7 @@ export const getEnvironmentList = async (token) => {
 export const GetApp = async (idapp, token) => {
 	if (idapp) {
 		let uf = new uFetch();
-		
+
 		let request = await uf.GET({
 			url: url_paths.app,
 			data: { idapp: idapp }
@@ -54,7 +54,7 @@ export const LoginRequest = async (username, password) => {
 	let uf = new uFetch();
 	uf.SetBasicAuthorization(username, password);
 	let user = await uf.GET({
-		url: url_paths.login,
+		url: url_paths.login
 	});
 	let data = await user.json();
 	return data;
@@ -63,7 +63,7 @@ export const LoginRequest = async (username, password) => {
 export const GetServerAPIVersion = async () => {
 	// Lógica de autenticación aquí
 	let uf = new uFetch();
-	
+
 	let version_req = await uf.GET({ url: url_paths.serverAPIVersion });
 	let version_res = await version_req.json();
 
@@ -73,7 +73,7 @@ export const GetServerAPIVersion = async () => {
 export const GetAppBackup = async (idapp, token) => {
 	if (idapp) {
 		let uf = new uFetch();
-	
+
 		let request = await uf.GET({
 			url: url_paths.appBackup,
 			data: { idapp: idapp }
@@ -90,7 +90,7 @@ export const GetAppBackup = async (idapp, token) => {
 export const RestoreAppBackup = async (app, token) => {
 	if (app) {
 		let uf = new uFetch();
-		
+
 		let request = await uf.POST({
 			url: url_paths.appBackup,
 			data: app
@@ -104,14 +104,14 @@ export const RestoreAppBackup = async (app, token) => {
 	}
 };
 
-export const GetEndpointsByIdapp = async (idapp, token) => {
+export const GetEndpointsByIdapp = async (idapp) => {
 	if (idapp) {
-		let app = await GetApp(idapp, token);
+		let app = await GetApp(idapp);
 
 		if (app.idapp == idapp) {
 			app.endpoints = [];
 			let uf = new uFetch();
-		
+
 			let request = await uf.GET({
 				url: url_paths.endpoints_get_by_idapp,
 				data: { idapp: idapp }
@@ -179,7 +179,7 @@ export const getHandlerDocs = async (handler, token) => {
 	if (handler) {
 		//	console.log(url_paths.apiDoc);
 		let uF = new uFetch();
-		
+
 		let req = await uF.GET({ url: url_paths.apiDoc, data: { handler: handler } });
 		let res = await req.json();
 		//		console.log(res);
@@ -189,11 +189,7 @@ export const getHandlerDocs = async (handler, token) => {
 	}
 };
 
-export const getListFunction = async (
-	/** @type {string} */ token,
-	/** @type {string} */ appName
-) => {
-	
+export const getListFunction = async (/** @type {string} */ appName) => {
 	// @ts-ignore
 	let f = new uFetch();
 
@@ -306,7 +302,7 @@ export const getLogsRecordsPerMinute = async (options, token) => {
 	}
 };
 
-export const GetAppVars = async (idapp, token, setStoreListAppVars = false) => {
+export const GetAppVars = async (idapp, setStoreListAppVars = false) => {
 	let uf = new uFetch();
 
 	let req = await uf.GET({
@@ -327,7 +323,7 @@ export const GetAppVars = async (idapp, token, setStoreListAppVars = false) => {
 export const UpsertAppVar = async (data, token) => {
 	if (data) {
 		let uf = new uFetch();
-	
+
 		let request = await uf.POST({
 			url: url_paths.appvar,
 			data: data
@@ -344,7 +340,7 @@ export const UpsertAppVar = async (data, token) => {
 export const DeleteAppVar = async (idvar, token) => {
 	if (idvar) {
 		let uf = new uFetch();
-		
+
 		let request = await uf.DELETE({
 			url: url_paths.appvar,
 			data: { idvar: idvar }
@@ -360,7 +356,7 @@ export const DeleteAppVar = async (idvar, token) => {
 
 export const getListApps = async (token) => {
 	let uf = new uFetch();
-	
+
 	let apps_res = await uf.GET({ url: url_paths.apps_get_list });
 	let apps = await apps_res.json();
 	return apps;
@@ -368,18 +364,29 @@ export const getListApps = async (token) => {
 
 export const changeUserPassword = async (data, token) => {
 	let uf = new uFetch();
-	
+
 	let apps_res = await uf.POST({ url: url_paths.changeUserPassword, data: data });
 	let apps = await apps_res.json();
 	return apps;
 };
 
-export const restoreSystemEndpoints = async (restore, token) => {
+export const restoreSystemEndpoints = async (restore) => {
 	let uf = new uFetch();
-	
+
 	let sys_res = await uf.PUT({
 		url: url_paths.restoreSystemEndpoints,
 		data: { restore: restore }
+	});
+	let r = await sys_res.json();
+	return r;
+};
+
+export const getLogSummaryByAppStatusCode = async (idapp) => {
+	let uf = new uFetch();
+
+	let sys_res = await uf.GET({
+		url: url_paths.getLogSummaryByAppStatusCode,
+		data: { idapp: idapp }
 	});
 	let r = await sys_res.json();
 	return r;

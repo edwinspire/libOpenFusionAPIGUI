@@ -7,6 +7,7 @@
 	let value_count_status_code = $state({});
 
 	const unsubscribe = storeCountResponseStatusCode.subscribe((ListCountStatusCode) => {
+		//console.log('storeCountResponseStatusCode >>>> ', ListCountStatusCode);
 		if (row && row.idendpoint) {
 			value_count_status_code = ListCountStatusCode[row.idendpoint];
 		}
