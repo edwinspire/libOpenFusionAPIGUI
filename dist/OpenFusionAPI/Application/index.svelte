@@ -333,7 +333,7 @@
 		<AppScreen
 			{idapp}
 			onsavedeploy={async () => {
-				await getListApps($userStore.token);
+				await getListAppsInternal($userStore.token);
 			}}
 		></AppScreen>
 	{:else if menu_item_selected == '/appvars'}

@@ -87,7 +87,7 @@ export const GetAppBackup = async (idapp, token) => {
 	}
 };
 
-export const RestoreAppBackup = async (app, token) => {
+export const RestoreAppBackup = async (app) => {
 	if (app) {
 		let uf = new uFetch();
 
@@ -354,7 +354,7 @@ export const DeleteAppVar = async (idvar, token) => {
 	}
 };
 
-export const getListApps = async (token) => {
+export const getListApps = async () => {
 	let uf = new uFetch();
 
 	let apps_res = await uf.GET({ url: url_paths.apps_get_list });

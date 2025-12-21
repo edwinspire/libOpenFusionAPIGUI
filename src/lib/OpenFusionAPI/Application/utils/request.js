@@ -87,7 +87,7 @@ export const GetAppBackup = async (idapp, token) => {
 	}
 };
 
-export const RestoreAppBackup = async (app, token) => {
+export const RestoreAppBackup = async (app) => {
 	if (app) {
 		let uf = new uFetch();
 

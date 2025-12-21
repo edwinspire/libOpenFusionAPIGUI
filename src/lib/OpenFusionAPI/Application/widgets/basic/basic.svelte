@@ -6,9 +6,13 @@
 	import TextAreaWidget from '../common/textArea.svelte';
 	import { url_paths } from '../../utils/paths.js';
 	import { userStore, statusSystemEndpointsStore } from '../../utils/stores.js';
-	import { GetApp as GetAppRequest, GetAppBackup, RestoreAppBackup, restoreSystemEndpoints } from '../../utils/request.js';
+	import {
+		GetApp as GetAppRequest,
+		GetAppBackup,
+		RestoreAppBackup,
+		restoreSystemEndpoints
+	} from '../../utils/request.js';
 	import { Notifications } from '@edwinspire/svelte-components';
-	
 
 	let notify = new Notifications();
 	let uf = new uFetch();
@@ -35,7 +39,6 @@
 		// Cualquier lectura de `app` haría que el efecto se active cuando `app` cambie
 	});
 
-	
 	// Función que valida el input para permitir solo letras y números
 	function validateInput(event) {
 		const tecla = event.key; // obtiene la tecla presionada
@@ -74,6 +77,8 @@
 			console.error(error);
 			deploying.error = true;
 			deploying.message = `Error: ${error.message}`;
+		} finally {
+			onsavedeploy(app);
 		}
 	}
 
@@ -102,8 +107,6 @@
 		const input = e.target;
 		input.value = input.value.replace(/[^a-zA-Z0-9]/g, '');
 	}
-
-	
 </script>
 
 {#snippet backup_restore_app()}
@@ -157,14 +160,17 @@
 
 						//showAppData([uploaded_file]);
 
-						if (
-							confirm('This action will replace existing data.') &&
-							uploaded_file.idapp == app.idapp
+						if (!uploaded_file.idapp) {
+							alert('Invalid File app data');
+						} else if (
+							uploaded_file.idapp == app.idapp &&
+							confirm('This action will replace existing data. ' )
 						) {
 							// TODO: Aquí puedes realizar acciones con los datos JSON, por ejemplo, mostrarlos en la página.
 							let data_return = await RestoreAppBackup(uploaded_file, $userStore.token);
+
 							if (data_return.idapp == app.idapp) {
-								//	alert('The file does not correspond to the same application.');
+								idapp = data_return.idapp;
 								notify.push({
 									message: 'App restored',
 									color: 'success'
@@ -175,19 +181,36 @@
 									color: 'danger'
 								});
 							}
-						} else {
-							notify.push({
-								message: 'The file does not correspond to the same application.',
-								color: 'danger'
-							});
+						} else if (
+							uploaded_file.idapp != app.idapp &&
+							confirm(
+								'The file does not correspond to the same application. Do you want to create a new one?'
+							)
+						) { 
+							let data_return = await RestoreAppBackup(uploaded_file);
+
+							if (data_return.idapp) {
+								idapp = data_return.idapp;
+								notify.push({
+									message: 'New app created',
+									color: 'success'
+								});
+							} else {
+								notify.push({
+									message: 'App not restored',
+									color: 'danger'
+								});
+							}
 						}
+						// Emite el evento onsavedeploy para notificar que se ha guardado/desplegado la app
+						onsavedeploy(app);
 					}}
 				>
 					<span class="icon is-small">
 						<i class="fa-solid fa-upload"></i>
 					</span>
 
-					<span> Upload </span>
+					<span> Restore </span>
 				</button>
 			</p>
 			<p class="control">
@@ -228,7 +251,7 @@
 						<i class="fa-solid fa-download"></i>
 					</span>
 
-					<span> Download </span>
+					<span> Backup </span>
 				</button>
 			</p>
 		</div>
@@ -241,10 +264,9 @@
 		left={[backup_restore_app]}
 		onsavedeploy={async () => {
 			await SaveApp();
-			onsavedeploy(app);
 		}}
 		oncancel={() => {
-		//	alert('No');
+			//	alert('No');
 		}}
 	></SaveDeploy>
 
@@ -268,6 +290,26 @@
 							oninput={(event) => {
 								clearInput(event);
 							}}
+						/>
+					{/if}
+				</p>
+			</div>
+		</div>
+		<div class="column">
+			<div class="field has-addons">
+				<p class="control">
+					<!-- svelte-ignore a11y_missing_attribute -->
+					<a class="button is-static is-small"> UUID App </a>
+				</p>
+				<p class="control">
+					{#if app}
+						<input
+							class="input is-small"
+							size="50"
+							type="text"
+							readonly
+							placeholder="UUID App"
+							value={app.idapp}
 						/>
 					{/if}
 				</p>
