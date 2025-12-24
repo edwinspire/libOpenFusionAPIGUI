@@ -148,11 +148,11 @@ export namespace endpointColumns {
         let hidden_15: boolean;
         export { hidden_15 as hidden };
     }
-    namespace cost_by_request {
+    namespace price_by_request {
         let hidden_16: boolean;
         export { hidden_16 as hidden };
     }
-    namespace cost_by_kb {
+    namespace price_kb_request {
         let hidden_17: boolean;
         export { hidden_17 as hidden };
     }
@@ -176,13 +176,21 @@ export namespace endpointColumns {
         let hidden_22: boolean;
         export { hidden_22 as hidden };
     }
-    namespace createdAt {
+    namespace price_kb_response {
         let hidden_23: boolean;
         export { hidden_23 as hidden };
     }
-    namespace updatedAt {
+    namespace createdAt {
         let hidden_24: boolean;
         export { hidden_24 as hidden };
+    }
+    namespace updatedAt {
+        let hidden_25: boolean;
+        export { hidden_25 as hidden };
+    }
+    namespace price_total {
+        let hidden_26: boolean;
+        export { hidden_26 as hidden };
     }
 }
 export default Index;

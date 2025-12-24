@@ -54,15 +54,17 @@
 		data_test: { hidden: true },
 		latest_updater: { hidden: true },
 		environment: { hidden: true },
-		cost_by_request: { hidden: true },
-		cost_by_kb: { hidden: true },
+		price_by_request: { hidden: true },
+		price_kb_request: { hidden: true },
 		custom_data: { hidden: true },
 		keywords: { hidden: true },
 		cache_size: { hidden: true },
 		docs: { hidden: true },
 
 		json_schema: { hidden: true },
+		price_kb_response: { hidden: true },
 		createdAt: { hidden: true },
-		updatedAt: { hidden: true }
+		updatedAt: { hidden: true },
+		price_total: { hidden: true }
 	});
 </script>

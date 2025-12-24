@@ -29,9 +29,14 @@
 	let notify = new Notifications();
 	let environment_list = $state(Environment);
 	let handlers = $state([]);
+	let new_keyword = $state('');
 
 	let ShowDialogCopyEndpoint = $state(false);
 	//let ShowDialogCopyEndpointError = $state('');
+
+	let list_keywords = $derived.by(() => {
+		return endpoint && endpoint.keywords ? endpoint.keywords.split(',') : [];
+	});
 
 	function defaultValues() {
 		if (!endpoint) {
@@ -295,6 +300,56 @@
 		</div>
 	</div>
 
+	
+	<hr class="" />
+
+	<div class="field">
+		<!-- svelte-ignore a11y_label_has_associated_control -->
+		<label class="label is-small">Keywords</label>
+		<div class="control">
+			<Input
+				bind:value={new_keyword}
+				label="Add Keyword"
+				onchange={() => {
+					//alert('add keyword ' + new_keyword);
+					if (new_keyword && new_keyword.trim().length > 0) {
+						let keywords_array = endpoint.keywords
+							? endpoint.keywords.split(',').map((k) => k.trim())
+							: [];
+						if (!keywords_array.includes(new_keyword.trim())) {
+							keywords_array.push(new_keyword.trim());
+							endpoint.keywords = keywords_array.join(',');
+						}
+						new_keyword = '';
+					}
+				}}
+			></Input>
+			<div class="field is-grouped is-grouped-multiline">
+				{#each list_keywords as kw}
+					<div class="control">
+						<div class="tags has-addons">
+							<a class="tag">{kw}</a>
+							<a
+								class="tag is-delete is-danger"
+								onclick={() => {
+									let keywords_array = endpoint.keywords
+										? endpoint.keywords.split(',').map((k) => k.trim())
+										: [];
+
+									keywords_array = keywords_array.filter((k) => k != kw);
+									endpoint.keywords = keywords_array.join(',');
+								}}
+							></a>
+						</div>
+					</div>
+				{/each}
+			</div>
+		</div>
+	</div>
+
+	
+	<hr class="" />
+	
 	<div class="field">
 		<!-- svelte-ignore a11y_label_has_associated_control -->
 		<label class="label is-small">Description</label>

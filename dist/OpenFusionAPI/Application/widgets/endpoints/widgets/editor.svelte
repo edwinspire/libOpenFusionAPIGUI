@@ -188,6 +188,7 @@
 		{ label: 'Authorizations', component: tab_auth, classIcon: ' fa-solid fa-key ' },
 		{ label: 'MCP', component: tab_mcp, classIcon: ' fa-solid fa-robot ' },
 		{ label: 'Custom Data', component: tab_custom_data, classIcon: ' fa-regular fa-hand ' },
+		{ label: 'Price', component: tab_price, classIcon: ' fa-solid fa-tag ' },
 		{ label: 'Tester', component: tab_tester, classIcon: ' fa-solid fa-microscope ' },
 		{ label: 'Logs', component: tab_log }
 	]);
@@ -394,6 +395,34 @@
 		></EditorCode>
 	{/if}
 {/snippet}
+
+{#snippet tab_price()}
+	<Input
+		label="Price by Request (in credits)"
+		type="number"
+		bind:value={endpoint.price_by_request}
+		step="1"
+		min="0"
+		placeholder="Price by Request"
+	/>
+		<Input
+		label="Price by KB on request (in credits)"
+		type="number"
+		bind:value={endpoint.price_kb_request}
+		step="1"
+		min="0"
+		placeholder="Price by Request"
+	/>
+		<Input
+		label="Price by KB on response (in credits)"
+		type="number"
+		bind:value={endpoint.price_kb_response}
+		step="1"
+		min="0"
+		placeholder="Price by Request"
+	/>
+{/snippet}
+
 
 {#snippet tab_config()}
 	{#if endpoint}
