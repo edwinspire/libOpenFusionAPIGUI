@@ -279,9 +279,9 @@
 	<EndPointEditor
 		bind:this={EndpointEditorWidget}
 		bind:showEditor={showEndpointEdit}
-		oncopy={(eps) => {
-			console.log(eps);
-			endpoints = setpathEdpoint(eps);
+		oncopy={async (eps) => {
+			console.log('EndPointEditor >', eps);
+			await GetEndpoints();
 		}}
 		onsave={async (e) => {
 			await GetEndpoints();

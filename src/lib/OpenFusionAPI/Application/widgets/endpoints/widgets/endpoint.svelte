@@ -300,7 +300,6 @@
 		</div>
 	</div>
 
-	
 	<hr class="" />
 
 	<div class="field">
@@ -347,9 +346,8 @@
 		</div>
 	</div>
 
-	
 	<hr class="" />
-	
+
 	<div class="field">
 		<!-- svelte-ignore a11y_label_has_associated_control -->
 		<label class="label is-small">Description</label>
@@ -369,10 +367,12 @@
 		//let eps = [...app.endpoints];
 		if ((endpoint_env_copy = !'')) {
 			try {
-				let result = await EndpointSave(endpoint_copied, $userStore.token);
-				if (result && result && result.idapp == app.idapp) {
+				let result = await EndpointSave(endpoint_copied);
+				console.log('EndpointSave result:', result, app);
+				if (result && result.result && result.result.idapp == app.idapp) {
+					oncopy(result.result);
 					notify.push({
-						message: 'Copied successfully, dont forget Save & Deploy',
+						message: 'Copied successfully to ' + endpoint_env_copy,
 						color: 'success'
 					});
 				} else {
