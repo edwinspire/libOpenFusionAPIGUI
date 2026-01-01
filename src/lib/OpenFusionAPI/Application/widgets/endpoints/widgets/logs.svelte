@@ -1,12 +1,15 @@
 <script>
 	import { onMount } from 'svelte';
 	import { Tab, Table } from '@edwinspire/svelte-components';
-	import { url_paths } from '$lib/OpenFusionAPI/Application/utils/paths.js';
-	import LogLevelSelect from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/loglevel_select.svelte';
+	import { url_paths } from '../../../utils/paths.js';
+	import LogLevelSelect from './loglevel_select.svelte';
 	import { DateTime } from 'luxon';
+	import uFetch from '@edwinspire/universal-fetch';
+
+	let uF = new uFetch(url_paths.getLogs);
 
 	let {
-		row = $bindable({}),
+		endpoint = $bindable({}),
 		log = $bindable({
 			status_info: 1,
 			status_success: 1,
@@ -17,6 +20,8 @@
 		ondata = (d) => {}
 	} = $props();
 
+	let dataLogs = $state([]);
+
 	// Obtener la fecha actual en la zona horaria local
 	const now = DateTime.local();
 	// Formatear la fecha actual en el formato deseado: "yyyy-MM-dd'T'HH:mm+ZZ"
@@ -26,18 +31,15 @@
 	// Obtener la fecha restándole 24 horas
 	const nowMinus24 = now.minus({ hours: 24 });
 	const start = nowMinus24.toFormat("yyyy-MM-dd'T'HH:mm");
-// TODO: Está desactivado hasta ver como realizar correctamente la consulta al log
+	// TODO: Está desactivado hasta ver como realizar correctamente la consulta al log
 	let active_tab = $state(0);
-	let requestData = $state({
-		url: url_paths.getLogs,
-		params: {
-			startDate: start,
-			endDate: formattedNow,
-			idendpoint: row.idendpoint||'ffffffff-ffff-ffff-ffff-ffffffffffff',
-			//	level: null,
-			limit: 1000,
-			timezone : DateTime.local().z
-		}
+	let params = $state({
+		start_date: start,
+		end_date: formattedNow,
+		idendpoint: endpoint.idendpoint || 'ffffffff-ffff-ffff-ffff-ffffffffffff',
+		//	level: null,
+		limit: 1000,
+		timezone: DateTime.local().z
 	});
 	let tabs = $state([
 		{
@@ -85,6 +87,17 @@
 
 		if (log && log.status_server_error == null) {
 			log.status_server_error = 3;
+		}
+	}
+
+	async function fetchLogs() {
+		try {
+			params.idendpoint = endpoint.idendpoint || 'ffffffff-ffff-ffff-ffff-ffffffffffff';
+			let req = await uF.GET({ data: params });
+			dataLogs = await req.json();
+		} catch (error) {
+			console.error('Error fetching logs:', error);
+			//dataLogs = [];
 		}
 	}
 
@@ -271,7 +284,7 @@
 {/snippet}
 
 {#snippet tab_logs()}
-	<Table bind:requestData right_items={[rt1, rt2, rt3]}>
+	<Table bind:RawDataTable={dataLogs} right_items={[rt1, rt2, rt3, search]}>
 		{#snippet rt1()}
 			<div class="field has-addons has-addons-centered">
 				<span class="control">
@@ -279,7 +292,7 @@
 						class="input is-small"
 						type="datetime-local"
 						placeholder="Start"
-						bind:value={requestData.params.startDate}
+						bind:value={params.start_date}
 					/>
 				</span>
 				<span class="control">
@@ -295,7 +308,7 @@
 						class="input is-small"
 						type="datetime-local"
 						placeholder="Start"
-						bind:value={requestData.params.endDate}
+						bind:value={params.end_date}
 					/>
 				</span>
 				<span class="control">
@@ -311,7 +324,7 @@
 						class="input is-small"
 						type="number"
 						placeholder="Limit"
-						bind:value={requestData.params.limit}
+						bind:value={params.limit}
 					/>
 				</span>
 				<span class="control">
@@ -319,6 +332,14 @@
 					<a class="button is-static is-small"> Limit </a>
 				</span>
 			</div>
+		{/snippet}
+		{#snippet search()}
+			<button class="button is-small is-info" onclick={fetchLogs}>
+				<span>Get Logs</span>
+				<span class="icon">
+					<i class="fa-solid fa-magnifying-glass"></i>
+				</span>
+			</button>
 		{/snippet}
 	</Table>
 {/snippet}
