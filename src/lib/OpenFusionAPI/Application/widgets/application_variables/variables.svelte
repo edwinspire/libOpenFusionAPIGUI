@@ -1,16 +1,16 @@
 <script>
-	import uFetch from '@edwinspire/universal-fetch';
 	import { GetAppVars, UpsertAppVar } from '$lib/OpenFusionAPI/Application/utils/request.js';
 	import { userStore } from '$lib/OpenFusionAPI/Application/utils/stores.js';
 	import VarEnv from './variable.svelte';
 	import { isNewApp } from '$lib/OpenFusionAPI/Application/utils/utils.js';
-	import { DialogModal } from '@edwinspire/svelte-components';
+	import { DialogModal, Notifications } from '@edwinspire/svelte-components';
 	import SelectEnvironment from '$lib/OpenFusionAPI/widgets/Select.svelte';
 	import { Environment as environment_list } from '$lib/OpenFusionAPI/Application/utils/static_values.js';
 	import { onDestroy, onMount } from 'svelte';
 
-	let uf = new uFetch();
-
+	
+	let noty = new Notifications();
+	
 	let {
 		idapp = $bindable(0),
 		environment = $bindable('*'),
