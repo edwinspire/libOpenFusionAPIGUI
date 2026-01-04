@@ -70,6 +70,7 @@
 			stateValue = newValue;
 			onselect(newValue);
 			value = newValue; // sincroniza con padre vía bind:value
+			//console.log('> updateValue > ', value, newValue);
 		}
 	}
 
@@ -85,6 +86,7 @@
 	}
 
 	function handleVarSelect(selected) {
+		//console.log('>> handleVarSelect >> ', selected);
 		updateValue(selected);
 	}
 

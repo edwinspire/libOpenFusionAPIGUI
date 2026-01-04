@@ -244,6 +244,7 @@
 			endpoint.data_test = v.data_test;
 			endpoint.code = v.code;
 			endpoint.docs = endpoint.docs;
+			//console.log(' onChangeValueHandler -> ', endpoint);
 		}
 	}
 
@@ -439,7 +440,7 @@
 					bind:endpoint
 					onchange={(v) => {
 						onChangeValueHandler(v);
-						//console.log('SOAP onchange', v);
+						console.log('SOAP onchange', v);
 					}}
 				/>
 			{:else if endpoint?.handler == 'SQL'}

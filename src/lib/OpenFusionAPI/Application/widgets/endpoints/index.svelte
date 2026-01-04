@@ -222,7 +222,7 @@
 				//SelectedRow = { app: app, endpoint: defaultValuesEndpointRow(data) };
 				idendpoint_selected = data.idendpoint;
 				showEndpointEdit = true;
-				//console.log('oneditrow', data);
+				console.log('oneditrow', data);
 				EndpointEditorWidget.setData({ app: app, idendpoint: data.idendpoint });
 			}}
 		>

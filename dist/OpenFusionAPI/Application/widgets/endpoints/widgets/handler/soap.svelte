@@ -45,6 +45,7 @@
 	});
 
 	function getCode() {
+		//console.log('>>>>>>>>>>>>> ', $state.snapshot( internal_code));
 		return internal_code;
 	}
 
@@ -79,6 +80,7 @@
 			environment={endpoint.environment}
 			onselect={(selected) => {
 				//console.log('AppVarsSelector Editor', selected);
+				internal_code = selected;
 				fnOnChange();
 			}}
 		></AppVarsSelector>
