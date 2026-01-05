@@ -520,7 +520,6 @@
 {/snippet}
 
 {#snippet tab_mcp()}
-{JSON.stringify(endpoint)}
 	<MCP bind:mcp={endpoint.mcp} bind:endpoint></MCP>
 {/snippet}
 
