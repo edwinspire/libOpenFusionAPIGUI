@@ -2,31 +2,14 @@
 	import { onMount } from 'svelte';
 	import { Input } from '@edwinspire/svelte-components';
 
-	let { row = $bindable({}), mcp = $bindable({}), ondata = (d) => {} } = $props();
+	let { mcp = $bindable({}) } = $props();
 
 	function defaultValue() {
-		if (!mcp || mcp == null) {
-			mcp = { enabled: false, name: '', title: '' };
-		}
-
-		if (mcp.enabled == null) {
-			mcp.enabled = false;
-		}
-
-		if (mcp.name == null) {
-			mcp.name = '';
-		}
-
-		if (mcp.title == null) {
-			mcp.title = '';
-		}
-
-		if (mcp.description == null) {
-			mcp.description = '';
-		}
-
-		//mcp = { ...mcp };
-		//console.log('MCP', mcp);
+		mcp ??= { enabled: false, name: '', title: '', description: '' };
+		mcp.enabled ??= false;
+		mcp.name ??= '';
+		mcp.title ??= '';
+		mcp.description ??= '';
 	}
 
 	onMount(() => {
@@ -34,18 +17,19 @@
 	});
 </script>
 
-<Input label="Enabled" type="checkbox" bind:value={mcp.enabled} placeholder="Enabled" />
+{JSON.stringify(mcp)}
+<Input label="Enabled" type="checkbox" bind:value={mcp.enabled} />
 <Input label="Name" bind:value={mcp.name} placeholder="Name" required={true} />
 <Input label="Title" bind:value={mcp.title} placeholder="Title" />
 
 <div class="field">
 	<p class="control label_descrip">
 		<!-- svelte-ignore a11y_missing_attribute -->
-		<a class="button is-static is-small "> Tool Description </a>
+		<a class="button is-static is-small"> Tool Description </a>
 	</p>
-	
+
 	<div class="control">
-		<textarea class="textarea is-small " placeholder="Tool description" bind:value={mcp.description}
+		<textarea class="textarea is-small" placeholder="Tool description" bind:value={mcp.description}
 		></textarea>
 	</div>
 </div>
@@ -68,5 +52,4 @@
 	.label_descrip {
 		margin-bottom: inherit;
 	}
-
 </style>

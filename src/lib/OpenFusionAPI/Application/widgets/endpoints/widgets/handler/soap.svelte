@@ -16,7 +16,44 @@
 		}
 	});
 
-	let timeoutChange;
+	let isSyncingFromParent = $state(false);
+
+	let debounceTimer;
+
+	/* ---------- Parent → Internal ---------- */
+	function syncFromParent() {
+		console.log('syncFromParent', endpoint, internal_code, endpoint?.code !== internal_code);
+		if (endpoint?.code !== internal_code) {
+			isSyncingFromParent = true;
+			internal_code = endpoint.code ?? '';
+		}
+	}
+
+	$effect(() => {
+		endpoint?.code;
+		syncFromParent();
+	});
+
+	/* ---------- Internal → Parent (Debounced) ---------- */
+	function syncToParent() {
+		clearTimeout(debounceTimer);
+
+		debounceTimer = setTimeout(() => {
+			if (isSyncingFromParent) {
+				isSyncingFromParent = false;
+				return;
+			}
+
+			if (internal_code !== endpoint?.code) {
+				onchange({ code: internal_code });
+			}
+		}, 300); // ⏱ debounce en ms
+	}
+
+	$effect(() => {
+		internal_code;
+		syncToParent();
+	});
 
 	function parseCode() {
 		internal_code = endpoint.code;
@@ -65,7 +102,7 @@
 	});
 
 	onDestroy(() => {
-		clearTimeout(timeoutChange);
+		clearTimeout(debounceTimer);
 	});
 </script>
 
@@ -114,8 +151,8 @@
 					<strong>wsdl:</strong> URL where the wsdl is located. (Required)
 				</li>
 				<li>
-					<strong>endpoint:</strong> URL of the actual endpoint. This is not usually required except
-					in specific cases. (Optional)
+					<strong>endpoint:</strong> URL of the actual endpoint. This is not usually required except in
+					specific cases. (Optional)
 				</li>
 				<li>
 					<strong>functionName:</strong> Function or method to call. Required when the method used

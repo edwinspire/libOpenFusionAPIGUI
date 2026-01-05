@@ -171,20 +171,32 @@ export function validateURL(string_url) {
 }
 
 export const mergeSourceOverwrite = (target, source) => {
-	// OJO sibreescribe el valor de tarjet
-	const isObject = (val) => val && typeof val === 'object' && !Array.isArray(val);
+	// Early return para casos triviales
+	if (target === source) return target;
+	if (source == null || typeof source !== 'object') return target;
+	if (target == null || typeof target !== 'object') return source;
 
-	for (const key in source) {
-		if (source.hasOwnProperty(key)) {
-			const srcVal = source[key];
-			const tarVal = target[key];
+	const isPlainObject = (val) =>
+		val !== null &&
+		typeof val === 'object' &&
+		!Array.isArray(val);
 
-			if (isObject(tarVal) && isObject(srcVal)) {
-				mergeSourceOverwrite(tarVal, srcVal); // Merge recursivo
-			} else {
-				target[key] = srcVal; // Sobrescribe directamente
-			}
+	// Clon superficial del target (NO se muta el original)
+	const result = { ...target };
+
+	for (const key of Object.keys(source)) {
+		const srcVal = source[key];
+		const tarVal = target[key];
+
+		if (isPlainObject(tarVal) && isPlainObject(srcVal)) {
+			// Merge profundo inmutable
+			result[key] = mergeSourceOverwrite(tarVal, srcVal);
+		} else {
+			// Overwrite directo
+			result[key] = srcVal;
 		}
 	}
-	return target; // el target ya está modificado
+
+	return result;
 };
+

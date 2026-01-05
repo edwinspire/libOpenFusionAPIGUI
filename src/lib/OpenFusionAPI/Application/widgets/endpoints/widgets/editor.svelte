@@ -57,7 +57,7 @@
 			if (ep_found) {
 				// Se hace una copia del default porque se estaba sobreescribiendo
 				endpoint = mergeSourceOverwrite({ ...defaultEndpoint }, ep_found);
-
+				console.log('> setValuesEndpoint ', endpoint, defaultEndpoint, ep_found);
 				json_schema_in_enabled = endpoint.json_schema?.in.enabled;
 				json_schema_in_schema = endpoint.json_schema?.in?.schema;
 
@@ -235,7 +235,7 @@
 	});
 
 	function clearValues() {
-		endpoint = defaultEndpoint;
+		endpoint = {...defaultEndpoint};
 		endpoint.idapp = app.idapp;
 	}
 
@@ -406,7 +406,7 @@
 		min="0"
 		placeholder="Price by Request"
 	/>
-		<Input
+	<Input
 		label="Price by KB on request (in credits)"
 		type="number"
 		bind:value={endpoint.price_kb_request}
@@ -414,7 +414,7 @@
 		min="0"
 		placeholder="Price by Request"
 	/>
-		<Input
+	<Input
 		label="Price by KB on response (in credits)"
 		type="number"
 		bind:value={endpoint.price_kb_response}
@@ -423,7 +423,6 @@
 		placeholder="Price by Request"
 	/>
 {/snippet}
-
 
 {#snippet tab_config()}
 	{#if endpoint}
@@ -521,9 +520,8 @@
 {/snippet}
 
 {#snippet tab_mcp()}
-	{#if endpoint?.mcp}
-		<MCP bind:mcp={endpoint.mcp} bind:endpoint></MCP>
-	{/if}
+{JSON.stringify(endpoint)}
+	<MCP bind:mcp={endpoint.mcp} bind:endpoint></MCP>
 {/snippet}
 
 {#snippet endpoint_path()}

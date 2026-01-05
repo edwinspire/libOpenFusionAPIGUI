@@ -2,7 +2,6 @@
 	import uFetch from '@edwinspire/universal-fetch';
 	import { onMount } from 'svelte';
 	import { url_paths } from '../../../utils/paths.js';
-	import { userStore } from '../../../utils/stores.js';
 
 	let uF;
 	let vars_js = {};

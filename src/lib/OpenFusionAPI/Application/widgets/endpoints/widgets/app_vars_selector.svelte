@@ -1,5 +1,4 @@
 <script>
-	import { onMount, onDestroy } from 'svelte';
 	import { PredictiveInput, JSONView } from '@edwinspire/svelte-components';
 	import { listAppVars } from '$lib/OpenFusionAPI/Application/utils/stores.js';
 
@@ -13,42 +12,30 @@
 		onselect = () => {}
 	} = $props();
 
-	let options_app_vars = $state([]);
-
 	// --------------------------------------------
-	// Valor seleccionado (derivado)
+	// Options filtered by environment (derived from store)
 	// --------------------------------------------
-	let value_selected = $derived.by(() =>
-		options_app_vars && Array.isArray(options_app_vars)
-			? options_app_vars.find((item) => item.name === value)
+	let options_app_vars = $derived(
+		Array.isArray($listAppVars)
+			? $listAppVars
+					.filter((item) => item.environment === environment)
+					.map((item) => ({
+						name: item.name,
+						value: item.name,
+						code: item.value
+					}))
 			: []
 	);
 
 	// --------------------------------------------
-	// Suscripción al store
+	// Selected value (derived)
 	// --------------------------------------------
-	const unsubscribe = listAppVars.subscribe((list) => {
-		if (!Array.isArray(list)) {
-			options_app_vars = [];
-			return;
-		}
-
-		const filtered = list.filter((item) => item.environment === environment);
-
-		options_app_vars = filtered.map((item) => ({
-			name: item.name,
-			value: item.name,
-			code: item.value
-		}));
-	});
+	let value_selected = $derived(options_app_vars.find((item) => item.name === value));
 
 	function onselectInternal(val) {
-		//		console.log('onselectInternal app_vars_selector', val);
 		value = val;
 		onselect(val);
 	}
-
-	onDestroy(unsubscribe);
 </script>
 
 <PredictiveInput

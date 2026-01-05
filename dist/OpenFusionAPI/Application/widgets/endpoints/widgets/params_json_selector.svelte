@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { untrack } from 'svelte';
 	import { EditorCode } from '@edwinspire/svelte-components';
 	import AppVarsSelector from './app_vars_selector.svelte';
 
@@ -23,10 +23,17 @@
 	let param_varname = $state('');
 	let use_var_app = $state(false);
 
-	// Se ejecuta cuando stateValue cambia
+	// internal tracker for the last processed value to avoid loops
+	let lastProcessedValue = $state();
+
+	// Se ejecuta cuando value cambia desde el padre
 	$effect(() => {
-		if (value) {
-			normalizeValue($state.snapshot(value));
+		if (value !== undefined) {
+			untrack(() => {
+				if (stringifyValue(value) !== stringifyValue(lastProcessedValue)) {
+					normalizeValue(value);
+				}
+			});
 		}
 	});
 
@@ -34,6 +41,7 @@
 	// Normaliza el valor recibido (JSON o variable)
 	// ------------------------------------------------------------
 	function normalizeValue(val) {
+		lastProcessedValue = val;
 		stateValue = val;
 
 		if (val == null) {
@@ -45,16 +53,28 @@
 		// Si es objeto, forzamos a JSON editor
 		if (typeof val === 'object') {
 			use_var_app = false;
-			param_json = structuredClone(val);
+			const newVal = $state.snapshot(val);
+			if (JSON.stringify(param_json) !== JSON.stringify(newVal)) {
+				param_json = newVal;
+			}
 			return;
 		}
 
 		// Si NO es objeto: intentamos parsear JSON
 		try {
-			param_json = JSON.parse(val);
-			use_var_app = false;
+			const parsed = JSON.parse(val);
+			if (typeof parsed === 'object' && parsed !== null) {
+				if (JSON.stringify(param_json) !== JSON.stringify(parsed)) {
+					param_json = parsed;
+				}
+				use_var_app = false;
+			} else {
+				throw new Error('Not an object');
+			}
 		} catch {
-			param_varname = val;
+			if (param_varname !== val) {
+				param_varname = val;
+			}
 			use_var_app = true;
 		}
 	}
@@ -63,14 +83,11 @@
 	// Comparación y actualización
 	// ------------------------------------------------------------
 	function updateValue(newValue) {
-		const prev = stringifyValue(stateValue);
-		const next = stringifyValue(newValue);
-
-		if (prev !== next) {
+		if (stringifyValue(stateValue) !== stringifyValue(newValue)) {
 			stateValue = newValue;
+			lastProcessedValue = newValue;
 			onselect(newValue);
 			value = newValue; // sincroniza con padre vía bind:value
-			//console.log('> updateValue > ', value, newValue);
 		}
 	}
 
@@ -89,10 +106,6 @@
 		//console.log('>> handleVarSelect >> ', selected);
 		updateValue(selected);
 	}
-
-	onMount(() => {
-		normalizeValue($state.snapshot(value));
-	});
 </script>
 
 <div class="box">
