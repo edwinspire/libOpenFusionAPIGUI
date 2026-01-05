@@ -17,7 +17,6 @@
 	});
 </script>
 
-{JSON.stringify(mcp)}
 <Input label="Enabled" type="checkbox" bind:value={mcp.enabled} />
 <Input label="Name" bind:value={mcp.name} placeholder="Name" required={true} />
 <Input label="Title" bind:value={mcp.title} placeholder="Title" />
