@@ -113,8 +113,8 @@ declare module '$env/static/private' {
 	export const PSModulePath: string;
 	export const PUBLIC: string;
 	export const PWD: string;
-	export const QIP16876: string;
-	export const QIP7512: string;
+	export const QIP15432: string;
+	export const SESSIONNAME: string;
 	export const SHELL: string;
 	export const SHLVL: string;
 	export const SSH_ASKPASS: string;
@@ -139,7 +139,6 @@ declare module '$env/static/private' {
 	export const VSCODE_PYTHON_AUTOACTIVATE_GUARD: string;
 	export const WINDIR: string;
 	export const _: string;
-	export const __COMPAT_LAYER: string;
 }
 
 /**
@@ -256,8 +255,8 @@ declare module '$env/dynamic/private' {
 		PSModulePath: string;
 		PUBLIC: string;
 		PWD: string;
-		QIP16876: string;
-		QIP7512: string;
+		QIP15432: string;
+		SESSIONNAME: string;
 		SHELL: string;
 		SHLVL: string;
 		SSH_ASKPASS: string;
@@ -282,7 +281,6 @@ declare module '$env/dynamic/private' {
 		VSCODE_PYTHON_AUTOACTIVATE_GUARD: string;
 		WINDIR: string;
 		_: string;
-		__COMPAT_LAYER: string;
 		[key: `PUBLIC_${string}`]: undefined;
 		[key: `${string}`]: string | undefined;
 	}

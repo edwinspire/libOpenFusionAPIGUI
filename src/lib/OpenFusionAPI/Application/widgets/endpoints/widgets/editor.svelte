@@ -1,5 +1,5 @@
 <script>
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import {
 		SlideFullScreen,
 		Tab,
@@ -34,14 +34,19 @@
 
 	let json_schema_in_enabled = $state(false);
 	let json_schema_in_schema = $state({});
-	let endpoint = $state(defaultEndpoint);
+	let endpoint = $state(structuredClone(defaultEndpoint));
 	let app = $state({});
 	let idendpoint = $state();
 
 	let markdown_docs = $state('');
 
 	let deploying = $state({ show: false, message: '', error: false });
-	let timeoutChange;
+
+	$effect(() => {
+		if (endpoint.handler) {
+			getHandlerDocsRequest();
+		}
+	});
 
 	export function setData(data) {
 		app = data.app || {};
@@ -56,10 +61,14 @@
 
 			if (ep_found) {
 				// Se hace una copia del default porque se estaba sobreescribiendo
-				endpoint = mergeSourceOverwrite({ ...defaultEndpoint }, ep_found);
+				endpoint = mergeSourceOverwrite(structuredClone(defaultEndpoint), ep_found);
 				console.log('> setValuesEndpoint ', endpoint, defaultEndpoint, ep_found);
-				json_schema_in_enabled = endpoint.json_schema?.in.enabled;
-				json_schema_in_schema = endpoint.json_schema?.in?.schema;
+
+				// Ensure json_schema structure exists
+				endpoint.json_schema ??= {};
+				endpoint.json_schema.in ??= {};
+				endpoint.json_schema.in.enabled ??= false;
+				endpoint.json_schema.in.schema ??= {};
 
 				// Get Handler Docs
 				await getHandlerDocsRequest();
@@ -77,9 +86,7 @@
 		endpoint_out.data_test = endpoint.data_test;
 		endpoint_out.code = endpoint.code;
 		endpoint_out.docs = endpoint.docs;
-		endpoint_out.json_schema = {
-			in: { enabled: json_schema_in_enabled, schema: json_schema_in_schema }
-		};
+		// json_schema is already bound in endpoint derived from state
 
 		console.log('Save Endpoint', endpoint_out);
 		deploying = { show: true, message: 'Saving Endpoint...', error: false };
@@ -101,67 +108,6 @@
 			deploying.message = `Error: ${error.message}`;
 		}
 	}
-
-	function doc_app_header() {
-		return {
-			id: 'qomiKhnfSk',
-			type: 'header',
-			data: {
-				text: `Application: ${app.app}`,
-				level: 2
-			}
-		};
-	}
-
-	let doc_endpoint_resource = $state({
-		id: 'NsMuckns3e',
-		type: 'header',
-		data: {
-			text: `Resource: ${endpoint.endpoint}`,
-			level: 3
-		}
-	});
-
-	let doc_endpoint_params = {
-		id: 'coNrlHnl5r',
-		type: 'table',
-		data: {
-			withHeadings: false,
-			stretched: false,
-			content: [
-				[`<b>Enabled:</b> ${endpoint.enabled}`, `<b>Method: </b> ${endpoint.method}`],
-				[`<b>Handler:</b> ${endpoint.handler}`, `<b>Environment: </b> ${endpoint.environment}`],
-				[`<b>Access:</b> ${endpoint.access}`, `<b>Handler: </b> ${endpoint.handler}`],
-				[`<b>Environment: </b> ${endpoint.environment}`, ``]
-			]
-		}
-	};
-
-	let doc_endpoint_description_label = {
-		id: 'TVnfeWbUYi',
-		type: 'header',
-		data: {
-			text: 'Description:',
-			level: 3
-		}
-	};
-
-	let doc_endpoint_description = {
-		id: 'sHiRVy9Eyh',
-		type: 'paragraph',
-		data: {
-			text: `${endpoint.description}`,
-			level: 3
-		}
-	};
-
-	let default_docs = [
-		doc_app_header(),
-		doc_endpoint_resource,
-		doc_endpoint_params,
-		doc_endpoint_description_label,
-		doc_endpoint_description
-	];
 
 	let validateResource = $state(false);
 	let availableURL = $state(false);
@@ -235,7 +181,7 @@
 	});
 
 	function clearValues() {
-		endpoint = {...defaultEndpoint};
+		endpoint = { ...defaultEndpoint };
 		endpoint.idapp = app.idapp;
 	}
 
@@ -316,10 +262,6 @@
 		//	defaultValues();
 		//	console.log('Editor endpoint > ', $state.snapshot(endpoint));
 	});
-
-	onDestroy(() => {
-		clearTimeout(timeoutChange);
-	});
 </script>
 
 {#snippet tab_docs()}
@@ -351,14 +293,14 @@
 	<Input
 		label="Enabled"
 		type="checkbox"
-		bind:value={json_schema_in_enabled}
+		bind:value={endpoint.json_schema.in.enabled}
 		placeholder="Enabled"
 	/>
 
 	<EditorCode
 		lang="json"
 		showFormat={true}
-		bind:code={json_schema_in_schema}
+		bind:code={endpoint.json_schema.in.schema}
 		onchange={(datajs) => {
 			//	json_schema_in = datajs.code;
 		}}

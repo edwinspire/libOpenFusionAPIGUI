@@ -327,7 +327,12 @@
 				{#each list_keywords as kw}
 					<div class="control">
 						<div class="tags has-addons">
+							<!-- svelte-ignore a11y_missing_attribute -->
 							<a class="tag">{kw}</a>
+							<!-- svelte-ignore a11y_click_events_have_key_events -->
+							<!-- svelte-ignore a11y_no_static_element_interactions -->
+							<!-- svelte-ignore a11y_consider_explicit_label -->
+							<!-- svelte-ignore a11y_missing_attribute -->
 							<a
 								class="tag is-delete is-danger"
 								onclick={() => {
@@ -363,53 +368,38 @@
 	title={titleModal}
 	body={bodyDialogModal}
 	onaccept={async () => {
-		console.log($state.snapshot(endpoint), $state.snapshot(endpoint_copied));
+		//console.log($state.snapshot(endpoint), $state.snapshot(endpoint_copied));
 		//let eps = [...app.endpoints];
-		if ((endpoint_env_copy = !'')) {
-			try {
-				let result = await EndpointSave(endpoint_copied);
-				console.log('EndpointSave result:', result, app);
-				if (result && result.result && result.result.idapp == app.idapp) {
-					oncopy(result.result);
-					notify.push({
-						message: 'Copied successfully to ' + endpoint_env_copy,
-						color: 'success'
-					});
-				} else {
-					notify.push({
-						message: 'Error copying endpoint: ' + (result.message || 'Unknown error'),
-						color: 'danger'
-					});
+		if (endpoint_replace_copy) {
+			if ((endpoint_env_copy = !'')) {
+				try {
+					let result = await EndpointSave(endpoint_copied);
+					//console.log('EndpointSave result:', result, app);
+					if (result && result.result && result.result.idapp == app.idapp) {
+						oncopy(result.result);
+						notify.push({
+							message: 'Copied successfully to ' + endpoint_env_copy,
+							color: 'success'
+						});
+					} else {
+						notify.push({
+							message: 'Error copying endpoint: ' + (result.message || 'Unknown error'),
+							color: 'danger'
+						});
+					}
+				} catch (error) {
+					console.error('Error copying endpoint: ', error);
+					notify.push({ message: 'Error copying endpoint: ' + error.message, color: 'danger' });
 				}
-			} catch (error) {
-				console.error('Error copying endpoint: ', error);
-				notify.push({ message: 'Error copying endpoint: ' + error.message, color: 'danger' });
+
+				ShowDialogCopyEndpoint = false;
 			}
-
-			ShowDialogCopyEndpoint = false;
-		}
-
-		/*
-		if (endpoint_copied && endpoint_copied.idendpoint) {
-			// Se reemplaza en endpoint
-			eps = eps.map((ep) => {
-				if (ep.idendpoint == endpoint_copied.idendpoint) {
-					//console.log('----------------------------', endpoint_copied);
-					ep = { ...endpoint_copied };
-				}
-				return ep;
-			});
 		} else {
-			// Se agrega el endpoint
-			eps.push(endpoint_copied);
+			notify.push({
+				message: 'You must accept overwriting the endpoint data.' ,
+				color: 'success'
+			});
 		}
-
-		if (endpoint_env_copy != '') {
-			//	console.log('>>>>< ', eps.length);
-			oncopy($state.snapshot(eps));
-			ShowDialogCopyEndpoint = false;
-		}
-		*/
 	}}
 >
 	{#snippet titleModal()}
