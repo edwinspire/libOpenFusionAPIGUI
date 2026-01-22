@@ -107,6 +107,7 @@
 	<Level left={[enabled_endpoint]} right={[copy_endpoint]}>
 		{#snippet enabled_endpoint()}
 			<Input label="Enabled" type="checkbox" bind:value={endpoint.enabled} placeholder="Enabled" />
+			<Input label="Title" type="text" bind:value={endpoint.title} placeholder="Title" />
 		{/snippet}
 
 		{#snippet copy_endpoint()}
