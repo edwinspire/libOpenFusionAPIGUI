@@ -60,11 +60,11 @@
 		keywords: { hidden: true },
 		cache_size: { hidden: true },
 		docs: { hidden: true },
-
+		title: { hidden: true },
 		json_schema: { hidden: true },
 		price_kb_response: { hidden: true },
 		createdAt: { hidden: true },
-		updatedAt: { hidden: true },
+		//updatedAt: { hidden: false },
 		price_total: { hidden: true }
 	});
 </script>

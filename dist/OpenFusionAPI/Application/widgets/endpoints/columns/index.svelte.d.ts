@@ -172,19 +172,19 @@ export namespace endpointColumns {
         let hidden_21: boolean;
         export { hidden_21 as hidden };
     }
-    namespace json_schema {
+    namespace title {
         let hidden_22: boolean;
         export { hidden_22 as hidden };
     }
-    namespace price_kb_response {
+    namespace json_schema {
         let hidden_23: boolean;
         export { hidden_23 as hidden };
     }
-    namespace createdAt {
+    namespace price_kb_response {
         let hidden_24: boolean;
         export { hidden_24 as hidden };
     }
-    namespace updatedAt {
+    namespace createdAt {
         let hidden_25: boolean;
         export { hidden_25 as hidden };
     }
