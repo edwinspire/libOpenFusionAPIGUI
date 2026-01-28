@@ -25,4 +25,5 @@ export namespace url_paths {
     let changeUserPassword: string;
     let restoreSystemEndpoints: string;
     let getLogSummaryByAppStatusCode: string;
+    let getEndpointBackups: string;
 }

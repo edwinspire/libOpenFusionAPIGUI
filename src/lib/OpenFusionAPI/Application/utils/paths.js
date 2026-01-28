@@ -46,4 +46,5 @@ export const url_paths = {
 	changeUserPassword: host + '/api/system/user/changepassword/prd',
 	restoreSystemEndpoints: host + '/api/system/restore/prd',
 	getLogSummaryByAppStatusCode: host + '/api/system/log/app/summary/prd',
+	getEndpointBackups: host + '/api/system/api/endpoint/backup/prd',
 };

@@ -6,7 +6,7 @@ import { B as BINARY_FORM_CONTENT_TYPE, c as create_remote_key, p as parse_remot
 import * as devalue from "devalue";
 import { m as make_trackable, d as disable_search, a as decode_params, S as SCHEME, v as validate_layout_server_exports, b as validate_layout_exports, c as validate_page_server_exports, e as validate_page_exports, n as normalize_path, r as resolve, f as decode_pathname, g as validate_server_exports } from "./chunks/exports.js";
 import { b as base64_encode, t as text_decoder, a as text_encoder, g as get_relative_path } from "./chunks/utils.js";
-import { r as readable, w as writable } from "./chunks/index.js";
+import { w as writable, r as readable } from "./chunks/index.js";
 import { p as public_env, r as read_implementation, o as options, s as set_private_env, a as set_public_env, g as get_hooks, b as set_read_implementation } from "./chunks/internal.js";
 import { parse, serialize } from "cookie";
 import * as set_cookie_parser from "set-cookie-parser";
@@ -3365,20 +3365,27 @@ async function internal_respond(request, options2, manifest, state) {
   } catch {
     return text("Malformed URI", { status: 400 });
   }
-  if (resolved_path !== url.pathname && !state.prerendering?.fallback && has_prerendered_path(manifest, resolved_path)) {
+  if (
+    // the resolved path has been decoded so it should be compared to the decoded url pathname
+    resolved_path !== decode_pathname(url.pathname) && !state.prerendering?.fallback && has_prerendered_path(manifest, resolved_path)
+  ) {
     const url2 = new URL(request.url);
     url2.pathname = is_data_request ? add_data_suffix(resolved_path) : is_route_resolution_request ? add_resolution_suffix(resolved_path) : resolved_path;
-    const response = await fetch(url2, request);
-    const headers22 = new Headers(response.headers);
-    if (headers22.has("content-encoding")) {
-      headers22.delete("content-encoding");
-      headers22.delete("content-length");
+    try {
+      const response = await fetch(url2, request);
+      const headers22 = new Headers(response.headers);
+      if (headers22.has("content-encoding")) {
+        headers22.delete("content-encoding");
+        headers22.delete("content-length");
+      }
+      return new Response(response.body, {
+        headers: headers22,
+        status: response.status,
+        statusText: response.statusText
+      });
+    } catch (error2) {
+      return await handle_fatal_error(event, event_state, options2, error2);
     }
-    return new Response(response.body, {
-      headers: headers22,
-      status: response.status,
-      statusText: response.statusText
-    });
   }
   let route = null;
   if (base && !state.prerendering?.fallback) {

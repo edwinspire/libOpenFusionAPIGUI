@@ -1,6 +1,6 @@
 import "clsx";
 import { w as attr_class, x as bind_props, y as ensure_array_like, z as stringify, F as attr } from "../../chunks/index2.js";
-import { m as escape_html } from "../../chunks/context.js";
+import { p as escape_html } from "../../chunks/context.js";
 import "@edwinspire/universal-fetch";
 import "events";
 import "prettier-plugin-sql";
@@ -65,7 +65,7 @@ function Notifications($$renderer, $$props) {
     $$renderer2.push(`<!--]--></div>`);
   });
 }
-const version = "1.1.57";
+const version = "1.1.59";
 function Login($$renderer, $$props) {
   $$renderer.component(($$renderer2) => {
     let username = "";

@@ -21,6 +21,7 @@
 	import Endpoint from './endpoint.svelte';
 	import Authorizations from './authorizations.svelte';
 	import Logs from './logs.svelte';
+	import Backups from './endpoint_bkp.svelte';
 	import MCP from './mcp.svelte';
 	import EndpointLabel from './endpoint_label.svelte';
 	import { userStore } from '../../../utils/stores.js';
@@ -136,6 +137,7 @@
 		{ label: 'Custom Data', component: tab_custom_data, classIcon: ' fa-regular fa-hand ' },
 		{ label: 'Price', component: tab_price, classIcon: ' fa-solid fa-tag ' },
 		{ label: 'Tester', component: tab_tester, classIcon: ' fa-solid fa-microscope ' },
+		{ label: 'Backups', component: tab_backups, classIcon: ' fa-solid fa-list-check ' },
 		{ label: 'Logs', component: tab_log }
 	]);
 
@@ -472,6 +474,20 @@
 		bind:method={endpoint.method}
 		bind:handler={endpoint.handler}
 	></EndpointLabel>
+{/snippet}
+
+{#snippet tab_backups()}
+	{#if endpoint && endpoint.idendpoint}
+		<Backups
+			bind:idendpoint={endpoint.idendpoint}
+			onselect={(backup) => {
+				console.log('Selected backup to restore', backup);
+				if (backup && backup.idendpoint == endpoint.idendpoint) {
+					endpoint = $state.snapshot(backup);
+				}
+			}}
+		></Backups>
+	{/if}
 {/snippet}
 
 {#snippet tab_tester()}
