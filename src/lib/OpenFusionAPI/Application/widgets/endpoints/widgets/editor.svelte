@@ -22,6 +22,7 @@
 	import Authorizations from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/authorizations.svelte';
 	import Logs from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/logs.svelte';
 	import Backups from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/endpoint_bkp.svelte';
+	import TelegramBot from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/handler/telegramBot.svelte';
 	import MCP from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/mcp.svelte';
 	import EndpointLabel from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/endpoint_label.svelte';
 	import { userStore } from '$lib/OpenFusionAPI/Application/utils/stores.js';
@@ -376,6 +377,14 @@
 					bind:endpoint
 					onchange={(v) => {
 						onChangeValueHandler(v);
+					}}
+				/>
+			{:else if endpoint?.handler == 'TELEGRAM_BOT'}
+				<TelegramBot
+					bind:endpoint
+					onchange={(v) => {
+						onChangeValueHandler(v);
+						console.log('TELEGRAM_BOT onchange', v);
 					}}
 				/>
 			{:else if endpoint?.handler == 'SOAP'}

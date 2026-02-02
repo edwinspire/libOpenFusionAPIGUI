@@ -22,6 +22,7 @@
 	import Authorizations from './authorizations.svelte';
 	import Logs from './logs.svelte';
 	import Backups from './endpoint_bkp.svelte';
+	import TelegramBot from './handler/telegramBot.svelte';
 	import MCP from './mcp.svelte';
 	import EndpointLabel from './endpoint_label.svelte';
 	import { userStore } from '../../../utils/stores.js';
@@ -376,6 +377,14 @@
 					bind:endpoint
 					onchange={(v) => {
 						onChangeValueHandler(v);
+					}}
+				/>
+			{:else if endpoint?.handler == 'TELEGRAM_BOT'}
+				<TelegramBot
+					bind:endpoint
+					onchange={(v) => {
+						onChangeValueHandler(v);
+						console.log('TELEGRAM_BOT onchange', v);
 					}}
 				/>
 			{:else if endpoint?.handler == 'SOAP'}

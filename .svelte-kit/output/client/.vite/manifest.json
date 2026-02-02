@@ -1,6 +1,6 @@
 {
   ".svelte-kit/generated/client-optimized/app.js": {
-    "file": "_app/immutable/entry/app.ezqzOj1y.js",
+    "file": "_app/immutable/entry/app.B4hxK8hr.js",
     "name": "entry/app",
     "src": ".svelte-kit/generated/client-optimized/app.js",
     "isEntry": true,
@@ -30,7 +30,7 @@
     ]
   },
   ".svelte-kit/generated/client-optimized/nodes/1.js": {
-    "file": "_app/immutable/nodes/1.Dp0Xn3Ks.js",
+    "file": "_app/immutable/nodes/1.BbI2O2hK.js",
     "name": "nodes/1",
     "src": ".svelte-kit/generated/client-optimized/nodes/1.js",
     "isEntry": true,
@@ -40,11 +40,11 @@
       "_C8rVB0NV.js",
       "_DAG6MmbM.js",
       "_CkOcOS8O.js",
-      "_CamMfMB0.js"
+      "_Dmx5zJAM.js"
     ]
   },
   ".svelte-kit/generated/client-optimized/nodes/2.js": {
-    "file": "_app/immutable/nodes/2.qH7f0PnP.js",
+    "file": "_app/immutable/nodes/2.BMgkqosV.js",
     "name": "nodes/2",
     "src": ".svelte-kit/generated/client-optimized/nodes/2.js",
     "isEntry": true,
@@ -110,14 +110,6 @@
       "_DM3asQhX.js"
     ]
   },
-  "_CamMfMB0.js": {
-    "file": "_app/immutable/chunks/CamMfMB0.js",
-    "name": "entry",
-    "imports": [
-      "_DAG6MmbM.js",
-      "_DM3asQhX.js"
-    ]
-  },
   "_CkOcOS8O.js": {
     "file": "_app/immutable/chunks/CkOcOS8O.js",
     "name": "render",
@@ -135,6 +127,14 @@
     "name": "index-client",
     "imports": [
       "_DAG6MmbM.js"
+    ]
+  },
+  "_Dmx5zJAM.js": {
+    "file": "_app/immutable/chunks/Dmx5zJAM.js",
+    "name": "entry",
+    "imports": [
+      "_DAG6MmbM.js",
+      "_DM3asQhX.js"
     ]
   },
   "node_modules/@edwinspire/svelte-components/node_modules/@fortawesome/fontawesome-free/webfonts/fa-brands-400.ttf": {
@@ -170,12 +170,12 @@
     "src": "node_modules/@edwinspire/svelte-components/node_modules/@fortawesome/fontawesome-free/webfonts/fa-v4compatibility.woff2"
   },
   "node_modules/@sveltejs/kit/src/runtime/client/entry.js": {
-    "file": "_app/immutable/entry/start.BNYzi3qj.js",
+    "file": "_app/immutable/entry/start.DY_8s1Zi.js",
     "name": "entry/start",
     "src": "node_modules/@sveltejs/kit/src/runtime/client/entry.js",
     "isEntry": true,
     "imports": [
-      "_CamMfMB0.js"
+      "_Dmx5zJAM.js"
     ]
   },
   "src/lib/OpenFusionAPI/img/android-chrome-512x512.png": {
