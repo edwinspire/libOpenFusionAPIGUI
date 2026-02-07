@@ -64,6 +64,7 @@
 		json_schema: { hidden: true },
 		price_kb_response: { hidden: true },
 		createdAt: { hidden: true },
+		timeout: { hidden: true },
 		//updatedAt: { hidden: false },
 		price_total: { hidden: true }
 	});

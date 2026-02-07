@@ -221,6 +221,8 @@
 								endpoint.resource = '/mcp/server';
 							} else if (e.value == 'AGENT_IA') {
 								endpoint.method = 'POST';
+							} else if (e.value == 'TELEGRAM_BOT') {
+								endpoint.method = 'POST';
 							}
 						}}
 					/>
@@ -277,27 +279,36 @@
 			</div>
 
 			<div class="cell">
-				{#if endpoint?.cost_by_request != null}
-					<Input
-						bind:value={endpoint.cost_by_request}
-						type="number"
-						step="0.00001"
-						min="0"
-						label="Cost / Request"
-					></Input>
-				{/if}
+				<div class="field">
+					<div class="field is-horizontal">
+						<div class="field-body">
+							<div class="field is-expanded">
+								<div class="field has-addons">
+									<p class="control">
+										<!-- svelte-ignore a11y_missing_attribute -->
+										<a class="button is-small is-static"> Timeout Endpoint: </a>
+									</p>
+									<p class="control">
+										<input
+											class="input is-small"
+											type="number"
+											min="0"
+											step="1"
+											bind:value={endpoint.timeout}
+										/>
+									</p>
+									<p class="control">
+										<!-- svelte-ignore a11y_missing_attribute -->
+										<a class="button is-small is-static"> seconds. </a>
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
-			<div class="cell">
-				{#if endpoint?.cost_by_kb != null}
-					<Input
-						bind:value={endpoint.cost_by_kb}
-						type="number"
-						min="0"
-						step="0.0001"
-						label="Cost / Kb"
-					></Input>
-				{/if}
-			</div>
+
+			
 		</div>
 	</div>
 
@@ -397,7 +408,7 @@
 			}
 		} else {
 			notify.push({
-				message: 'You must accept overwriting the endpoint data.' ,
+				message: 'You must accept overwriting the endpoint data.',
 				color: 'success'
 			});
 		}
