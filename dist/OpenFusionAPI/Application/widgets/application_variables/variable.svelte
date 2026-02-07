@@ -120,7 +120,9 @@
 								} else {
 									// Buscar la fila y reemplazarla
 									appVars = appVars.map((item) => {
-										if (item.idvar == appvar.idvar) {
+										// Compare by object reference instead of ID
+										// This handles cases where idvar is undefined (new variables)
+										if (item === appvar) {
 											item.name = appvar.name;
 											item.edit_name = false;
 										}
@@ -142,7 +144,7 @@
 							title="Cancel"
 							onclick={() => {
 								appVars = appVars.map((item) => {
-									if (item.idvar == appvar.idvar) {
+									if (item === appvar) {
 										item.edit_name = false;
 										item.name = item.org_name;
 									}
@@ -163,7 +165,7 @@
 							title="Edit variable name"
 							onclick={() => {
 								appVars = appVars.map((item) => {
-									if (item.idvar == appvar.idvar) {
+									if (item === appvar) {
 										// Aqui se marca en modo de edición la variable
 										item.edit_name = true;
 										item.org_name = item.name;

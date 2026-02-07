@@ -66,16 +66,23 @@
 	});
 
 	$effect(() => {
-		endpoint;
-		// console.log('::::::::::..> endpoint', endpoint);
-		validateResource = validateURL(endpoint.resource);
-		availableURL = checkEndpointConstraint();
-		endpoint.endpoint = createEndpoint(
-			endpoint.method,
-			app.app,
-			endpoint.resource,
-			endpoint.environment
-		);
+		if (!endpoint) {
+			endpoint = { method: 'X', access: 0 };
+		}
+		if (endpoint && endpoint.access == undefined) {
+			endpoint.access = 0;
+		}
+
+		if (endpoint) {
+			validateResource = validateURL(endpoint.resource);
+			availableURL = checkEndpointConstraint();
+			endpoint.endpoint = createEndpoint(
+				endpoint.method,
+				app?.app || '',
+				endpoint.resource,
+				endpoint.environment
+			);
+		}
 	});
 
 	onDestroy(unsubscribe);
@@ -98,7 +105,6 @@
 	onMount(async () => {
 		console.log('onMount endpoint');
 		endpoint_copied = {};
-		defaultValues();
 		//await getEnvList();
 	});
 </script>
@@ -307,8 +313,6 @@
 					</div>
 				</div>
 			</div>
-
-			
 		</div>
 	</div>
 
@@ -382,8 +386,10 @@
 	onaccept={async () => {
 		//console.log($state.snapshot(endpoint), $state.snapshot(endpoint_copied));
 		//let eps = [...app.endpoints];
-		if (endpoint_replace_copy) {
-			if ((endpoint_env_copy = !'')) {
+		const is_new = !endpoint_copied.idendpoint || endpoint_copied.idendpoint.length === 0;
+
+		if (is_new || endpoint_replace_copy) {
+			if (endpoint_env_copy && endpoint_env_copy !== '') {
 				try {
 					let result = await EndpointSave(endpoint_copied);
 					//console.log('EndpointSave result:', result, app);

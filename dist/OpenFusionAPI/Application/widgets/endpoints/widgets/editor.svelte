@@ -72,6 +72,14 @@
 				endpoint.json_schema.in.enabled ??= false;
 				endpoint.json_schema.in.schema ??= {};
 
+				// Ensure other critical structures exist
+				endpoint.custom_data ??= {};
+				endpoint.mcp ??= {};
+				endpoint.ctrl ??= {};
+				endpoint.ctrl.users ??= [];
+				endpoint.ctrl.log ??= {};
+				endpoint.data_test ??= {};
+
 				// Get Handler Docs
 				await getHandlerDocsRequest();
 			} else {
@@ -116,30 +124,48 @@
 
 	let tabList = $state([
 		{
+			name: 'endpoint',
 			label: 'Endpoint',
 			isActive: true,
 			component: tab_endpoint,
 			classIcon: ' fa-solid fa-network-wired '
 		},
-		{ label: 'Documentation', component: tab_docs, classIcon: ' fa-solid fa-book ' },
+		{ name: 'docs', label: 'Documentation', component: tab_docs, classIcon: ' fa-solid fa-book ' },
 		{
+			name: 'config',
 			label: 'Configuration',
 			component: tab_config,
 			classIcon: ' fa-solid fa-screwdriver-wrench '
 		},
 		{
+			name: 'app_vars',
 			label: 'Application Variables',
 			component: tab_app_vars,
 			classIcon: ' fa-solid fa-square-root-variable '
 		},
-		{ label: 'JSON Schema', component: tab_json_schema },
-		{ label: 'Authorizations', component: tab_auth, classIcon: ' fa-solid fa-key ' },
-		{ label: 'MCP', component: tab_mcp, classIcon: ' fa-solid fa-robot ' },
-		{ label: 'Custom Data', component: tab_custom_data, classIcon: ' fa-regular fa-hand ' },
-		{ label: 'Price', component: tab_price, classIcon: ' fa-solid fa-tag ' },
-		{ label: 'Tester', component: tab_tester, classIcon: ' fa-solid fa-microscope ' },
-		{ label: 'Backups', component: tab_backups, classIcon: ' fa-solid fa-list-check ' },
-		{ label: 'Logs', component: tab_log }
+		{ name: 'json_schema', label: 'JSON Schema', component: tab_json_schema },
+		{ name: 'auth', label: 'Authorizations', component: tab_auth, classIcon: ' fa-solid fa-key ' },
+		{ name: 'mcp', label: 'MCP', component: tab_mcp, classIcon: ' fa-solid fa-robot ' },
+		{
+			name: 'custom_data',
+			label: 'Custom Data',
+			component: tab_custom_data,
+			classIcon: ' fa-regular fa-hand '
+		},
+		{ name: 'price', label: 'Price', component: tab_price, classIcon: ' fa-solid fa-tag ' },
+		{
+			name: 'tester',
+			label: 'Tester',
+			component: tab_tester,
+			classIcon: ' fa-solid fa-microscope '
+		},
+		{
+			name: 'backups',
+			label: 'Backups',
+			component: tab_backups,
+			classIcon: ' fa-solid fa-list-check '
+		},
+		{ name: 'logs', label: 'Logs', component: tab_log }
 	]);
 
 	let derivedtabList = $derived.by(() => {
@@ -148,13 +174,14 @@
 		if (endpoint?.handler == 'MCP') {
 			new_tabs = tabList.filter((tab) => {
 				if (
-					endpoint.handler == 'MCP' &&
-					(tab.label == 'Configuration' || tab.label == 'JSON Schema' || tab.label == 'MCP')
+					tab.name == 'endpoint' ||
+					tab.name == 'tester' ||
+					tab.name == 'backups' ||
+					tab.name == 'logs'
 				) {
-					// retornamos un nuevo objeto, sin mutar el original
-					return false;
+					return true;
 				}
-				return true;
+				return false;
 			});
 		} else if (
 			endpoint?.handler == 'NOAPPLY' ||
@@ -162,19 +189,44 @@
 			endpoint?.handler == 'NA'
 		) {
 			new_tabs = tabList.filter((tab) => {
-				if (tab.label == 'Endpoint') {
-					// retornamos un nuevo objeto, sin mutar el original
+				if (tab.name == 'endpoint') {
 					return true;
 				}
 				return false;
 			});
-		} else if (endpoint?.handler == 'AGENT_IA') {
+		} else if (endpoint?.handler == 'TELEGRAM_BOT') {
 			new_tabs = tabList.filter((tab) => {
-				if (endpoint.handler == 'AGENT_IA' && tab.label == 'MCP') {
-					// retornamos un nuevo objeto, sin mutar el original
-					return false;
+				if (
+					tab.name == 'endpoint' ||
+					tab.name == 'config' ||
+					tab.name == 'docs' ||
+					tab.name == 'app_vars' ||
+					tab.name == 'auth' ||
+					tab.name == 'price' ||
+					tab.name == 'tester' ||
+					tab.name == 'backups' ||
+					tab.name == 'logs'
+				) {
+					return true;
 				}
-				return true;
+				return false;
+			});
+		} else if (endpoint?.handler == 'FUNCTION') {
+			new_tabs = tabList.filter((tab) => {
+				if (
+					tab.name == 'endpoint' ||
+					tab.name == 'config' ||
+					tab.name == 'docs' ||
+					tab.name == 'auth' ||
+					tab.name == 'price' ||
+					tab.name == 'tester' ||
+					tab.name == 'backups' ||
+					tab.name == 'logs' ||
+					tab.name == 'json_schema'
+				) {
+					return true;
+				}
+				return false;
 			});
 		} else {
 			new_tabs = tabList;

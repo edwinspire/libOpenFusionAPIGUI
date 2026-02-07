@@ -188,9 +188,13 @@ export namespace endpointColumns {
         let hidden_25: boolean;
         export { hidden_25 as hidden };
     }
-    namespace price_total {
+    namespace timeout {
         let hidden_26: boolean;
         export { hidden_26 as hidden };
+    }
+    namespace price_total {
+        let hidden_27: boolean;
+        export { hidden_27 as hidden };
     }
 }
 export default Index;

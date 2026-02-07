@@ -66,16 +66,23 @@
 	});
 
 	$effect(() => {
-		endpoint;
-		// console.log('::::::::::..> endpoint', endpoint);
-		validateResource = validateURL(endpoint.resource);
-		availableURL = checkEndpointConstraint();
-		endpoint.endpoint = createEndpoint(
-			endpoint.method,
-			app.app,
-			endpoint.resource,
-			endpoint.environment
-		);
+		if (!endpoint) {
+			endpoint = { method: 'X', access: 0 };
+		}
+		if (endpoint && endpoint.access == undefined) {
+			endpoint.access = 0;
+		}
+
+		if (endpoint) {
+			validateResource = validateURL(endpoint.resource);
+			availableURL = checkEndpointConstraint();
+			endpoint.endpoint = createEndpoint(
+				endpoint.method,
+				app?.app || '',
+				endpoint.resource,
+				endpoint.environment
+			);
+		}
 	});
 
 	onDestroy(unsubscribe);
@@ -98,7 +105,6 @@
 	onMount(async () => {
 		console.log('onMount endpoint');
 		endpoint_copied = {};
-		defaultValues();
 		//await getEnvList();
 	});
 </script>
@@ -221,6 +227,8 @@
 								endpoint.resource = '/mcp/server';
 							} else if (e.value == 'AGENT_IA') {
 								endpoint.method = 'POST';
+							} else if (e.value == 'TELEGRAM_BOT') {
+								endpoint.method = 'POST';
 							}
 						}}
 					/>
@@ -277,26 +285,33 @@
 			</div>
 
 			<div class="cell">
-				{#if endpoint?.cost_by_request != null}
-					<Input
-						bind:value={endpoint.cost_by_request}
-						type="number"
-						step="0.00001"
-						min="0"
-						label="Cost / Request"
-					></Input>
-				{/if}
-			</div>
-			<div class="cell">
-				{#if endpoint?.cost_by_kb != null}
-					<Input
-						bind:value={endpoint.cost_by_kb}
-						type="number"
-						min="0"
-						step="0.0001"
-						label="Cost / Kb"
-					></Input>
-				{/if}
+				<div class="field">
+					<div class="field is-horizontal">
+						<div class="field-body">
+							<div class="field is-expanded">
+								<div class="field has-addons">
+									<p class="control">
+										<!-- svelte-ignore a11y_missing_attribute -->
+										<a class="button is-small is-static"> Timeout Endpoint: </a>
+									</p>
+									<p class="control">
+										<input
+											class="input is-small"
+											type="number"
+											min="0"
+											step="1"
+											bind:value={endpoint.timeout}
+										/>
+									</p>
+									<p class="control">
+										<!-- svelte-ignore a11y_missing_attribute -->
+										<a class="button is-small is-static"> seconds. </a>
+									</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -371,8 +386,10 @@
 	onaccept={async () => {
 		//console.log($state.snapshot(endpoint), $state.snapshot(endpoint_copied));
 		//let eps = [...app.endpoints];
-		if (endpoint_replace_copy) {
-			if ((endpoint_env_copy = !'')) {
+		const is_new = !endpoint_copied.idendpoint || endpoint_copied.idendpoint.length === 0;
+
+		if (is_new || endpoint_replace_copy) {
+			if (endpoint_env_copy && endpoint_env_copy !== '') {
 				try {
 					let result = await EndpointSave(endpoint_copied);
 					//console.log('EndpointSave result:', result, app);
@@ -397,7 +414,7 @@
 			}
 		} else {
 			notify.push({
-				message: 'You must accept overwriting the endpoint data.' ,
+				message: 'You must accept overwriting the endpoint data.',
 				color: 'success'
 			});
 		}

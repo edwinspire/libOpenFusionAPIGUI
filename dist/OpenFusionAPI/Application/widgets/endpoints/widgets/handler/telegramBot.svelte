@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { Tab, EditorCode } from '@edwinspire/svelte-components';
+	import { Tab, EditorCode, Input } from '@edwinspire/svelte-components';
 
 	//	import PredefinedVars from '../../../../../app/endpoint/widgets/js_predefined_vars.svelte';
 	import PredefinedVars from '../js_predefined_vars.svelte';
@@ -9,20 +9,20 @@
 	let internal_code = $state('');
 
 	$effect(() => {
+		if (!endpoint) {
+			endpoint = { code: {}, custom_data: {} };
+		}
+		if (endpoint && !endpoint.code) {
+			endpoint.code = {};
+		}
+		if (endpoint && !endpoint.custom_data) {
+			endpoint.custom_data = {};
+		}
+
 		if (endpoint?.code) {
 			parseCode();
 		}
 	});
-
-	function defaultValues() {
-		if (!endpoint) {
-			endpoint = { code: {} };
-		}
-
-		if (endpoint && !endpoint.code) {
-			endpoint.code = {};
-		}
-	}
 
 	function parseCode() {
 		internal_code = endpoint.code;
@@ -37,17 +37,30 @@
 	}
 
 	let tabList = $state([
-		{ label: 'Code', isActive: true, classIcon: ' fa-brands fa-node-js ', component: tab_code },
+		{ label: 'Bot Code', isActive: true, classIcon: ' fa-brands fa-node-js ', component: tab_code },
 		{ label: 'Predefined Variables', component: tab_pred_vars }
 	]);
-
-	onMount(() => {
-		defaultValues();
-	});
 </script>
 
+{#snippet inputToken()}
+	<span>The constant $BOT is an instance of Grammy.</span>
+{/snippet}
+
 {#snippet tab_code()}
+	{#if endpoint?.custom_data}
+		<Input
+			label="Telegram Bot Token"
+			bind:value={endpoint.custom_data.token}
+			placeholder="Telegram Bot Token"
+			onchange={(v) => {
+				endpoint.custom_data.token = v;
+				onchange(endpoint);
+			}}
+		></Input>
+	{/if}
+
 	<EditorCode
+		left={inputToken}
 		lang="js"
 		showFormat={true}
 		bind:code={internal_code}

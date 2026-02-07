@@ -4,13 +4,12 @@
 	import VarEnv from './variable.svelte';
 	import { isNewApp } from '../../utils/utils.js';
 	import { DialogModal, Notifications } from '@edwinspire/svelte-components';
-	import SelectEnvironment from '../../../widgets/Select.svelte';
+	import SelectEnvironment from '../common/Select.svelte';
 	import { Environment as environment_list } from '../../utils/static_values.js';
 	import { onDestroy, onMount } from 'svelte';
 
-	
 	let noty = new Notifications();
-	
+
 	let {
 		idapp = $bindable(0),
 		environment = $bindable('*'),
@@ -124,7 +123,6 @@
 	onMount(async () => {
 		//await GetListEnvironment();
 	});
-	
 </script>
 
 <div>
@@ -188,8 +186,16 @@
 	title={titleModal}
 	body={bodyDialogModal}
 	onaccept={async () => {
+		if (var_to_copy.idvar_destination && !var_replace_copy) {
+			noty.push({
+				message: 'You must agree to replace the variable.',
+				color: 'danger'
+			});
+			return;
+		}
 		//
 		await SaveAppVarCopyReplace();
+		ShowDialogCopyEndpoint = false;
 	}}
 	oncancel={() => {
 		var_to_copy = {};
