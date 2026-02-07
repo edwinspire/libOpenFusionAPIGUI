@@ -65,7 +65,7 @@ function Notifications($$renderer, $$props) {
     $$renderer2.push(`<!--]--></div>`);
   });
 }
-const version = "1.1.64";
+const version = "1.1.65";
 function Login($$renderer, $$props) {
   $$renderer.component(($$renderer2) => {
     let username = "";

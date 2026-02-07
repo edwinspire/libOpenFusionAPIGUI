@@ -13,7 +13,7 @@
 
 	let tabList = $state([
 		{ label: 'Code', isActive: true, classIcon: ' fa-brands fa-node-js ', component: tab_code },
-		{ label: 'Predefined Variables', component: tab_pred_vars },
+		{ label: 'Modules and functions', component: tab_pred_vars },
 		{ label: 'Connection Parameters', component: tab_cnx_params }
 	]);
 
