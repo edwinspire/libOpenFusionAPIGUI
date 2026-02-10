@@ -284,7 +284,7 @@
 {/snippet}
 
 {#snippet tab_logs()}
-	<Table bind:RawDataTable={dataLogs} right_items={[rt1, rt2, rt3, search]}>
+	<Table bind:RawDataTable={dataLogs} right_items={[rt1, rt2, rt3]} onsearch={fetchLogs}>
 		{#snippet rt1()}
 			<div class="field has-addons has-addons-centered">
 				<span class="control">
@@ -332,14 +332,6 @@
 					<a class="button is-static is-small"> Limit </a>
 				</span>
 			</div>
-		{/snippet}
-		{#snippet search()}
-			<button class="button is-small is-info" onclick={fetchLogs}>
-				<span>Get Logs</span>
-				<span class="icon">
-					<i class="fa-solid fa-magnifying-glass"></i>
-				</span>
-			</button>
 		{/snippet}
 	</Table>
 {/snippet}
