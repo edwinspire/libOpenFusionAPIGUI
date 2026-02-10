@@ -21,6 +21,9 @@
 	} = $props();
 
 	let dataLogs = $state([]);
+	let datatraceLogs = $state([]);
+	let trace_id = $state('');
+
 
 	// Obtener la fecha actual en la zona horaria local
 	const now = DateTime.local();
@@ -55,6 +58,13 @@
 			slot: 'logs',
 			isActive: false,
 			component: tab_logs
+		},
+		{
+			label: 'Trace Logs',
+			classIcon: 'fa-solid fa-file-lines',
+			slot: 'logs',
+			isActive: false,
+			component: tab_trace_logs
 		}
 	]);
 
@@ -98,6 +108,16 @@
 		} catch (error) {
 			console.error('Error fetching logs:', error);
 			//dataLogs = [];
+		}
+	}
+
+	async function fetchTraceLogs() {
+		try {
+			let req = await uF.GET({ data: { trace_id: trace_id } });
+			datatraceLogs = await req.json();
+		} catch (error) {
+			console.error('Error fetching logs:', error);
+			//datatraceLogs = [];
 		}
 	}
 
@@ -333,6 +353,30 @@
 				</span>
 			</div>
 		{/snippet}
+	</Table>
+{/snippet}
+
+
+{#snippet tab_trace_logs()}
+	<Table bind:RawDataTable={datatraceLogs} left_items={[rt1 ]} onsearch={fetchTraceLogs}>
+		{#snippet rt1()}
+			<div class="field has-addons has-addons-centered">
+				<span class="control">
+					<!-- svelte-ignore a11y_missing_attribute -->
+					<a class="button is-static is-small"> Trace ID </a>
+				</span>
+				<span class="control">
+					<input
+						class="input is-small"
+						type="text"
+						placeholder="Trace ID"
+						bind:value={trace_id}
+					/>
+				</span>
+
+			</div>
+		{/snippet}
+		
 	</Table>
 {/snippet}
 
