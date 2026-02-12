@@ -26,9 +26,7 @@
 	let query_sample_post_result =
 		'SELECT * FROM YOUR_TABLE WHERE FIELD_01 = ? AND FIELD_02 IN (?, ?);';
 
-	let sample_bind_post = $state({
-		params: { value_01: 1234, list_your_values: ['0002000157', '0002000158'] }
-	});
+	let sample_bind_post = $state({bind:{ value_01: 1234, list_your_values: ['0002000157', '0002000158'] }});
 
 	let tabList = $state([
 		{ label: 'Query', isActive: true, classIcon: ' fa-solid fa-database ', component: tab_query },
@@ -57,7 +55,6 @@
 			//console.log(outcode);
 			return JSON.stringify(outcode);
 		} catch (error) {
-			
 			return code;
 		}
 	}
@@ -110,9 +107,9 @@
 			<div>
 				<div class="content is-small">
 					<span style="font-style: oblique; font-weight: bold;">$nameparameter</span>
-					to bind, or <span style="font-style: oblique; font-weight: bold;">:nameparameter</span> to
-					use array bind. The values ​​you send in the request. For more information go to the "Pass
-					parameters" tab.
+					to bind, or <span style="font-style: oblique; font-weight: bold;">:nameparameter</span> to use
+					array bind. The values ​​you send in the request. For more information go to the "Pass parameters"
+					tab.
 				</div>
 			</div>
 		</div>

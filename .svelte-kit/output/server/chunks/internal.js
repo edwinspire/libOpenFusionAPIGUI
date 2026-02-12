@@ -86,7 +86,8 @@ function skip_nodes(remove = true) {
       if (data === HYDRATION_END) {
         if (depth === 0) return node;
         depth -= 1;
-      } else if (data === HYDRATION_START || data === HYDRATION_START_ELSE) {
+      } else if (data === HYDRATION_START || data === HYDRATION_START_ELSE || // "[1", "[2", etc. for if blocks
+      data[0] === "[" && !isNaN(Number(data.slice(1)))) {
         depth += 1;
       }
     }
@@ -1336,7 +1337,7 @@ function proxy(value) {
         }
         var s = sources.get(prop);
         if (s === void 0) {
-          s = with_parent(() => {
+          with_parent(() => {
             var s2 = /* @__PURE__ */ state(descriptor.value);
             sources.set(prop, s2);
             return s2;
@@ -2680,7 +2681,7 @@ const options = {
 		<div class="error">
 			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
   },
-  version_hash: "t88k0s"
+  version_hash: "1rt10d5"
 };
 async function get_hooks() {
   let handle;
