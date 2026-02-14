@@ -228,6 +228,25 @@
 				}
 				return false;
 			});
+		} else if (endpoint?.handler == 'SOAP') {
+			new_tabs = tabList.filter((tab) => {
+				if (
+					tab.name == 'endpoint' ||
+					tab.name == 'config' ||
+					tab.name == 'docs' ||
+					tab.name == 'auth' ||
+					tab.name == 'price' ||
+					tab.name == 'tester' ||
+					tab.name == 'backups' ||
+					tab.name == 'logs' ||
+					tab.name == 'json_schema' ||
+					tab.name == 'app_vars' ||
+					tab.name == 'mcp'
+				) {
+					return true;
+				}
+				return false;
+			});
 		} else {
 			new_tabs = tabList;
 		}
@@ -245,6 +264,9 @@
 			endpoint.data_test = v.data_test;
 			endpoint.code = v.code;
 			endpoint.docs = endpoint.docs;
+			if(v.custom_data){
+				endpoint.custom_data = v.custom_data;
+			}
 			//console.log(' onChangeValueHandler -> ', endpoint);
 		}
 	}
@@ -443,8 +465,8 @@
 				<SoapCode
 					bind:endpoint
 					onchange={(v) => {
-						onChangeValueHandler(v);
-						console.log('SOAP onchange', v);
+						//onChangeValueHandler(v);
+						console.log('SOAP onchange', endpoint);
 					}}
 				/>
 			{:else if endpoint?.handler == 'SQL'}

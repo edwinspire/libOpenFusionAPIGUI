@@ -1,110 +1,68 @@
 <script>
-	import { untrack } from 'svelte';
 	import { EditorCode } from '@edwinspire/svelte-components';
 	import AppVarsSelector from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/app_vars_selector.svelte';
 
 	// Props (Svelte 5 Runes)
+	// No usar fallback en $bindable() para evitar error props_invalid_value
+	// cuando el padre pasa undefined.
 	let {
-		freeTyping = $bindable(false),
-		placeholder = $bindable('$_VAR_NAME'),
-		classIcon = $bindable(''),
-		label = $bindable('Application Variable'),
-		value = $bindable(),
-		environment = $bindable(''),
-		langEditor = $bindable('json'),
+		freeTyping = $bindable(),
+		placeholder = $bindable(),
+		classIcon = $bindable(),
+		label = $bindable(),
+		custom = $bindable(),
+		appvar = $bindable(),
+		environment = $bindable(),
+		langEditor = $bindable(),
 		onselect = () => {}
 	} = $props();
 
-	// Estado interno que representa el valor real del componente
-	let stateValue = $state(value);
+	// Aplicar defaults cuando el padre pasa undefined
+	$effect.pre(() => {
+		if (freeTyping === undefined) freeTyping = false;
+		if (placeholder === undefined) placeholder = '$_VAR_NAME';
+		if (classIcon === undefined) classIcon = '';
+		if (label === undefined) label = 'Application Variable';
+		if (custom === undefined) custom = {};
+		if (appvar === undefined) appvar = '';
+		if (environment === undefined) environment = '';
+		if (langEditor === undefined) langEditor = 'json';
+	});
 
-	// Estados derivados
-	let param_json = $state({});
-	let param_varname = $state('');
+	// Estado interno — solo se modifica por cambios externos o por botones
 	let use_var_app = $state(false);
 
-	// internal tracker for the last processed value to avoid loops
-	let lastProcessedValue = $state();
+	// Guard: true cuando el cambio viene de dentro del componente
+	let _internal = false;
 
-	// Se ejecuta cuando value cambia desde el padre
+	// Solo actualizar use_var_app cuando appvar cambia desde el padre
+	// y no es null/undefined
 	$effect(() => {
-		if (value !== undefined) {
-			untrack(() => {
-				if (stringifyValue(value) !== stringifyValue(lastProcessedValue)) {
-					normalizeValue(value);
-				}
-			});
+		const currentAppvar = appvar;
+		if (!_internal && currentAppvar !== null && currentAppvar !== undefined) {
+			use_var_app = String(currentAppvar).trim().length > 0;
 		}
 	});
 
 	// ------------------------------------------------------------
-	// Normaliza el valor recibido (JSON o variable)
-	// ------------------------------------------------------------
-	function normalizeValue(val) {
-		lastProcessedValue = val;
-		stateValue = val;
-
-		if (val == null) {
-			use_var_app = false;
-			param_json = {};
-			return;
-		}
-
-		// Si es objeto, forzamos a JSON editor
-		if (typeof val === 'object') {
-			use_var_app = false;
-			const newVal = $state.snapshot(val);
-			if (JSON.stringify(param_json) !== JSON.stringify(newVal)) {
-				param_json = newVal;
-			}
-			return;
-		}
-
-		// Si NO es objeto: intentamos parsear JSON
-		try {
-			const parsed = JSON.parse(val);
-			if (typeof parsed === 'object' && parsed !== null) {
-				if (JSON.stringify(param_json) !== JSON.stringify(parsed)) {
-					param_json = parsed;
-				}
-				use_var_app = false;
-			} else {
-				throw new Error('Not an object');
-			}
-		} catch {
-			if (param_varname !== val) {
-				param_varname = val;
-			}
-			use_var_app = true;
-		}
-	}
-
-	// ------------------------------------------------------------
-	// Comparación y actualización
-	// ------------------------------------------------------------
-	function updateValue(newValue) {
-		if (stringifyValue(stateValue) !== stringifyValue(newValue)) {
-			stateValue = newValue;
-			lastProcessedValue = newValue;
-			onselect(newValue);
-			value = newValue; // sincroniza con padre vía bind:value
-		}
-	}
-
-	function stringifyValue(v) {
-		return typeof v === 'object' ? JSON.stringify(v) : String(v ?? '');
-	}
-
-	// ------------------------------------------------------------
-	// Callbacks internos
+	// Callbacks internos (no modifican use_var_app)
 	// ------------------------------------------------------------
 	function handleCodeChange(event) {
-		updateValue(event.code);
+		console.log('handleCodeChange', event);
+		_internal = true;
+		custom = event.code;
+		appvar = '';
+		_internal = false;
+		onselect({ custom: event.code, appvar: '' });
 	}
 
 	function handleVarSelect(selected) {
-		//console.log('>> handleVarSelect >> ', selected);
-		updateValue(selected);
+		console.log('>> handleVarSelect >> ', selected);
+		_internal = true;
+		appvar = selected;
+		custom = {};
+		_internal = false;
+		onselect({ custom: {}, appvar: selected });
 	}
 </script>
 
@@ -130,7 +88,7 @@
 			isReadOnly={false}
 			lang={langEditor}
 			showFormat={true}
-			code={param_json}
+			code={custom}
 			onchange={handleCodeChange}
 		/>
 	{:else}
@@ -140,7 +98,7 @@
 			{classIcon}
 			{label}
 			{environment}
-			bind:value={param_varname}
+			bind:value={appvar}
 			onselect={handleVarSelect}
 		/>
 	{/if}

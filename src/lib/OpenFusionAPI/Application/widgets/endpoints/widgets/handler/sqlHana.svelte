@@ -37,47 +37,21 @@
 	let query_code = $state('');
 	let timeoutChange;
 
+	let cnx_custom = $state({});
+	let cnx_appvar = $state('');
+
 	$effect(() => {
 		if (endpoint?.code) {
 			timeoutChange = TimeOutChangeValue(timeoutChange, parseCode);
 		}
 	});
 
-	function getCode() {
-		let conf = {};
-		let outcode = {};
-
-		conf = cnx_param_var;
-
-		try {
-			outcode.config = conf;
-			outcode.query = query_code;
-			//console.log(outcode);
-			return JSON.stringify(outcode);
-		} catch (error) {
-			return code;
-		}
-	}
+	
 
 	function parseCode() {
-		try {
-			let params = JSON.parse(endpoint.code || '{}');
-
-			if (params && params.query) {
-				query_code = params.query;
-			}
-
-			if (params && params.config) {
-				cnx_param_var = params.config;
-			}
-
-			console.log('parseCode query_code', query_code);
-		} catch (error) {
-			cnx_param_json = {};
-			cnx_param_var = '';
-			query_code = 'SELECT 2;';
-			console.error('Error', $state.snapshot(error));
-		}
+		query_code = endpoint.code ?? 'SELECT 1;';
+		cnx_custom = endpoint.custom_data;
+		cnx_appvar = endpoint.custom_data;
 	}
 
 	function fnOnChange() {
@@ -86,8 +60,15 @@
 	}
 
 	function getData() {
-		let data = { code: getCode(), data_test: $state.snapshot(endpoint.data_test) };
-		//console.log('getData >>>>>>>>>>>>>>> ', data);
+		let data = {
+			code: query_code,
+			custom_data:
+				cnx_appvar && typeof cnx_appvar === 'string' && cnx_appvar.trim().length > 0
+					? cnx_appvar
+					: cnx_custom,
+			data_test: $state.snapshot(endpoint.data_test)
+		};
+		console.log(data);
 		return data;
 	}
 
@@ -245,7 +226,8 @@
 		</div>
 
 		<AppVarsSelector
-			bind:value={cnx_param_var}
+		bind:custom={cnx_custom}
+		bind:appvar={cnx_appvar}
 			bind:environment={endpoint.environment}
 			onselect={(selected) => {
 				//console.log('AppVarsSelector Editor', c);
