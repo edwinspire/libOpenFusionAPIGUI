@@ -1,15 +1,9 @@
 <script>
-	import { onMount, onDestroy } from 'svelte';
 	import { Tab, EditorCode, JSONView } from '@edwinspire/svelte-components';
-
-	//import AppVarsSelector from '$lib/OpenFusionAPI/app/endpoint/widgets/params_json_selector.svelte';
 	import AppVarsSelector from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/params_json_selector.svelte';
 	import { TimeOutChangeValue } from '$lib/OpenFusionAPI/Application/utils/utils.js';
 
 	let { endpoint = $bindable({}), onchange = () => {} } = $props();
-
-	let cnx_param_json = $state({});
-	let cnx_param_var = $state('');
 
 	let cnx_sample = $state({
 		host: '<host-name>',
@@ -26,7 +20,9 @@
 	let query_sample_post_result =
 		'SELECT * FROM YOUR_TABLE WHERE FIELD_01 = ? AND FIELD_02 IN (?, ?);';
 
-	let sample_bind_post = $state({bind:{ value_01: 1234, list_your_values: ['0002000157', '0002000158'] }});
+	let sample_bind_post = $state({
+		bind: { value_01: 1234, list_your_values: ['0002000157', '0002000158'] }
+	});
 
 	let tabList = $state([
 		{ label: 'Query', isActive: true, classIcon: ' fa-solid fa-database ', component: tab_query },
@@ -41,12 +37,11 @@
 	let cnx_appvar = $state('');
 
 	$effect(() => {
-		if (endpoint?.code) {
-			timeoutChange = TimeOutChangeValue(timeoutChange, parseCode);
-		}
+		// Rastrear cambios en code y custom_data
+		endpoint?.code;
+		endpoint?.custom_data;
+		timeoutChange = TimeOutChangeValue(timeoutChange, parseCode);
 	});
-
-	
 
 	function parseCode() {
 		query_code = endpoint.code ?? 'SELECT 1;';
@@ -71,15 +66,6 @@
 		console.log(data);
 		return data;
 	}
-
-	onMount(() => {
-		parseCode();
-		//	sample_bind_post_string = JSON.stringify(sample_bind_post);
-	});
-
-	onDestroy(() => {
-		clearTimeout(timeoutChange);
-	});
 </script>
 
 {#snippet tab_query()}
@@ -226,8 +212,8 @@
 		</div>
 
 		<AppVarsSelector
-		bind:custom={cnx_custom}
-		bind:appvar={cnx_appvar}
+			bind:custom={cnx_custom}
+			bind:appvar={cnx_appvar}
 			bind:environment={endpoint.environment}
 			onselect={(selected) => {
 				//console.log('AppVarsSelector Editor', c);
