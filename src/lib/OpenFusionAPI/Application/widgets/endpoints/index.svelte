@@ -24,25 +24,19 @@
 
 	let notify = new Notifications();
 	let EndpointEditorWidget = $state();
-	//let deploying = $state({ show: false, message: '', error: false });
 	let app = $state({ app: '', enabled: false, description: '' });
-	let endpoints = $state([]);
 	let showEndpointEdit = $state(false);
-	//let SelectedRow = $state(defaultValuesEndpointRow());
 	let TableSelectionType = $state(0);
 	let serverAPIVersion = $state('Loading...');
 	let serverDDBB = $state('?');
 	let TableObject = $state();
 	let idendpoint_selected = $state();
 
-	$effect(async () => {
-		//idapp;
+	$effect(() => {
 		if (isNewApp(idapp)) {
 			app = {};
-			console.log('Resetear variables');
 		} else {
-			console.log('Cargar endpoints para la app', idapp);
-			await GetEndpoints();
+			GetEndpoints();
 		}
 	});
 
@@ -66,8 +60,6 @@
 	}
 
 	async function clearcacheSelected() {
-		// Lógica de autenticación aquí
-
 		let urls_clear = TableObject.GetSelectedRows().map((u) => {
 			return `${u.endpoint}|${u.method}`;
 		});
@@ -78,8 +70,6 @@
 
 				notify.push({ message: 'Cache deleted', color: 'success' });
 			} else {
-				//alert('You must select at least one record.');
-
 				TableSelectionType = 2;
 				notify.push({ message: 'You must select at least one record.', color: 'warning' });
 			}
@@ -107,8 +97,6 @@
 	}
 
 	async function exportAppDocumentation() {
-		// Lógica de autenticación aquí
-
 		let idendpoints = TableObject.GetSelectedRows().map((u) => {
 			return u.idendpoint;
 		});
@@ -116,24 +104,17 @@
 		try {
 			if (idendpoints && Array.isArray(idendpoints) && idendpoints.length > 0) {
 				let doc = await getAppDocumentation($userStore.token, app.idapp, idendpoints);
-				console.log(doc);
 				downloadFileAppDoc(doc.html, `${app.app}_${getCurrentDateToNameDoc()}.html`);
-				//notify.push({ message: 'Cache deleted', color: 'success' });
 			} else {
-				//alert('You must select at least one record.');
-
 				TableSelectionType = 2;
 				notify.push({ message: 'You must select at least one record.', color: 'warning' });
 			}
 		} catch (error) {
-			//alert(error.message);
 			notify.push({ message: error.message, color: 'danger' });
 		}
 	}
 
 	async function getServerAPIVer() {
-		// Lógica de autenticación aquí
-
 		try {
 			let version_res = await getServerAPIVersion($userStore.token);
 
@@ -144,8 +125,6 @@
 				serverAPIVersion = 'Unknown';
 			}
 		} catch (error) {
-			//notify.push({ message: error.message, color: 'danger' });
-			//alert(error.message);
 			console.error(error);
 		}
 	}
@@ -171,7 +150,6 @@
 
 					dataStatus[element.idendpoint][element.status_code] = element.recordCount;
 				}
-				//console.log('statusCodeEndpoints >> ', statusCodeEndpoints	);
 				storeCountResponseStatusCode.set(dataStatus);
 			}
 		} catch (error) {
@@ -181,7 +159,6 @@
 
 	onMount(async () => {
 		await getServerAPIVer();
-		//
 	});
 </script>
 
@@ -199,30 +176,24 @@
 			left_items={[lt01]}
 			right_items={[rt2, rt1]}
 			ondeleterow={(data) => {
-				//console.log('ondeleterow', data);
 				if (confirm('Do you want to delete the endpoints selected?')) {
-					endpoints = endpoints.filter((item) => {
+					app.endpoints = app.endpoints.filter((item) => {
 						return !data.rows.some((element) => element.idendpoint == item.idendpoint);
 					});
-					//console.log('ondeleterow', endpoints);
 				}
 			}}
 			onnewrow={() => {
 				if (idapp && idapp.length > 0) {
-					//SelectedRow = { app: app, endpoint: defaultValuesEndpointRow() };
 					idendpoint_selected = 0;
 					showEndpointEdit = true;
 					EndpointEditorWidget.setData({ app: app });
 				} else {
-					//alert('No App selected');
 					notify.push({ message: 'Not app selected', color: 'warning' });
 				}
 			}}
 			oneditrow={(data) => {
-				//SelectedRow = { app: app, endpoint: defaultValuesEndpointRow(data) };
 				idendpoint_selected = data.idendpoint;
 				showEndpointEdit = true;
-				console.log('oneditrow', data);
 				EndpointEditorWidget.setData({ app: app, idendpoint: data.idendpoint });
 			}}
 		>
@@ -280,7 +251,6 @@
 		bind:this={EndpointEditorWidget}
 		bind:showEditor={showEndpointEdit}
 		oncopy={async (eps) => {
-			console.log('EndPointEditor >', eps);
 			await GetEndpoints();
 		}}
 		onsave={async (e) => {
