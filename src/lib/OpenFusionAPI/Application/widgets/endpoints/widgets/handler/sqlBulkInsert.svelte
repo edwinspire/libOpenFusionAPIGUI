@@ -1,16 +1,13 @@
 <script>
-	import { onMount } from 'svelte';
 	import { Tab, JSONView, Input } from '@edwinspire/svelte-components';
-
 	import { TimeOutChangeValue } from '$lib/OpenFusionAPI/Application/utils/utils.js';
-	//import AppVarsSelector from '$lib/OpenFusionAPI/app/endpoint/widgets/params_json_selector.svelte';
 	import AppVarsSelector from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/params_json_selector.svelte';
 
 	let { endpoint = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =
 		$props();
 
-	let cnx_param_json = $state({});
-	let cnx_param_var = $state('');
+	let cnx_custom = $state({});
+	let cnx_appvar = $state('');
 
 	let tabList = $state([
 		{
@@ -34,66 +31,36 @@
 	});
 
 	let table_name = $state('');
-	let ignoreDuplicates = $state(false);
+	let timeoutChange;
 
 	$effect(() => {
-		if (endpoint?.code) {
-			timeoutChange = TimeOutChangeValue(timeoutChange, parseCode);
-		}
+		endpoint?.code;
+		endpoint?.custom_data;
+		timeoutChange = TimeOutChangeValue(timeoutChange, parseCode);
 	});
 
 	function parseCode() {
-		try {
-			let params = JSON.parse(endpoint.code || '{}');
-
-			if (params && params.table_name) {
-				table_name = params.table_name;
-			}
-
-			if (params && params.ignoreDuplicates) {
-				ignoreDuplicates = params.ignoreDuplicates;
-			}
-
-			if (params && params.config) {
-				cnx_param_var = params.config;
-			}
-		} catch (error) {
-			cnx_param_json = {};
-			cnx_param_var = '';
-			table_name = '';
-			ignoreDuplicates = false;
-			console.error('Error', error);
-		}
-	}
-
-	function getData() {
-		return { code: $state.snapshot(getCode()), data_test: $state.snapshot(endpoint.data_test) };
+		table_name = endpoint.code ?? '';
+		cnx_custom = endpoint.custom_data;
+		cnx_appvar = endpoint.custom_data;
 	}
 
 	function fnOnChange() {
 		onchange(getData());
 	}
 
-	function getCode() {
-		let conf = {};
-		let outcode = {};
-
-		conf = cnx_param_var;
-
-		try {
-			outcode.config = conf;
-			outcode.table_name = table_name;
-			outcode.ignoreDuplicates = ignoreDuplicates;
-			return JSON.stringify(outcode, null, 2);
-		} catch (error) {
-			
-			return outcode;
-		}
+	function getData() {
+		let data = {
+			code: table_name,
+			custom_data:
+				cnx_appvar && typeof cnx_appvar === 'string' && cnx_appvar.trim().length > 0
+					? cnx_appvar
+					: cnx_custom,
+			ignoreDuplicates: endpoint.custom_data?.ignoreDuplicates ?? false,
+			data_test: $state.snapshot(endpoint.data_test)
+		};
+		return data;
 	}
-
-	onMount(() => {
-		parseCode();
-	});
 </script>
 
 {#snippet tab_tablename()}
@@ -106,21 +73,6 @@
 			fnOnChange();
 		}}
 	></Input>
-
-	<Input
-		label="ignoreDuplicates"
-		type="boolean"
-		bind:value={ignoreDuplicates}
-		placeholder="ignoreDuplicates"
-		onchange={() => {
-			fnOnChange();
-		}}
-	></Input>
-
-	<div class="content is-small">
-		<strong>ignoreDuplicates only:</strong>
-		{'MySQL, MariaDB, SQLite >= 3.24.0 & Postgres >= 9.5'}
-	</div>
 
 	<div class="content is-small">
 		<h4>Bulk INSERT</h4>
@@ -159,10 +111,21 @@
 			>
 			for more information.
 		</div>
+		<div>
+			<span class="icon-text">
+				<span class="icon has-text-warning">
+					<i class="fas fa-exclamation-triangle fa-fade"></i>
+				</span>
+				<span class="label is-small"
+					>ignoreDuplicates parameter only: MySQL, MariaDB, SQLite >= 3.24.0 & Postgres >= 9.5</span
+				>
+			</span>
+		</div>
 	</div>
 
 	<AppVarsSelector
-		bind:value={cnx_param_var}
+		bind:custom={cnx_custom}
+		bind:appvar={cnx_appvar}
 		bind:environment={endpoint.environment}
 		onselect={(selected) => {
 			fnOnChange();

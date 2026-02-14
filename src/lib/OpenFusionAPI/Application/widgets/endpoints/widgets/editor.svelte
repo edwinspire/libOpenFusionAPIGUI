@@ -228,7 +228,7 @@
 				}
 				return false;
 			});
-		} else if (endpoint?.handler == 'SOAP') {
+		} else if (endpoint?.handler == 'SOAP' || endpoint?.handler == 'SQL_BULK_I' || endpoint?.handler == 'SQL' || endpoint?.handler == 'HANA') {
 			new_tabs = tabList.filter((tab) => {
 				if (
 					tab.name == 'endpoint' ||
@@ -264,7 +264,7 @@
 			endpoint.data_test = v.data_test;
 			endpoint.code = v.code;
 			endpoint.docs = endpoint.docs;
-			if(v.custom_data){
+			if (v.custom_data) {
 				endpoint.custom_data = v.custom_data;
 			}
 			//console.log(' onChangeValueHandler -> ', endpoint);
