@@ -1,5 +1,5 @@
 <script>
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import {
 		listFunctionStoreDev,
 		listFunctionStoreQA,
@@ -46,7 +46,7 @@
 	}
 
 	function getData() {
-		return { code: $state.snapshot(endpoint.code), data_test: $state.snapshot(endpoint.data_test) };
+		return { code: endpoint.code, data_test: $state.snapshot(endpoint.data_test) };
 	}
 
 	function fnOnChange() {
@@ -55,7 +55,6 @@
 
 	onMount(() => {
 		defaultValues();
-
 	});
 </script>
 
@@ -70,7 +69,7 @@
 		<div class="field-body">
 			<div class="field is-narrow">
 				<SelectFns
-					bind:options={functions}
+					options={functions}
 					bind:option={endpoint.code}
 					onchange={(s) => {
 						fnOnChange();
