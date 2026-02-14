@@ -1,8 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
 	import { Tab } from '@edwinspire/svelte-components';
-
-	//import AppVarsSelector from '$lib/OpenFusionAPI/app/endpoint/widgets/app_vars_selector.svelte';
 	import AppVarsSelector from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/app_vars_selector.svelte';
 
 	let { endpoint = $bindable({}), onchange = () => {} } = $props();
@@ -10,14 +7,12 @@
 	let tabList = $state([{ label: 'Url', isActive: true, component: tab_url }]);
 
 	function getData() {
-		return { code: $state.snapshot(endpoint.code), data_test: $state.snapshot(endpoint.data_test) };
+		return { code: endpoint.code, data_test: $state.snapshot(endpoint.data_test) };
 	}
 
 	function fnOnChange() {
 		onchange(getData());
 	}
-
-	onMount(() => {});
 </script>
 
 {#snippet tab_url()}
