@@ -1,12 +1,10 @@
 <script>
-	import { onMount } from 'svelte';
 	import { Tab, EditorCode } from '@edwinspire/svelte-components';
-	//	import SelectMimeType from '../../../../../widgets/Select.svelte';
 	import SelectMimeType from '../../../common/Select.svelte';
 
 	let { endpoint = $bindable({}), onchange = () => {} } = $props();
 
-	let mimeTypes = $state([
+	const mimeTypes = [
 		{ id: 'text/plain', value: 'text/plain', enabled: true, editor: 'text' },
 		{ id: 'text/html', value: 'text/html', enabled: true, editor: 'html' },
 		{ id: 'text/css', value: 'text/css', enabled: true, editor: 'text' },
@@ -54,79 +52,38 @@
 		{ id: 'text/x-vcard', value: 'text/x-vcard', enabled: true, editor: 'text' },
 		{ id: 'text/troff', value: 'text/troff', enabled: true, editor: 'text' },
 		{ id: 'text/x-component', value: 'text/x-component', enabled: true, editor: 'text' }
-	]);
+	];
 
 	let tabList = $state([{ label: 'Payload', isActive: true, component: tab_payload }]);
 
 	let mimeType = $state('text/plain');
 	let payload = $state('');
-	let langEditor = $state('txt');
+
+	// langEditor se calcula automáticamente según mimeType
+	let langEditor = $derived(mimeTypes.find((m) => m.id === mimeType)?.editor ?? 'text');
 
 	$effect(() => {
-		if (endpoint?.code) {
-			parseCode();
-		}
+		endpoint?.code;
+		endpoint?.custom_data;
+		parseCode();
 	});
 
 	function parseCode() {
-		try {
-			let params = JSON.parse(endpoint.code || '{}');
-
-			if (params && params.payload) {
-				payload = params.payload;
-			}
-
-			if (params && params.mimeType) {
-				mimeType = params.mimeType;
-			}
-		} catch (error) {
-			mimeType = 'text/plain';
-			payload = '';
-			console.error('Error', error);
-		}
-	}
-
-	function getCode() {
-		//let textCode = fnEditorCode2.getCode();
-		//let conf = {};
-		let outcode = {};
-
-		try {
-			outcode.mimeType = mimeType;
-			outcode.payload = payload;
-
-			console.log(outcode);
-
-			return JSON.stringify(outcode, null, 2);
-		} catch (error) {
-			return endpoint.code;
-		}
+		payload = endpoint.code ?? '';
+		mimeType = endpoint.custom_data?.mimeType ?? 'text/plain';
 	}
 
 	function getData() {
-		return { code: $state.snapshot(getCode()), data_test: $state.snapshot(endpoint.data_test) };
+		return {
+			code: payload,
+			custom_data: { mimeType },
+			data_test: $state.snapshot(endpoint.data_test)
+		};
 	}
 
 	function fnOnChange() {
 		onchange(getData());
 	}
-
-	function setMimeTypeEditor() {
-		let mime_selected = mimeTypes.find((item) => {
-			return item.id == mimeType;
-		});
-
-		if (mime_selected) {
-			langEditor = mime_selected.editor;
-		} else {
-			langEditor = 'text';
-		}
-	}
-
-	onMount(() => {
-		parseCode();
-		setMimeTypeEditor();
-	});
 </script>
 
 {#snippet tab_payload()}
@@ -143,10 +100,10 @@
 							<div class="control">
 								<div class="is-fullwidth">
 									<SelectMimeType
-										bind:options={mimeTypes}
+										options={mimeTypes}
 										bind:option={mimeType}
 										onchange={(e) => {
-											setMimeTypeEditor();
+											fnOnChange();
 										}}
 									/>
 								</div>
@@ -160,7 +117,7 @@
 		</div>
 
 		<EditorCode
-			bind:lang={langEditor}
+			lang={langEditor}
 			bind:code={payload}
 			showFormat={true}
 			onchange={(c) => {

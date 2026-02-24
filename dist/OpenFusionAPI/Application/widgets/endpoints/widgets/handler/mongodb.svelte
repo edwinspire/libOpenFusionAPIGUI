@@ -1,15 +1,14 @@
 <script>
-	import { onMount, onDestroy } from 'svelte';
 	import { Tab, EditorCode, JSONView } from '@edwinspire/svelte-components';
-
-	import AppVarsSelector from '../app_vars_selector.svelte';
+	import AppVarsSelector from '../params_json_selector.svelte';
 	import PredefinedVars from '../js_predefined_vars.svelte';
 	import { TimeOutChangeValue } from '../../../../utils/utils.js';
 
 	let { endpoint = $bindable({ endpoint: '', method: '', environment: '' }), onchange = () => {} } =
 		$props();
 
-	let cnx_param_var = $state('');
+	let cnx_custom = $state({});
+	let cnx_appvar = $state('');
 
 	let tabList = $state([
 		{ label: 'Code', isActive: true, classIcon: ' fa-brands fa-node-js ', component: tab_code },
@@ -17,16 +16,16 @@
 		{ label: 'Connection Parameters', component: tab_cnx_params }
 	]);
 
-	let js_code = $state('let test = 1;');
+	let js_code = $state('// JS Code');
 
 	let timeoutChange;
 
 	let cnx_param_sample = {
-		host: 'localhost', // Dirección del servidor MongoDB
-		port: 27017, // Puerto por defecto de MongoDB
-		dbName: 'my_db', // Nombre de la base de datos
-		user: '', // Usuario (opcional, si la autenticación está habilitada)
-		pass: '', // Contraseña (opcional)
+		host: 'localhost',
+		port: 27017,
+		dbName: 'my_db',
+		user: '',
+		pass: '',
 		options: {
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
@@ -36,28 +35,15 @@
 	};
 
 	$effect(() => {
-		if (endpoint?.code) {
-			timeoutChange = TimeOutChangeValue(timeoutChange, parseCode);
-		}
+		endpoint?.code;
+		endpoint?.custom_data;
+		timeoutChange = TimeOutChangeValue(timeoutChange, parseCode);
 	});
 
 	function parseCode() {
-		try {
-			let params = JSON.parse(endpoint.code || '{}');
-
-			if (params && params.code) {
-				js_code = params.code;
-			}
-
-			if (params && params.config) {
-				cnx_param_var = params.config;
-			}
-		} catch (error) {
-			//	cnx_param_json = {};
-			cnx_param_var = '';
-			js_code = '// Js Code';
-			console.error('Error', error);
-		}
+		js_code = endpoint.code ?? '// JS Code';
+		cnx_custom = endpoint.custom_data;
+		cnx_appvar = endpoint.custom_data;
 	}
 
 	function fnOnChange() {
@@ -65,34 +51,16 @@
 	}
 
 	function getData() {
-		let data = { code: getCode(), data_test: $state.snapshot(endpoint.data_test) };
-
+		let data = {
+			code: js_code,
+			custom_data:
+				cnx_appvar && typeof cnx_appvar === 'string' && cnx_appvar.trim().length > 0
+					? cnx_appvar
+					: cnx_custom,
+			data_test: $state.snapshot(endpoint.data_test)
+		};
 		return data;
 	}
-
-	function getCode() {
-		let conf = {};
-		let outcode = {};
-
-		conf = cnx_param_var;
-
-		try {
-			outcode.config = conf;
-			outcode.code = js_code;
-			return JSON.stringify(outcode);
-		} catch (error) {
-			 
-			return code;
-		}
-	}
-
-	onMount(() => {
-		parseCode();
-		//	sample_bind_post_string = JSON.stringify(sample_bind_post);
-	});
-	onDestroy(() => {
-		clearTimeout(timeoutChange);
-	});
 </script>
 
 {#snippet tab_code()}
@@ -104,6 +72,9 @@
 				<a href="https://www.mongodb.com/products/updates/version-release">MongoDB</a>
 				documentation.
 			</div>
+		
+			
+			<div class="content is-small">The mongose ​​instance with the connection is called <code>mongooseInstance</code> and you can use it within the code.</div>
 		</div>
 	</div>
 
@@ -134,10 +105,11 @@
 			<br />
 
 			<AppVarsSelector
-				bind:value={cnx_param_var}
+				bind:custom={cnx_custom}
+				bind:appvar={cnx_appvar}
 				bind:environment={endpoint.environment}
 				onselect={(selected) => {
-					//console.log('AppVarsSelector Editor', c);
+					console.log('SQL AppVarsSelector Editor', selected, cnx_custom, cnx_appvar);
 					fnOnChange();
 				}}
 			></AppVarsSelector>

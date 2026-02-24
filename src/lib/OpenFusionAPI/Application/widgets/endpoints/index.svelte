@@ -194,6 +194,7 @@
 			oneditrow={(data) => {
 				idendpoint_selected = data.idendpoint;
 				showEndpointEdit = true;
+				console.log('>>>>>>>>>>>>>>>> ', data);
 				EndpointEditorWidget.setData({ app: app, idendpoint: data.idendpoint });
 			}}
 		>

@@ -1,64 +1,25 @@
 <script>
-	import { onMount, onDestroy } from 'svelte';
 	import { Tab, JSONView } from '@edwinspire/svelte-components';
 	import AppVarsSelector from '../params_json_selector.svelte';
 
-	let { endpoint = {}, onchange = () => {} } = $props();
+	let { endpoint = $bindable(), onchange = () => {} } = $props();
 
-	let internal_code = $state('');
+	// Garantizar que las propiedades de bind siempre existan
+	$effect(() => {
+		if (endpoint) {
+			if (endpoint.custom_data === undefined) endpoint.custom_data = {};
+			if (endpoint.code === undefined) endpoint.code = '';
+		}
+	});
+
 	let code_desc = JSON.stringify({ 'describe()': true });
 
 	let code_sample_options = $state({
 		wsdl_options: {
 			strictSSL: true,
 			rejectUnauthorized: false
-			//secureOptions: constants.SSL_OP_NO_TLSv1_2,
 		}
 	});
-
-	let isSyncingFromParent = $state(false);
-
-	let debounceTimer;
-
-	/* ---------- Parent → Internal ---------- */
-	function syncFromParent() {
-		console.log('syncFromParent', endpoint, internal_code, endpoint?.code !== internal_code);
-		if (endpoint?.code !== internal_code) {
-			isSyncingFromParent = true;
-			internal_code = endpoint.code ?? '';
-		}
-	}
-
-	$effect(() => {
-		endpoint?.code;
-		syncFromParent();
-	});
-
-	/* ---------- Internal → Parent (Debounced) ---------- */
-	function syncToParent() {
-		clearTimeout(debounceTimer);
-
-		debounceTimer = setTimeout(() => {
-			if (isSyncingFromParent) {
-				isSyncingFromParent = false;
-				return;
-			}
-
-			if (internal_code !== endpoint?.code) {
-				onchange({ code: internal_code });
-			}
-		}, 300); // ⏱ debounce en ms
-	}
-
-	$effect(() => {
-		internal_code;
-		syncToParent();
-	});
-
-	function parseCode() {
-		internal_code = endpoint.code;
-		//	console.log('parseCode SOAP', endpoint, internal_code);
-	}
 
 	let tabList = $state([
 		{
@@ -81,29 +42,9 @@
 		RequestArgs: { dNum: 236.08 }
 	});
 
-	function getCode() {
-		//console.log('>>>>>>>>>>>>> ', $state.snapshot( internal_code));
-		return internal_code;
-	}
-
 	function fnOnChange() {
-		onchange(getData());
+		onchange({ code: endpoint.code });
 	}
-
-	function getData() {
-		//let data = { code: getCode(), data_test: $state.snapshot(endpoint.data_test) };
-		let data = { code: getCode() };
-
-		return data;
-	}
-
-	onMount(() => {
-		parseCode();
-	});
-
-	onDestroy(() => {
-		clearTimeout(debounceTimer);
-	});
 </script>
 
 {#snippet tab_parameters()}
@@ -113,12 +54,14 @@
 		</div>
 
 		<AppVarsSelector
-			bind:value={internal_code}
+			bind:custom={endpoint.custom_data}
+			bind:appvar={endpoint.code}
 			environment={endpoint.environment}
 			onselect={(selected) => {
 				//console.log('AppVarsSelector Editor', selected);
-				internal_code = selected;
+				//internal_code = selected;
 				fnOnChange();
+				console.log('>>>>>> AppVarsSelector Editor', selected, endpoint.custom_data, endpoint.code);
 			}}
 		></AppVarsSelector>
 
@@ -126,7 +69,7 @@
 			<div class="block">
 				<div class="icon-text">
 					<span class="icon has-text-warning">
-						<i class="fas fa-exclamationcode-triangle"></i>
+						<i class="fas fa-exclamation-triangle"></i>
 					</span>
 					<span>Warning</span>
 				</div>

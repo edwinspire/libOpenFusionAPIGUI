@@ -47,4 +47,6 @@ export const url_paths = {
 	restoreSystemEndpoints: host + '/api/system/restore/prd',
 	getLogSummaryByAppStatusCode: host + '/api/system/log/app/summary/prd',
 	getEndpointBackups: host + '/api/system/api/endpoint/backup/prd',
+	APIKeys: host + '/api/system/apikey/prd',
+	APIClients: host + '/api/system/api_clients/prd',
 };

@@ -53,6 +53,7 @@
 	export function setData(data) {
 		app = data.app || {};
 		idendpoint = data.idendpoint || '';
+		console.log('+++++++++++++++> setData ', app, idendpoint);
 		setValuesEndpoint();
 	}
 
@@ -83,9 +84,11 @@
 				// Get Handler Docs
 				await getHandlerDocsRequest();
 			} else {
+				//Notification.error('Endpoint not found');
 				clearValues();
 			}
 		} else {
+			//Notification.error('Application not found');
 			clearValues();
 		}
 	}
@@ -175,6 +178,7 @@
 			new_tabs = tabList.filter((tab) => {
 				if (
 					tab.name == 'endpoint' ||
+					tab.name == 'docs' ||
 					tab.name == 'tester' ||
 					tab.name == 'backups' ||
 					tab.name == 'logs'
@@ -218,11 +222,31 @@
 					tab.name == 'config' ||
 					tab.name == 'docs' ||
 					tab.name == 'auth' ||
+					tab.name == 'mcp' ||
 					tab.name == 'price' ||
 					tab.name == 'tester' ||
 					tab.name == 'backups' ||
 					tab.name == 'logs' ||
 					tab.name == 'json_schema'
+				) {
+					return true;
+				}
+				return false;
+			});
+		} else if (endpoint?.handler == 'SOAP' || endpoint?.handler == 'SQL_BULK_I' || endpoint?.handler == 'SQL' || endpoint?.handler == 'HANA') {
+			new_tabs = tabList.filter((tab) => {
+				if (
+					tab.name == 'endpoint' ||
+					tab.name == 'config' ||
+					tab.name == 'docs' ||
+					tab.name == 'auth' ||
+					tab.name == 'price' ||
+					tab.name == 'tester' ||
+					tab.name == 'backups' ||
+					tab.name == 'logs' ||
+					tab.name == 'json_schema' ||
+					tab.name == 'app_vars' ||
+					tab.name == 'mcp'
 				) {
 					return true;
 				}
@@ -245,6 +269,9 @@
 			endpoint.data_test = v.data_test;
 			endpoint.code = v.code;
 			endpoint.docs = endpoint.docs;
+			if (v.custom_data) {
+				endpoint.custom_data = v.custom_data;
+			}
 			//console.log(' onChangeValueHandler -> ', endpoint);
 		}
 	}
@@ -443,8 +470,8 @@
 				<SoapCode
 					bind:endpoint
 					onchange={(v) => {
-						onChangeValueHandler(v);
-						console.log('SOAP onchange', v);
+						//onChangeValueHandler(v);
+						console.log('SOAP onchange', endpoint);
 					}}
 				/>
 			{:else if endpoint?.handler == 'SQL'}

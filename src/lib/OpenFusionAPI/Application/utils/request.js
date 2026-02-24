@@ -20,10 +20,10 @@ export const getEnvironmentList = async (token) => {
 
 		if (!environment_list || !Array.isArray(environment_list)) {
 			/*
-            environment_list = env_list.map((item) => {
+			environment_list = env_list.map((item) => {
 				return { id: item.id, value: item.text };
 			});
-            */
+			*/
 
 			environment_list = [];
 		}
@@ -53,7 +53,7 @@ export const GetApp = async (idapp, token) => {
 export const LoginRequest = async (username, password) => {
 	let uf = new uFetch();
 	uf.SetBasicAuthorization(username, password);
-	let user = await uf.GET({
+	let user = await uf.POST({
 		url: url_paths.login
 	});
 	let data = await user.json();
@@ -136,6 +136,32 @@ export const GetEndpointsByIdapp = async (idapp) => {
 		return {};
 	}
 };
+
+export const GetAPIKeys = async (idapp) => {
+	let apiKeys = [];
+	let uf = new uFetch(url_paths.APIKeys);
+
+	let request = await uf.GET({
+		data: { idapp: idapp }
+	});
+
+	apiKeys = await request.json();
+
+	return apiKeys;
+}
+
+export const GetAPIClients = async (data) => {
+	let apiKeys = [];
+	let uf = new uFetch(url_paths.APIClients);
+
+	let request = await uf.GET({
+		data: data
+	});
+
+	apiKeys = await request.json();
+
+	return apiKeys;
+}
 
 export const getListHandler = async (/** @type {string} */ token) => {
 	let f = new uFetch();

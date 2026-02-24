@@ -1,13 +1,13 @@
-export default Soap;
-type Soap = {
+export default Index;
+type Index = {
     $on?(type: string, callback: (e: any) => void): () => void;
     $set?(props: Partial<$$ComponentProps>): void;
 };
-declare const Soap: import("svelte").Component<{
-    endpoint?: any;
+declare const Index: import("svelte").Component<{
+    idapp?: any;
     onchange?: Function;
-}, {}, "endpoint">;
+}, {}, "idapp">;
 type $$ComponentProps = {
-    endpoint?: any;
+    idapp?: any;
     onchange?: Function;
 };

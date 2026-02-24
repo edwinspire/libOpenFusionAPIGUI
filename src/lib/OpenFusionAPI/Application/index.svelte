@@ -25,6 +25,7 @@
 	import AppVars from '$lib/OpenFusionAPI/Application/widgets/application_variables/index.svelte';
 	import Endpoints from '$lib/OpenFusionAPI/Application/widgets/endpoints/index.svelte';
 	import IntervalTasks from '$lib/OpenFusionAPI/Application/widgets/interval_tasks/index.svelte';
+	import ApiKeys from '$lib/OpenFusionAPI/Application/widgets/apikeys/index.svelte';
 	import {
 		getListApps,
 		changeUserPassword,
@@ -60,7 +61,6 @@
 					onclick: () => {
 						idapp = 0;
 						menu_item_selected = '/basic';
-						// Aqui resetear todas las variables para evitar que se mesclen los codigos entre aplicaciones
 					}
 				},
 				{
@@ -93,6 +93,13 @@
 					}
 				},
 				{
+					label: 'API Keys',
+					icon: ' fa-solid fa-key ',
+					onclick: () => {
+						menu_item_selected = '/apikeys';
+					}
+				},
+				{
 					label: 'Tasks',
 					icon: ' fa-solid fa-list-check ',
 					onclick: () => {
@@ -117,7 +124,6 @@
 			let status_sys_endp = await restoreSystemEndpoints(false, $userStore.token);
 			statusSystemEndpointsStore.set(status_sys_endp);
 		} catch (error) {
-			//alert(error.message);
 			console.error(error);
 			notify.push({ message: error.message, color: 'danger' });
 		}
@@ -130,23 +136,18 @@
 
 		wsClient.connect();
 		wsClient.on('open', () => {
-			//console.log('WebSocket connected');
 			wsClient.subscribe('/server/events');
 		});
 
 		wsClient.on('message', (m) => {
-			//console.log('WebSocket message', m);
-
 			if (m && m.data?.idapp == idapp) {
 				if (m && (m.event_name == 'cache_set' || m.event_name == 'cache_released')) {
-					//	console.log('> cache_set ', m);
 					storeCacheSize.update((value) => {
 						value[m.data.idendpoint] = m.data.size.endpoint;
 
 						return value;
 					});
 				} else if (m && m.event_name == 'request_completed') {
-					//console.log('> request_completed ', m);
 					let data1 = m.data;
 					data1.dateTime = m.timestamp;
 
@@ -158,19 +159,9 @@
 						}
 
 						let current = value?.[m.data.idendpoint]?.[m.data.statusCode];
-						let new_value = current !== undefined && current !== null ? Number(current) + 1 : 1;
+						value[m.data.idendpoint][m.data.statusCode] =
+							current !== undefined && current !== null ? Number(current) + 1 : 1;
 
-						//console.log('>>>> storeCountResponseStatusCode ', new_value, value[m.data.idendpoint][m.data.statusCode]);
-
-						if (value[m.data.idendpoint][m.data.statusCode]) {
-							value[m.data.idendpoint][m.data.statusCode] = new_value;
-						} else {
-							value[m.data.idendpoint][m.data.statusCode] = 1;
-						}
-
-						//value[m.data.idendpoint] = new_value;
-
-						//console.log(':::: storeCountResponseStatusCode ', value, m.data);
 						return value;
 					});
 				} else if (m && m.event_name == 'request_start') {
@@ -183,8 +174,7 @@
 	});
 
 	onDestroy(() => {
-		wsClient.disconnect();
-		unsubscribe();
+		wsClient.close();
 	});
 </script>
 
@@ -259,7 +249,7 @@
 					class="dropdown-item"
 					onclick={() => {
 						show_dialog_change_pwd = true;
-						password_change = defaultPasswordChange;
+						password_change = { ...defaultPasswordChange };
 						password_change.username = $userStore?.user?.username || '';
 					}}
 				>
@@ -312,10 +302,7 @@
 		onselect={async (e) => {
 			if ($userStore) {
 				idapp = e.value;
-				//		alert(e.value);
-				//await AppScreenWidget.setData(idapp);
 			} else {
-				//alert('You do not have authorization');
 				notify.push({ message: 'You do not have authorization', color: 'warning' });
 			}
 		}}
@@ -325,7 +312,7 @@
 <AppBase
 	{logoIcon}
 	logoText="OpenFusionAPI"
-	bind:menu
+	{menu}
 	topLeftNavBar={[select_app]}
 	topRightNavBar={[user]}
 >
@@ -333,7 +320,7 @@
 		<AppScreen
 			{idapp}
 			onsavedeploy={async () => {
-				await getListAppsInternal($userStore.token);
+				await getListAppsInternal();
 			}}
 		></AppScreen>
 	{:else if menu_item_selected == '/appvars'}
@@ -342,6 +329,8 @@
 		<Endpoints {idapp}></Endpoints>
 	{:else if menu_item_selected == '/interval_tasks'}
 		<IntervalTasks {idapp}></IntervalTasks>
+	{:else if menu_item_selected == '/apikeys'}
+		<ApiKeys bind:idapp={idapp}></ApiKeys>
 	{:else}
 		<DashBoardScreen {idapp}></DashBoardScreen>
 	{/if}</AppBase
@@ -354,7 +343,7 @@
 		if (password_change.newPassword == password_change.repeatNewPassword) {
 			let result = await changeUserPassword(password_change, $userStore.token);
 			if (result.success) {
-				password_change = defaultPasswordChange;
+				password_change = { ...defaultPasswordChange };
 				show_dialog_change_pwd = false;
 				notify.push({ message: 'Successful update', color: 'success' });
 			} else {
@@ -365,7 +354,7 @@
 		}
 	}}
 	oncancel={() => {
-		password_change = defaultPasswordChange;
+		password_change = { ...defaultPasswordChange };
 	}}
 	bind:show={show_dialog_change_pwd}
 >

@@ -1,7 +1,8 @@
-import { D as DEV, a as assets, b as base, c as app_dir, r as relative, o as override, d as reset } from "./chunks/environment.js";
+import { D as DEV } from "./chunks/false.js";
 import { json, text, error } from "@sveltejs/kit";
 import { Redirect, SvelteKitError, ActionFailure, HttpError } from "@sveltejs/kit/internal";
 import { with_request_store, merge_tracing, try_get_request_store } from "@sveltejs/kit/internal/server";
+import { a as assets, b as base, c as app_dir, r as relative, o as override, d as reset } from "./chunks/environment.js";
 import { E as ENDPOINT_METHODS, P as PAGE_METHODS, n as negotiate, m as method_not_allowed, h as handle_error_and_jsonify, g as get_status, i as is_form_content_type, a as normalize_error, b as get_global_name, s as serialize_uses, c as clarify_devalue_error, d as get_node_type, e as escape_html, S as SVELTE_KIT_ASSETS, f as create_remote_key, j as static_error_page, r as redirect_response, p as parse_remote_arg, k as stringify, l as deserialize_binary_form, o as has_prerendered_path, T as TRAILING_SLASH_PARAM, I as INVALIDATED_PARAM, q as handle_fatal_error, t as format_server_error } from "./chunks/shared.js";
 import * as devalue from "devalue";
 import { m as make_trackable, d as disable_search, a as decode_params, S as SCHEME, v as validate_layout_server_exports, b as validate_layout_exports, c as validate_page_server_exports, e as validate_page_exports, n as normalize_path, r as resolve, f as decode_pathname, g as validate_server_exports } from "./chunks/exports.js";
@@ -410,13 +411,14 @@ function try_serialize(data, fn, route_id) {
     );
     if (data instanceof Response) {
       throw new Error(
-        `Data returned from action inside ${route_id} is not serializable. Form actions need to return plain objects or fail(). E.g. return { success: true } or return fail(400, { message: "invalid" });`
+        `Data returned from action inside ${route_id} is not serializable. Form actions need to return plain objects or fail(). E.g. return { success: true } or return fail(400, { message: "invalid" });`,
+        { cause: e }
       );
     }
     if ("path" in error2) {
       let message = `Data returned from action inside ${route_id} is not serializable: ${error2.message}`;
       if (error2.path !== "") message += ` (data.${error2.path})`;
-      throw new Error(message);
+      throw new Error(message, { cause: e });
     }
     throw error2;
   }
@@ -480,7 +482,6 @@ function server_data_serializer(event, event_state, options2) {
                 options2,
                 new Error(`Failed to serialize promise while rendering ${event.route.id}`)
               );
-              data = void 0;
               str = devalue.uneval([, error2], replacer);
             }
             return {
@@ -524,7 +525,7 @@ function server_data_serializer(event, event_state, options2) {
           event,
           /** @type {any} */
           e
-        ));
+        ), { cause: e });
       }
     },
     get_data(csp) {
@@ -617,7 +618,7 @@ function server_data_serializer_json(event, event_state, options2) {
           event,
           /** @type {any} */
           e
-        ));
+        ), { cause: e });
       }
     },
     get_data() {
@@ -1149,16 +1150,22 @@ class BaseProvider {
   #style_src_elem_needs_csp;
   /** @type {import('types').CspDirectives} */
   #directives;
-  /** @type {import('types').Csp.Source[]} */
+  /** @type {Set<import('types').Csp.Source>} */
   #script_src;
-  /** @type {import('types').Csp.Source[]} */
+  /** @type {Set<import('types').Csp.Source>} */
   #script_src_elem;
-  /** @type {import('types').Csp.Source[]} */
+  /** @type {Set<import('types').Csp.Source>} */
   #style_src;
-  /** @type {import('types').Csp.Source[]} */
+  /** @type {Set<import('types').Csp.Source>} */
   #style_src_attr;
-  /** @type {import('types').Csp.Source[]} */
+  /** @type {Set<import('types').Csp.Source>} */
   #style_src_elem;
+  /** @type {boolean} */
+  script_needs_nonce;
+  /** @type {boolean} */
+  style_needs_nonce;
+  /** @type {boolean} */
+  script_needs_hash;
   /** @type {string} */
   #nonce;
   /**
@@ -1170,11 +1177,11 @@ class BaseProvider {
     this.#use_hashes = use_hashes;
     this.#directives = directives;
     const d = this.#directives;
-    this.#script_src = [];
-    this.#script_src_elem = [];
-    this.#style_src = [];
-    this.#style_src_attr = [];
-    this.#style_src_elem = [];
+    this.#script_src = /* @__PURE__ */ new Set();
+    this.#script_src_elem = /* @__PURE__ */ new Set();
+    this.#style_src = /* @__PURE__ */ new Set();
+    this.#style_src_attr = /* @__PURE__ */ new Set();
+    this.#style_src_elem = /* @__PURE__ */ new Set();
     const effective_script_src = d["script-src"] || d["default-src"];
     const script_src_elem = d["script-src-elem"];
     const effective_style_src = d["style-src"] || d["default-src"];
@@ -1191,6 +1198,7 @@ class BaseProvider {
     this.#style_needs_csp = this.#style_src_needs_csp || this.#style_src_attr_needs_csp || this.#style_src_elem_needs_csp;
     this.script_needs_nonce = this.#script_needs_csp && !this.#use_hashes;
     this.style_needs_nonce = this.#style_needs_csp && !this.#use_hashes;
+    this.script_needs_hash = this.#script_needs_csp && this.#use_hashes;
     this.#nonce = nonce;
   }
   /** @param {string} content */
@@ -1198,10 +1206,21 @@ class BaseProvider {
     if (!this.#script_needs_csp) return;
     const source = this.#use_hashes ? `sha256-${sha256(content)}` : `nonce-${this.#nonce}`;
     if (this.#script_src_needs_csp) {
-      this.#script_src.push(source);
+      this.#script_src.add(source);
     }
     if (this.#script_src_elem_needs_csp) {
-      this.#script_src_elem.push(source);
+      this.#script_src_elem.add(source);
+    }
+  }
+  /** @param {`sha256-${string}`[]} hashes */
+  add_script_hashes(hashes) {
+    for (const hash2 of hashes) {
+      if (this.#script_src_needs_csp) {
+        this.#script_src.add(hash2);
+      }
+      if (this.#script_src_elem_needs_csp) {
+        this.#script_src_elem.add(hash2);
+      }
     }
   }
   /** @param {string} content */
@@ -1209,19 +1228,19 @@ class BaseProvider {
     if (!this.#style_needs_csp) return;
     const source = this.#use_hashes ? `sha256-${sha256(content)}` : `nonce-${this.#nonce}`;
     if (this.#style_src_needs_csp) {
-      this.#style_src.push(source);
+      this.#style_src.add(source);
     }
     if (this.#style_src_attr_needs_csp) {
-      this.#style_src_attr.push(source);
+      this.#style_src_attr.add(source);
     }
     if (this.#style_src_elem_needs_csp) {
       const sha256_empty_comment_hash = "sha256-9OlNO0DNEeaVzHL4RZwCLsBHA8WBQ8toBp/4F5XV2nc=";
       const d = this.#directives;
-      if (d["style-src-elem"] && !d["style-src-elem"].includes(sha256_empty_comment_hash) && !this.#style_src_elem.includes(sha256_empty_comment_hash)) {
-        this.#style_src_elem.push(sha256_empty_comment_hash);
+      if (d["style-src-elem"] && !d["style-src-elem"].includes(sha256_empty_comment_hash) && !this.#style_src_elem.has(sha256_empty_comment_hash)) {
+        this.#style_src_elem.add(sha256_empty_comment_hash);
       }
       if (source !== sha256_empty_comment_hash) {
-        this.#style_src_elem.push(source);
+        this.#style_src_elem.add(source);
       }
     }
   }
@@ -1231,31 +1250,31 @@ class BaseProvider {
   get_header(is_meta = false) {
     const header = [];
     const directives = { ...this.#directives };
-    if (this.#style_src.length > 0) {
+    if (this.#style_src.size > 0) {
       directives["style-src"] = [
         ...directives["style-src"] || directives["default-src"] || [],
         ...this.#style_src
       ];
     }
-    if (this.#style_src_attr.length > 0) {
+    if (this.#style_src_attr.size > 0) {
       directives["style-src-attr"] = [
         ...directives["style-src-attr"] || [],
         ...this.#style_src_attr
       ];
     }
-    if (this.#style_src_elem.length > 0) {
+    if (this.#style_src_elem.size > 0) {
       directives["style-src-elem"] = [
         ...directives["style-src-elem"] || [],
         ...this.#style_src_elem
       ];
     }
-    if (this.#script_src.length > 0) {
+    if (this.#script_src.size > 0) {
       directives["script-src"] = [
         ...directives["script-src"] || directives["default-src"] || [],
         ...this.#script_src
       ];
     }
-    if (this.#script_src_elem.length > 0) {
+    if (this.#script_src_elem.size > 0) {
       directives["script-src-elem"] = [
         ...directives["script-src-elem"] || [],
         ...this.#script_src_elem
@@ -1329,6 +1348,9 @@ class Csp {
     this.csp_provider = new CspProvider(use_hashes, directives, this.nonce);
     this.report_only_provider = new CspReportOnlyProvider(use_hashes, reportOnly, this.nonce);
   }
+  get script_needs_hash() {
+    return this.csp_provider.script_needs_hash || this.report_only_provider.script_needs_hash;
+  }
   get script_needs_nonce() {
     return this.csp_provider.script_needs_nonce || this.report_only_provider.script_needs_nonce;
   }
@@ -1339,6 +1361,11 @@ class Csp {
   add_script(content) {
     this.csp_provider.add_script(content);
     this.report_only_provider.add_script(content);
+  }
+  /** @param {`sha256-${string}`[]} hashes */
+  add_script_hashes(hashes) {
+    this.csp_provider.add_script_hashes(hashes);
+    this.report_only_provider.add_script_hashes(hashes);
   }
   /** @param {string} content */
   add_style(content) {
@@ -1386,6 +1413,20 @@ function exec(match, params, matchers) {
   if (buffered) return;
   return result;
 }
+function find_route(path, routes, matchers) {
+  for (const route of routes) {
+    const match = route.pattern.exec(path);
+    if (!match) continue;
+    const matched = exec(match, route.params, matchers);
+    if (matched) {
+      return {
+        route,
+        params: decode_params(matched)
+      };
+    }
+  }
+  return null;
+}
 function generate_route_object(route, url, manifest) {
   const { errors, layouts, leaf } = route;
   const nodes = [...errors, ...layouts.map((l) => l?.[1]), leaf[1]].filter((n) => typeof n === "number").map((n) => `'${n}': () => ${create_client_import(manifest._.client.nodes?.[n], url)}`).join(",\n		");
@@ -1417,20 +1458,9 @@ async function resolve_route(resolved_path, url, manifest) {
   if (!manifest._.client.routes) {
     return text("Server-side route resolution disabled", { status: 400 });
   }
-  let route = null;
-  let params = {};
   const matchers = await manifest._.matchers();
-  for (const candidate of manifest._.client.routes) {
-    const match = candidate.pattern.exec(resolved_path);
-    if (!match) continue;
-    const matched = exec(match, candidate.params, matchers);
-    if (matched) {
-      route = candidate;
-      params = decode_params(matched);
-      break;
-    }
-  }
-  return create_server_routing_response(route, params, url, manifest).response;
+  const result = find_route(resolved_path, manifest._.client.routes, matchers);
+  return create_server_routing_response(result?.route ?? null, result?.params ?? {}, url, manifest).response;
 }
 function create_server_routing_response(route, params, url, manifest) {
   const headers2 = new Headers({
@@ -1494,13 +1524,15 @@ async function render_response({
   const stylesheets = new Set(client.stylesheets);
   const fonts = new Set(client.fonts);
   const link_headers = /* @__PURE__ */ new Set();
-  const link_tags = /* @__PURE__ */ new Set();
   const inline_styles = /* @__PURE__ */ new Map();
   let rendered;
   const form_value = action_result?.type === "success" || action_result?.type === "failure" ? action_result.data ?? null : null;
   let base$1 = base;
   let assets$1 = assets;
   let base_expression = s(base);
+  const csp = new Csp(options2.csp, {
+    prerender: !!state.prerendering
+  });
   {
     if (!state.prerendering?.fallback) {
       const segments = event.url.pathname.slice(base.length).split("/").slice(2);
@@ -1556,7 +1588,8 @@ async function render_response({
             page: props.page
           }
         ]
-      ])
+      ]),
+      csp: csp.script_needs_nonce ? { nonce: csp.nonce } : { hash: csp.script_needs_hash }
     };
     const fetch2 = globalThis.fetch;
     try {
@@ -1571,8 +1604,14 @@ async function render_response({
         if (options2.async) {
           reset();
         }
-        const { head: head2, html: html2, css } = options2.async ? await rendered2 : rendered2;
-        return { head: head2, html: html2, css };
+        const { head: head2, html: html2, css, hashes } = (
+          /** @type {ReturnType<typeof options.root.render>} */
+          options2.async ? await rendered2 : rendered2
+        );
+        if (hashes) {
+          csp.add_script_hashes(hashes.script);
+        }
+        return { head: head2, html: html2, css, hashes };
       });
     } finally {
       reset();
@@ -1592,13 +1631,10 @@ async function render_response({
       }
     }
   } else {
-    rendered = { head: "", html: "", css: { code: "", map: null } };
+    rendered = { head: "", html: "", css: { code: "", map: null }, hashes: { script: [] } };
   }
-  let head = "";
+  const head = new Head(rendered.head, !!state.prerendering);
   let body2 = rendered.html;
-  const csp = new Csp(options2.csp, {
-    prerender: !!state.prerendering
-  });
   const prefixed = (path) => {
     if (path.startsWith("/")) {
       return base + path;
@@ -1608,10 +1644,9 @@ async function render_response({
   const style = client.inline ? client.inline?.style : Array.from(inline_styles.values()).join("\n");
   if (style) {
     const attributes = [];
-    if (csp.style_needs_nonce) attributes.push(` nonce="${csp.nonce}"`);
+    if (csp.style_needs_nonce) attributes.push(`nonce="${csp.nonce}"`);
     csp.add_style(style);
-    head += `
-	<style${attributes.join("")}>${style}</style>`;
+    head.add_style(style, attributes);
   }
   for (const dep of stylesheets) {
     const path = prefixed(dep);
@@ -1623,14 +1658,13 @@ async function render_response({
         link_headers.add(`<${encodeURI(path)}>; rel="preload"; as="style"; nopush`);
       }
     }
-    head += `
-		<link href="${path}" ${attributes.join(" ")}>`;
+    head.add_stylesheet(path, attributes);
   }
   for (const dep of fonts) {
     const path = prefixed(dep);
     if (resolve_opts.preload({ type: "font", path })) {
       const ext = dep.slice(dep.lastIndexOf(".") + 1);
-      link_tags.add(`<link rel="preload" as="font" type="font/${ext}" href="${path}" crossorigin>`);
+      head.add_link_tag(path, ['rel="preload"', 'as="font"', `type="font/${ext}"`, "crossorigin"]);
       link_headers.add(
         `<${encodeURI(path)}>; rel="preload"; as="font"; type="font/${ext}"; crossorigin; nopush`
       );
@@ -1656,16 +1690,11 @@ async function render_response({
       for (const path of included_modulepreloads) {
         link_headers.add(`<${encodeURI(path)}>; rel="modulepreload"; nopush`);
         if (options2.preload_strategy !== "modulepreload") {
-          head += `
-		<link rel="preload" as="script" crossorigin="anonymous" href="${path}">`;
+          head.add_script_preload(path);
         } else {
-          link_tags.add(`<link rel="modulepreload" href="${path}">`);
+          head.add_link_tag(path, ['rel="modulepreload"']);
         }
       }
-    }
-    if (state.prerendering && link_tags.size > 0) {
-      head += Array.from(link_tags).map((tag) => `
-		${tag}`).join("");
     }
     if (manifest._.client.routes && state.prerendering && !state.prerendering.fallback) {
       const pathname = add_resolution_suffix(event.url.pathname);
@@ -1828,16 +1857,14 @@ ${indent}}`);
     "content-type": "text/html"
   });
   if (state.prerendering) {
-    const http_equiv = [];
     const csp_headers = csp.csp_provider.get_meta();
     if (csp_headers) {
-      http_equiv.push(csp_headers);
+      head.add_http_equiv(csp_headers);
     }
     if (state.prerendering.cache) {
-      http_equiv.push(`<meta http-equiv="cache-control" content="${state.prerendering.cache}">`);
-    }
-    if (http_equiv.length > 0) {
-      head = http_equiv.join("\n") + head;
+      head.add_http_equiv(
+        `<meta http-equiv="cache-control" content="${state.prerendering.cache}">`
+      );
     }
   } else {
     const csp_header = csp.csp_provider.get_header();
@@ -1852,9 +1879,8 @@ ${indent}}`);
       headers2.set("link", Array.from(link_headers).join(", "));
     }
   }
-  head += rendered.head;
   const html = options2.templates.app({
-    head,
+    head: head.build(),
     body: body2,
     assets: assets$1,
     nonce: (
@@ -1888,6 +1914,73 @@ ${indent}}`);
       headers: headers2
     }
   );
+}
+class Head {
+  #rendered;
+  #prerendering;
+  /** @type {string[]} */
+  #http_equiv = [];
+  /** @type {string[]} */
+  #link_tags = [];
+  /** @type {string[]} */
+  #script_preloads = [];
+  /** @type {string[]} */
+  #style_tags = [];
+  /** @type {string[]} */
+  #stylesheet_links = [];
+  /**
+   * @param {string} rendered
+   * @param {boolean} prerendering
+   */
+  constructor(rendered, prerendering) {
+    this.#rendered = rendered;
+    this.#prerendering = prerendering;
+  }
+  build() {
+    return [
+      ...this.#http_equiv,
+      ...this.#link_tags,
+      ...this.#script_preloads,
+      this.#rendered,
+      ...this.#style_tags,
+      ...this.#stylesheet_links
+    ].join("\n		");
+  }
+  /**
+   * @param {string} style
+   * @param {string[]} attributes
+   */
+  add_style(style, attributes) {
+    this.#style_tags.push(
+      `<style${attributes.length ? " " + attributes.join(" ") : ""}>${style}</style>`
+    );
+  }
+  /**
+   * @param {string} href
+   * @param {string[]} attributes
+   */
+  add_stylesheet(href, attributes) {
+    this.#stylesheet_links.push(`<link href="${href}" ${attributes.join(" ")}>`);
+  }
+  /** @param {string} href */
+  add_script_preload(href) {
+    this.#script_preloads.push(
+      `<link rel="preload" as="script" crossorigin="anonymous" href="${href}">`
+    );
+  }
+  /**
+   * @param {string} href
+   * @param {string[]} attributes
+   */
+  add_link_tag(href, attributes) {
+    if (!this.#prerendering) return;
+    this.#link_tags.push(`<link href="${href}" ${attributes.join(" ")}>`);
+  }
+  /** @param {string} tag */
+  add_http_equiv(tag) {
+    if (!this.#prerendering) return;
+    this.#http_equiv.push(tag);
+  }
 }
 class PageNodes {
   data;
@@ -2137,6 +2230,7 @@ async function handle_remote_call_internal(event, state, options2, manifest, id)
         );
       }
       const { data: data2, meta, form_data } = await deserialize_binary_form(event.request);
+      form_client_refreshes = meta.remote_refreshes;
       if (additional_args && !("id" in data2)) {
         data2.id = JSON.parse(decodeURIComponent(additional_args));
       }
@@ -2552,13 +2646,16 @@ async function render_page(event, event_state, page, options2, manifest, state, 
       data_serializer: ssr === false ? server_data_serializer(event, event_state, options2) : data_serializer
     });
   } catch (e) {
+    if (e instanceof Redirect) {
+      return redirect_response(e.status, e.location);
+    }
     return await respond_with_error({
       event,
       event_state,
       options: options2,
       manifest,
       state,
-      status: 500,
+      status: e instanceof HttpError ? e.status : 500,
       error: e,
       resolve_opts
     });
@@ -2888,7 +2985,8 @@ function create_fetch({ event, options: options2, manifest, state, get_cookie_he
         if ((request.method === "GET" || request.method === "HEAD") && (mode === "no-cors" && url.origin !== event.url.origin || url.origin === event.url.origin)) {
           request.headers.delete("origin");
         }
-        if (url.origin !== event.url.origin) {
+        const decoded = decodeURIComponent(url.pathname);
+        if (url.origin !== event.url.origin || base && decoded !== base && !decoded.startsWith(`${base}/`)) {
           if (`.${url.hostname}`.endsWith(`.${event.url.hostname}`) && credentials !== "omit") {
             const cookie = get_cookie_header(url, request.headers.get("cookie"));
             if (cookie) request.headers.set("cookie", cookie);
@@ -2896,7 +2994,6 @@ function create_fetch({ event, options: options2, manifest, state, get_cookie_he
           return fetch(request);
         }
         const prefix = assets || base;
-        const decoded = decodeURIComponent(url.pathname);
         const filename = (decoded.startsWith(prefix) ? decoded.slice(prefix.length) : decoded).slice(1);
         const filename_html = `${filename}/index.html`;
         const is_asset = manifest.assets.has(filename) || filename in manifest._.server_assets;
@@ -3198,16 +3295,11 @@ async function internal_respond(request, options2, manifest, state) {
   }
   if (!state.prerendering?.fallback) {
     const matchers = await manifest._.matchers();
-    for (const candidate of manifest._.routes) {
-      const match = candidate.pattern.exec(resolved_path);
-      if (!match) continue;
-      const matched = exec(match, candidate.params, matchers);
-      if (matched) {
-        route = candidate;
-        event.route = { id: route.id };
-        event.params = decode_params(matched);
-        break;
-      }
+    const result = find_route(resolved_path, manifest._.routes, matchers);
+    if (result) {
+      route = result.route;
+      event.route = { id: route.id };
+      event.params = result.params;
     }
   }
   let resolve_opts = {

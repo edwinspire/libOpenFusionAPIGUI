@@ -229,6 +229,8 @@
 								endpoint.method = 'POST';
 							} else if (e.value == 'TELEGRAM_BOT') {
 								endpoint.method = 'POST';
+							} else if (e.value == 'SQL_BULK_I') {
+								endpoint.method = 'POST';
 							}
 						}}
 					/>

@@ -1,15 +1,9 @@
 <script>
-	import { onMount, onDestroy } from 'svelte';
 	import { Tab, EditorCode, JSONView } from '@edwinspire/svelte-components';
-
-	//import AppVarsSelector from '../../../../../app/endpoint/widgets/params_json_selector.svelte';
 	import AppVarsSelector from '../params_json_selector.svelte';
 	import { TimeOutChangeValue } from '../../../../utils/utils.js';
 
 	let { endpoint = $bindable({}), onchange = () => {} } = $props();
-
-	let cnx_param_json = $state({});
-	let cnx_param_var = $state('');
 
 	let cnx_sample = $state({
 		host: '<host-name>',
@@ -26,7 +20,9 @@
 	let query_sample_post_result =
 		'SELECT * FROM YOUR_TABLE WHERE FIELD_01 = ? AND FIELD_02 IN (?, ?);';
 
-	let sample_bind_post = $state({bind:{ value_01: 1234, list_your_values: ['0002000157', '0002000158'] }});
+	let sample_bind_post = $state({
+		bind: { value_01: 1234, list_your_values: ['0002000157', '0002000158'] }
+	});
 
 	let tabList = $state([
 		{ label: 'Query', isActive: true, classIcon: ' fa-solid fa-database ', component: tab_query },
@@ -37,47 +33,20 @@
 	let query_code = $state('');
 	let timeoutChange;
 
+	let cnx_custom = $state({});
+	let cnx_appvar = $state('');
+
 	$effect(() => {
-		if (endpoint?.code) {
-			timeoutChange = TimeOutChangeValue(timeoutChange, parseCode);
-		}
+		// Rastrear cambios en code y custom_data
+		endpoint?.code;
+		endpoint?.custom_data;
+		timeoutChange = TimeOutChangeValue(timeoutChange, parseCode);
 	});
 
-	function getCode() {
-		let conf = {};
-		let outcode = {};
-
-		conf = cnx_param_var;
-
-		try {
-			outcode.config = conf;
-			outcode.query = query_code;
-			//console.log(outcode);
-			return JSON.stringify(outcode);
-		} catch (error) {
-			return code;
-		}
-	}
-
 	function parseCode() {
-		try {
-			let params = JSON.parse(endpoint.code || '{}');
-
-			if (params && params.query) {
-				query_code = params.query;
-			}
-
-			if (params && params.config) {
-				cnx_param_var = params.config;
-			}
-
-			console.log('parseCode query_code', query_code);
-		} catch (error) {
-			cnx_param_json = {};
-			cnx_param_var = '';
-			query_code = 'SELECT 2;';
-			console.error('Error', $state.snapshot(error));
-		}
+		query_code = endpoint.code ?? 'SELECT 1;';
+		cnx_custom = endpoint.custom_data;
+		cnx_appvar = endpoint.custom_data;
 	}
 
 	function fnOnChange() {
@@ -86,19 +55,17 @@
 	}
 
 	function getData() {
-		let data = { code: getCode(), data_test: $state.snapshot(endpoint.data_test) };
-		//console.log('getData >>>>>>>>>>>>>>> ', data);
+		let data = {
+			code: query_code,
+			custom_data:
+				cnx_appvar && typeof cnx_appvar === 'string' && cnx_appvar.trim().length > 0
+					? cnx_appvar
+					: cnx_custom,
+			data_test: $state.snapshot(endpoint.data_test)
+		};
+		console.log(data);
 		return data;
 	}
-
-	onMount(() => {
-		parseCode();
-		//	sample_bind_post_string = JSON.stringify(sample_bind_post);
-	});
-
-	onDestroy(() => {
-		clearTimeout(timeoutChange);
-	});
 </script>
 
 {#snippet tab_query()}
@@ -245,7 +212,8 @@
 		</div>
 
 		<AppVarsSelector
-			bind:value={cnx_param_var}
+			bind:custom={cnx_custom}
+			bind:appvar={cnx_appvar}
 			bind:environment={endpoint.environment}
 			onselect={(selected) => {
 				//console.log('AppVarsSelector Editor', c);
