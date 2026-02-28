@@ -263,16 +263,6 @@
 
 				<hr class="dropdown-divider" />
 
-				<a href="https://github.com/edwinspire/OpenFusionAPI" target="_blank" class="dropdown-item">
-					<div class="icon-text">
-						<span class="icon">
-							<i class="fa-brands fa-github"></i>
-						</span>
-						<span>Github</span>
-					</div>
-				</a>
-				<hr class="dropdown-divider" />
-
 				<!-- svelte-ignore a11y_click_events_have_key_events -->
 				<!-- svelte-ignore a11y_no_static_element_interactions -->
 				<div
@@ -330,7 +320,7 @@
 	{:else if menu_item_selected == '/interval_tasks'}
 		<IntervalTasks {idapp}></IntervalTasks>
 	{:else if menu_item_selected == '/apikeys'}
-		<ApiKeys bind:idapp={idapp}></ApiKeys>
+		<ApiKeys bind:idapp></ApiKeys>
 	{:else}
 		<DashBoardScreen {idapp}></DashBoardScreen>
 	{/if}</AppBase

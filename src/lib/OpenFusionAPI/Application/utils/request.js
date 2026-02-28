@@ -163,6 +163,18 @@ export const GetAPIClients = async (data) => {
 	return apiKeys;
 }
 
+export const saveAPIClient = async (data) => {
+	let uf = new uFetch(url_paths.APIClient);
+
+	let request = await uf.POST({
+		data: data
+	});
+
+	let apiKeys = await request.json();
+
+	return apiKeys;
+}
+
 export const getListHandler = async (/** @type {string} */ token) => {
 	let f = new uFetch();
 

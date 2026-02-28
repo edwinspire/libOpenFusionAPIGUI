@@ -7,7 +7,10 @@
 		Level,
 		PredictiveInput,
 		Input,
-		TextArea
+		TextArea,
+		DialogModal,
+		BasicSelect,
+		Notifications
 	} from '@edwinspire/svelte-components';
 
 	import { url_paths } from '$lib/OpenFusionAPI/Application/utils/paths.js';
@@ -17,7 +20,11 @@
 		userStore,
 		statusSystemEndpointsStore
 	} from '$lib/OpenFusionAPI/Application/utils/stores.js';
-	import { GetAPIKeys, GetAPIClients } from '$lib/OpenFusionAPI/Application/utils/request.js';
+	import {
+		GetAPIKeys,
+		GetAPIClients,
+		saveAPIClient
+	} from '$lib/OpenFusionAPI/Application/utils/request.js';
 
 	let { idapp = $bindable(), onchange = () => {} } = $props();
 
@@ -32,8 +39,16 @@
 		token: '',
 		idapp: idapp
 	});
+	const todayISO = () => new Date().toISOString().split('T')[0];
+	const nextMonthISO = () => {
+		const d = new Date();
+		d.setMonth(d.getMonth() + 1);
+		return d.toISOString().split('T')[0];
+	};
+	let notify = new Notifications();
+	let new_user = $state({ startAt: todayISO(), endAt: nextMonthISO() });
 	let optionsClients = $state([{ name: 'dsdf', value: 'dsdf' }]);
-
+	let show_dialog_new_user = $state(false);
 	let DataTableTasks = $state([]);
 	let columns = $state({
 		idtask: { hidden: true },
@@ -163,13 +178,17 @@
 		selectedRow = {
 			idclient: '',
 			enabled: true,
-			startAt: '',
-			endAt: '',
+			startAt: todayISO(),
+			endAt: nextMonthISO(),
 			description: '',
 			token: '',
 			idapp: idapp
 		};
 	}
+
+	let new_user_compare_verify = $derived.by(() => {
+		return new_user.newPassword == new_user.repeatNewPassword;
+	});
 
 	onMount(() => {
 		//
@@ -182,6 +201,7 @@
 <Table
 	bind:RawDataTable={DataTableTasks}
 	bind:columns
+	left_items={[lt01]}
 	showEditRow={true}
 	showNewButton={true}
 	showDeleteButton={true}
@@ -207,7 +227,24 @@
 			await deleteTasks(r.rows);
 		}
 	}}
-></Table>
+>
+	{#snippet lt01()}
+		<div class="buttons are-small">
+			<button
+				class="button is-link is-outlined"
+				onclick={() => {
+					new_user = { startAt: todayISO(), endAt: nextMonthISO() };
+					show_dialog_new_user = true;
+				}}
+			>
+				<span class="icon">
+					<i class="fa-solid fa-user"></i>
+				</span>
+				<span>New User API</span>
+			</button>
+		</div>
+	{/snippet}
+</Table>
 
 {#if idapp && selectedRow}
 	<SlideFullScreen bind:show={showEditor}>
@@ -272,8 +309,7 @@
 					<Input type="boolean" label="Enabled" bind:value={selectedRow.enabled}></Input>
 				</div>
 				<div class="column is-one-third">
-					<Input type="date" label="Date Start: " bind:value={selectedRow.startAt}
-					></Input>
+					<Input type="date" label="Date Start: " bind:value={selectedRow.startAt}></Input>
 				</div>
 				<div class="column is-one-third">
 					<Input type="date" label="Date End: " bind:value={selectedRow.endAt}></Input>
@@ -287,3 +323,66 @@
 		</div>
 	</SlideFullScreen>
 {/if}
+
+<DialogModal
+	title={titleModal}
+	body={bodyDialogModal}
+	onaccept={async () => {
+		if (new_user.newPassword == new_user.repeatNewPassword) {
+			let result = await saveAPIClient(new_user);
+			if (result?.client?.idclient) {
+				show_dialog_new_user = false;
+				notify.push({ message: 'User API created successfully', color: 'success' });
+				await loadAPIKeys();
+			} else {
+				notify.push({ message: result.error, color: 'danger' });
+			}
+		} else {
+			notify.push({ message: 'You must repeat the new password twice.', color: 'danger' });
+		}
+	}}
+	oncancel={() => {
+		new_user = { ...defaultPasswordChange };
+	}}
+	bind:show={show_dialog_new_user}
+>
+	{#snippet titleModal()}
+		<span>{`New User API`}</span>
+	{/snippet}
+
+	{#snippet bodyDialogModal()}
+		<Input label="Username" type="text" bind:value={new_user.username}></Input>
+		<Input label="First Name" type="text" bind:value={new_user.first_name}></Input>
+		<Input label="Last Name" type="text" bind:value={new_user.last_name}></Input>
+
+		<Input label="Email" type="email" bind:value={new_user.email}></Input>
+		<BasicSelect
+			label="Document Type"
+			bind:value={new_user.document_type}
+			options={[
+				{ name: 'Passport', value: 'passport' },
+				{ name: 'National ID', value: 'id_card' },
+				{ name: 'Driver License', value: 'driver_license' },
+				{ name: 'Social Security', value: 'social_security' },
+				{ name: 'Tax ID', value: 'tax_id' },
+				{ name: 'Other', value: 'other' }
+			]}
+		></BasicSelect>
+		<Input label="Document ID" type="text" bind:value={new_user.document_id}></Input>
+		<Input label="Phone" type="text" bind:value={new_user.phone}></Input>
+		<Input label="StartAt	" type="date" bind:value={new_user.startAt}></Input>
+		<Input label="EndAt" type="date" bind:value={new_user.endAt}></Input>
+		<Input label="Password" type="password" bind:value={new_user.password}></Input>
+		<Input label="Repeat Password" type="password" bind:value={new_user.repeatPassword}></Input>
+		<div>
+			{#if !new_user_compare_verify}
+				<span class="icon-text has-text-warning is-small">
+					<span class="icon">
+						<i class="fas fa-exclamation-triangle"></i>
+					</span>
+					<span>You must repeat the new password twice.</span>
+				</span>
+			{/if}
+		</div>
+	{/snippet}
+</DialogModal>

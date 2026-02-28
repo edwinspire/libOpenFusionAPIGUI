@@ -49,4 +49,5 @@ export const url_paths = {
 	getEndpointBackups: host + '/api/system/api/endpoint/backup/prd',
 	APIKeys: host + '/api/system/apikey/prd',
 	APIClients: host + '/api/system/api_clients/prd',
+	APIClient: host + '/api/system/apiclient/prd',
 };
