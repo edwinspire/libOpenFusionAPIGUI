@@ -175,7 +175,10 @@ export const getListHandler = async (/** @type {string} */ token) => {
 				id: m.handler,
 				value: m.label,
 				enabled: m.enabled,
-				description: m.description
+				description: m.description,
+				css_class: m.css_class,
+				css_icon: m.css_icon,
+				modules: m.modules
 			};
 		});
 		listHandlerStore.set(data);

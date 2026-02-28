@@ -1,9 +1,9 @@
 <script>
 	import {
-		listHandlers,
 		listHTTPMethods,
 		Environment
 	} from '$lib/OpenFusionAPI/Application/utils/static_values.js';
+	import { getHandlerParams } from '$lib/OpenFusionAPI/Application/utils/utils.js';
 
 	let {
 		environment = $bindable('?'),
@@ -11,6 +11,11 @@
 		method = $bindable('?'),
 		handler = $bindable('?')
 	} = $props();
+
+
+	let handler_params = $derived.by(() => {
+		return getHandlerParams(handler);
+	});
 
 	let env_selected = $derived.by(() => {
 		let data =
@@ -53,7 +58,7 @@
 				<div class="control">
 					<div class="tags has-addons">
 						<span class="tag is-dark">Handler</span>
-						<span class="tag is-{listHandlers[handler]?.color}">{listHandlers[handler]?.label}</span
+						<span class="tag is-{handler_params?.css_class}">{handler_params?.value}</span
 						>
 					</div>
 				</div>

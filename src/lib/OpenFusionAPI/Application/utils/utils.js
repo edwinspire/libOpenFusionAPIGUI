@@ -1,3 +1,11 @@
+import { get } from 'svelte/store';
+import { listHandlerStore } from '$lib/OpenFusionAPI/Application/utils/stores.js';
+
+export const getHandlerParams = (handler) => {
+	const list = get(listHandlerStore); // ← obtiene el valor actual del store
+	return Array.isArray(list) ? list.find((item) => item.id == handler) : {};
+};
+
 export const isNewApp = (idapp) => {
 	if (typeof idapp === 'string' && idapp.trim().length > 5) {
 		console.log('Basic cargar idapp: ', idapp);

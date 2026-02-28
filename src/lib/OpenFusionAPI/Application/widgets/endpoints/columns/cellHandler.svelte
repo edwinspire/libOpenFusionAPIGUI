@@ -1,12 +1,12 @@
 <script>
 	import BLabel from '$lib/OpenFusionAPI/Application/widgets/common/icon_label.svelte';
-	import { listHandlers } from '$lib/OpenFusionAPI/Application/utils/static_values.js';
 	import {
 		listFunctionStorePRD,
 		listFunctionStoreDev,
 		listFunctionStoreQA
 	} from '$lib/OpenFusionAPI/Application/utils/stores.js';
 	import { onMount } from 'svelte';
+	import { getHandlerParams } from '$lib/OpenFusionAPI/Application/utils/utils.js';
 
 	let { value = $bindable(), row = $bindable() } = $props();
 
@@ -45,14 +45,16 @@
 	}
 
 	/**
-	 * @param {string} method
+	 * @param {string} handler
 	 */
-	function setCSS(method) {
-		// @ts-ignore
-		let css_selected = listHandlers[method];
+	function setCSS(handler) {
+		let css_selected = getHandlerParams(handler);
+
+		console.log('css_selected >>>> ', css_selected);
+
 		if (css_selected) {
-			css_class = css_selected.color;
-			css_icon = css_selected.icon;
+			css_class = css_selected.css_class;
+			css_icon = css_selected.css_icon;
 		} else {
 			css_class = '';
 			css_icon = '';

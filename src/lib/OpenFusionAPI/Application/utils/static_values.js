@@ -13,18 +13,7 @@ export const listHTTPMethods = {
 	WS: { color: 'warning', icon: 'fa-solid fa-tower-broadcast' }
 };
 
-export const listHandlers = {
-	JS: { color: 'success', icon: 'fa-brands fa-js', label: 'Javascript' },
-	SQL: { color: 'link', icon: 'fa-solid fa-database', label: 'SQL' },
-	SQL_BULK_I: { color: 'danger', icon: 'fa-solid fa-database', label: 'SQL BULK INSERT' },
-	HANA: { color: '', icon: 'fa-solid fa-database', label: 'Hana' },
-	FETCH: { color: 'primary', icon: 'fa-solid fa-globe', label: 'Fetch' },
-	SOAP: { color: 'info', icon: 'fa-solid fa-soap', label: 'SOAP' },
-	TEXT: { color: 'warning', icon: 'fa-regular fa-file-lines', label: 'Text' },
-	FUNCTION: { color: 'danger', icon: 'fa-solid fa-robot', label: 'Function' },
-	MONGODB: { color: '', icon: 'fa-solid fa-database', label: 'MongoDB' },
-	MCP: { color: 'danger', icon: 'fa-solid fa-plug fa-bounce', label: 'MCP' }
-};
+
 
 export const Environment = [
 	{

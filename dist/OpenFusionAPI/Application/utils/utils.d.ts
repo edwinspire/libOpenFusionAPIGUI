@@ -3,6 +3,7 @@ export function createEndpoint(method: any, app: any, resource: any, environment
  * @param {string} string_url
  */
 export function validateURL(string_url: string): boolean;
+export function getHandlerParams(handler: any): any;
 export function isNewApp(idapp: any): boolean;
 export function equalObjs(value: any, new_value: any): boolean;
 export function jsonToHtmlString(obj: any): string;
