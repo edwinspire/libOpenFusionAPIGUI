@@ -7,6 +7,7 @@ export function RestoreAppBackup(app: any): Promise<any>;
 export function GetEndpointsByIdapp(idapp: any): Promise<any>;
 export function GetAPIKeys(idapp: any): Promise<any>;
 export function GetAPIClients(data: any): Promise<any>;
+export function saveAPIClient(data: any): Promise<any>;
 export function getListHandler(token: string): Promise<void>;
 export function getListMethods(token: string): Promise<void>;
 export function getHandlerDocs(handler: any, token: any): Promise<any>;

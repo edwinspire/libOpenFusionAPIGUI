@@ -28,4 +28,5 @@ export namespace url_paths {
     let getEndpointBackups: string;
     let APIKeys: string;
     let APIClients: string;
+    let APIClient: string;
 }
