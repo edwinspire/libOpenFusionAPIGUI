@@ -1,5 +1,4 @@
 <script>
-	import { onMount } from 'svelte';
 	import {
 		getListMethods,
 		getListHandler,
@@ -24,16 +23,18 @@
 			let data = await LoginRequest(username, password);
 
 			if (data.login) {
-				userStore.set(data);
+				// Solo almacenamos campos necesarios, evitando datos sensibles
+				userStore.set({ login: data.login, token: data.token, user: data.user });
 
 				await getListMethods(data.token);
 				await getListHandler(data.token);
+
+				processing.waiting = false;
 
 				onlogin({
 					login: data.login
 				});
 			} else {
-				//	alert('Invalid credentials');
 				processing.error = 'Invalid credentials';
 				processing.waiting = false;
 				noty.push({ message: processing.error, color: 'danger' });
@@ -45,14 +46,10 @@
 			processing.error = error.message;
 		}
 	}
-
-	onMount(() => {});
 </script>
 
 <Modal show={true}>
 	<div class="box">
-		<!-- Any other Bulma elements you want -->
-
 		<div class="media t1">
 			<div class="media-left">
 				<figure class="image is-48x48">
@@ -64,50 +61,42 @@
 			</div>
 		</div>
 
-		<div class="field">
-			<p class="control has-icons-left has-icons-right">
-				<input class="input" type="text" placeholder="Username" bind:value={username} />
-				<span class="icon is-small is-left">
-					<i class="fa-solid fa-user"></i>
-				</span>
-			</p>
-		</div>
-		<div class="field">
-			<p class="control has-icons-left">
-				<input class="input" type="password" placeholder="Password" bind:value={password} />
-				<span class="icon is-small is-left">
-					<i class="fas fa-lock"></i>
-				</span>
-			</p>
-		</div>
-		<div class="field">
-			<p class="control">
-				{#if processing.waiting}
+		<form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }}>
+			<div class="field">
+				<p class="control has-icons-left has-icons-right">
+					<input class="input" type="text" placeholder="Username" bind:value={username} />
+					<span class="icon is-small is-left">
+						<i class="fa-solid fa-user"></i>
+					</span>
+				</p>
+			</div>
+			<div class="field">
+				<p class="control has-icons-left">
+					<input class="input" type="password" placeholder="Password" bind:value={password} />
+					<span class="icon is-small is-left">
+						<i class="fa-solid fa-lock"></i>
+					</span>
+				</p>
+			</div>
+			<div class="field">
+				<p class="control">
 					<button
-						class="button is-success is-loading"
-						onclick={() => {
-							handleSubmit();
-						}}
-					>
-						Login
-					</button>
-				{:else}
-					<button
+						type="submit"
 						class="button is-success"
-						onclick={() => {
-							handleSubmit();
-						}}
+						class:is-loading={processing.waiting}
+						disabled={processing.waiting}
 					>
 						Login
 					</button>
-				{/if}
-			</p>
-			<div class="content is-small is-flex is-justify-content-flex-end">GUI Version: {version}</div>
-		</div>
+				</p>
+				<div class="content is-small is-flex is-justify-content-flex-end">GUI Version: {version}</div>
+			</div>
+		</form>
+
 		{#if !processing.waiting && processing.error}
 			<div class="icon-text">
 				<span class="icon has-text-warning">
-					<i class="fas fa-exclamation-triangle"></i>
+					<i class="fa-solid fa-triangle-exclamation"></i>
 				</span>
 				<span>{processing.error}</span>
 			</div>
