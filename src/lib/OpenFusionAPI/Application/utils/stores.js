@@ -1,5 +1,14 @@
 import { writable } from 'svelte/store';
 
+/**
+ * Emite eventos de autenticación globales.
+ * Valores posibles:
+ *   null
+ *   { type: 'unauthorized' }
+ *   { type: 'token_expiring', minutesLeft: number }
+ */
+export const authEventStore = writable(null);
+
 export const userStore = writable({});
 export const statusSystemEndpointsStore = writable({});
 export const listMethodStore = writable({});
