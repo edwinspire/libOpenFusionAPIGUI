@@ -1,3 +1,11 @@
+/**
+ * Emite eventos de autenticación globales.
+ * Valores posibles:
+ *   null
+ *   { type: 'unauthorized' }
+ *   { type: 'token_expiring', minutesLeft: number }
+ */
+export const authEventStore: import("svelte/store").Writable<any>;
 export const userStore: import("svelte/store").Writable<{}>;
 export const statusSystemEndpointsStore: import("svelte/store").Writable<{}>;
 export const listMethodStore: import("svelte/store").Writable<{}>;

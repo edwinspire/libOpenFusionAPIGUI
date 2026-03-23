@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import { Table, Notifications } from '@edwinspire/svelte-components';
 	import { isNewApp } from '../../utils/utils.js';
 	import {
@@ -31,13 +31,18 @@
 	let serverDDBB = $state('?');
 	let TableObject = $state();
 	let idendpoint_selected = $state();
+	let loadingEndpoints = $state(false);
 
 	$effect(() => {
-		if (isNewApp(idapp)) {
-			app = {};
-		} else {
-			GetEndpoints();
-		}
+		// Leer idapp de forma reactiva, luego ejecutar lógica sin rastrear app
+		const currentIdapp = idapp;
+		untrack(() => {
+			if (isNewApp(currentIdapp)) {
+				app = { app: '', enabled: false, description: '', endpoints: [] };
+			} else {
+				GetEndpoints();
+			}
+		});
 	});
 
 	// Función para descargar el archivo
@@ -81,19 +86,10 @@
 
 	/**
 	 * Devuelve la fecha y hora actual en formato yyyyMMddHHmmss.
-	 * @returns {string} Fecha y hora actual formateada.
+	 * @returns {string}
 	 */
 	function getCurrentDateToNameDoc() {
-		const ahora = new Date();
-
-		const yyyy = ahora.getFullYear();
-		const MM = String(ahora.getMonth() + 1).padStart(2, '0'); // Meses van de 0 a 11
-		const dd = String(ahora.getDate()).padStart(2, '0');
-		const HH = String(ahora.getHours()).padStart(2, '0');
-		const mm = String(ahora.getMinutes()).padStart(2, '0');
-		const ss = String(ahora.getSeconds()).padStart(2, '0');
-
-		return `${yyyy}${MM}${dd}${HH}${mm}${ss}`;
+		return new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
 	}
 
 	async function exportAppDocumentation() {
@@ -131,6 +127,10 @@
 
 	async function GetEndpoints() {
 		try {
+			loadingEndpoints = true;
+			// Limpiar datos previos antes de cargar la nueva app
+			app = { app: '', enabled: false, description: '', endpoints: [] };
+
 			app = await GetEndpointsByIdapp(idapp);
 			await getListFunction(app.app);
 			await GetAppVars(idapp, true);
@@ -139,21 +139,20 @@
 			let statusCodeEndpoints = await getLogSummaryByAppStatusCode(idapp);
 
 			if (statusCodeEndpoints && Array.isArray(statusCodeEndpoints)) {
-				// Asigna los datos al store con la cantidad de statuscode por cada endpoint
 				let dataStatus = {};
-				for (let index = 0; index < statusCodeEndpoints.length; index++) {
-					const element = statusCodeEndpoints[index];
-
+				for (const element of statusCodeEndpoints) {
 					if (dataStatus[element.idendpoint] === undefined) {
 						dataStatus[element.idendpoint] = {};
 					}
-
 					dataStatus[element.idendpoint][element.status_code] = element.recordCount;
 				}
 				storeCountResponseStatusCode.set(dataStatus);
 			}
 		} catch (error) {
 			console.error(error);
+			notify.push({ message: error.message, color: 'danger' });
+		} finally {
+			loadingEndpoints = false;
 		}
 	}
 
@@ -176,14 +175,14 @@
 			left_items={[lt01]}
 			right_items={[rt2, rt1]}
 			ondeleterow={(data) => {
-				if (confirm('Do you want to delete the endpoints selected?')) {
+				if (confirm('Do you want to delete the endpoints selected? - NO IMPLEMENTED')) {
 					app.endpoints = app.endpoints.filter((item) => {
 						return !data.rows.some((element) => element.idendpoint == item.idendpoint);
 					});
 				}
 			}}
 			onnewrow={() => {
-				if (idapp && idapp.length > 0) {
+				if (idapp && idapp > 0) {
 					idendpoint_selected = 0;
 					showEndpointEdit = true;
 					EndpointEditorWidget.setData({ app: app });
@@ -194,7 +193,6 @@
 			oneditrow={(data) => {
 				idendpoint_selected = data.idendpoint;
 				showEndpointEdit = true;
-				console.log('>>>>>>>>>>>>>>>> ', data);
 				EndpointEditorWidget.setData({ app: app, idendpoint: data.idendpoint });
 			}}
 		>
@@ -215,12 +213,7 @@
 
 			{#snippet rt1()}
 				<span>
-					<button
-						class="button is-small"
-						onclick={() => {
-							clearcacheSelected();
-						}}
-					>
+					<button class="button is-small" onclick={clearcacheSelected}>
 						<span class="icon is-small">
 							<i class="fa-solid fa-eraser"></i>
 						</span>
@@ -230,12 +223,7 @@
 			{/snippet}
 			{#snippet rt2()}
 				<span>
-					<button
-						class="button is-small"
-						onclick={async () => {
-							await exportAppDocumentation();
-						}}
-					>
+					<button class="button is-small" onclick={exportAppDocumentation}>
 						<span class="icon is-small">
 							<i class="fa-solid fa-file-export"></i>
 						</span>
@@ -244,6 +232,13 @@
 				</span>
 			{/snippet}
 		</Table>
+		{#if loadingEndpoints}
+			<div class="is-flex is-justify-content-center p-4">
+				<span class="icon has-text-grey">
+					<i class="fa-solid fa-spinner fa-spin fa-2x"></i>
+				</span>
+			</div>
+		{/if}
 	</div>
 </div>
 
@@ -253,9 +248,11 @@
 		bind:showEditor={showEndpointEdit}
 		oncopy={async (eps) => {
 			await GetEndpoints();
+			onsavedeploy();
 		}}
 		onsave={async (e) => {
 			await GetEndpoints();
+			onsavedeploy();
 		}}
 	></EndPointEditor>
 {/if}

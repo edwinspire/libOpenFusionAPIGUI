@@ -45,13 +45,19 @@
 	let deploying = $state({ show: false, message: '', error: false });
 
 	// Cache del último handler consultado para evitar re-fetch innecesarios
+	// NOTA: getHandlerDocsRequest() se llama directamente desde setValuesEndpoint().
+	// Este efecto sólo actúa cuando el handler cambia manualmente en el editor,
+	// sin recargar el endpoint completo, para no duplicar la llamada inicial.
 	let lastHandlerDocs = '';
 	$effect(() => {
 		const h = endpoint.handler;
 		untrack(() => {
 			if (h && h !== lastHandlerDocs) {
 				lastHandlerDocs = h;
-				getHandlerDocsRequest();
+				// Solo disparar si el endpoint ya está cargado (idendpoint definido)
+				if (idendpoint) {
+					getHandlerDocsRequest().catch((e) => console.error('getHandlerDocs:', e));
+				}
 			}
 		});
 	});
@@ -85,7 +91,8 @@
 				endpoint.ctrl.log ??= {};
 				endpoint.data_test ??= {};
 
-				// Get Handler Docs
+				// Get Handler Docs (actualizar cache para evitar re-fetch del $effect)
+				lastHandlerDocs = endpoint.handler;
 				await getHandlerDocsRequest();
 			} else {
 				//Notification.error('Endpoint not found');
@@ -98,11 +105,9 @@
 	}
 
 	async function saveEndpoint() {
+		// $state.snapshot() ya produce un objeto plano con todas las propiedades;
+		// no se requieren asignaciones adicionales.
 		let endpoint_out = $state.snapshot(endpoint);
-
-		endpoint_out.data_test = endpoint.data_test;
-		endpoint_out.code = endpoint.code;
-		endpoint_out.docs = endpoint.docs;
 
 		deploying = { show: true, message: 'Saving Endpoint...', error: false };
 		try {
@@ -389,78 +394,27 @@
 	{#if endpoint}
 		<div>
 			{#if endpoint?.handler == 'JS'}
-				<JsCode
-					bind:endpoint
-					onchange={(v) => {
-						onChangeValueHandler(v);
-					}}
-				/>
+				<JsCode bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'TELEGRAM_BOT'}
-				<TelegramBot
-					bind:endpoint
-					onchange={onChangeValueHandler}
-				/>
+				<TelegramBot bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'SOAP'}
-				<SoapCode
-					bind:endpoint
-					onchange={onChangeValueHandler}
-				/>
+				<SoapCode bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'SQL'}
-				<SqlCode
-					bind:endpoint
-					onchange={(v) => {
-						onChangeValueHandler(v);
-					}}
-				/>
+				<SqlCode bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'HANA'}
-				<SqlHana
-					bind:endpoint
-					onchange={(v) => {
-						onChangeValueHandler(v);
-					}}
-				/>
+				<SqlHana bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'SQL_BULK_I'}
-				<SqlBulkInsert
-					bind:endpoint
-					onchange={(v) => {
-						onChangeValueHandler(v);
-					}}
-				/>
+				<SqlBulkInsert bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'FETCH'}
-				<FetchCode
-					bind:endpoint
-					onchange={(v) => {
-						onChangeValueHandler(v);
-					}}
-				/>
+				<FetchCode bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'FUNCTION'}
-				<CustomFn
-					bind:endpoint
-					onchange={(v) => {
-						onChangeValueHandler(v);
-					}}
-				/>
+				<CustomFn bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'TEXT'}
-				<TextCode
-					bind:endpoint
-					onchange={(v) => {
-						onChangeValueHandler(v);
-					}}
-				/>
+				<TextCode bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'MONGODB'}
-				<MongoDB
-					bind:endpoint
-					onchange={(v) => {
-						onChangeValueHandler(v);
-					}}
-				/>
+				<MongoDB bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'AGENT_IA'}
-				<AgentIA
-					bind:endpoint
-					onchange={(v) => {
-						onChangeValueHandler(v);
-					}}
-				/>
+				<AgentIA bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'NOAPPLY' || endpoint?.handler == 'No Handler' || endpoint?.handler == 'NA'}
 				<div>No Handler</div>
 			{:else}
@@ -483,7 +437,9 @@
 {/snippet}
 
 {#snippet tab_mcp()}
-	<MCP bind:mcp={endpoint.mcp} bind:endpoint></MCP>
+	{#if endpoint?.mcp}
+		<MCP bind:mcp={endpoint.mcp} bind:endpoint></MCP>
+	{/if}
 {/snippet}
 
 {#snippet endpoint_path()}
@@ -516,17 +472,16 @@
 			url={endpoint.endpoint}
 			methodDisabled={true}
 			onchange={(d) => {
-				//	console.log($state.snapshot(d));
 				endpoint.data_test = d.data;
 
-				// Limita el tamaño de la respuesta
-				endpoint.data_test.last_response = {
-					data: getResultLimited(d.last_response.data),
-					sizeKBResponse: d.last_response.sizeKBResponse,
-					MimeType: d.last_response.MimeType
-				};
-
-				//console.log('RESTTester Editor > ', d.data);
+				// Limita el tamaño de la respuesta (guard para evitar TypeError si last_response es null)
+				if (d.last_response) {
+					endpoint.data_test.last_response = {
+						data: getResultLimited(d.last_response.data),
+						sizeKBResponse: d.last_response.sizeKBResponse,
+						MimeType: d.last_response.MimeType
+					};
+				}
 			}}
 		></RESTTester>
 	</div>

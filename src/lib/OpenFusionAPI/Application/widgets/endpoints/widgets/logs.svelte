@@ -24,6 +24,14 @@
 	let datatraceLogs = $state([]);
 	let trace_id = $state('');
 
+	let columns_trace = $state({
+		response_data: { hidden: false },
+		request_data: { hidden: true },
+		idapp: { hidden: true },
+		idendpoint: { hidden: true },
+		idlog: { hidden: true },
+		id: { hidden: true }
+	});
 
 	// Obtener la fecha actual en la zona horaria local
 	const now = DateTime.local();
@@ -358,7 +366,7 @@
 
 
 {#snippet tab_trace_logs()}
-	<Table bind:RawDataTable={datatraceLogs} left_items={[rt1 ]} onsearch={fetchTraceLogs}>
+	<Table columns={columns_trace} bind:RawDataTable={datatraceLogs} left_items={[rt1 ]} onsearch={fetchTraceLogs}>
 		{#snippet rt1()}
 			<div class="field has-addons has-addons-centered">
 				<span class="control">

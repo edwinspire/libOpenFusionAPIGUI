@@ -1,6 +1,11 @@
 export default Index;
 type Index = {
     $on?(type: string, callback: (e: any) => void): () => void;
-    $set?(props: Partial<Record<string, never>>): void;
+    $set?(props: Partial<$$ComponentProps>): void;
 };
-declare const Index: import("svelte").Component<Record<string, never>, {}, "">;
+declare const Index: import("svelte").Component<{
+    onexit?: Function;
+}, {}, "">;
+type $$ComponentProps = {
+    onexit?: Function;
+};

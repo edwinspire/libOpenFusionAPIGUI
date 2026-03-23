@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { untrack } from 'svelte';
 	import {
 		SlideFullScreen,
 		Tab,
@@ -44,16 +44,27 @@
 
 	let deploying = $state({ show: false, message: '', error: false });
 
+	// Cache del último handler consultado para evitar re-fetch innecesarios
+	// NOTA: getHandlerDocsRequest() se llama directamente desde setValuesEndpoint().
+	// Este efecto sólo actúa cuando el handler cambia manualmente en el editor,
+	// sin recargar el endpoint completo, para no duplicar la llamada inicial.
+	let lastHandlerDocs = '';
 	$effect(() => {
-		if (endpoint.handler) {
-			getHandlerDocsRequest();
-		}
+		const h = endpoint.handler;
+		untrack(() => {
+			if (h && h !== lastHandlerDocs) {
+				lastHandlerDocs = h;
+				// Solo disparar si el endpoint ya está cargado (idendpoint definido)
+				if (idendpoint) {
+					getHandlerDocsRequest().catch((e) => console.error('getHandlerDocs:', e));
+				}
+			}
+		});
 	});
 
 	export function setData(data) {
 		app = data.app || {};
-		idendpoint = data.idendpoint || '';
-		console.log('+++++++++++++++> setData ', app, idendpoint);
+		idendpoint = data.idendpoint || undefined;
 		setValuesEndpoint();
 	}
 
@@ -65,7 +76,6 @@
 			if (ep_found) {
 				// Se hace una copia del default porque se estaba sobreescribiendo
 				endpoint = mergeSourceOverwrite(structuredClone(defaultEndpoint), ep_found);
-				console.log('> setValuesEndpoint ', endpoint, defaultEndpoint, ep_found);
 
 				// Ensure json_schema structure exists
 				endpoint.json_schema ??= {};
@@ -81,7 +91,8 @@
 				endpoint.ctrl.log ??= {};
 				endpoint.data_test ??= {};
 
-				// Get Handler Docs
+				// Get Handler Docs (actualizar cache para evitar re-fetch del $effect)
+				lastHandlerDocs = endpoint.handler;
 				await getHandlerDocsRequest();
 			} else {
 				//Notification.error('Endpoint not found');
@@ -94,14 +105,10 @@
 	}
 
 	async function saveEndpoint() {
+		// $state.snapshot() ya produce un objeto plano con todas las propiedades;
+		// no se requieren asignaciones adicionales.
 		let endpoint_out = $state.snapshot(endpoint);
 
-		endpoint_out.data_test = endpoint.data_test;
-		endpoint_out.code = endpoint.code;
-		endpoint_out.docs = endpoint.docs;
-		// json_schema is already bound in endpoint derived from state
-
-		console.log('Save Endpoint', endpoint_out);
 		deploying = { show: true, message: 'Saving Endpoint...', error: false };
 		try {
 			let resp = await EndpointSave(endpoint_out, $userStore.token);
@@ -109,7 +116,7 @@
 
 			if (response && response.idapp == app.idapp) {
 				deploying.show = false;
-				//	console.log(response);
+				showEditor = false;
 				onsave();
 			} else {
 				deploying.error = true;
@@ -171,108 +178,47 @@
 		{ name: 'logs', label: 'Logs', component: tab_log }
 	]);
 
+	/** Mapa de handler → tabs permitidas. Sin entrada = todas las tabs. */
+	const HANDLER_TABS = {
+		MCP:          new Set(['endpoint', 'docs', 'tester', 'backups', 'logs']),
+		NOAPPLY:      new Set(['endpoint']),
+		'No Handler': new Set(['endpoint']),
+		NA:           new Set(['endpoint']),
+		TELEGRAM_BOT: new Set(['endpoint', 'config', 'docs', 'app_vars', 'auth', 'price', 'tester', 'backups', 'logs']),
+		FUNCTION:     new Set(['endpoint', 'config', 'docs', 'auth', 'mcp', 'price', 'tester', 'backups', 'logs', 'json_schema']),
+		SOAP:         new Set(['endpoint', 'config', 'docs', 'auth', 'price', 'tester', 'backups', 'logs', 'json_schema', 'app_vars', 'mcp']),
+		SQL_BULK_I:   new Set(['endpoint', 'config', 'docs', 'auth', 'price', 'tester', 'backups', 'logs', 'json_schema', 'app_vars', 'mcp']),
+		SQL:          new Set(['endpoint', 'config', 'docs', 'auth', 'price', 'tester', 'backups', 'logs', 'json_schema', 'app_vars', 'mcp']),
+		HANA:         new Set(['endpoint', 'config', 'docs', 'auth', 'price', 'tester', 'backups', 'logs', 'json_schema', 'app_vars', 'mcp']),
+	};
+
 	let derivedtabList = $derived.by(() => {
-		let new_tabs = tabList;
-
-		if (endpoint?.handler == 'MCP') {
-			new_tabs = tabList.filter((tab) => {
-				if (
-					tab.name == 'endpoint' ||
-					tab.name == 'docs' ||
-					tab.name == 'tester' ||
-					tab.name == 'backups' ||
-					tab.name == 'logs'
-				) {
-					return true;
-				}
-				return false;
-			});
-		} else if (
-			endpoint?.handler == 'NOAPPLY' ||
-			endpoint?.handler == 'No Handler' ||
-			endpoint?.handler == 'NA'
-		) {
-			new_tabs = tabList.filter((tab) => {
-				if (tab.name == 'endpoint') {
-					return true;
-				}
-				return false;
-			});
-		} else if (endpoint?.handler == 'TELEGRAM_BOT') {
-			new_tabs = tabList.filter((tab) => {
-				if (
-					tab.name == 'endpoint' ||
-					tab.name == 'config' ||
-					tab.name == 'docs' ||
-					tab.name == 'app_vars' ||
-					tab.name == 'auth' ||
-					tab.name == 'price' ||
-					tab.name == 'tester' ||
-					tab.name == 'backups' ||
-					tab.name == 'logs'
-				) {
-					return true;
-				}
-				return false;
-			});
-		} else if (endpoint?.handler == 'FUNCTION') {
-			new_tabs = tabList.filter((tab) => {
-				if (
-					tab.name == 'endpoint' ||
-					tab.name == 'config' ||
-					tab.name == 'docs' ||
-					tab.name == 'auth' ||
-					tab.name == 'mcp' ||
-					tab.name == 'price' ||
-					tab.name == 'tester' ||
-					tab.name == 'backups' ||
-					tab.name == 'logs' ||
-					tab.name == 'json_schema'
-				) {
-					return true;
-				}
-				return false;
-			});
-		} else if (endpoint?.handler == 'SOAP' || endpoint?.handler == 'SQL_BULK_I' || endpoint?.handler == 'SQL' || endpoint?.handler == 'HANA') {
-			new_tabs = tabList.filter((tab) => {
-				if (
-					tab.name == 'endpoint' ||
-					tab.name == 'config' ||
-					tab.name == 'docs' ||
-					tab.name == 'auth' ||
-					tab.name == 'price' ||
-					tab.name == 'tester' ||
-					tab.name == 'backups' ||
-					tab.name == 'logs' ||
-					tab.name == 'json_schema' ||
-					tab.name == 'app_vars' ||
-					tab.name == 'mcp'
-				) {
-					return true;
-				}
-				return false;
-			});
-		} else {
-			new_tabs = tabList;
-		}
-
-		return app.app ? new_tabs : [];
+		if (!app.app) return [];
+		const allowed = HANDLER_TABS[endpoint?.handler];
+		if (!allowed) return tabList;
+		return tabList.filter((tab) => allowed.has(tab.name));
 	});
 
 	function clearValues() {
-		endpoint = { ...defaultEndpoint };
+		endpoint = structuredClone(defaultEndpoint);
 		endpoint.idapp = app.idapp;
+		// Inicializar estructuras anidadas requeridas
+		endpoint.json_schema ??= {};
+		endpoint.json_schema.in ??= { enabled: false, schema: {} };
+		endpoint.custom_data ??= {};
+		endpoint.mcp ??= {};
+		endpoint.ctrl ??= { users: [], log: {} };
+		endpoint.data_test ??= {};
 	}
 
 	function onChangeValueHandler(v) {
 		if (v) {
 			endpoint.data_test = v.data_test;
 			endpoint.code = v.code;
-			endpoint.docs = endpoint.docs;
+			endpoint.docs = v.docs;
 			if (v.custom_data) {
 				endpoint.custom_data = v.custom_data;
 			}
-			//console.log(' onChangeValueHandler -> ', endpoint);
 		}
 	}
 
@@ -339,11 +285,7 @@
 		}
 	}
 
-	onMount(() => {
-		//		await getEnvList();
-		//	defaultValues();
-		//	console.log('Editor endpoint > ', $state.snapshot(endpoint));
-	});
+
 </script>
 
 {#snippet tab_docs()}
@@ -452,84 +394,27 @@
 	{#if endpoint}
 		<div>
 			{#if endpoint?.handler == 'JS'}
-				<JsCode
-					bind:endpoint
-					onchange={(v) => {
-						onChangeValueHandler(v);
-					}}
-				/>
+				<JsCode bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'TELEGRAM_BOT'}
-				<TelegramBot
-					bind:endpoint
-					onchange={(v) => {
-						onChangeValueHandler(v);
-						console.log('TELEGRAM_BOT onchange', v);
-					}}
-				/>
+				<TelegramBot bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'SOAP'}
-				<SoapCode
-					bind:endpoint
-					onchange={(v) => {
-						//onChangeValueHandler(v);
-						console.log('SOAP onchange', endpoint);
-					}}
-				/>
+				<SoapCode bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'SQL'}
-				<SqlCode
-					bind:endpoint
-					onchange={(v) => {
-						onChangeValueHandler(v);
-					}}
-				/>
+				<SqlCode bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'HANA'}
-				<SqlHana
-					bind:endpoint
-					onchange={(v) => {
-						onChangeValueHandler(v);
-					}}
-				/>
+				<SqlHana bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'SQL_BULK_I'}
-				<SqlBulkInsert
-					bind:endpoint
-					onchange={(v) => {
-						onChangeValueHandler(v);
-					}}
-				/>
+				<SqlBulkInsert bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'FETCH'}
-				<FetchCode
-					bind:endpoint
-					onchange={(v) => {
-						onChangeValueHandler(v);
-					}}
-				/>
+				<FetchCode bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'FUNCTION'}
-				<CustomFn
-					bind:endpoint
-					onchange={(v) => {
-						onChangeValueHandler(v);
-					}}
-				/>
+				<CustomFn bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'TEXT'}
-				<TextCode
-					bind:endpoint
-					onchange={(v) => {
-						onChangeValueHandler(v);
-					}}
-				/>
+				<TextCode bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'MONGODB'}
-				<MongoDB
-					bind:endpoint
-					onchange={(v) => {
-						onChangeValueHandler(v);
-					}}
-				/>
+				<MongoDB bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'AGENT_IA'}
-				<AgentIA
-					bind:endpoint
-					onchange={(v) => {
-						onChangeValueHandler(v);
-					}}
-				/>
+				<AgentIA bind:endpoint onchange={onChangeValueHandler} />
 			{:else if endpoint?.handler == 'NOAPPLY' || endpoint?.handler == 'No Handler' || endpoint?.handler == 'NA'}
 				<div>No Handler</div>
 			{:else}
@@ -552,7 +437,9 @@
 {/snippet}
 
 {#snippet tab_mcp()}
-	<MCP bind:mcp={endpoint.mcp} bind:endpoint></MCP>
+	{#if endpoint?.mcp}
+		<MCP bind:mcp={endpoint.mcp} bind:endpoint></MCP>
+	{/if}
 {/snippet}
 
 {#snippet endpoint_path()}
@@ -569,7 +456,6 @@
 		<Backups
 			bind:idendpoint={endpoint.idendpoint}
 			onselect={(backup) => {
-				console.log('Selected backup to restore', backup);
 				if (backup && backup.idendpoint == endpoint.idendpoint) {
 					endpoint = $state.snapshot(backup);
 				}
@@ -586,17 +472,16 @@
 			url={endpoint.endpoint}
 			methodDisabled={true}
 			onchange={(d) => {
-				//	console.log($state.snapshot(d));
 				endpoint.data_test = d.data;
 
-				// Limita el tamaño de la respuesta
-				endpoint.data_test.last_response = {
-					data: getResultLimited(d.last_response.data),
-					sizeKBResponse: d.last_response.sizeKBResponse,
-					MimeType: d.last_response.MimeType
-				};
-
-				//console.log('RESTTester Editor > ', d.data);
+				// Limita el tamaño de la respuesta (guard para evitar TypeError si last_response es null)
+				if (d.last_response) {
+					endpoint.data_test.last_response = {
+						data: getResultLimited(d.last_response.data),
+						sizeKBResponse: d.last_response.sizeKBResponse,
+						MimeType: d.last_response.MimeType
+					};
+				}
 			}}
 		></RESTTester>
 	</div>
@@ -608,21 +493,17 @@
 		left={[endpoint_path]}
 		onsavedeploy={async () => {
 			if (!validateResource) {
-				alert('URL is invalid.');
+				deploying = { show: true, error: true, message: 'URL is invalid.' };
 			} else if (!availableURL) {
-				alert('URL already exists.');
+				deploying = { show: true, error: true, message: 'URL already exists.' };
 			} else if (endpoint.handler == 'FUNCTION' && (!endpoint.code || endpoint.code.length < 1)) {
-				deploying = { show: false };
-				alert('You have not selected a function');
+				deploying = { show: true, error: true, message: 'You have not selected a function.' };
 			} else {
-				saveEndpoint();
-				showEditor = false;
+				await saveEndpoint();
 			}
 		}}
 		oncancel={() => {
-			idendpoint = '';
-			//console.log('Editor Cancel', idendpoint);
-			//clearValues();
+			idendpoint = undefined;
 			showEditor = false;
 		}}
 	></SaveDeploy>
