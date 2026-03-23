@@ -33,7 +33,9 @@
 	} from '$lib/OpenFusionAPI/Application/utils/request.js';
 
 	let notify = new Notifications();
+	let { onexit = () => {} } = $props();
 	let idapp = $state(0);
+	let loading = $state(false);
 	let options = $state([]);
 	let menu_item_selected = $state('');
 	let show_dialog_change_pwd = $state(false);
@@ -112,6 +114,7 @@
 
 	async function getListAppsInternal() {
 		try {
+			loading = true;
 			let apps = await getListApps($userStore.token);
 			if (apps && Array.isArray(apps) && apps.length > 0) {
 				options = apps.map((item) => {
@@ -126,6 +129,8 @@
 		} catch (error) {
 			console.error(error);
 			notify.push({ message: error.message, color: 'danger' });
+		} finally {
+			loading = false;
 		}
 	}
 
@@ -200,7 +205,7 @@
 				</span>
 				<span> System Endpoints {$statusSystemEndpointsStore.valid ? 'Ready' : 'Error'} </span>
 				<span class="icon is-small">
-					<i class="fas fa-angle-down" aria-hidden="true"></i>
+					<i class="fa-solid fa-angle-down" aria-hidden="true"></i>
 				</span>
 			</button>
 		</div>
@@ -237,7 +242,7 @@
 				</span>
 				<span> {$userStore?.user?.username}</span>
 				<span class="icon is-small">
-					<i class="fas fa-angle-down" aria-hidden="true"></i>
+					<i class="fa-solid fa-angle-down" aria-hidden="true"></i>
 				</span>
 			</button>
 		</div>
@@ -268,7 +273,8 @@
 				<div
 					class="dropdown-item"
 					onclick={() => {
-						location.reload();
+						userStore.set({});
+						onexit();
 					}}
 				>
 					<div class="icon-text">
@@ -284,19 +290,31 @@
 {/snippet}
 
 {#snippet select_app()}
-	<PredictiveInput
-		label="Application"
-		classLabel="is-small"
-		classInput="is-small"
-		bind:options
-		onselect={async (e) => {
-			if ($userStore) {
-				idapp = e.value;
-			} else {
-				notify.push({ message: 'You do not have authorization', color: 'warning' });
-			}
-		}}
-	/>
+	<div class="is-flex is-align-items-center" style="gap: 0.5rem;">
+		<PredictiveInput
+			label="Application"
+			classLabel="is-small"
+			classInput="is-small"
+			bind:options
+			onselect={async (e) => {
+				if ($userStore) {
+					// Limpiar stores de la app anterior antes de cargar la nueva
+					storeCacheSize.set({});
+					storeEndpointOnComplete.set({});
+					storeCountResponseStatusCode.set({});
+					storeEndpointOnStart.set({});
+					idapp = e.value;
+				} else {
+					notify.push({ message: 'You do not have authorization', color: 'warning' });
+				}
+			}}
+		/>
+		{#if loading}
+			<span class="icon is-small has-text-grey">
+				<i class="fa-solid fa-spinner fa-spin"></i>
+			</span>
+		{/if}
+	</div>
 {/snippet}
 
 <AppBase
@@ -306,24 +324,26 @@
 	topLeftNavBar={[select_app]}
 	topRightNavBar={[user]}
 >
-	{#if menu_item_selected == '/basic'}
-		<AppScreen
-			{idapp}
-			onsavedeploy={async () => {
-				await getListAppsInternal();
-			}}
-		></AppScreen>
-	{:else if menu_item_selected == '/appvars'}
-		<AppVars {idapp}></AppVars>
-	{:else if menu_item_selected == '/endpoints'}
-		<Endpoints {idapp}></Endpoints>
-	{:else if menu_item_selected == '/interval_tasks'}
-		<IntervalTasks {idapp}></IntervalTasks>
-	{:else if menu_item_selected == '/apikeys'}
-		<ApiKeys bind:idapp></ApiKeys>
-	{:else}
-		<DashBoardScreen {idapp}></DashBoardScreen>
-	{/if}</AppBase
+	{#key idapp}
+		{#if menu_item_selected == '/basic'}
+			<AppScreen
+				{idapp}
+				onsavedeploy={async () => {
+					await getListAppsInternal();
+				}}
+			></AppScreen>
+		{:else if menu_item_selected == '/appvars'}
+			<AppVars {idapp}></AppVars>
+		{:else if menu_item_selected == '/endpoints'}
+			<Endpoints {idapp}></Endpoints>
+		{:else if menu_item_selected == '/interval_tasks'}
+			<IntervalTasks {idapp}></IntervalTasks>
+		{:else if menu_item_selected == '/apikeys'}
+			<ApiKeys bind:idapp></ApiKeys>
+		{:else}
+			<DashBoardScreen {idapp}></DashBoardScreen>
+		{/if}
+	{/key}</AppBase
 >
 
 <DialogModal
