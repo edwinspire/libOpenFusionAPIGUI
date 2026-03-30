@@ -1,5 +1,5 @@
 import "clsx";
-import { a1 as attr_class, a2 as bind_props, a3 as ensure_array_like, a4 as stringify, e as escape_html, a5 as attr } from "../../chunks/index2.js";
+import { a1 as attr_class, a2 as bind_props, a3 as ensure_array_like, a4 as stringify, e as escape_html, a5 as attr, a6 as clsx } from "../../chunks/index2.js";
 import "@edwinspire/universal-fetch";
 import "events";
 import "prettier-plugin-sql";
@@ -64,20 +64,26 @@ function Notifications($$renderer, $$props) {
     $$renderer2.push(`<!--]--></div>`);
   });
 }
-const version = "1.1.77";
+const version = "1.2.1";
 function Login($$renderer, $$props) {
   $$renderer.component(($$renderer2) => {
     let username = "";
     let password = "";
-    let processing = { waiting: false };
+    let processing = { waiting: false, error: null };
+    let mounted = false;
     Modal($$renderer2, {
       show: true,
       children: ($$renderer3) => {
-        $$renderer3.push(`<div class="box"><div class="media t1 svelte-177ibf8"><div class="media-left"><figure class="image is-48x48"><img${attr("src", Logo)} alt="OpenFusionAPI"/></figure></div> <div class="media-content"><p class="title is-family-sans-serif">Open Fusion API</p></div></div> <form><div class="field"><p class="control has-icons-left has-icons-right"><input class="input" type="text" placeholder="Username"${attr("value", username)}/> <span class="icon is-small is-left"><i class="fa-solid fa-user"></i></span></p></div> <div class="field"><p class="control has-icons-left"><input class="input" type="password" placeholder="Password"${attr("value", password)}/> <span class="icon is-small is-left"><i class="fa-solid fa-lock"></i></span></p></div> <div class="field"><p class="control"><button type="submit"${attr_class("button is-success", void 0, { "is-loading": processing.waiting })}${attr("disabled", processing.waiting, true)}>Login</button></p> <div class="content is-small is-flex is-justify-content-flex-end">GUI Version: ${escape_html(version)}</div></div></form> `);
+        $$renderer3.push(`<div${attr_class("login-wrapper svelte-177ibf8", void 0, { "is-visible": mounted })}><div class="orb orb-1 svelte-177ibf8"></div> <div class="orb orb-2 svelte-177ibf8"></div> <div class="orb orb-3 svelte-177ibf8"></div> <div class="login-card box svelte-177ibf8"><div class="brand-header has-text-centered svelte-177ibf8"><div class="logo-ring svelte-177ibf8"><div class="logo-figure svelte-177ibf8"><img${attr("src", Logo)} alt="OpenFusionAPI" class="logo-img svelte-177ibf8"/></div></div> <h1 class="title is-4 mt-3 brand-title svelte-177ibf8">Open Fusion API</h1> <p class="subtitle is-6 brand-subtitle svelte-177ibf8"><span class="tag is-dark is-rounded svelte-177ibf8"><span class="icon is-small svelte-177ibf8"><i class="fa-solid fa-server svelte-177ibf8"></i></span> <span class="svelte-177ibf8">MCP Server</span></span></p></div> <div class="divider-line svelte-177ibf8"></div> <form class="login-form svelte-177ibf8"><div class="field svelte-177ibf8"><label class="label has-text-grey-light is-small svelte-177ibf8">Username</label> <p class="control has-icons-left svelte-177ibf8"><input${attr_class("input is-rounded svelte-177ibf8", void 0, { "is-danger": processing.error })} type="text" placeholder="Enter your username"${attr("value", username)} autocomplete="username"/> <span class="icon is-small is-left svelte-177ibf8"><i class="fa-solid fa-user svelte-177ibf8"></i></span></p></div> <div class="field svelte-177ibf8"><label class="label has-text-grey-light is-small svelte-177ibf8">Password</label> <p class="control has-icons-left has-icons-right svelte-177ibf8"><input${attr_class("input is-rounded svelte-177ibf8", void 0, { "is-danger": processing.error })}${attr("type", "password")} placeholder="Enter your password"${attr("value", password)} autocomplete="current-password"/> <span class="icon is-small is-left svelte-177ibf8"><i class="fa-solid fa-lock svelte-177ibf8"></i></span> <span class="icon is-small is-right is-clickable eye-icon svelte-177ibf8"${attr("title", "Show password")}><i${attr_class(clsx("fa-solid fa-eye"), "svelte-177ibf8")}></i></span></p></div> `);
         {
           $$renderer3.push("<!--[!-->");
         }
-        $$renderer3.push(`<!--]--></div>`);
+        $$renderer3.push(`<!--]--> <div class="field mt-4 svelte-177ibf8"><p class="control svelte-177ibf8"><button type="submit"${attr_class("button is-fullwidth is-rounded login-btn svelte-177ibf8", void 0, { "is-loading": processing.waiting })}${attr("disabled", !username, true)}>`);
+        {
+          $$renderer3.push("<!--[-->");
+          $$renderer3.push(`<span class="icon svelte-177ibf8"><i class="fa-solid fa-right-to-bracket svelte-177ibf8"></i></span> <span class="svelte-177ibf8">Sign In</span>`);
+        }
+        $$renderer3.push(`<!--]--></button></p></div></form> <p class="version-tag has-text-centered has-text-grey svelte-177ibf8"><span class="icon is-small svelte-177ibf8"><i class="fa-solid fa-code-branch svelte-177ibf8"></i></span> v${escape_html(version)}</p></div></div>`);
       },
       $$slots: { default: true }
     });
