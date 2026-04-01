@@ -182,7 +182,7 @@
 				}
 			}}
 			onnewrow={() => {
-				if (idapp && idapp > 0) {
+				if (idapp && idapp.length > 5) {
 					idendpoint_selected = 0;
 					showEndpointEdit = true;
 					EndpointEditorWidget.setData({ app: app });

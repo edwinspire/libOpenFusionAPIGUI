@@ -31,7 +31,7 @@ export const url_paths = {
 	getHandler: host + '/api/system/system/handler/0.01/prd',
 	Methods: host + '/api/system/system/method/0.01/prd',
 	apiDoc: host + '/api/system/api/handler/documentation/prd',
-	getlistFunctionsVarsJS: host + '/api/system/system/handler/js/funtions/prd',
+	getlistFunctionsVarsJS: host + '/api/system/system/handler/js/functions/prd',
 	getLogs: host + '/api/system/system/log/prd',
 	getListIntervalTasksByIdApp: host + '/api/system/interval_tasks/byidapp/prd',
 	upsertIntervalTasksByIdTask: host + '/api/system/interval_tasks/upsert/prd',
