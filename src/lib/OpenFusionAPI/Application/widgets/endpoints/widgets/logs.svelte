@@ -1,6 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
-	import { Tab, Table } from '@edwinspire/svelte-components';
+	import { Tab, Table, ColumnTypes } from '@edwinspire/svelte-components';
 	import { url_paths } from '../../../utils/paths.js';
 	import LogLevelSelect from './loglevel_select.svelte';
 	import { DateTime } from 'luxon';
@@ -25,6 +25,7 @@
 	let trace_id = $state('');
 
 	let columns_trace = $state({
+		
 		response_data: { hidden: false },
 		request_data: { hidden: true },
 		idapp: { hidden: true },
@@ -33,6 +34,26 @@
 		id: { hidden: true }
 	});
 
+	let columns_logs = $state({
+		trace_id: { hidden: false },
+		response_data: {
+			hidden: false,
+			decorator: { component: ColumnTypes.JSON }
+		},
+		req_headers: {
+			hidden: false,
+			decorator: { component: ColumnTypes.JSON }
+		},
+		res_headers: {
+			hidden: false,
+			decorator: { component: ColumnTypes.JSON }
+		},
+		request_data: { hidden: true },
+		idapp: { hidden: true },
+		idendpoint: { hidden: true },
+		idlog: { hidden: true },
+		id: { hidden: true }
+	});
 	// Obtener la fecha actual en la zona horaria local
 	const now = DateTime.local();
 	// Formatear la fecha actual en el formato deseado: "yyyy-MM-dd'T'HH:mm+ZZ"
@@ -136,172 +157,186 @@
 
 {#snippet tab_param()}
 	<div class="content is-small">
-		<table class="table is-bordered is-striped is-hoverable">
+		<table class="table is-fullwidth is-hoverable" style="background-color: transparent;">
 			<thead>
 				<tr>
-					<th><span>Log Level</span> </th>
-					<th><span>HTTP Status Codes</span></th>
-					<th><span>Description</span></th>
+					<th style="width: 30%;">Log Level</th>
+					<th style="width: 15%; text-align: center;">Status Codes</th>
+					<th>Description</th>
 				</tr>
 			</thead>
-
 			<tbody>
-				<tr class="">
-					<td
-						>{#if log.status_info >= 0}
+				<!-- 1XX -->
+				<tr>
+					<td class="is-vcentered">
+						{#if log.status_info >= 0}
 							<LogLevelSelect bind:level={log.status_info}></LogLevelSelect>
-						{/if}</td
-					>
-					<td><div>1XX</div></td>
+						{/if}
+					</td>
+					<td class="is-vcentered has-text-centered">
+						<span class="tag is-info is-light has-text-weight-bold">
+							<span class="icon is-small mr-1"><i class="fa-solid fa-circle-info"></i></span>
+							1XX
+						</span>
+					</td>
 					<td>
 						<details>
-							<summary>Informational</summary>
-							<div>They indicate that the request has been received and is being processed.</div>
-							<div>
-								<ul>
-									<li>100 (Continue)</li>
-									<li>101 (Switching Protocols)</li>
-									<li>102 (Processing)</li>
-								</ul>
+							<summary class="has-text-weight-bold is-clickable mb-2">Informational</summary>
+							<p class="has-text-grey mb-3">They indicate that the request has been received and is being processed.</p>
+							<div class="tags">
+								<span class="tag is-info is-light">100 Continue</span>
+								<span class="tag is-info is-light">101 Switching Protocols</span>
+								<span class="tag is-info is-light">102 Processing</span>
 							</div>
 						</details>
 					</td>
 				</tr>
 
+				<!-- 2XX -->
 				<tr>
-					<td
-						>{#if log.status_success >= 0}
+					<td class="is-vcentered">
+						{#if log.status_success >= 0}
 							<LogLevelSelect bind:level={log.status_success}></LogLevelSelect>
 						{/if}
 					</td>
-					<td><div>2XX</div></td>
+					<td class="is-vcentered has-text-centered">
+						<span class="tag is-success is-light has-text-weight-bold">
+							<span class="icon is-small mr-1"><i class="fa-solid fa-circle-check"></i></span>
+							2XX
+						</span>
+					</td>
 					<td>
 						<details>
-							<summary>Success</summary>
-							<div>The request has been received, understood and processed correctly.</div>
-							<div>
-								<ul>
-									<li>200 (OK)</li>
-									<li>201 (Created)</li>
-									<li>202 (Accepted)</li>
-									<li>203 (Non-Authoritative Information)</li>
-									<li>204 (No Content)</li>
-									<li>205 (Reset Content)</li>
-									<li>206 (Partial Content)</li>
-									<li>207 (Multi-Status)</li>
-									<li>208 (Already Reported)</li>
-									<li>226 (IM Used)</li>
-								</ul>
+							<summary class="has-text-weight-bold is-clickable mb-2">Success</summary>
+							<p class="has-text-grey mb-3">The request has been received, understood and processed correctly.</p>
+							<div class="tags">
+								<span class="tag is-success is-light">200 OK</span>
+								<span class="tag is-success is-light">201 Created</span>
+								<span class="tag is-success is-light">202 Accepted</span>
+								<span class="tag is-success is-light">203 Non-Authoritative</span>
+								<span class="tag is-success is-light">204 No Content</span>
+								<span class="tag is-success is-light">205 Reset Content</span>
+								<span class="tag is-success is-light">206 Partial Content</span>
+								<span class="tag is-success is-light">207 Multi-Status</span>
+								<span class="tag is-success is-light">208 Already Reported</span>
+								<span class="tag is-success is-light">226 IM Used</span>
 							</div>
 						</details>
 					</td>
 				</tr>
 
+				<!-- 3XX -->
 				<tr>
-					<td
-						>{#if log.status_redirect >= 0}
+					<td class="is-vcentered">
+						{#if log.status_redirect >= 0}
 							<LogLevelSelect bind:level={log.status_redirect}></LogLevelSelect>
 						{/if}
 					</td>
-					<td><div>3XX</div></td>
+					<td class="is-vcentered has-text-centered">
+						<span class="tag is-link is-light has-text-weight-bold">
+							<span class="icon is-small mr-1"><i class="fa-solid fa-share"></i></span>
+							3XX
+						</span>
+					</td>
 					<td>
 						<details>
-							<summary>Redirection</summary>
-
-							<div>The customer must take additional actions to complete the request.</div>
-
-							<div>
-								<ul>
-									<li>300 (Multiple Choices)</li>
-									<li>301 (Moved Permanently)</li>
-									<li>302 (Found)</li>
-									<li>303 (See Other)</li>
-									<li>304 (Not Modified)</li>
-									<li>305 (Use Proxy)</li>
-									<li>307 (Temporary Redirect)</li>
-									<li>308 (Permanent Redirect)</li>
-								</ul>
+							<summary class="has-text-weight-bold is-clickable mb-2">Redirection</summary>
+							<p class="has-text-grey mb-3">The customer must take additional actions to complete the request.</p>
+							<div class="tags">
+								<span class="tag is-link is-light">300 Multiple Choices</span>
+								<span class="tag is-link is-light">301 Moved Permanently</span>
+								<span class="tag is-link is-light">302 Found</span>
+								<span class="tag is-link is-light">303 See Other</span>
+								<span class="tag is-link is-light">304 Not Modified</span>
+								<span class="tag is-link is-light">305 Use Proxy</span>
+								<span class="tag is-link is-light">307 Temporary Redirect</span>
+								<span class="tag is-link is-light">308 Permanent Redirect</span>
 							</div>
 						</details>
 					</td>
 				</tr>
 
-				<tr class="">
-					<td
-						>{#if log.status_client_error >= 0}
+				<!-- 4XX -->
+				<tr>
+					<td class="is-vcentered">
+						{#if log.status_client_error >= 0}
 							<LogLevelSelect bind:level={log.status_client_error}></LogLevelSelect>
 						{/if}
 					</td>
-					<td><div>4XX</div></td>
+					<td class="is-vcentered has-text-centered">
+						<span class="tag is-warning is-light has-text-weight-bold">
+							<span class="icon is-small mr-1"><i class="fa-solid fa-triangle-exclamation"></i></span>
+							4XX
+						</span>
+					</td>
 					<td>
 						<details>
-							<summary>Client error</summary>
-							<div>The request contains an error or cannot be processed.</div>
-							<div>
-								<ul>
-									<li>400 (Bad Request)</li>
-									<li>401 (Unauthorized)</li>
-									<li>402 (Payment Required)</li>
-									<li>403 (Forbidden)</li>
-									<li>404 (Not Found)</li>
-									<li>405 (Method Not Allowed)</li>
-									<li>406 (Not Acceptable)</li>
-									<li>407 (Proxy Authentication Required)</li>
-									<li>408 (Request Timeout)</li>
-									<li>409 (Conflict)</li>
-									<li>410 (Gone)</li>
-									<li>411 (Length Required)</li>
-									<li>412 (Precondition Failed)</li>
-									<li>413 (Payload Too Large)</li>
-									<li>414 (URI Too Long)</li>
-									<li>415 (Unsupported Media Type)</li>
-									<li>416 (Range Not Satisfiable)</li>
-									<li>417 (Expectation Failed)</li>
-									<li>418 (I'm a teapot)</li>
-									<li>421 (Misdirected Request)</li>
-									<li>422 (Unprocessable Entity)</li>
-									<li>423 (Locked)</li>
-									<li>424 (Failed Dependency)</li>
-									<li>425 (Too Early)</li>
-									<li>426 (Upgrade Required)</li>
-									<li>428 (Precondition Required)</li>
-									<li>429 (Too Many Requests)</li>
-									<li>431 (Request Header Fields Too Large)</li>
-									<li>451 (Unavailable For Legal Reasons)</li>
-								</ul>
+							<summary class="has-text-weight-bold is-clickable mb-2">Client error</summary>
+							<p class="has-text-grey mb-3">The request contains an error or cannot be processed.</p>
+							<div class="tags">
+								<span class="tag is-warning is-light">400 Bad Request</span>
+								<span class="tag is-warning is-light">401 Unauthorized</span>
+								<span class="tag is-warning is-light">402 Payment Required</span>
+								<span class="tag is-warning is-light">403 Forbidden</span>
+								<span class="tag is-warning is-light">404 Not Found</span>
+								<span class="tag is-warning is-light">405 Method Not Allowed</span>
+								<span class="tag is-warning is-light">406 Not Acceptable</span>
+								<span class="tag is-warning is-light">407 Proxy Auth Required</span>
+								<span class="tag is-warning is-light">408 Request Timeout</span>
+								<span class="tag is-warning is-light">409 Conflict</span>
+								<span class="tag is-warning is-light">410 Gone</span>
+								<span class="tag is-warning is-light">411 Length Required</span>
+								<span class="tag is-warning is-light">412 Precondition Failed</span>
+								<span class="tag is-warning is-light">413 Payload Too Large</span>
+								<span class="tag is-warning is-light">414 URI Too Long</span>
+								<span class="tag is-warning is-light">415 Unsupported Media Type</span>
+								<span class="tag is-warning is-light">416 Range Not Satisfiable</span>
+								<span class="tag is-warning is-light">417 Expectation Failed</span>
+								<span class="tag is-warning is-light">418 I'm a teapot</span>
+								<span class="tag is-warning is-light">421 Misdirected Request</span>
+								<span class="tag is-warning is-light">422 Unprocessable Entity</span>
+								<span class="tag is-warning is-light">423 Locked</span>
+								<span class="tag is-warning is-light">424 Failed Dependency</span>
+								<span class="tag is-warning is-light">425 Too Early</span>
+								<span class="tag is-warning is-light">426 Upgrade Required</span>
+								<span class="tag is-warning is-light">428 Precondition Required</span>
+								<span class="tag is-warning is-light">429 Too Many Requests</span>
+								<span class="tag is-warning is-light">431 Request Header Fields Too Large</span>
+								<span class="tag is-warning is-light">451 Unavailable For Legal Reasons</span>
 							</div>
 						</details>
 					</td>
 				</tr>
 
-				<tr class="">
-					<td>
+				<!-- 5XX -->
+				<tr>
+					<td class="is-vcentered">
 						{#if log.status_server_error >= 0}
 							<LogLevelSelect bind:level={log.status_server_error}></LogLevelSelect>
 						{/if}
 					</td>
-					<td>
-						<div>5XX</div>
+					<td class="is-vcentered has-text-centered">
+						<span class="tag is-danger is-light has-text-weight-bold">
+							<span class="icon is-small mr-1"><i class="fa-solid fa-server"></i></span>
+							5XX
+						</span>
 					</td>
 					<td>
 						<details>
-							<summary>Server error</summary>
-							<div>The server was unable to fulfill an apparently valid request.</div>
-
-							<div>
-								<ul>
-									<li>500 (Internal Server Error)</li>
-									<li>501 (Not Implemented)</li>
-									<li>502 (Bad Gateway)</li>
-									<li>503 (Service Unavailable)</li>
-									<li>504 (Gateway Timeout)</li>
-									<li>505 (HTTP Version Not Supported)</li>
-									<li>506 (Variant Also Negotiates)</li>
-									<li>507 (Insufficient Storage)</li>
-									<li>508 (Loop Detected)</li>
-									<li>510 (Not Extended)</li>
-									<li>511 (Network Authentication Required)</li>
-								</ul>
+							<summary class="has-text-weight-bold is-clickable mb-2">Server error</summary>
+							<p class="has-text-grey mb-3">The server was unable to fulfill an apparently valid request.</p>
+							<div class="tags">
+								<span class="tag is-danger is-light">500 Internal Server Error</span>
+								<span class="tag is-danger is-light">501 Not Implemented</span>
+								<span class="tag is-danger is-light">502 Bad Gateway</span>
+								<span class="tag is-danger is-light">503 Service Unavailable</span>
+								<span class="tag is-danger is-light">504 Gateway Timeout</span>
+								<span class="tag is-danger is-light">505 HTTP Version Not Supported</span>
+								<span class="tag is-danger is-light">506 Variant Also Negotiates</span>
+								<span class="tag is-danger is-light">507 Insufficient Storage</span>
+								<span class="tag is-danger is-light">508 Loop Detected</span>
+								<span class="tag is-danger is-light">510 Not Extended</span>
+								<span class="tag is-danger is-light">511 Network Auth Required</span>
 							</div>
 						</details>
 					</td>
@@ -312,7 +347,7 @@
 {/snippet}
 
 {#snippet tab_logs()}
-	<Table bind:RawDataTable={dataLogs} right_items={[rt1, rt2, rt3]} onsearch={fetchLogs}>
+	<Table bind:columns={columns_logs} bind:RawDataTable={dataLogs} right_items={[rt1, rt2, rt3]} onsearch={fetchLogs}>
 		{#snippet rt1()}
 			<div class="field has-addons has-addons-centered">
 				<span class="control">
@@ -381,7 +416,13 @@
 						bind:value={trace_id}
 					/>
 				</span>
-
+				<span class="control">
+					<button class="button is-small" onclick={fetchTraceLogs}>
+						<span class="icon is-small">
+							<i class="fa-solid fa-magnifying-glass"></i>
+						</span>
+					</button>
+				</span>
 			</div>
 		{/snippet}
 		

@@ -16,7 +16,8 @@
 		getAppDocumentation,
 		GetAppVars,
 		restoreSystemEndpoints,
-		getLogSummaryByAppStatusCode
+		getLogSummaryByAppStatusCode,
+		getServerAPILastVersion
 	} from '$lib/OpenFusionAPI/Application/utils/request.js';
 	import EndPointEditor from './widgets/editor.svelte';
 
@@ -28,6 +29,7 @@
 	let showEndpointEdit = $state(false);
 	let TableSelectionType = $state(0);
 	let serverAPIVersion = $state('Loading...');
+	let serverAPILastVersion = $state('');
 	let serverDDBB = $state('?');
 	let TableObject = $state();
 	let idendpoint_selected = $state();
@@ -123,6 +125,15 @@
 		} catch (error) {
 			console.error(error);
 		}
+
+		try {
+			let last_version_res = await getServerAPILastVersion($userStore.token);
+			if (last_version_res) {
+				serverAPILastVersion = last_version_res.libOpenFusionAPI?.version || last_version_res.version || '';
+			}
+		} catch (error) {
+			console.error(error);
+		}
 	}
 
 	async function GetEndpoints() {
@@ -203,12 +214,26 @@
 						<span class="tag is-success">{serverAPIVersion}</span>
 					</div>
 				</div>
+				
 				<div class="control">
 					<div class="tags has-addons">
 						<span class="tag is-dark">DataBase</span>
 						<span class="tag is-link">{serverDDBB}</span>
 					</div>
 				</div>
+				{#if serverAPIVersion !== serverAPILastVersion && serverAPILastVersion !== ''}
+					<div class="control">
+						<div class="tags has-addons">
+							<span class="tag is-dark">
+								<span class="icon is-small mr-1 has-text-warning">
+									<i class="fa-solid fa-bell fa-shake"></i>
+								</span>
+								Update
+							</span>
+							<span class="tag is-warning">{serverAPILastVersion}</span>
+						</div>
+					</div>
+				{/if}
 			{/snippet}
 
 			{#snippet rt1()}

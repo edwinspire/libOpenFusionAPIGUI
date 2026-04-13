@@ -6,6 +6,7 @@ export namespace url_paths {
     let wsServerEvents: string;
     let environment: string;
     let serverAPIVersion: string;
+    let serverAPIVersionLast: string;
     let clearCache: string;
     let login: string;
     let getHandler: string;

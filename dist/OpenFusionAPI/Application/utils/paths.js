@@ -26,6 +26,7 @@ export const url_paths = {
 	wsServerEvents: host + '/ws/system/websocket/server/prd',
 	environment: host + '/api/system/system/environment/prd',
 	serverAPIVersion: host + '/server/version',
+	serverAPIVersionLast: host + '/api/system/libopenfusionapi/version/last/prd',
 	clearCache: host + '/api/system/cache/clear/prd',
 	login: host + '/api/system/system/login/prd',
 	getHandler: host + '/api/system/system/handler/0.01/prd',

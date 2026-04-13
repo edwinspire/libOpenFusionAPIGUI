@@ -25,6 +25,7 @@
 		GetAPIClients,
 		saveAPIClient
 	} from '$lib/OpenFusionAPI/Application/utils/request.js';
+	import CellToken from './cellToken.svelte';
 
 	let { idapp = $bindable(), onchange = () => {} } = $props();
 
@@ -49,13 +50,13 @@
 	let new_user = $state({ startAt: todayISO(), endAt: nextMonthISO() });
 	let optionsClients = $state([{ name: 'dsdf', value: 'dsdf' }]);
 	let show_dialog_new_user = $state(false);
-	let DataTableTasks = $state([]);
+	let DataTableAPIs = $state([]);
 	let columns = $state({
-		idtask: { hidden: true },
-		iduser: { hidden: true },
+		idkey: { hidden: true },
+		idclient: { hidden: true },
 		idapp: { hidden: true },
-		task_enabled: {
-			label: 'Enabled Task',
+		enabled: {
+			label: 'Enabled',
 			decorator: {
 				component: ColumnTypes.Boolean,
 				props: {
@@ -65,27 +66,13 @@
 				}
 			}
 		},
-		endpoint_enabled: {
-			label: 'Enabled Endpoint',
-			decorator: {
-				component: ColumnTypes.Boolean,
-				props: {
-					ontrue: { label: 'Enabled' },
-					onfalse: { label: 'Unabled' },
-					editInline: false
-				}
-			}
-		},
-		method: { label: 'method', decorator: { component: CellMethod } },
-		url: { label: 'url' },
-		interval: {},
-		datestart: {
+		startAt: {
 			label: 'datestart',
 			decorator: {
 				component: ColumnTypes.DateTime
 			}
 		},
-		dateend: {
+		endAt: {
 			label: 'dateend',
 			decorator: {
 				component: ColumnTypes.DateTime
@@ -97,13 +84,12 @@
 				component: ColumnTypes.DateTime
 			}
 		},
-		next_run: {
-			label: 'next_run',
+		token: {
+			label: 'Token',
 			decorator: {
-				component: ColumnTypes.DateTime
+				component: CellToken
 			}
 		},
-
 		params: {},
 		exec_time_limit: {},
 		failed_attempts: {},
@@ -127,10 +113,10 @@
 
 			if (Array.isArray(jresp)) {
 				//console.log(jresp);
-				DataTableTasks = jresp;
-				//	console.log('DataTableTasks', DataTableTasks);
+				DataTableAPIs = jresp;
+				//	console.log('DataTableAPIs', DataTableAPIs);
 			} else {
-				DataTableTasks = [];
+				DataTableAPIs = [];
 			}
 
 			let clients = await GetAPIClients();
@@ -142,7 +128,7 @@
 						value: c.idclient
 					};
 				});
-				//	console.log('DataTableTasks', DataTableTasks);
+				//	console.log('DataTableAPIs', DataTableAPIs);
 			} else {
 				optionsClients = [];
 			}
@@ -199,7 +185,7 @@
 </script>
 
 <Table
-	bind:RawDataTable={DataTableTasks}
+	bind:RawDataTable={DataTableAPIs}
 	bind:columns
 	left_items={[lt01]}
 	showEditRow={true}

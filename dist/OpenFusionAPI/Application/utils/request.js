@@ -331,6 +331,15 @@ export const getServerAPIVersion = async (token) => {
 	return version_res;
 };
 
+export const getServerAPILastVersion = async (token) => {
+	let uf = new uFetch();
+
+	let version_req = checkStatus(await uf.GET({ url: url_paths.serverAPIVersionLast }));
+	let version_res = await version_req.json();
+
+	return version_res;
+};
+
 export const EndpointSave = async (endpoint, token) => {
 	let uf = new uFetch();
 	let req = checkStatus(await uf.POST({ url: url_paths.endpoint, data: endpoint }));
