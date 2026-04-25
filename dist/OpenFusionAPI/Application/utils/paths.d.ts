@@ -30,4 +30,5 @@ export namespace url_paths {
     let APIKeys: string;
     let APIClients: string;
     let APIClient: string;
+    let migrateEndpoints: string;
 }

@@ -1,6 +1,6 @@
 <script>
 	import { onMount, untrack } from 'svelte';
-	import { Table, Notifications } from '@edwinspire/svelte-components';
+	import { Table, Notifications, Modal  } from '@edwinspire/svelte-components';
 	import { isNewApp } from '$lib/OpenFusionAPI/Application/utils/utils.js';
 	import {
 		userStore,
@@ -17,7 +17,8 @@
 		GetAppVars,
 		restoreSystemEndpoints,
 		getLogSummaryByAppStatusCode,
-		getServerAPILastVersion
+		getServerAPILastVersion,
+		migrateEndpoints
 	} from '$lib/OpenFusionAPI/Application/utils/request.js';
 	import EndPointEditor from './widgets/editor.svelte';
 
@@ -26,6 +27,10 @@
 	let notify = new Notifications();
 	let EndpointEditorWidget = $state();
 	let app = $state({ app: '', enabled: false, description: '' });
+	let showMigrateModal = $state(false);
+	let migrateTargetEnv = $state('');
+	let migrateConfirmCheck = $state(false);
+	let selectedEndpointsForMigration = $state([]);
 	let showEndpointEdit = $state(false);
 	let TableSelectionType = $state(0);
 	let serverAPIVersion = $state('Loading...');
@@ -112,6 +117,79 @@
 		}
 	}
 
+	function openMigrateModal() {
+		let idendpoints = TableObject.GetSelectedRows().map((u) => {
+			return u.idendpoint;
+		});
+
+		if (idendpoints && Array.isArray(idendpoints) && idendpoints.length > 0) {
+			selectedEndpointsForMigration = idendpoints;
+			migrateTargetEnv = '';
+			migrateConfirmCheck = false;
+			showMigrateModal = true;
+		} else {
+			TableSelectionType = 2;
+			notify.push({ message: 'You must select at least one record.', color: 'warning' });
+		}
+	}
+
+	async function confirmMigration() {
+		if (!migrateTargetEnv) {
+			notify.push({ message: 'Please select a target environment.', color: 'warning' });
+			return;
+		}
+		if (!migrateConfirmCheck) {
+			notify.push({ message: 'Please confirm the migration by checking the box.', color: 'warning' });
+			return;
+		}
+
+		try {
+			let payload = selectedEndpointsForMigration.map((id) => {
+				return { idendpoint: id, target_env: migrateTargetEnv };
+			});
+
+			let migrate_data = await migrateEndpoints(payload);
+			
+			if (Array.isArray(migrate_data)) {
+				let successCount = migrate_data.filter(item => item.status === 'success').length;
+				let ignoredCount = migrate_data.filter(item => item.status === 'ignored').length;
+				let errorCount = migrate_data.length - successCount - ignoredCount;
+
+				if (errorCount === 0) {
+					if (successCount > 0 && ignoredCount === 0) {
+						notify.push({ message: `Successfully migrated ${successCount} endpoints.`, color: 'success' });
+					} else if (successCount > 0 && ignoredCount > 0) {
+						notify.push({ message: `Successfully migrated ${successCount} endpoints. (${ignoredCount} already existed in target env).`, color: 'success' });
+					} else if (successCount === 0 && ignoredCount > 0) {
+						notify.push({ message: `All ${ignoredCount} selected endpoints are already in the target environment.`, color: 'info' });
+					} else {
+						notify.push({ message: 'No endpoints were processed.', color: 'info' });
+					}
+				} else {
+					if (successCount > 0 || ignoredCount > 0) {
+						notify.push({ message: `Migrated ${successCount} successfully, ${ignoredCount} ignored, but ${errorCount} failed.`, color: 'warning' });
+					} else {
+						notify.push({ message: `Failed to migrate ${errorCount} endpoints.`, color: 'danger' });
+					}
+				}
+
+				if (successCount > 0 || ignoredCount > 0) {
+					showMigrateModal = false;
+					// Force uncheck the selection type to clear the UI state
+					TableSelectionType = 0;
+					// Re-enable multiple selection if needed
+					setTimeout(() => {
+						TableSelectionType = 2;
+					}, 100);
+				}
+			} else {
+				notify.push({ message: 'Unexpected response from server.', color: 'danger' });
+			}
+		} catch (error) {
+			notify.push({ message: error.message, color: 'danger' });
+		}
+	}
+
 	async function getServerAPIVer() {
 		try {
 			let version_res = await getServerAPIVersion($userStore.token);
@@ -184,7 +262,7 @@
 			bind:selectionType={TableSelectionType}
 			bind:this={TableObject}
 			left_items={[lt01]}
-			right_items={[rt2, rt1]}
+			right_items={[rt3, rt2, rt1]}
 			ondeleterow={(data) => {
 				if (confirm('Do you want to delete the endpoints selected? - NO IMPLEMENTED')) {
 					app.endpoints = app.endpoints.filter((item) => {
@@ -237,8 +315,8 @@
 			{/snippet}
 
 			{#snippet rt1()}
-				<span>
-					<button class="button is-small" onclick={clearcacheSelected}>
+				<span >
+					<button class="button is-small" onclick={clearcacheSelected} title="Clear Cache">
 						<span class="icon is-small">
 							<i class="fa-solid fa-eraser"></i>
 						</span>
@@ -248,11 +326,21 @@
 			{/snippet}
 			{#snippet rt2()}
 				<span>
-					<button class="button is-small" onclick={exportAppDocumentation}>
+					<button title="Generate Documentation" class="button is-small" onclick={exportAppDocumentation}>
 						<span class="icon is-small">
 							<i class="fa-solid fa-file-export"></i>
 						</span>
 						<span>Doc</span>
+					</button>
+				</span>
+			{/snippet}
+			{#snippet rt3()}
+				<span>
+					<button class="button is-small" onclick={openMigrateModal} title="Migrate selected endpoints to another environment">
+						<span class="icon is-small">
+							<i class="fa-solid fa-route"></i>
+						</span>
+						<span>Migrate</span>
 					</button>
 				</span>
 			{/snippet}
@@ -266,6 +354,58 @@
 		{/if}
 	</div>
 </div>
+
+<Modal bind:show={showMigrateModal} bind:showCloseButton={showMigrateModal}>
+	<div class="box">
+		<h3 class="title is-4">Migrate Endpoints</h3>
+		
+		<div class="content">
+			<p class="has-text-weight-bold">
+				You have selected {selectedEndpointsForMigration.length} endpoint{selectedEndpointsForMigration.length === 1 ? '' : 's'} for migration.
+			</p>
+			
+			<div class="field">
+				<label class="label">Target Environment</label>
+				<div class="control">
+					<div class="select is-fullwidth is-small">
+						<select bind:value={migrateTargetEnv}>
+							<option value="" disabled>Select an environment...</option>
+							<option value="qa">QA (Quality Assurance)</option>
+							<option value="dev">DEV (Development)</option>
+							<option value="prd">PRD (Production)</option>
+						</select>
+					</div>
+				</div>
+			</div>
+
+			<div class="notification is-warning is-light">
+				<span class="icon">
+					<i class="fa-solid fa-triangle-exclamation"></i>
+				</span>
+				<strong>Warning:</strong> This is a risky operation. The existing code in the target environment for the selected endpoints will be completely replaced. Please proceed with caution.
+			</div>
+
+			<div class="field">
+				<div class="control">
+					<label class="checkbox">
+						<input type="checkbox" bind:checked={migrateConfirmCheck}>
+						Are you sure you want to migrate the selected endpoints to the <strong>{migrateTargetEnv ? migrateTargetEnv.toUpperCase() : 'selected'}</strong> environment?
+					</label>
+				</div>
+			</div>
+		</div>
+		
+		<div class="buttons is-right mt-5">
+			<button class="button is-small" onclick={() => (showMigrateModal = false)}>Cancel</button>
+			<button class="button is-small is-primary" disabled={!migrateConfirmCheck || !migrateTargetEnv} onclick={confirmMigration}>
+				<span class="icon">
+					<i class="fa-solid fa-check"></i>
+				</span>
+				<span>Accept</span>
+			</button>
+		</div>
+	</div>
+</Modal>
 
 {#if idapp}
 	<EndPointEditor

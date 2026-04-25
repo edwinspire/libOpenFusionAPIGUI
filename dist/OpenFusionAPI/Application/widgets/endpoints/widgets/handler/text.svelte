@@ -1,6 +1,5 @@
 <script>
-	import { Tab, EditorCode } from '@edwinspire/svelte-components';
-	import SelectMimeType from '../../../common/Select.svelte';
+	import { Tab, EditorCode, PredictiveInput } from '@edwinspire/svelte-components';
 
 	let { endpoint = $bindable({}), onchange = () => {} } = $props();
 
@@ -99,10 +98,12 @@
 						<div class="field is-narendpoint">
 							<div class="control">
 								<div class="is-fullwidth">
-									<SelectMimeType
-										options={mimeTypes}
-										bind:option={mimeType}
-										onchange={(e) => {
+									<PredictiveInput
+										options={mimeTypes.map(m => ({...m, name: m.value}))}
+										bind:selectedValue={mimeType}
+										freeTyping={true}
+										label=""
+										onselect={() => {
 											fnOnChange();
 										}}
 									/>

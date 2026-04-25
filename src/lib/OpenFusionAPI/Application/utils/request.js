@@ -30,7 +30,7 @@ export const getEnvironmentList = async (token) => {
 	let environment_list = [];
 
 	try {
-		let env_list_resp = checkStatus(await uf.GET({ url: url_paths.environment }));
+		let env_list_resp = checkStatus(await uf.get({ url: url_paths.environment }));
 		environment_list = await env_list_resp.json();
 
 		if (!environment_list || !Array.isArray(environment_list)) {
@@ -46,7 +46,7 @@ export const GetApp = async (idapp, token) => {
 	if (idapp) {
 		let uf = new uFetch();
 
-		let request = checkStatus(await uf.GET({
+		let request = checkStatus(await uf.get({
 			url: url_paths.app,
 			data: { idapp: idapp }
 		}));
@@ -62,7 +62,7 @@ export const GetApp = async (idapp, token) => {
 export const LoginRequest = async (username, password) => {
 	let uf = new uFetch();
 	uf.SetBasicAuthorization(username, password);
-	let user = await uf.POST({
+	let user = await uf.post({
 		url: url_paths.login
 	});
 	let data = await user.json();
@@ -73,7 +73,7 @@ export const GetServerAPIVersion = async () => {
 	// Lógica de autenticación aquí
 	let uf = new uFetch();
 
-	let version_req = await uf.GET({ url: url_paths.serverAPIVersion });
+	let version_req = await uf.get({ url: url_paths.serverAPIVersion });
 	let version_res = await version_req.json();
 
 	return version_res;
@@ -83,7 +83,7 @@ export const GetAppBackup = async (idapp, token) => {
 	if (idapp) {
 		let uf = new uFetch();
 
-		let request = checkStatus(await uf.GET({
+		let request = checkStatus(await uf.get({
 			url: url_paths.appBackup,
 			data: { idapp: idapp }
 		}));
@@ -100,7 +100,7 @@ export const RestoreAppBackup = async (app) => {
 	if (app) {
 		let uf = new uFetch();
 
-		let request = checkStatus(await uf.POST({
+		let request = checkStatus(await uf.post({
 			url: url_paths.appBackup,
 			data: app
 		}));
@@ -121,7 +121,7 @@ export const GetEndpointsByIdapp = async (idapp) => {
 			app.endpoints = [];
 			let uf = new uFetch();
 
-			let request = checkStatus(await uf.GET({
+			let request = checkStatus(await uf.get({
 				url: url_paths.endpoints_get_by_idapp,
 				data: { idapp: idapp }
 			}));
@@ -150,7 +150,7 @@ export const GetAPIKeys = async (idapp) => {
 	let apiKeys = [];
 	let uf = new uFetch(url_paths.APIKeys);
 
-	let request = checkStatus(await uf.GET({
+	let request = checkStatus(await uf.get({
 		data: { idapp: idapp }
 	}));
 
@@ -163,7 +163,7 @@ export const GetAPIClients = async (data) => {
 	let apiKeys = [];
 	let uf = new uFetch(url_paths.APIClients);
 
-	let request = checkStatus(await uf.GET({
+	let request = checkStatus(await uf.get({
 		data: data
 	}));
 
@@ -175,7 +175,7 @@ export const GetAPIClients = async (data) => {
 export const saveAPIClient = async (data) => {
 	let uf = new uFetch(url_paths.APIClient);
 
-	let request = checkStatus(await uf.POST({
+	let request = checkStatus(await uf.post({
 		data: data
 	}));
 
@@ -187,7 +187,7 @@ export const saveAPIClient = async (data) => {
 export const getListHandler = async (/** @type {string} */ token) => {
 	let f = new uFetch();
 
-	let fr = checkStatus(await f.GET({ url: url_paths.getHandler }));
+	let fr = checkStatus(await f.get({ url: url_paths.getHandler }));
 	let list = await fr.json();
 
 	if (list && Array.isArray(list)) {
@@ -209,7 +209,7 @@ export const getListHandler = async (/** @type {string} */ token) => {
 export const getListMethods = async (/** @type {string} */ token) => {
 	let f = new uFetch();
 
-	let fr = checkStatus(await f.GET({ url: url_paths.Methods }));
+	let fr = checkStatus(await f.get({ url: url_paths.Methods }));
 	let list = await fr.json();
 
 	if (list && Array.isArray(list)) {
@@ -230,7 +230,7 @@ export const getHandlerDocs = async (handler, token) => {
 		//	console.log(url_paths.apiDoc);
 		let uF = new uFetch();
 
-		let req = checkStatus(await uF.GET({ url: url_paths.apiDoc, data: { handler: handler } }));
+		let req = checkStatus(await uF.get({ url: url_paths.apiDoc, data: { handler: handler } }));
 		let res = await req.json();
 		//		console.log(res);
 		return res;
@@ -244,7 +244,7 @@ export const getListFunction = async (/** @type {string} */ appName) => {
 	let f = new uFetch();
 
 	try {
-		let fr = await f.GET({
+		let fr = await f.get({
 			url: url_paths.getfunctions,
 			data: { appName: appName, environment: 'dev' }
 		});
@@ -262,7 +262,7 @@ export const getListFunction = async (/** @type {string} */ appName) => {
 	}
 	////////////////////////////////////
 	try {
-		let fr = await f.GET({
+		let fr = await f.get({
 			url: url_paths.getfunctions,
 			data: { appName: appName, environment: 'qa' }
 		});
@@ -280,7 +280,7 @@ export const getListFunction = async (/** @type {string} */ appName) => {
 	}
 	////////////////////////////////////
 	try {
-		let fr = await f.GET({
+		let fr = await f.get({
 			url: url_paths.getfunctions,
 			data: { appName: appName, environment: 'prd' }
 		});
@@ -301,7 +301,7 @@ export const getListFunction = async (/** @type {string} */ appName) => {
 export const clearCache = async (/** @type {string} */ token, urls_clear) => {
 	let uf = new uFetch();
 
-	let get_list_clear = checkStatus(await uf.POST({
+	let get_list_clear = checkStatus(await uf.post({
 		url: url_paths.clearCache,
 		data: urls_clear
 	}));
@@ -313,7 +313,7 @@ export const clearCache = async (/** @type {string} */ token, urls_clear) => {
 export const getAppDocumentation = async (token, idapp, idendpoints) => {
 	let uf = new uFetch();
 
-	let get_doc = checkStatus(await uf.POST({
+	let get_doc = checkStatus(await uf.post({
 		url: url_paths.appDocumentation,
 		data: { idapp: idapp, endpoints: idendpoints }
 	}));
@@ -322,10 +322,22 @@ export const getAppDocumentation = async (token, idapp, idendpoints) => {
 	return result;
 };
 
+export const migrateEndpoints = async (data) => {
+	let uf = new uFetch();
+
+	let request = checkStatus(await uf.post({
+		url: url_paths.migrateEndpoints,
+		data: data
+	}));
+
+	let response = await request.json();
+	return response;
+};
+
 export const getServerAPIVersion = async (token) => {
 	let uf = new uFetch();
 
-	let version_req = checkStatus(await uf.GET({ url: url_paths.serverAPIVersion }));
+	let version_req = checkStatus(await uf.get({ url: url_paths.serverAPIVersion }));
 	let version_res = await version_req.json();
 
 	return version_res;
@@ -334,7 +346,7 @@ export const getServerAPIVersion = async (token) => {
 export const getServerAPILastVersion = async (token) => {
 	let uf = new uFetch();
 
-	let version_req = checkStatus(await uf.GET({ url: url_paths.serverAPIVersionLast }));
+	let version_req = checkStatus(await uf.get({ url: url_paths.serverAPIVersionLast }));
 	let version_res = await version_req.json();
 
 	return version_res;
@@ -342,7 +354,7 @@ export const getServerAPILastVersion = async (token) => {
 
 export const EndpointSave = async (endpoint, token) => {
 	let uf = new uFetch();
-	let req = checkStatus(await uf.POST({ url: url_paths.endpoint, data: endpoint }));
+	let req = checkStatus(await uf.post({ url: url_paths.endpoint, data: endpoint }));
 	let es = await req.json();
 	return es;
 };
@@ -351,7 +363,7 @@ export const getLogsRecordsPerMinute = async (options, token) => {
 	let uf = new uFetch();
 
 	if (options) {
-		let get_list_metrics = checkStatus(await uf.GET({
+		let get_list_metrics = checkStatus(await uf.get({
 			url: url_paths.getLogsRecordsPerMinute,
 			data: options
 		}));
@@ -364,7 +376,7 @@ export const getLogsRecordsPerMinute = async (options, token) => {
 export const GetAppVars = async (idapp, setStoreListAppVars = false) => {
 	let uf = new uFetch();
 
-	let req = checkStatus(await uf.GET({
+	let req = checkStatus(await uf.get({
 		url: url_paths.appvarsbyidapp,
 		data: { idapp: idapp }
 	}));
@@ -383,7 +395,7 @@ export const UpsertAppVar = async (data, token) => {
 	if (data) {
 		let uf = new uFetch();
 
-		let request = checkStatus(await uf.POST({
+		let request = checkStatus(await uf.post({
 			url: url_paths.appvar,
 			data: data
 		}));
@@ -416,7 +428,7 @@ export const DeleteAppVar = async (idvar, token) => {
 export const getListApps = async () => {
 	let uf = new uFetch();
 
-	let apps_res = checkStatus(await uf.GET({ url: url_paths.apps_get_list }));
+	let apps_res = checkStatus(await uf.get({ url: url_paths.apps_get_list }));
 	let apps = await apps_res.json();
 	return apps;
 };
@@ -424,7 +436,7 @@ export const getListApps = async () => {
 export const changeUserPassword = async (data, token) => {
 	let uf = new uFetch();
 
-	let apps_res = checkStatus(await uf.POST({ url: url_paths.changeUserPassword, data: data }));
+	let apps_res = checkStatus(await uf.post({ url: url_paths.changeUserPassword, data: data }));
 	let apps = await apps_res.json();
 	return apps;
 };
@@ -443,7 +455,7 @@ export const restoreSystemEndpoints = async (restore) => {
 export const getLogSummaryByAppStatusCode = async (idapp) => {
 	let uf = new uFetch();
 
-	let sys_res = checkStatus(await uf.GET({
+	let sys_res = checkStatus(await uf.get({
 		url: url_paths.getLogSummaryByAppStatusCode,
 		data: { idapp: idapp }
 	}));

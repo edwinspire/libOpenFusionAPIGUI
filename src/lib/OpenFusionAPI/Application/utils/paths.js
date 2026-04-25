@@ -51,4 +51,5 @@ export const url_paths = {
 	APIKeys: host + '/api/system/apikey/prd',
 	APIClients: host + '/api/system/api_clients/prd',
 	APIClient: host + '/api/system/apiclient/prd',
+	migrateEndpoints: host + '/api/system/endpoints/migrate/prd',
 };
