@@ -132,7 +132,7 @@
 	async function fetchLogs() {
 		try {
 			params.idendpoint = endpoint.idendpoint || 'ffffffff-ffff-ffff-ffff-ffffffffffff';
-			let req = await uF.GET({ data: params });
+			let req = await uF.get({ data: params });
 			dataLogs = await req.json();
 		} catch (error) {
 			console.error('Error fetching logs:', error);
@@ -142,7 +142,7 @@
 
 	async function fetchTraceLogs() {
 		try {
-			let req = await uF.GET({ data: { trace_id: trace_id } });
+			let req = await uF.get({ data: { trace_id: trace_id } });
 			datatraceLogs = await req.json();
 		} catch (error) {
 			console.error('Error fetching logs:', error);

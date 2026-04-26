@@ -141,7 +141,7 @@
 		if (idapp) {
 			let row = $state.snapshot(selectedRow);
 			console.log('saveAPIKey >>>>>>>>>>>>>', row);
-			let resp = await uF.POST({ url: url_paths.APIKeys, data: row });
+			let resp = await uF.post({ url: url_paths.APIKeys, data: row });
 			let jresp = await resp.json();
 			console.log('saveAPIKey >>>>>>>>>>>>>', selectedRow, jresp);
 			await loadAPIKeys();

@@ -118,7 +118,7 @@
 	async function loadTasks() {
 		if (idapp) {
 			
-			let resp = await uF.GET({ url: url_paths.getListIntervalTasksByIdApp, data: { idapp } });
+			let resp = await uF.get({ url: url_paths.getListIntervalTasksByIdApp, data: { idapp } });
 			let jresp = await resp.json();
 			//	console.log('++++>>>>>>>>>>>>>', jresp);
 			let status_sys_endp = await restoreSystemEndpoints(false, $userStore.token);
@@ -175,7 +175,7 @@
 			
 			let row = $state.snapshot(selectedRow);
 			console.log('saveInterval >>>>>>>>>>>>>', row);
-			let resp = await uF.POST({ url: url_paths.upsertIntervalTasksByIdTask, data: row });
+			let resp = await uF.post({ url: url_paths.upsertIntervalTasksByIdTask, data: row });
 			let jresp = await resp.json();
 			//console.log('saveInterval >>>>>>>>>>>>>', selectedRow, jresp);
 			await loadTasks();

@@ -17,7 +17,7 @@ export function getAppDocumentation(token: any, idapp: any, idendpoints: any): P
 export function migrateEndpoints(data: any): Promise<any>;
 export function getServerAPIVersion(token: any): Promise<any>;
 export function getServerAPILastVersion(token: any): Promise<any>;
-export function EndpointSave(endpoint: any, token: any): Promise<any>;
+export function EndpointSave(endpoint: any): Promise<any>;
 export function getLogsRecordsPerMinute(options: any, token: any): Promise<any>;
 export function GetAppVars(idapp: any, setStoreListAppVars?: boolean): Promise<any>;
 export function UpsertAppVar(data: any, token: any): Promise<any>;

@@ -28,7 +28,7 @@
 		// Lógica de autenticación aquí
 
 		try {
-			let apps_res = await uf.GET({ url: '/system/main/role/1' });
+			let apps_res = await uf.get({ url: '/system/main/role/1' });
 			let data = await apps_res.json();
 			appDataTable = data.attrs.endpoints;
 		} catch (error) {

@@ -56,7 +56,7 @@
 
 	async function SaveApp() {
 		try {
-			let request = await uf.POST({
+			let request = await uf.post({
 				url: url_paths.app,
 				data: $state.snapshot(app)
 			});

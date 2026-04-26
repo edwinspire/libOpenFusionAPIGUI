@@ -45,7 +45,7 @@
 		messages = [...messages];
 
 		const uF = new uFetch();
-		let response = await uF.POST({
+		let response = await uF.post({
 			url,
 			data: {
 				prompt: { history: $state.snapshot(messages), user: prompt, init_prompts: init_prompts }

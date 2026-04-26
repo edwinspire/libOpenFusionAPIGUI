@@ -26,6 +26,8 @@
 				: [];
 		return data;
 	});
+
+	let copied = $state(false);
 </script>
 
 <!-- Main container -->
@@ -34,9 +36,22 @@
 	<div class="level-left">
 		<div class="level-item">
 			<h4 class="subtitle is-5">
-				<div class="icon-text">
-					<span class="icon has-text-info">
-						<i class="fa-solid fa-link"></i>
+				<!-- svelte-ignore a11y_click_events_have_key_events -->
+				<!-- svelte-ignore a11y_no_static_element_interactions -->
+				<div 
+					class="icon-text" 
+					style="cursor: pointer;"
+					title="Copy to clipboard"
+					onclick={() => {
+						navigator.clipboard?.writeText?.(endpoint);
+						copied = true;
+						setTimeout(() => {
+							copied = false;
+						}, 1000);
+					}}
+				>
+					<span class="icon {copied ? 'has-text-success' : 'has-text-info'}">
+						<i class="fa-solid {copied ? 'fa-check fa-beat' : 'fa-copy'}"></i>
 					</span>
 					<span>{endpoint}</span>
 				</div>

@@ -28,7 +28,7 @@
 		if (idendpoint) {
 			selectionType = 1;
 			try {
-				let req = await uF.GET({ data: { idendpoint } });
+				let req = await uF.get({ data: { idendpoint } });
 				dataBackups = await req.json();
 				console.log('Fetched Backups:', dataBackups);
 			} catch (error) {

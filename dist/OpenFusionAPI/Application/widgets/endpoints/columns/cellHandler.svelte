@@ -50,7 +50,7 @@
 	function setCSS(handler) {
 		let css_selected = getHandlerParams(handler);
 
-		console.log('css_selected >>>> ', css_selected);
+		//console.log('css_selected >>>> ', css_selected);
 
 		if (css_selected) {
 			css_class = css_selected.css_class;

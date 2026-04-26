@@ -352,11 +352,37 @@ export const getServerAPILastVersion = async (token) => {
 	return version_res;
 };
 
-export const EndpointSave = async (endpoint, token) => {
-	let uf = new uFetch();
-	let req = checkStatus(await uf.post({ url: url_paths.endpoint, data: endpoint }));
-	let es = await req.json();
-	return es;
+export const EndpointSave = async (endpoint) => {
+	// console.trace('EndpointSave >>>>>>>>>>>>>', endpoint);
+
+	if (endpoint.handler == "TEXT" && endpoint.File) {
+		let uf = new uFetch();
+		let formData = new FormData();
+		
+		// Agrega el archivo al formData
+		formData.append('file', endpoint.File);
+		
+		// Agrega el resto de los parámetros de `endpoint`
+		for (const key in endpoint) {
+			if (key !== 'File') {
+				let value = endpoint[key];
+				if (typeof value === 'object' && value !== null) {
+					formData.append(key, JSON.stringify(value));
+				} else {
+					formData.append(key, value);
+				}
+			}
+		}
+
+		let req = checkStatus(await uf.post({ url: url_paths.endpoint, data: formData }));
+		let es = await req.json();
+		return es;
+	} else {
+		let uf = new uFetch();
+		let req = checkStatus(await uf.post({ url: url_paths.endpoint, data: endpoint }));
+		let es = await req.json();
+		return es;
+	}
 };
 
 export const getLogsRecordsPerMinute = async (options, token) => {
@@ -444,7 +470,7 @@ export const changeUserPassword = async (data, token) => {
 export const restoreSystemEndpoints = async (restore) => {
 	let uf = new uFetch();
 
-	let sys_res = checkStatus(await uf.PUT({
+	let sys_res = checkStatus(await uf.put({
 		url: url_paths.restoreSystemEndpoints,
 		data: { restore: restore }
 	}));

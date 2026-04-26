@@ -212,10 +212,13 @@
 	}
 
 	function onChangeValueHandler(v) {
+		console.trace('onChangeValueHandler', v);
 		if (v) {
 			endpoint.data_test = v.data_test;
 			endpoint.code = v.code;
 			endpoint.docs = v.docs;
+			endpoint.File = v.File;
+			
 			if (v.custom_data) {
 				endpoint.custom_data = v.custom_data;
 			}

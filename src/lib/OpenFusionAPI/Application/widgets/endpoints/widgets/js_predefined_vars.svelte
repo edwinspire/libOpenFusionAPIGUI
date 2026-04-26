@@ -12,7 +12,7 @@
 	onMount(async () => {
 		uF = new uFetch();
 		try {
-			let req_uf = await uF.GET({ url: url_paths.getlistFunctionsVarsJS });
+			let req_uf = await uF.get({ url: url_paths.getlistFunctionsVarsJS });
 			vars_js = await req_uf.json();
 		} catch (error) {
 			console.error('Error fetching JS predefined vars:', error);
