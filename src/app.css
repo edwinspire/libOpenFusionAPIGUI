@@ -1,0 +1,56 @@
+/* Global Responsive Fixes */
+
+/* Allow horizontal scrolling on very small screens, though we prefer wrapping */
+html {
+    overflow-x: auto !important;
+}
+
+/* Fix login modal fixed width */
+.modal-content {
+    max-width: 90vw !important;
+}
+
+/* Fix application toolbar (Bulma .level) wrapping */
+.level {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    height: auto !important;
+    min-height: fit-content;
+}
+
+.level-left, 
+.level-right {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    height: auto !important;
+}
+
+.level-item {
+    max-width: 100%;
+}
+
+/* Fix AppBase Navbar Overflow (assuming Bulma Navbar or is-flex container) */
+.navbar-brand,
+.navbar-menu,
+.navbar-start,
+.navbar-end,
+.navbar {
+    flex-wrap: wrap !important;
+    height: auto !important;
+    min-height: fit-content;
+}
+
+/* General flex utilities that might need wrapping on small screens */
+.is-flex {
+    flex-wrap: wrap !important;
+    height: auto !important;
+}
+
+.tags {
+    flex-wrap: wrap;
+}
+
+/* Ensure buttons and inputs don't stretch layout */
+.control, .field {
+    max-width: 100%;
+}

@@ -38,15 +38,15 @@
 		trace_id: { hidden: false },
 		response_data: {
 			hidden: false,
-			decorator: { component: ColumnTypes.JSON }
+			decorator: { component: ColumnTypes.Json }
 		},
 		req_headers: {
 			hidden: false,
-			decorator: { component: ColumnTypes.JSON }
+			decorator: { component: ColumnTypes.Json }
 		},
 		res_headers: {
 			hidden: false,
-			decorator: { component: ColumnTypes.JSON }
+			decorator: { component: ColumnTypes.Json }
 		},
 		request_data: { hidden: true },
 		idapp: { hidden: true },
