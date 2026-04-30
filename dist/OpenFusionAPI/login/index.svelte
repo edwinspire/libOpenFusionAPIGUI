@@ -84,9 +84,10 @@
 			<!-- Form -->
 			<form onsubmit={(e) => { e.preventDefault(); handleSubmit(); }} class="login-form">
 				<div class="field">
-					<label class="label has-text-grey-light is-small">Username</label>
+					<label class="label has-text-grey-light is-small" for="login-username">Username</label>
 					<p class="control has-icons-left">
 						<input
+							id="login-username"
 							class="input is-rounded"
 							class:is-danger={processing.error}
 							type="text"
@@ -101,9 +102,10 @@
 				</div>
 
 				<div class="field">
-					<label class="label has-text-grey-light is-small">Password</label>
+					<label class="label has-text-grey-light is-small" for="login-password">Password</label>
 					<p class="control has-icons-left has-icons-right">
 						<input
+							id="login-password"
 							class="input is-rounded"
 							class:is-danger={processing.error}
 							type={showPassword ? 'text' : 'password'}
@@ -114,13 +116,15 @@
 						<span class="icon is-small is-left">
 							<i class="fa-solid fa-lock"></i>
 						</span>
-						<span
+						<button
+							type="button"
 							class="icon is-small is-right is-clickable eye-icon"
 							onclick={() => (showPassword = !showPassword)}
 							title={showPassword ? 'Hide password' : 'Show password'}
+							aria-label={showPassword ? 'Hide password' : 'Show password'}
 						>
 							<i class={showPassword ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye'}></i>
-						</span>
+						</button>
 					</p>
 				</div>
 

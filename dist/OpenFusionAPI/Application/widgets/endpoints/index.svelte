@@ -365,10 +365,10 @@
 			</p>
 			
 			<div class="field">
-				<label class="label">Target Environment</label>
+				<label class="label" for="migrate-target-environment">Target Environment</label>
 				<div class="control">
 					<div class="select is-fullwidth is-small">
-						<select bind:value={migrateTargetEnv}>
+						<select id="migrate-target-environment" bind:value={migrateTargetEnv}>
 							<option value="" disabled>Select an environment...</option>
 							<option value="qa">QA (Quality Assurance)</option>
 							<option value="dev">DEV (Development)</option>
