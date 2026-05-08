@@ -417,9 +417,8 @@
 					/>
 				</span>
 				<span class="control">
-					<button class="button is-small" onclick={fetchTraceLogs}>
-						aria-label="Search trace logs"
-						title="Search trace logs"
+					<button class="button is-small" onclick={fetchTraceLogs} aria-label="Search trace logs" title="Search trace logs">
+						
 						<span class="icon is-small">
 							<i class="fa-solid fa-magnifying-glass"></i>
 						</span>
