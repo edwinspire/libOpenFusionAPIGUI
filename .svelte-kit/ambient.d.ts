@@ -40,8 +40,8 @@
 declare module '$env/static/private' {
 	export const ACLOCAL_PATH: string;
 	export const ALLUSERSPROFILE: string;
-	export const ANTIGRAVITY_CLI_ALIAS: string;
 	export const APPDATA: string;
+	export const BUNDLED_DEBUGPY_PATH: string;
 	export const ChocolateyInstall: string;
 	export const CHROME_CRASHPAD_PIPE_NAME: string;
 	export const COLOR: string;
@@ -124,7 +124,10 @@ declare module '$env/static/private' {
 	export const PSModulePath: string;
 	export const PUBLIC: string;
 	export const PWD: string;
-	export const QIP15740: string;
+	export const PYDEVD_DISABLE_FILE_VALIDATION: string;
+	export const PYTHONSTARTUP: string;
+	export const PYTHON_BASIC_REPL: string;
+	export const QIP16160: string;
 	export const SESSIONNAME: string;
 	export const SHELL: string;
 	export const SHLVL: string;
@@ -143,6 +146,7 @@ declare module '$env/static/private' {
 	export const USERNAME: string;
 	export const USERPROFILE: string;
 	export const VBOX_MSI_INSTALL_PATH: string;
+	export const VSCODE_DEBUGPY_ADAPTER_ENDPOINTS: string;
 	export const VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
 	export const VSCODE_GIT_ASKPASS_MAIN: string;
 	export const VSCODE_GIT_ASKPASS_NODE: string;
@@ -238,8 +242,8 @@ declare module '$env/dynamic/private' {
 	export const env: {
 		ACLOCAL_PATH: string;
 		ALLUSERSPROFILE: string;
-		ANTIGRAVITY_CLI_ALIAS: string;
 		APPDATA: string;
+		BUNDLED_DEBUGPY_PATH: string;
 		ChocolateyInstall: string;
 		CHROME_CRASHPAD_PIPE_NAME: string;
 		COLOR: string;
@@ -322,7 +326,10 @@ declare module '$env/dynamic/private' {
 		PSModulePath: string;
 		PUBLIC: string;
 		PWD: string;
-		QIP15740: string;
+		PYDEVD_DISABLE_FILE_VALIDATION: string;
+		PYTHONSTARTUP: string;
+		PYTHON_BASIC_REPL: string;
+		QIP16160: string;
 		SESSIONNAME: string;
 		SHELL: string;
 		SHLVL: string;
@@ -341,6 +348,7 @@ declare module '$env/dynamic/private' {
 		USERNAME: string;
 		USERPROFILE: string;
 		VBOX_MSI_INSTALL_PATH: string;
+		VSCODE_DEBUGPY_ADAPTER_ENDPOINTS: string;
 		VSCODE_GIT_ASKPASS_EXTRA_ARGS: string;
 		VSCODE_GIT_ASKPASS_MAIN: string;
 		VSCODE_GIT_ASKPASS_NODE: string;
