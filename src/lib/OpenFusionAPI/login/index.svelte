@@ -2,7 +2,8 @@
 	import {
 		getListMethods,
 		getListHandler,
-		LoginRequest
+		LoginRequest,
+		GetServerAPIVersion
 	} from '$lib/OpenFusionAPI/Application/utils/request.js';
 	import { userStore } from '$lib/OpenFusionAPI/Application/utils/stores.js';
 	import logo from '$lib/OpenFusionAPI/img/favicon.png';
@@ -16,11 +17,22 @@
 	let processing = $state({ waiting: false, error: null });
 	let showPassword = $state(false);
 	let mounted = $state(false);
+	let serverVersion = $state('...');
 
 	import { onMount } from 'svelte';
 
+	async function loadServerVersion() {
+		try {
+			const versionRes = await GetServerAPIVersion();
+			serverVersion = versionRes?.version || 'Unknown';
+		} catch (error) {
+			serverVersion = 'Unknown';
+		}
+	}
+
 	onMount(() => {
 		setTimeout(() => (mounted = true), 50);
+		loadServerVersion();
 	});
 
 	async function handleSubmit() {
@@ -154,7 +166,10 @@
 
 			<p class="version-tag has-text-centered has-text-grey">
 				<span class="icon is-small"><i class="fa-solid fa-code-branch"></i></span>
-				v{version}
+				GUI v{version}
+				<span class="version-separator">|</span>
+				<span class="icon is-small"><i class="fa-solid fa-server"></i></span>
+				Server v{serverVersion}
 			</p>
 		</div>
 	</div>
@@ -436,5 +451,11 @@
 		align-items: center;
 		justify-content: center;
 		gap: 0.3rem;
+		flex-wrap: wrap;
+	}
+
+	.version-separator {
+		opacity: 0.5;
+		padding: 0 0.1rem;
 	}
 </style>

@@ -52,13 +52,14 @@ function Notifications($$renderer, $$props) {
     $$renderer2.push(`<!--]--></div>`);
   });
 }
-const version = "1.4.4";
+const version = "1.4.5";
 function Login($$renderer, $$props) {
   $$renderer.component(($$renderer2) => {
     let username = "";
     let password = "";
     let processing = { waiting: false, error: null };
     let mounted = false;
+    let serverVersion = "...";
     Modal($$renderer2, {
       show: true,
       children: ($$renderer3) => {
@@ -71,7 +72,7 @@ function Login($$renderer, $$props) {
           $$renderer3.push("<!--[0-->");
           $$renderer3.push(`<span class="icon svelte-177ibf8"><i class="fa-solid fa-right-to-bracket svelte-177ibf8"></i></span> <span class="svelte-177ibf8">Sign In</span>`);
         }
-        $$renderer3.push(`<!--]--></button></p></div></form> <p class="version-tag has-text-centered has-text-grey svelte-177ibf8"><span class="icon is-small svelte-177ibf8"><i class="fa-solid fa-code-branch svelte-177ibf8"></i></span> v${escape_html(version)}</p></div></div>`);
+        $$renderer3.push(`<!--]--></button></p></div></form> <p class="version-tag has-text-centered has-text-grey svelte-177ibf8"><span class="icon is-small svelte-177ibf8"><i class="fa-solid fa-code-branch svelte-177ibf8"></i></span> GUI v${escape_html(version)} <span class="version-separator svelte-177ibf8">|</span> <span class="icon is-small svelte-177ibf8"><i class="fa-solid fa-server svelte-177ibf8"></i></span> Server v${escape_html(serverVersion)}</p></div></div>`);
       },
       $$slots: { default: true }
     });

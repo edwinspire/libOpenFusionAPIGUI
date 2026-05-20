@@ -5,7 +5,6 @@ export const url_paths = {
 	endpoints_get_by_idapp: '/api/system/api/app/endpoints/prd',
 	wsServerEvents: '/ws/system/websocket/server/prd',
 	environment: '/api/system/system/environment/prd',
-	serverAPIVersion: '/server/version',
 	serverAPIVersionLast: '/api/system/libopenfusionapi/version/last/prd',
 	clearCache: '/api/system/cache/clear/prd',
 	login: '/api/system/system/login/prd',

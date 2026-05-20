@@ -5,7 +5,6 @@ export namespace url_paths {
     let endpoints_get_by_idapp: string;
     let wsServerEvents: string;
     let environment: string;
-    let serverAPIVersion: string;
     let serverAPIVersionLast: string;
     let clearCache: string;
     let login: string;
@@ -18,6 +17,7 @@ export namespace url_paths {
     let upsertIntervalTasksByIdTask: string;
     let deleteIntervalTasksByIdTask: string;
     let getfunctions: string;
+    let serverAPIVersion: string;
     let appBackup: string;
     let appDocumentation: string;
     let appvarsbyidapp: string;
