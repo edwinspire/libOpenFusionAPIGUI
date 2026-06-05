@@ -171,9 +171,11 @@
 					});
 				} else if (m && m.event_name == 'request_start') {
 					storeEndpointOnStart.set({ idendpoint: m.data?.idendpoint, ts: new Date() });
+				} else if (m && m.event_name == 'system_information') {
+					storeServerDynamicInformation.set(m.data);
 				}
-			} else if (m && m.event_name == 'system_information') {
-				storeServerDynamicInformation.set(m.data);
+			} else if (m && m.event_name == 'database_hook') {
+					console.log('database_hook >>>>> ', m);
 			}
 		});
 	});

@@ -65,7 +65,7 @@
 		price_kb_response: { hidden: true },
 		createdAt: { hidden: true },
 		timeout: { hidden: true },
-		//updatedAt: { hidden: false },
+		updatedAt: {decorator: { component: ColumnTypes.DateTime }, label: 'Updated At' },
 		price_total: { hidden: true }
 	});
 </script>

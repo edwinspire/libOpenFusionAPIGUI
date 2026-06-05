@@ -51,13 +51,12 @@ declare module '$env/static/private' {
 	export const COMPUTERNAME: string;
 	export const COMSPEC: string;
 	export const CONFIG_SITE: string;
+	export const COPILOT_DEBUG_NONCE: string;
 	export const DISPLAY: string;
 	export const DriverData: string;
 	export const EDITOR: string;
 	export const ESET_OPTIONS: string;
 	export const EXEPATH: string;
-	export const FPS_BROWSER_APP_PROFILE_STRING: string;
-	export const FPS_BROWSER_USER_PROFILE_STRING: string;
 	export const GIT_ASKPASS: string;
 	export const HOME: string;
 	export const HOMEDRIVE: string;
@@ -127,7 +126,7 @@ declare module '$env/static/private' {
 	export const PYDEVD_DISABLE_FILE_VALIDATION: string;
 	export const PYTHONSTARTUP: string;
 	export const PYTHON_BASIC_REPL: string;
-	export const QIP15948: string;
+	export const QIP38480: string;
 	export const SESSIONNAME: string;
 	export const SHELL: string;
 	export const SHLVL: string;
@@ -253,13 +252,12 @@ declare module '$env/dynamic/private' {
 		COMPUTERNAME: string;
 		COMSPEC: string;
 		CONFIG_SITE: string;
+		COPILOT_DEBUG_NONCE: string;
 		DISPLAY: string;
 		DriverData: string;
 		EDITOR: string;
 		ESET_OPTIONS: string;
 		EXEPATH: string;
-		FPS_BROWSER_APP_PROFILE_STRING: string;
-		FPS_BROWSER_USER_PROFILE_STRING: string;
 		GIT_ASKPASS: string;
 		HOME: string;
 		HOMEDRIVE: string;
@@ -329,7 +327,7 @@ declare module '$env/dynamic/private' {
 		PYDEVD_DISABLE_FILE_VALIDATION: string;
 		PYTHONSTARTUP: string;
 		PYTHON_BASIC_REPL: string;
-		QIP15948: string;
+		QIP38480: string;
 		SESSIONNAME: string;
 		SHELL: string;
 		SHLVL: string;
