@@ -1,6 +1,6 @@
 {
   "name": "@edwinspire/libopenfusionapigui",
-  "version": "1.4.6",
+  "version": "1.5.1",
   "main": "./dist/index.js",
   "repository": {
     "type": "git",

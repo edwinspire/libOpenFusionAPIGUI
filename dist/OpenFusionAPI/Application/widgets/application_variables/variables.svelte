@@ -1,6 +1,6 @@
 <script>
-	import { GetAppVars, UpsertAppVar } from '../../utils/request.js';
-	import { userStore } from '../../utils/stores.js';
+	import { GetAppVars, UpsertAppVar, migrateAppVars } from '../../utils/request.js';
+	import { userStore, storeServerModelChanged } from '../../utils/stores.js';
 	import VarEnv from './variable.svelte';
 	import { isNewApp } from '../../utils/utils.js';
 	import { DialogModal, Notifications } from '@edwinspire/svelte-components';
@@ -70,31 +70,67 @@
 		}
 	});
 
+	let reloadVarsTimeout;
+	function handleServerModelChanged(change) {
+		if (change && change.model === 'ofapi_appvars' && change.idapp === idapp) {
+			clearTimeout(reloadVarsTimeout);
+			reloadVarsTimeout = setTimeout(async () => {
+				await GetData();
+			}, 300);
+		}
+	}
+
+	onDestroy(() => {
+		clearTimeout(reloadVarsTimeout);
+	});
+
+	$effect(() => {
+		handleServerModelChanged($storeServerModelChanged);
+	});
+
 	function resetValues() {
 		app = { idapp: 0, vars: {} };
 	}
 
 	async function SaveAppVarCopyReplace() {
-		let var_to_save = { ...var_to_copy };
-		if (var_to_save.idvar_destination) {
-			var_to_save.idvar = var_to_save.idvar_destination;
-			delete var_to_save.idvar_destination;
-		} else {
-			var_to_save.idvar = undefined;
-		}
-		var_to_save.environment = var_to_save.env_destination;
-		delete var_to_save.env_destination;
+		try {
+			let payload = [
+				{
+					idappvar: var_to_copy.idvar,
+					target_env: var_to_copy.env_destination
+				}
+			];
 
-		let avr = await UpsertAppVar(var_to_save);
+			let migrate_data = await migrateAppVars(payload);
 
-		if (avr && avr.idvar) {
+			if (Array.isArray(migrate_data) && migrate_data.length > 0) {
+				let result = migrate_data[0];
+				if (result.status === 'success') {
+					noty.push({
+						message: result.message || `Variable ${var_to_copy.name} successfully migrated/replaced in the ${var_to_copy.env_destination} environment`,
+						color: 'success'
+					});
+				} else if (result.status === 'ignored') {
+					noty.push({
+						message: result.message || `Variable ${var_to_copy.name} is already in the ${var_to_copy.env_destination} environment`,
+						color: 'info'
+					});
+				} else {
+					noty.push({
+						message: `Variable ${var_to_copy.name} could not be migrated: ${result.message || result.status}`,
+						color: 'danger'
+					});
+				}
+			} else {
+				noty.push({
+					message: `Unexpected response migrating variable ${var_to_copy.name}`,
+					color: 'danger'
+				});
+			}
+		} catch (error) {
+			console.error(error);
 			noty.push({
-				message: `Variable ${avr.name} successfully saved in the ${avr.environment} environment`,
-				color: 'success'
-			});
-		} else {
-			noty.push({
-				message: `Variable ${avr.name} could not be saved successfully in the ${avr.environment} environment`,
+				message: `Error migrating variable: ${error.message}`,
 				color: 'danger'
 			});
 		}

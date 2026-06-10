@@ -412,7 +412,6 @@ export const getLogsRecordsPerMinute = async (options, token) => {
 };
 
 export const GetAppVars = async (idapp, setStoreListAppVars = false) => {
-	console.trace('GetAppVars called:', { idapp, setStoreListAppVars });
 	let uf = new uFetch();
 
 	let req = checkStatus(await uf.get({

@@ -39,10 +39,11 @@
 <td>
 	{#if env_params}
 		<span class="icon-text">
-			<span class="icon {isRunning ? ' has-text-success ' : ' has-text-black-ter '}">
-				<i class="fa-solid fa-gear {isRunning ? ' fa-spin ' : ''}"></i>
+			
+			<span class="icon {env_params.color}">
+				<i class={env_params.icon}></i>
 			</span>
-			<span>{value}</span>
+			
 		</span>
 	{/if}
 </td>

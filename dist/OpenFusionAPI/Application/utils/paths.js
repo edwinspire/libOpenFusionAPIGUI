@@ -31,4 +31,5 @@ export const url_paths = {
 	APIClients: '/api/system/api_clients/prd',
 	APIClient: '/api/system/apiclient/prd',
 	migrateEndpoints: '/api/system/endpoints/migrate/prd',
+	migrateAppVars: '/api/system/appvars/migrate/prd',
 };

@@ -15,6 +15,7 @@ export function getListFunction(appName: string): Promise<void>;
 export function clearCache(token: string, urls_clear: any): Promise<any>;
 export function getAppDocumentation(token: any, idapp: any, idendpoints: any): Promise<any>;
 export function migrateEndpoints(data: any): Promise<any>;
+export function migrateAppVars(data: any): Promise<any>;
 export function getServerAPIVersion(token: any): Promise<any>;
 export function getServerAPILastVersion(token: any): Promise<any>;
 export function EndpointSave(endpoint: any): Promise<any>;

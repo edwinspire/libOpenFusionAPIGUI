@@ -23,3 +23,4 @@ export const storeCountResponseStatusCode = writable({});
 export const storeEndpointOnStart = writable({});
 export const storeEndpointOnComplete = writable({});
 export const storeServerDynamicInformation = writable({});
+export const storeServerModelChanged = writable({});

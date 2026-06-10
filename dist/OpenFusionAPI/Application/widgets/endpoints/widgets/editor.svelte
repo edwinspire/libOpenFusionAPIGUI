@@ -105,12 +105,13 @@
 	}
 
 	async function saveEndpoint() {
-		// $state.snapshot() ya produce un objeto plano con todas las propiedades;
-		// no se requieren asignaciones adicionales.
-		let endpoint_out = $state.snapshot(endpoint);
-
-		deploying = { show: true, message: 'Saving Endpoint...', error: false };
+		deploying.show = true;
+		deploying.message = 'Saving Endpoint...';
+		deploying.error = false;
 		try {
+			// $state.snapshot() ya produce un objeto plano con todas las propiedades;
+			// no se requieren asignaciones adicionales.
+			let endpoint_out = $state.snapshot(endpoint);
 			let resp = await EndpointSave(endpoint_out, $userStore.token);
 			let response = resp.result;
 
@@ -496,11 +497,17 @@
 		left={[endpoint_path]}
 		onsavedeploy={async () => {
 			if (!validateResource) {
-				deploying = { show: true, error: true, message: 'URL is invalid.' };
+				deploying.show = true;
+				deploying.error = true;
+				deploying.message = 'URL is invalid.';
 			} else if (!availableURL) {
-				deploying = { show: true, error: true, message: 'URL already exists.' };
+				deploying.show = true;
+				deploying.error = true;
+				deploying.message = 'URL already exists.';
 			} else if (endpoint.handler == 'FUNCTION' && (!endpoint.code || endpoint.code.length < 1)) {
-				deploying = { show: true, error: true, message: 'You have not selected a function.' };
+				deploying.show = true;
+				deploying.error = true;
+				deploying.message = 'You have not selected a function.';
 			} else {
 				await saveEndpoint();
 			}

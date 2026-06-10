@@ -1,6 +1,6 @@
 <script>
 	import { GetAppVars, UpsertAppVar, migrateAppVars } from '$lib/OpenFusionAPI/Application/utils/request.js';
-	import { userStore } from '$lib/OpenFusionAPI/Application/utils/stores.js';
+	import { userStore, storeServerModelChanged } from '$lib/OpenFusionAPI/Application/utils/stores.js';
 	import VarEnv from './variable.svelte';
 	import { isNewApp } from '$lib/OpenFusionAPI/Application/utils/utils.js';
 	import { DialogModal, Notifications } from '@edwinspire/svelte-components';
@@ -68,6 +68,24 @@
 			resetValues();
 			await GetData();
 		}
+	});
+
+	let reloadVarsTimeout;
+	function handleServerModelChanged(change) {
+		if (change && change.model === 'ofapi_appvars' && change.idapp === idapp) {
+			clearTimeout(reloadVarsTimeout);
+			reloadVarsTimeout = setTimeout(async () => {
+				await GetData();
+			}, 300);
+		}
+	}
+
+	onDestroy(() => {
+		clearTimeout(reloadVarsTimeout);
+	});
+
+	$effect(() => {
+		handleServerModelChanged($storeServerModelChanged);
 	});
 
 	function resetValues() {

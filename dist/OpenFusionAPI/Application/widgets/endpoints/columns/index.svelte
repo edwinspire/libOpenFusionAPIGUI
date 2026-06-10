@@ -7,6 +7,7 @@
 	import cellMCPTool from './cellMCPTool.svelte';
 	import cellCacheTime from './cellCacheTime.svelte';
 	import cellCountStatusCode from './cellCountStatusCode.svelte';
+	import cellEnv from './cellEnv.svelte';
 
 	export const endpointColumns = $state({
 		//enabled: { label: 'Enabled App' },
@@ -23,7 +24,7 @@
 				}
 			}
 		},
-
+		environment: { label: 'Env', decorator: { component: cellEnv } },
 		endpoint: { label: 'Endpoint', decorator: { component: cellPath } },
 		access: {
 			label: 'Access',
@@ -53,7 +54,7 @@
 		headers_test: { hidden: true },
 		data_test: { hidden: true },
 		latest_updater: { hidden: true },
-		environment: { hidden: true },
+		
 		price_by_request: { hidden: true },
 		price_kb_request: { hidden: true },
 		custom_data: { hidden: true },
@@ -65,7 +66,7 @@
 		price_kb_response: { hidden: true },
 		createdAt: { hidden: true },
 		timeout: { hidden: true },
-		//updatedAt: { hidden: false },
+		updatedAt: { decorator: { component: ColumnTypes.DateTime }, label: 'Updated At' },
 		price_total: { hidden: true }
 	});
 </script>

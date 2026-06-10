@@ -1,5 +1,5 @@
 <script>
-	import { onMount, untrack } from 'svelte';
+	import { onMount, onDestroy, untrack } from 'svelte';
 	import { Table, Notifications, Modal  } from '@edwinspire/svelte-components';
 	import { isNewApp } from '$lib/OpenFusionAPI/Application/utils/utils.js';
 	import {
@@ -47,16 +47,34 @@
 			if (isNewApp(currentIdapp)) {
 				app = { app: '', enabled: false, description: '', endpoints: [] };
 			} else {
-				GetEndpoints();
+				app = { app: '', enabled: false, description: '', endpoints: [] };
+				GetEndpoints(true);
 			}
 		});
 	});
 
+	let reloadEndpointsTimeout;
+	let reloadAppVarsTimeout;
 	function handleServerModelChanged(change) {
-		if (change && change.model === 'ofapi_endpoint' && change.idapp === idapp) {
-			GetEndpoints();
+		if (change && change.idapp === idapp) {
+			if (change.model === 'ofapi_endpoint') {
+				clearTimeout(reloadEndpointsTimeout);
+				reloadEndpointsTimeout = setTimeout(() => {
+					GetEndpoints(false);
+				}, 300);
+			} else if (change.model === 'ofapi_appvars') {
+				clearTimeout(reloadAppVarsTimeout);
+				reloadAppVarsTimeout = setTimeout(() => {
+					GetAppVars(idapp, true);
+				}, 300);
+			}
 		}
 	}
+
+	onDestroy(() => {
+		clearTimeout(reloadEndpointsTimeout);
+		clearTimeout(reloadAppVarsTimeout);
+	});
 
 	$effect(() => {
 		handleServerModelChanged($storeServerModelChanged);
@@ -224,17 +242,19 @@ console.log('Selected endpoints for migration:', idendpoints);
 		}
 	}
 
-	async function GetEndpoints() {
+	async function GetEndpoints(full = false) {
 		try {
 			loadingEndpoints = true;
-			// Limpiar datos previos antes de cargar la nueva app
-			app = { app: '', enabled: false, description: '', endpoints: [] };
 
-			app = await GetEndpointsByIdapp(idapp);
-			await getListFunction(app.app);
-			await GetAppVars(idapp, true);
-			let status_sys_endp = await restoreSystemEndpoints(false);
-			statusSystemEndpointsStore.set(status_sys_endp);
+			let freshApp = await GetEndpointsByIdapp(idapp);
+			await getListFunction(freshApp.app);
+			
+			if (full) {
+				await GetAppVars(idapp, true);
+				let status_sys_endp = await restoreSystemEndpoints(false);
+				statusSystemEndpointsStore.set(status_sys_endp);
+			}
+
 			let statusCodeEndpoints = await getLogSummaryByAppStatusCode(idapp);
 
 			if (statusCodeEndpoints && Array.isArray(statusCodeEndpoints)) {
@@ -247,6 +267,8 @@ console.log('Selected endpoints for migration:', idendpoints);
 				}
 				storeCountResponseStatusCode.set(dataStatus);
 			}
+
+			app = freshApp;
 		} catch (error) {
 			console.error(error);
 			notify.push({ message: error.message, color: 'danger' });

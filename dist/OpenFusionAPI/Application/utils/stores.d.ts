@@ -20,3 +20,4 @@ export const storeCountResponseStatusCode: import("svelte/store").Writable<{}>;
 export const storeEndpointOnStart: import("svelte/store").Writable<{}>;
 export const storeEndpointOnComplete: import("svelte/store").Writable<{}>;
 export const storeServerDynamicInformation: import("svelte/store").Writable<{}>;
+export const storeServerModelChanged: import("svelte/store").Writable<{}>;
