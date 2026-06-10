@@ -15,6 +15,8 @@
 				<button
 					class="button is-small is-warning"
 					onclick={() => {
+						console.log('onsavedeploy org', onsavedeploy);
+
 						if (
 							onsavedeploy &&
 							confirm('Are you sure you want to save the changes and deploy the application?')

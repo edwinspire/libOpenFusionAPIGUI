@@ -334,6 +334,18 @@ export const migrateEndpoints = async (data) => {
 	return response;
 };
 
+export const migrateAppVars = async (data) => {
+	let uf = new uFetch();
+
+	let request = checkStatus(await uf.post({
+		url: url_paths.migrateAppVars,
+		data: data
+	}));
+
+	let response = await request.json();
+	return response;
+};
+
 export const getServerAPIVersion = async (token) => {
 	let uf = new uFetch();
 
@@ -400,6 +412,7 @@ export const getLogsRecordsPerMinute = async (options, token) => {
 };
 
 export const GetAppVars = async (idapp, setStoreListAppVars = false) => {
+	console.trace('GetAppVars called:', { idapp, setStoreListAppVars });
 	let uf = new uFetch();
 
 	let req = checkStatus(await uf.get({

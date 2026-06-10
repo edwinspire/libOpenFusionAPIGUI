@@ -5,7 +5,7 @@
 	import {
 		userStore,
 		statusSystemEndpointsStore,
-		storeCountResponseStatusCode
+		storeCountResponseStatusCode, storeServerModelChanged
 	} from '$lib/OpenFusionAPI/Application/utils/stores.js';
 	import { endpointColumns } from '$lib/OpenFusionAPI/Application/widgets/endpoints/columns/index.svelte';
 	import {
@@ -50,6 +50,16 @@
 				GetEndpoints();
 			}
 		});
+	});
+
+	function handleServerModelChanged(change) {
+		if (change && change.model === 'ofapi_endpoint' && change.idapp === idapp) {
+			GetEndpoints();
+		}
+	}
+
+	$effect(() => {
+		handleServerModelChanged($storeServerModelChanged);
 	});
 
 	// Función para descargar el archivo
@@ -121,7 +131,7 @@
 		let idendpoints = TableObject.GetSelectedRows().map((u) => {
 			return u.idendpoint;
 		});
-
+console.log('Selected endpoints for migration:', idendpoints);
 		if (idendpoints && Array.isArray(idendpoints) && idendpoints.length > 0) {
 			selectedEndpointsForMigration = idendpoints;
 			migrateTargetEnv = '';
@@ -412,11 +422,11 @@
 		bind:this={EndpointEditorWidget}
 		bind:showEditor={showEndpointEdit}
 		oncopy={async (eps) => {
-			await GetEndpoints();
+			//await GetEndpoints();
 			onsavedeploy();
 		}}
 		onsave={async (e) => {
-			await GetEndpoints();
+			//await GetEndpoints();
 			onsavedeploy();
 		}}
 	></EndPointEditor>

@@ -11,6 +11,7 @@
 		storeCountResponseStatusCode,
 		storeEndpointOnStart,
 		storeServerDynamicInformation,
+		storeServerModelChanged,
 		statusSystemEndpointsStore
 	} from '$lib/OpenFusionAPI/Application/utils/stores.js';
 
@@ -175,7 +176,35 @@
 					storeServerDynamicInformation.set(m.data);
 				}
 			} else if (m && m.event_name == 'database_hook') {
-					console.log('database_hook >>>>> ', m);
+				console.log('database_hook >>>>> ', m);
+/*
+{
+    "event_name": "database_hook",
+    "timestamp": "2026-06-10T03:46:59.347Z",
+    "data": {
+        "host": ".",
+        "database": "temporales/ofapi4.sqlite",
+        "schema": "",
+        "model": "ofapi_appvars",
+        "action": "afterUpsert",
+        "data": {
+            "value": "ok_2026-05-21",
+            "idvar": "50b50ea2-5d1d-4559-9caa-e267bd124afd",
+            "idapp": "c4ca4238-a0b9-2382-0dcc-509a6f75849b",
+            "environment": "prd",
+            "name": "TEST_UPSERT_WRITE",
+            "type": "string"
+        }
+    }
+}
+*/
+
+				storeServerModelChanged.set({
+					ts: m.timestamp,
+					action: m.data.action,
+					model: m.data.model,
+					idapp: m.data.data?.idapp
+				});
 			}
 		});
 	});
