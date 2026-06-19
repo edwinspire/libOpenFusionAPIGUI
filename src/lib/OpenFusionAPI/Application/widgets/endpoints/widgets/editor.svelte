@@ -6,7 +6,7 @@
 		EditorCode,
 		Input,
 		MarkdownViewer,
-		RESTTester
+		RESTTester, Notifications
 	} from '@edwinspire/svelte-components';
 	import FetchCode from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/handler/fetch.svelte';
 	import JsCode from '$lib/OpenFusionAPI/Application/widgets/endpoints/widgets/handler/js.svelte';
@@ -34,6 +34,8 @@
 
 	let { showEditor = $bindable(false), onsave = (d) => {}, oncopy = () => {} } = $props();
 
+	
+	let noty = new Notifications();
 	let json_schema_in_enabled = $state(false);
 	let json_schema_in_schema = $state({});
 	let endpoint = $state(structuredClone(defaultEndpoint));
@@ -460,8 +462,10 @@
 		<Backups
 			bind:idendpoint={endpoint.idendpoint}
 			onselect={(backup) => {
+				//console.log('Selected backup', backup);
 				if (backup && backup.idendpoint == endpoint.idendpoint) {
 					endpoint = $state.snapshot(backup);
+noty.push({ message: `Endpoint ${backup.name} loaded from backup. Save to persist.`, color: 'success' });
 				}
 			}}
 		></Backups>

@@ -82,6 +82,7 @@ declare module '$env/static/private' {
 	export const NODE_EXE: string;
 	export const NPM_CLI_JS: string;
 	export const npm_command: string;
+	export const npm_config_allow_scripts: string;
 	export const npm_config_cache: string;
 	export const npm_config_engine_strict: string;
 	export const npm_config_globalconfig: string;
@@ -128,7 +129,7 @@ declare module '$env/static/private' {
 	export const PSModulePath: string;
 	export const PUBLIC: string;
 	export const PWD: string;
-	export const QIP19164: string;
+	export const QIP20284: string;
 	export const SHELL: string;
 	export const SHLVL: string;
 	export const SSH_ASKPASS: string;
@@ -283,6 +284,7 @@ declare module '$env/dynamic/private' {
 		NODE_EXE: string;
 		NPM_CLI_JS: string;
 		npm_command: string;
+		npm_config_allow_scripts: string;
 		npm_config_cache: string;
 		npm_config_engine_strict: string;
 		npm_config_globalconfig: string;
@@ -329,7 +331,7 @@ declare module '$env/dynamic/private' {
 		PSModulePath: string;
 		PUBLIC: string;
 		PWD: string;
-		QIP19164: string;
+		QIP20284: string;
 		SHELL: string;
 		SHLVL: string;
 		SSH_ASKPASS: string;
