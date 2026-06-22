@@ -1,4 +1,6 @@
 <script>
+	import { copyTextToClipboard } from '@edwinspire/svelte-components';
+
 	let { value = '' } = $props();
 	let isExpanded = $state(false);
 	let copied = $state(false);
@@ -8,14 +10,12 @@
 	}
 
 	async function copyToClipboard() {
-		try {
-			await navigator.clipboard.writeText(value);
+		const { result } = await copyTextToClipboard(value);
+		if (result) {
 			copied = true;
 			setTimeout(() => {
 				copied = false;
 			}, 2000);
-		} catch (err) {
-			console.error('Failed to copy: ', err);
 		}
 	}
 </script>

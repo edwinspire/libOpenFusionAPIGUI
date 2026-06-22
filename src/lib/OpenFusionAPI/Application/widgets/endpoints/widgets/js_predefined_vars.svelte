@@ -2,6 +2,7 @@
 	import uFetch from '@edwinspire/universal-fetch';
 	import { onMount } from 'svelte';
 	import { url_paths } from '$lib/OpenFusionAPI/Application/utils/paths.js';
+	import { copyTextToClipboard } from '@edwinspire/svelte-components';
 
 	let uF;
 	let vars_js = {};
@@ -29,21 +30,17 @@
 		}
 	}
 
-	function copyToClipboard(event, text, id) {
+	async function copyToClipboard(event, text, id) {
 		event.stopPropagation(); // Prevent toggling when clicking copy
-		if (navigator.clipboard) {
-			navigator.clipboard.writeText(text).then(
-				() => {
-					console.log('Copied to clipboard');
-					copiedStates = { ...copiedStates, [id]: true };
-					setTimeout(() => {
-						const newState = { ...copiedStates };
-						delete newState[id];
-						copiedStates = newState;
-					}, 3000);
-				},
-				(err) => console.error('Could not copy text: ', err)
-			);
+		const { result } = await copyTextToClipboard(text);
+		if (result) {
+			console.log('Copied to clipboard');
+			copiedStates = { ...copiedStates, [id]: true };
+			setTimeout(() => {
+				const newState = { ...copiedStates };
+				delete newState[id];
+				copiedStates = newState;
+			}, 3000);
 		}
 	}
 </script>

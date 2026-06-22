@@ -4,6 +4,7 @@
 		Environment
 	} from '../../../utils/static_values.js';
 	import { getHandlerParams } from '../../../utils/utils.js';
+	import { copyTextToClipboard } from '@edwinspire/svelte-components';
 
 	let {
 		environment = $bindable('?'),
@@ -42,12 +43,14 @@
 					class="icon-text" 
 					style="cursor: pointer;"
 					title="Copy to clipboard"
-					onclick={() => {
-						navigator.clipboard?.writeText?.(endpoint);
-						copied = true;
-						setTimeout(() => {
-							copied = false;
-						}, 1000);
+					onclick={async () => {
+						const { result } = await copyTextToClipboard(endpoint);
+						if (result) {
+							copied = true;
+							setTimeout(() => {
+								copied = false;
+							}, 1000);
+						}
 					}}
 				>
 					<span class="icon {copied ? 'has-text-success' : 'has-text-info'}">

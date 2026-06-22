@@ -208,3 +208,11 @@ export const mergeSourceOverwrite = (target, source) => {
 	return result;
 };
 
+// NOTA: Para copiar texto al portapapeles (clipboard), no defina una función local ni use copyToClipboard.
+// En su lugar, importe y utilice la función copyTextToClipboard de la librería @edwinspire/svelte-components.
+// Ejemplo:
+// import { copyTextToClipboard } from '@edwinspire/svelte-components';
+// ...
+// const { result, error } = await copyTextToClipboard(texto);
+
+

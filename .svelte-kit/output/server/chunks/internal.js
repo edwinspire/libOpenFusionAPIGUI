@@ -6,34 +6,13 @@ function set_read_implementation(fn) {
 }
 function set_manifest(_) {
 }
-function set_env(env) {
-}
 let public_env = {};
 function set_private_env(environment) {
 }
 function set_public_env(environment) {
   public_env = environment;
 }
-const options = {
-  app_template_contains_nonce: false,
-  async: false,
-  csp: { "mode": "auto", "directives": { "upgrade-insecure-requests": false, "block-all-mixed-content": false }, "reportOnly": { "upgrade-insecure-requests": false, "block-all-mixed-content": false } },
-  csrf_check_origin: true,
-  csrf_trusted_origins: [],
-  embedded: false,
-  env_public_prefix: "PUBLIC_",
-  env_private_prefix: "",
-  hash_routing: false,
-  hooks: null,
-  // added lazily, via `get_hooks`
-  preload_strategy: "modulepreload",
-  root,
-  service_worker: false,
-  service_worker_options: void 0,
-  server_error_boundaries: false,
-  templates: {
-    app: ({ head, body, assets, nonce, env }) => '<!DOCTYPE html>\r\n<html lang="en" class="theme-dark" >\r\n	<head>\r\n		<meta charset="utf-8" />\r\n		<link rel="icon" href="' + assets + '/favicon.png" />\r\n		<meta name="viewport" content="width=device-width, initial-scale=1" />\r\n		' + head + '\r\n	</head>\r\n	<body data-sveltekit-preload-data="hover">\r\n		<div>' + body + "</div>\r\n	</body>\r\n</html>\r\n",
-    error: ({ status, message }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<title>' + message + `</title>
+const error = ({ status, message }) => '<!doctype html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<title>' + message + `</title>
 
 		<style>
 			body {
@@ -102,9 +81,29 @@ const options = {
 	</head>
 	<body>
 		<div class="error">
-			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n"
+			<span class="status">` + status + '</span>\n			<div class="message">\n				<h1>' + message + "</h1>\n			</div>\n		</div>\n	</body>\n</html>\n";
+const options = {
+  app_template_contains_nonce: false,
+  async: false,
+  csp: { "mode": "auto", "directives": { "upgrade-insecure-requests": false, "block-all-mixed-content": false }, "reportOnly": { "upgrade-insecure-requests": false, "block-all-mixed-content": false } },
+  csrf_check_origin: true,
+  csrf_trusted_origins: [],
+  embedded: false,
+  env_public_prefix: "PUBLIC_",
+  env_private_prefix: "",
+  hash_routing: false,
+  hooks: null,
+  // added lazily, via `get_hooks`
+  preload_strategy: "modulepreload",
+  root,
+  service_worker: false,
+  service_worker_options: void 0,
+  server_error_boundaries: false,
+  templates: {
+    app: ({ head, body, assets, nonce, env }) => '<!DOCTYPE html>\r\n<html lang="en" class="theme-dark" >\r\n	<head>\r\n		<meta charset="utf-8" />\r\n		<link rel="icon" href="' + assets + '/favicon.png" />\r\n		<meta name="viewport" content="width=device-width, initial-scale=1" />\r\n		' + head + '\r\n	</head>\r\n	<body data-sveltekit-preload-data="hover">\r\n		<div>' + body + "</div>\r\n	</body>\r\n</html>\r\n",
+    error
   },
-  version_hash: "1o6fn3u"
+  version_hash: "10c94db"
 };
 async function get_hooks() {
   let handle;
@@ -127,8 +126,7 @@ async function get_hooks() {
 export {
   set_public_env as a,
   set_read_implementation as b,
-  set_env as c,
-  set_manifest as d,
+  set_manifest as c,
   get_hooks as g,
   options as o,
   public_env as p,

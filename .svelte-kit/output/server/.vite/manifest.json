@@ -20,10 +20,7 @@
   },
   "_index.js": {
     "file": "chunks/index.js",
-    "name": "index",
-    "imports": [
-      "_render-context.js"
-    ]
+    "name": "index"
   },
   "_index2.js": {
     "file": "chunks/index2.js",
@@ -39,10 +36,6 @@
       "_root.js",
       "_server.js"
     ]
-  },
-  "_render-context.js": {
-    "file": "chunks/render-context.js",
-    "name": "render-context"
   },
   "_root.js": {
     "file": "chunks/root.js",
@@ -60,8 +53,7 @@
     "file": "chunks/utils.js",
     "name": "utils",
     "imports": [
-      "_utils2.js",
-      "_render-context.js"
+      "_utils2.js"
     ]
   },
   "_utils2.js": {
@@ -143,12 +135,18 @@
       "_index2.js"
     ],
     "css": [
-      "_app/immutable/assets/_page.IRl9tDYR.css"
+      "_app/immutable/assets/_page.BcdvPO5z.css"
     ],
     "assets": [
       "_app/immutable/assets/fa-brands-400.BP5tdqmh.woff2",
       "_app/immutable/assets/fa-regular-400.nyy7hhHF.woff2",
       "_app/immutable/assets/fa-solid-900.DRAAbZTg.woff2"
     ]
+  },
+  "virtual:__sveltekit/env": {
+    "file": "env.js",
+    "name": "env",
+    "src": "virtual:__sveltekit/env",
+    "isEntry": true
   }
 }
