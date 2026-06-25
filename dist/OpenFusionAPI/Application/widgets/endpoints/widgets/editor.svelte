@@ -70,6 +70,53 @@
 		setValuesEndpoint();
 	}
 
+	function normalizeEndpoint(ep) {
+		if (!ep) return ep;
+
+		const jsonFields = ['json_schema', 'mcp', 'ctrl', 'data_test', 'cors', 'headers_test'];
+		for (const field of jsonFields) {
+			if (typeof ep[field] === 'string') {
+				const val = ep[field].trim();
+				if (val === '' || val === 'null' || val === 'undefined') {
+					ep[field] = {};
+				} else {
+					try {
+						ep[field] = JSON.parse(val);
+					} catch (e) {
+						console.error(`Error parsing ${field}:`, e);
+						try {
+							noty.push({
+								message: `Field '${field}' has invalid JSON format in database: ${e.message}`,
+								color: 'warning'
+							});
+						} catch (err) {
+							console.error('Failed to show notification:', err);
+						}
+						ep[field] = {};
+					}
+				}
+			}
+		}
+
+		// Ensure structures exist
+		ep.json_schema ??= {};
+		ep.json_schema.in ??= {};
+		ep.json_schema.in.enabled ??= false;
+		ep.json_schema.in.schema ??= {};
+		ep.json_schema.out ??= {};
+		ep.json_schema.out.enabled ??= false;
+		ep.json_schema.out.schema ??= {};
+
+		ep.custom_data ??= {};
+		ep.mcp ??= {};
+		ep.ctrl ??= {};
+		ep.ctrl.users ??= [];
+		ep.ctrl.log ??= {};
+		ep.data_test ??= {};
+
+		return ep;
+	}
+
 	async function setValuesEndpoint() {
 		//console.warn($state.snapshot(endpoint), defaultEndpoint);
 		if (app && app.endpoints && idendpoint) {
@@ -77,21 +124,8 @@
 
 			if (ep_found) {
 				// Se hace una copia del default porque se estaba sobreescribiendo
-				endpoint = mergeSourceOverwrite(structuredClone(defaultEndpoint), ep_found);
-
-				// Ensure json_schema structure exists
-				endpoint.json_schema ??= {};
-				endpoint.json_schema.in ??= {};
-				endpoint.json_schema.in.enabled ??= false;
-				endpoint.json_schema.in.schema ??= {};
-
-				// Ensure other critical structures exist
-				endpoint.custom_data ??= {};
-				endpoint.mcp ??= {};
-				endpoint.ctrl ??= {};
-				endpoint.ctrl.users ??= [];
-				endpoint.ctrl.log ??= {};
-				endpoint.data_test ??= {};
+				let merged = mergeSourceOverwrite(structuredClone(defaultEndpoint), ep_found);
+				endpoint = normalizeEndpoint(merged);
 
 				// Get Handler Docs (actualizar cache para evitar re-fetch del $effect)
 				lastHandlerDocs = endpoint.handler;
@@ -203,15 +237,9 @@
 	});
 
 	function clearValues() {
-		endpoint = structuredClone(defaultEndpoint);
-		endpoint.idapp = app.idapp;
-		// Inicializar estructuras anidadas requeridas
-		endpoint.json_schema ??= {};
-		endpoint.json_schema.in ??= { enabled: false, schema: {} };
-		endpoint.custom_data ??= {};
-		endpoint.mcp ??= {};
-		endpoint.ctrl ??= { users: [], log: {} };
-		endpoint.data_test ??= {};
+		let ep = structuredClone(defaultEndpoint);
+		ep.idapp = app.idapp;
+		endpoint = normalizeEndpoint(ep);
 	}
 
 	function onChangeValueHandler(v) {
@@ -464,8 +492,9 @@
 			onselect={(backup) => {
 				//console.log('Selected backup', backup);
 				if (backup && backup.idendpoint == endpoint.idendpoint) {
-					endpoint = $state.snapshot(backup);
-noty.push({ message: `Endpoint ${backup.name} loaded from backup. Save to persist.`, color: 'success' });
+					let snap = $state.snapshot(backup);
+					endpoint = normalizeEndpoint(snap);
+					noty.push({ message: `Endpoint ${backup.name} loaded from backup. Save to persist.`, color: 'success' });
 				}
 			}}
 		></Backups>

@@ -52,7 +52,7 @@ function Notifications($$renderer, $$props) {
     $$renderer2.push(`<!--]--></div>`);
   });
 }
-const version = "1.5.3";
+const version = "1.5.4";
 function Login($$renderer, $$props) {
   $$renderer.component(($$renderer2) => {
     let username = "";
